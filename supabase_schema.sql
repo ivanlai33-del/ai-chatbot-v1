@@ -2,11 +2,11 @@
 CREATE TABLE bots (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   store_name TEXT NOT NULL,
-  line_channel_secret TEXT, -- Should be encrypted in app logic
-  line_access_token TEXT,   -- Should be encrypted in app logic
-  openai_key TEXT,          -- Should be encrypted in app logic
+  line_channel_secret TEXT,
+  line_channel_access_token TEXT,
+  openai_api_key TEXT,
   system_prompt TEXT DEFAULT '你是一個專業的 AI 客服助手。',
-  plan_type TEXT DEFAULT 'lite',
+  selected_plan TEXT DEFAULT 'Standard',
   status TEXT DEFAULT 'active',
   current_period_end TIMESTAMP WITH TIME ZONE DEFAULT (now() + interval '30 days'),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),

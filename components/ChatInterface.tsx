@@ -28,6 +28,31 @@ export default function ChatInterface() {
     const scrollRef = useRef<HTMLDivElement>(null);
     const [isLoaded, setIsLoaded] = useState(false);
 
+    const triggerAiResponse = async (currentMessages: Message[]) => {
+        setIsTyping(true);
+        try {
+            const res = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    messages: currentMessages.map(m => ({ role: m.role, content: m.content })),
+                    storeName,
+                    currentStep: step
+                })
+            });
+
+            if (!res.ok) throw new Error('Chat API failed');
+
+            const data = await res.json();
+            setIsTyping(false);
+            processAiResponse(data.message, data.metadata);
+        } catch (error) {
+            console.error(error);
+            setIsTyping(false);
+            addAiMessage("抱歉，我現在連線有點問題，請稍後再跟我聊天！");
+        }
+    };
+
     // Persistence: Load from localStorage
     useEffect(() => {
         const savedMsg = localStorage.getItem('chat_messages');
@@ -50,13 +75,10 @@ export default function ChatInterface() {
 
         setIsLoaded(true);
 
-        // Initial Greeting if no messages
+        // Initial Greeting if no messages - Power it with AI
         if (!savedMsg) {
             const timer = setTimeout(() => {
-                addAiMessage("嗨！👋 我是您的 AI 轉型助手。看您的店舖生意越來越好，訊息回不完嗎？");
-                setTimeout(() => {
-                    addAiMessage("讓我幫您輕鬆搞定 Line 客服吧！請問您的店名叫什麼名字呢？");
-                }, 1500);
+                triggerAiResponse([{ id: 'init', role: 'user', content: '你好，我想了解如何建立 AI 客服。' }]);
             }, 1000);
             return () => clearTimeout(timer);
         }
@@ -96,53 +118,78 @@ export default function ChatInterface() {
         }, 1000 + Math.random() * 500);
     };
 
-    const handleSend = () => {
-        if (!inputValue.trim()) return;
+    const processAiResponse = (content: string, metadata: any) => {
+        let actionTip: Message['type'] = 'text';
+
+        if (metadata.action) {
+            const action = metadata.action;
+            if (action === 'SHOW_PLANS') actionTip = 'pricing';
+            if (action === 'SHOW_CHECKOUT') actionTip = 'checkout';
+            if (action === 'SHOW_SETUP') actionTip = 'setup';
+            if (action === 'SHOW_SUCCESS') actionTip = 'success';
+        }
+
+        if (metadata.storeName && metadata.storeName !== "未命名") {
+            setStoreName(metadata.storeName);
+        }
+
+        addAiMessage(content, actionTip);
+    };
+
+    const handleSend = async () => {
+        if (!inputValue.trim() || isTyping) return;
 
         const userMsg: Message = {
             id: Math.random().toString(36).substring(7),
             role: 'user',
             content: inputValue,
         };
-        setMessages(prev => [...prev, userMsg]);
-        setInputValue('');
 
-        // Flow Logic
-        if (step === 0) {
-            const name = userMsg.content;
-            setStoreName(name);
-            setStep(1);
-            setTimeout(() => {
-                addAiMessage(`哇！「${name}」聽起來就是一個非常有生命力的品牌！🚀`);
-                setTimeout(() => {
-                    addAiMessage("想像一下，如果現在有人在 Line 敲您問價錢或預約，我能在 0.1 秒內給出最專業的回覆...");
-                }, 1200);
-                setTimeout(() => {
-                    addAiMessage("我們為您準備了以下最受歡迎的 AI 轉型方案：", "pricing");
-                }, 2200);
-            }, 500);
-        } else {
-            setTimeout(() => {
-                addAiMessage("收到您的訊息了！如果有任何需要調整的地方，歡迎直接點選畫面上的按鈕。");
-            }, 500);
+        const newMessages = [...messages, userMsg];
+        setMessages(newMessages);
+        setInputValue('');
+        setIsTyping(true);
+
+        try {
+            const res = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    messages: newMessages.map(m => ({ role: m.role, content: m.content })),
+                    storeName,
+                    currentStep: step
+                })
+            });
+
+            if (!res.ok) throw new Error('Chat API failed');
+
+            const data = await res.json();
+            setIsTyping(false);
+            processAiResponse(data.message, data.metadata);
+        } catch (error) {
+            console.error(error);
+            setIsTyping(false);
+            addAiMessage("抱歉，我現在連線有點問題，請稍後再跟我聊天！");
         }
     };
 
     const handleSelectPlan = (name: string, price: string) => {
         setSelectedPlan({ name, price });
-        setMessages(prev => [...prev, { id: Date.now().toString(), role: 'user', content: `我想選擇 ${name} 方案` }]);
+        const content = \`我決定選擇 ${name} 方案\`;
+        setMessages(prev => [...prev, { id: Date.now().toString(), role: 'user', content }]);
         setStep(2);
+        // We could also call the API here to get AI's reaction to the plan choice
         setTimeout(() => {
-            addAiMessage(`太棒了！這是最聰明的選擇。請完成支付以正式開通您的 AI 店長：`, "checkout");
+            addAiMessage(\`太棒了！這是最聰明的選擇。請完成支付以正式開通您的 AI 店長：\`, "checkout");
         }, 800);
     };
 
     const handlePaymentSuccess = () => {
-        addAiMessage(`付款成功！🎉 恭喜「${storeName}」正式進入 AI 自動化時代。`);
+        setStep(3);
+        addAiMessage(\`付款成功！🎉 恭喜「${storeName || '您的店舖'}」正式進入 AI 自動化時代。\`);
         setTimeout(() => {
             addAiMessage("最後一哩路，請依照下方精靈指示，將您的 Line 官方帳號與我串接：", "setup");
         }, 1500);
-        setStep(3);
     };
 
     const handleSetupComplete = async () => {
@@ -490,7 +537,7 @@ export default function ChatInterface() {
                 </p>
             </footer>
 
-            <style jsx global>{`
+            <style jsx global>{\`
         .animate-spin-slow {
           animation: spin 5s linear infinite;
         }
@@ -508,7 +555,7 @@ export default function ChatInterface() {
         ::-webkit-scrollbar-track {
           background: transparent;
         }
-      `}</style>
+      \`}</style>
         </div>
     );
 }

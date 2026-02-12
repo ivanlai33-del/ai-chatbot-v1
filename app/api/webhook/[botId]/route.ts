@@ -39,19 +39,50 @@ export async function POST(
         for (const event of events) {
             if (event.type === 'message' && event.message.type === 'text') {
                 const userMessage = event.message.text;
+                const lineUserId = event.source.userId!;
 
-                // 3. Call OpenAI with dynamic prompt
+                // 3. Log user message
+                await supabase.from('chat_logs').insert({
+                    bot_id: botId,
+                    user_id: lineUserId,
+                    role: 'user',
+                    content: userMessage
+                });
+
+                // 4. Fetch history for context (last 10 messages)
+                const { data: history } = await supabase
+                    .from('chat_logs')
+                    .select('role, content')
+                    .eq('bot_id', botId)
+                    .eq('user_id', lineUserId)
+                    .order('created_at', { ascending: false })
+                    .limit(10);
+
+                const messages = [
+                    { role: "system", content: bot.system_prompt || "你是一個專業助手。" },
+                    ...(history || []).reverse().map((m: any) => ({
+                        role: m.role === 'ai' ? 'assistant' : m.role,
+                        content: m.content
+                    }))
+                ];
+
+                // 5. Call OpenAI with history
                 const completion = await openai.chat.completions.create({
                     model: "gpt-4o",
-                    messages: [
-                        { role: "system", content: bot.system_prompt || "你是一個專業助手。" },
-                        { role: "user", content: userMessage }
-                    ],
+                    messages: messages as any,
                 });
 
                 const aiResponse = completion.choices[0].message.content || '抱歉，我現在無法回答。';
 
-                // 4. Reply via Line
+                // 6. Log AI response
+                await supabase.from('chat_logs').insert({
+                    bot_id: botId,
+                    user_id: lineUserId,
+                    role: 'ai',
+                    content: aiResponse
+                });
+
+                // 7. Reply via Line
                 await client.replyMessage(event.replyToken, {
                     type: 'text',
                     text: aiResponse,

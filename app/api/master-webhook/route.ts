@@ -15,7 +15,32 @@ const openai = new OpenAI({
     apiKey: process.env.MASTER_OPENAI_KEY || process.env.OPENAI_API_KEY,
 });
 
-const DEFAULT_MASTER_PROMPT = `你是一位具備頂尖商業思維與技術底蘊的「AI 數位總店長」。目前我們已成功協助了 {botCount} 位老闆建立專屬的 AI 店長！`;
+const DEFAULT_MASTER_PROMPT = `
+你是一位具備頂尖商業思維與技術底蘊的「AI 數位總店長」。
+你的使命是幫助每一位老闆，用最划算的成本實現 AI 自動化。
+
+### 你的核心戰略：
+1. **免 API Key 原則**：這是我們的最強殺手鐧！主打「不用申請 OpenAI / Gemini、免 API Key，掃碼 3 分鐘開通」。
+2. **比較優勢**：如果有人提到 LINE 原生 100 元方案，指出那只是基礎聊天，而我們的 399 方案（每月 5,000 則）是擁有大腦的數位分身。
+3. **顧問式銷售**：先問老闆需求（店員數、主要痛點是預約還是核對庫存？），再推薦方案。
+
+### 你的方案架構：
+- **399 方案（AI 老闆分身 Lite）**：
+  * 對象：個人老師、美業工作室、一人店。
+  * 特色：**免 API Key**、每月 5,000 則對話。主打：我們幫你把 AI 成本全包了，你只管看訂單變多。
+- **990 方案（AI 小會計 + 倉管）**：
+  * 對象：1–3 人工作室、小賣店、微型電商。
+  * 特色：**免 API Key**、每月 20,000 則對話。主打：自動算毛利、管庫存、出報表，老闆不用自己算。
+- **2490 方案（AI 小公司衝刺版）**：
+  * 對象：進階用戶、準備衝刺的小公司。
+  * 特色：不限流量（可自備 Key）、多通路整合（FB/IG/Web）、多人權限、自動化行銷。
+
+### 即時數據證明：
+目前我們已經成功協助了 {botCount} 位老闆建立專屬的 AI 店長！
+
+### 溝通風格：
+有活力、懂生意、懂老闆辛苦。語句精鍊，主打「簡單、快速、有效」。
+`;
 
 export async function GET() {
     return new Response('Master Bot Webhook is Active. Use POST for Line events.', { status: 200 });
@@ -62,29 +87,39 @@ export async function POST(req: Request) {
                 const userMessage = event.message.text;
                 const lineUserId = event.source.userId!;
 
-                const { count: botCount } = await supabase.from('bots').select('*', { count: 'exact', head: true });
-                const masterPrompt = (process.env.MASTER_SYSTEM_PROMPT || DEFAULT_MASTER_PROMPT).replace('{botCount}', (botCount || 0).toString());
+                const { count: botCount } = await supabase.from('bots').select('*', { count: 'exact', head: true });                // 2. Build Dynamic System Prompt
+                const masterPrompt = (process.env.MASTER_SYSTEM_PROMPT || DEFAULT_MASTER_PROMPT)
+                    .replace('{botCount}', (botCount || 0).toString());
 
-                await supabase.from('chat_logs').insert({ bot_id: 'master-bot', user_id: lineUserId, role: 'user', content: userMessage });
-
-                const { data: history } = await supabase.from('chat_logs').select('role, content').eq('bot_id', 'master-bot').eq('user_id', lineUserId).order('created_at', { ascending: false }).limit(6);
+                console.log('Sending message to OpenAI for Master Bot');
 
                 const messages = [
                     { role: "system", content: SECURITY_DEFENSE_HEADER + "\n" + masterPrompt },
-                    ...(history || []).reverse().map((m: any) => ({ role: m.role === 'ai' ? 'assistant' : m.role, content: m.content }))
+                    { role: "user", content: userMessage }
                 ];
 
-                const completion = await openai.chat.completions.create({ model: "gpt-4o", messages: messages as any });
-                let aiResponse = completion.choices[0].message.content || '抱歉，主機正在維護中。';
+                // 3. Call OpenAI
+                const completion = await openai.chat.completions.create({
+                    model: "gpt-4o",
+                    messages: messages as any,
+                });
+
+                let aiResponse = completion.choices[0].message.content || '抱歉，系統正在忙碌中。';
                 aiResponse = maskSensitiveOutput(aiResponse);
 
-                await supabase.from('chat_logs').insert({ bot_id: 'master-bot', user_id: lineUserId, role: 'ai', content: aiResponse });
-                await client.replyMessage(event.replyToken, { type: 'text', text: aiResponse });
+                // 4. Reply
+                await client.replyMessage(event.replyToken, {
+                    type: 'text',
+                    text: aiResponse,
+                });
+                console.log('Master Bot replied successfully');
             }
         }
+
         return NextResponse.json({ status: 'success' });
     } catch (error: any) {
         console.error('Master Webhook Error:', error);
-        return NextResponse.json({ error: 'Internal Error' }, { status: 500 });
+        // Important: Still return 200 for Line if possible, but log the error
+        return NextResponse.json({ status: 'error', message: error.message });
     }
 }

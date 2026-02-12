@@ -271,7 +271,10 @@ export default function ChatInterface() {
         const errors: { [key: string]: boolean } = {};
         if (!lineSecret) errors.lineSecret = true;
         if (!lineToken) errors.lineToken = true;
-        if (!openaiKey) errors.openaiKey = true;
+
+        // Only require OpenAI Key for 2490 plan or if it was manually provided
+        const isManagedPlan = selectedPlan.name?.includes('399') || selectedPlan.name?.includes('990') || selectedPlan.name?.includes('Lite') || selectedPlan.name?.includes('會計');
+        if (!isManagedPlan && !openaiKey) errors.openaiKey = true;
 
         if (Object.keys(errors).length > 0) {
             setFieldErrors(errors);
@@ -463,9 +466,9 @@ export default function ChatInterface() {
                                         className="ml-14 grid grid-cols-1 gap-4 max-w-[85%]"
                                     >
                                         {[
-                                            { name: '輕量型', price: '$399', desc: '基礎 24/7 自動問答' },
-                                            { name: '標準型', price: '$990', desc: '對話記憶 + 語音支援 (熱門推薦)', popular: true },
-                                            { name: '企業型', price: '$2,490', desc: '串連內部知識庫 (RAG)' }
+                                            { name: 'AI 老闆分身 Lite', price: '$399', desc: '免 API Key / 每月 5,000 則 / 掃碼 3 分鐘開通', popular: true },
+                                            { name: 'AI 小會計 + 倉管', price: '$990', desc: '免 API Key / 每月 20,000 則 / 毛利庫存管理' },
+                                            { name: 'AI 小公司衝刺版', price: '$2,490', desc: '可自備 Key / 不限流量 / 多通路整合行銷' }
                                         ].map((p) => (
                                             <button
                                                 key={p.name}
@@ -585,23 +588,26 @@ export default function ChatInterface() {
                                                     />
                                                     {fieldErrors.lineToken && <p className="text-[10px] text-red-500 font-bold pl-1 mt-1">此欄位不可為空</p>}
                                                 </div>
-                                                <div className="space-y-2">
-                                                    <label className="text-[12px] font-black text-zinc-500 uppercase tracking-widest pl-1">OpenAI API Key</label>
-                                                    <input
-                                                        type="password"
-                                                        value={openaiKey}
-                                                        onChange={(e) => {
-                                                            setOpenaiKey(e.target.value);
-                                                            if (fieldErrors.openaiKey) setFieldErrors(prev => ({ ...prev, openaiKey: false }));
-                                                        }}
-                                                        placeholder="sk-..."
-                                                        className={cn(
-                                                            "w-full p-4 rounded-xl bg-zinc-50 border text-[18.5px] text-zinc-800 placeholder:text-zinc-400 focus:ring-2 outline-none transition-all",
-                                                            fieldErrors.openaiKey ? "border-red-500 focus:ring-red-100" : "border-zinc-100 focus:border-green-500 focus:ring-green-100"
-                                                        )}
-                                                    />
-                                                    {fieldErrors.openaiKey && <p className="text-[10px] text-red-500 font-bold pl-1 mt-1">此欄位不可為空</p>}
-                                                </div>
+                                                {!(selectedPlan.name?.includes('399') || selectedPlan.name?.includes('990') || selectedPlan.name?.includes('Lite') || selectedPlan.name?.includes('會計')) && (
+                                                    <div className="space-y-2">
+                                                        <label className="text-[12px] font-black text-zinc-500 uppercase tracking-widest pl-1">OpenAI API Key (進階選配)</label>
+                                                        <input
+                                                            type="password"
+                                                            value={openaiKey}
+                                                            onChange={(e) => {
+                                                                setOpenaiKey(e.target.value);
+                                                                if (fieldErrors.openaiKey) setFieldErrors(prev => ({ ...prev, openaiKey: false }));
+                                                            }}
+                                                            placeholder="sk-..."
+                                                            className={cn(
+                                                                "w-full p-4 rounded-xl bg-zinc-50 border text-[18.5px] text-zinc-800 placeholder:text-zinc-400 focus:ring-2 outline-none transition-all",
+                                                                fieldErrors.openaiKey ? "border-red-500 focus:ring-red-100" : "border-zinc-100 focus:border-green-500 focus:ring-green-100"
+                                                            )}
+                                                        />
+                                                        {fieldErrors.openaiKey && <p className="text-[10px] text-red-500 font-bold pl-1 mt-1">此欄位不可為空</p>}
+                                                        <p className="text-[11px] text-zinc-400 pl-1 font-medium">399/990 方案由我們託管，免填此項。</p>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                         <button

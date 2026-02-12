@@ -7,14 +7,16 @@ export async function POST(req: NextRequest) {
         const body = await req.json();
         const { storeName, lineSecret, lineToken, openaiKey, selectedPlan } = body;
 
-        if (!storeName || !lineSecret || !lineToken || !openaiKey) {
+        // Validation: Only require OpenAI Key for 2490 plan
+        const isManagedPlan = selectedPlan?.name?.includes('399') || selectedPlan?.name?.includes('990');
+        if (!storeName || !lineSecret || !lineToken || (!isManagedPlan && !openaiKey)) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
-        // Encrypt sensitive data
+        // Encrypt sensitive data (OpenAI Key is optional for managed plans)
         const encryptedSecret = encrypt(lineSecret);
         const encryptedToken = encrypt(lineToken);
-        const encryptedOpenaiKey = encrypt(openaiKey);
+        const encryptedOpenaiKey = openaiKey ? encrypt(openaiKey) : "";
 
         const { data, error } = await supabase
             .from('bots')

@@ -7,8 +7,8 @@ import { SECURITY_DEFENSE_HEADER, maskSensitiveOutput } from '@/lib/security';
 export const dynamic = 'force-dynamic';
 
 const lineConfig = {
-    channelAccessToken: process.env.MASTER_LINE_TOKEN || '',
-    channelSecret: process.env.MASTER_LINE_SECRET || '',
+    channelAccessToken: process.env.MASTER_LINE_TOKEN || process.env.LINE_CHANNEL_ACCESS_TOKEN || '',
+    channelSecret: process.env.MASTER_LINE_SECRET || process.env.LINE_CHANNEL_SECRET || '',
 };
 
 const openai = new OpenAI({
@@ -87,9 +87,27 @@ export async function POST(req: Request) {
                 const userMessage = event.message.text;
                 const lineUserId = event.source.userId!;
 
-                const { count: botCount } = await supabase.from('bots').select('*', { count: 'exact', head: true });                // 2. Build Dynamic System Prompt
+                // 1. Log User Message (Non-blocking)
+                supabase.from('chat_logs').insert({
+                    user_id: lineUserId,
+                    role: 'user',
+                    content: userMessage
+                }).then(({ error }) => {
+                    if (error) console.error('Master Log User failed:', error.message);
+                });
+
+                // 2. Fetch Bot Count (with fallback)
+                let botCount = 0;
+                try {
+                    const { count } = await supabase.from('bots').select('*', { count: 'exact', head: true });
+                    botCount = count || 0;
+                } catch (e) {
+                    console.error('Failed to fetch bot count:', e);
+                }
+
+                // 3. Build Dynamic System Prompt
                 const masterPrompt = (process.env.MASTER_SYSTEM_PROMPT || DEFAULT_MASTER_PROMPT)
-                    .replace('{botCount}', (botCount || 0).toString());
+                    .replace('{botCount}', botCount.toString());
 
                 console.log('Sending message to OpenAI for Master Bot');
 
@@ -98,21 +116,37 @@ export async function POST(req: Request) {
                     { role: "user", content: userMessage }
                 ];
 
-                // 3. Call OpenAI
+                // 4. Call OpenAI
+                console.log('Master Bot: Calling OpenAI with model gpt-4o-mini...');
                 const completion = await openai.chat.completions.create({
-                    model: "gpt-4o",
+                    model: "gpt-4o-mini",
                     messages: messages as any,
                 });
 
                 let aiResponse = completion.choices[0].message.content || '抱歉，系統正在忙碌中。';
+                console.log('Master Bot: OpenAI response received');
                 aiResponse = maskSensitiveOutput(aiResponse);
 
-                // 4. Reply
-                await client.replyMessage(event.replyToken, {
-                    type: 'text',
-                    text: aiResponse,
+                // 5. Log AI response (Non-blocking)
+                supabase.from('chat_logs').insert({
+                    user_id: lineUserId,
+                    role: 'ai',
+                    content: aiResponse
+                }).then(({ error }) => {
+                    if (error) console.error('Master Log AI failed:', error.message);
                 });
-                console.log('Master Bot replied successfully');
+
+                // 6. Reply
+                try {
+                    console.log('Master Bot: Sending reply to Line...');
+                    await client.replyMessage(event.replyToken, {
+                        type: 'text',
+                        text: aiResponse,
+                    });
+                    console.log('Master Bot replied successfully');
+                } catch (replyError) {
+                    console.error('Line Reply Failed:', replyError);
+                }
             }
         }
 

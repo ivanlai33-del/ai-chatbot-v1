@@ -1,5 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import { supabase } from '@/lib/supabase';
+import {
+    SECURITY_DEFENSE_HEADER,
+    filterMaliciousInput,
+    maskSensitiveOutput,
+    isMeaningless
+} from '@/lib/security';
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
@@ -35,42 +42,46 @@ const SYSTEM_PROMPT = `
 {"storeName": "及時偵測到的店名或保留原值", "action": "SHOW_PLANS | SHOW_CHECKOUT | SHOW_SETUP | SHOW_SUCCESS | null", "suggestedPlaceholder": "建議下一個問題的提示文字"}
 `;
 
-// Simple in-memory rate limiting (for demo/development)
-const lastRequestTime: Record<string, number[]> = {};
-
 export async function POST(req: NextRequest) {
     try {
-        const { messages, storeName, currentStep } = await req.json();
+        const { messages, storeName, currentStep, isMaster } = await req.json();
 
-        // 1. Bulk Data Protection (Length Check)
-        const lastUserMessage = messages.slice().reverse().find((m: any) => m.role === 'user');
-        if (lastUserMessage && lastUserMessage.content.length > 2000) {
-            return NextResponse.json({ error: "訊息太長了，老闆，您可以分段跟我說嗎？" }, { status: 400 });
+        // 1. Security check: Meaningless input
+        const lastUserMsg = messages[messages.length - 1];
+        if (lastUserMsg && isMeaningless(lastUserMsg.content)) {
+            return NextResponse.json({
+                message: "老闆，您剛才發送的內容我有點看不懂，要不要試試問我「如何開通 AI 服務」？",
+                metadata: { storeName, action: null }
+            });
         }
 
-        // 2. Simple Rate Limiting (Demo logic)
-        // In reality, use IP-based rate limiting via upstash or similar
-        const now = Date.now();
-        const sessionId = req.headers.get('x-session-id') || 'default';
-        if (!lastRequestTime[sessionId]) lastRequestTime[sessionId] = [];
-        lastRequestTime[sessionId] = lastRequestTime[sessionId].filter(t => now - t < 10000); // 10s window
-        if (lastRequestTime[sessionId].length >= 5) {
-            return NextResponse.json({ error: "老闆，您發得太快了，請讓我喘口氣再聊！" }, { status: 429 });
+        // 2. Security check: Malicious filtering
+        const originalContent = lastUserMsg?.content || "";
+        const sanitizedContent = filterMaliciousInput(originalContent);
+        if (sanitizedContent !== originalContent && lastUserMsg) {
+            lastUserMsg.content = sanitizedContent;
         }
-        lastRequestTime[sessionId].push(now);
 
         // 3. OpenAI Moderation API
-        if (lastUserMessage) {
-            const moderation = await openai.moderations.create({ input: lastUserMessage.content });
+        if (lastUserMsg) {
+            const moderation = await openai.moderations.create({ input: lastUserMsg.content });
             if (moderation.results[0].flagged) {
                 return NextResponse.json({
-                    message: "哎呀，這種話跟我這個文明 AI 說不太合適吧？我們還是聊聊如何開通 AI 客服正經點～",
+                    message: "系統偵測到不當內容，請保持專業的商業溝通喔！",
                     metadata: { storeName, action: null }
                 });
             }
         }
 
-        const dynamicSystemPrompt = SYSTEM_PROMPT
+        // 4. Build System Prompt (with master stats awareness)
+        let dynamicSystemPrompt = SYSTEM_PROMPT;
+
+        if (isMaster) {
+            const { count: botCount } = await supabase.from('bots').select('*', { count: 'exact', head: true });
+            dynamicSystemPrompt = `你現在是「總店長系統」的展示與銷售大師。目前我們已成功協助了 ${botCount || 0} 位老闆轉型。\n` + SYSTEM_PROMPT;
+        }
+
+        dynamicSystemPrompt = dynamicSystemPrompt
             .replace('{storeName}', storeName || '未命名')
             .replace('{currentStep}', currentStep.toString());
 
@@ -79,35 +90,25 @@ export async function POST(req: NextRequest) {
             content: m.content
         }));
 
-        console.log('Sending messages to OpenAI:', JSON.stringify([
-            { role: 'system', content: dynamicSystemPrompt.substring(0, 50) + '...' },
-            ...mappedMessages
-        ]));
-
         const response = await openai.chat.completions.create({
             model: 'gpt-4o-mini',
             messages: [
-                { role: 'system', content: dynamicSystemPrompt },
+                { role: 'system', content: SECURITY_DEFENSE_HEADER + "\n" + dynamicSystemPrompt },
                 ...mappedMessages
             ],
             temperature: 0.7,
         });
 
         let fullResponse = response.choices[0].message.content || "";
+        fullResponse = maskSensitiveOutput(fullResponse);
 
-        // 4. Output Sanitization (Key removal)
-        fullResponse = fullResponse.replace(/sk-[a-zA-Z0-9]{32,}/g, "[KEY_PROTECTED]");
-
-        // Split text and metadata
         let message = fullResponse;
         let metadata = { storeName: storeName, action: null };
 
-        // Robust JSON detection at the end of the response
         const jsonMatch = fullResponse.match(/(\{[^{}]+\})$/);
         if (jsonMatch) {
             try {
-                const potentialJson = jsonMatch[1];
-                const parsed = JSON.parse(potentialJson);
+                const parsed = JSON.parse(jsonMatch[1]);
                 if (parsed && typeof parsed === 'object') {
                     metadata = { ...metadata, ...parsed };
                     message = fullResponse.slice(0, jsonMatch.index).trim();

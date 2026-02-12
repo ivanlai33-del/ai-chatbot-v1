@@ -33,6 +33,7 @@ export default function ChatInterface() {
     const [viewMode, setViewMode] = useState<'chat' | 'webview'>('chat');
     const [fieldErrors, setFieldErrors] = useState<{ [key: string]: boolean }>({});
     const [isConnecting, setIsConnecting] = useState(false);
+    const [isMasterMode, setIsMasterMode] = useState(false);
 
     const triggerAiResponse = async (currentMessages: Message[]) => {
         setIsTyping(true);
@@ -43,7 +44,8 @@ export default function ChatInterface() {
                 body: JSON.stringify({
                     messages: currentMessages.map(m => ({ role: m.role, content: m.content })),
                     storeName,
-                    currentStep: step
+                    currentStep: step,
+                    isMaster: isMasterMode
                 })
             });
 
@@ -117,6 +119,8 @@ export default function ChatInterface() {
         if (savedLineToken) setLineToken(savedLineToken);
         if (savedOpenaiKey) setOpenaiKey(savedOpenaiKey);
         if (savedBotId) setBotId(savedBotId);
+        const savedMasterMode = localStorage.getItem('chat_master_mode');
+        if (savedMasterMode) setIsMasterMode(JSON.parse(savedMasterMode));
 
         setIsLoaded(true);
     }, []);
@@ -132,8 +136,9 @@ export default function ChatInterface() {
             localStorage.setItem('chat_line_token', lineToken);
             localStorage.setItem('chat_openai_key', openaiKey);
             if (botId) localStorage.setItem('chat_bot_id', botId);
+            localStorage.setItem('chat_master_mode', JSON.stringify(isMasterMode));
         }
-    }, [messages, step, storeName, selectedPlan, lineSecret, lineToken, openaiKey, botId, isLoaded]);
+    }, [messages, step, storeName, selectedPlan, lineSecret, lineToken, openaiKey, botId, isLoaded, isMasterMode]);
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -370,6 +375,19 @@ export default function ChatInterface() {
                                 <span>{viewMode === 'webview' ? "回到對話" : "查看我的 AI 店長"}</span>
                             </button>
                         )}
+                        <button
+                            onClick={() => setIsMasterMode(!isMasterMode)}
+                            className={cn(
+                                "flex items-center gap-2 px-4 py-2 rounded-full font-bold text-sm transition-all shadow-sm border",
+                                isMasterMode
+                                    ? "bg-amber-500 text-white border-amber-500 shadow-amber-500/20"
+                                    : "bg-zinc-100 text-zinc-500 border-zinc-200 hover:bg-zinc-200"
+                            )}
+                            title={isMasterMode ? "切換至客戶助理模式" : "切換至總店長模式"}
+                        >
+                            <Bot className="w-4 h-4" />
+                            <span>{isMasterMode ? "總店長模式" : "切換總店長"}</span>
+                        </button>
                         <button
                             onClick={() => setShowResetConfirm(true)}
                             className="w-10 h-10 rounded-full flex items-center justify-center text-zinc-400 border border-zinc-200 hover:bg-zinc-50 hover:text-zinc-600 transition-all shrink-0"

@@ -24,6 +24,7 @@ export default function ChatInterface() {
     const [lineSecret, setLineSecret] = useState("");
     const [lineToken, setLineToken] = useState("");
     const [openaiKey, setOpenaiKey] = useState("");
+    const [paypalInitialized, setPaypalInitialized] = useState(false);
     const [botId, setBotId] = useState<string | null>(null);
     const [placeholder, setPlaceholder] = useState("我想找Ai官方line小幫手....");
     const [showResetConfirm, setShowResetConfirm] = useState(false);
@@ -139,6 +140,43 @@ export default function ChatInterface() {
             localStorage.setItem('chat_master_mode', JSON.stringify(isMasterMode));
         }
     }, [messages, step, storeName, selectedPlan, lineSecret, lineToken, openaiKey, botId, isLoaded, isMasterMode]);
+
+    // PayPal Initialization Logic
+    useEffect(() => {
+        const lastMessage = messages[messages.length - 1];
+        if (lastMessage?.type === 'checkout' && (window as any).paypal && !paypalInitialized) {
+            const containerId = `paypal-button-container-${lastMessage.id}`;
+            const container = document.getElementById(containerId);
+
+            if (container && container.innerHTML === '') {
+                const is990 = selectedPlan.price === '$990';
+                (window as any).paypal.Buttons({
+                    style: {
+                        shape: is990 ? 'rect' : 'pill',
+                        color: 'white',
+                        layout: 'vertical',
+                        label: 'subscribe'
+                    },
+                    createSubscription: function (data: any, actions: any) {
+                        return actions.subscription.create({
+                            plan_id: is990 ? 'P-4JM25682K0587452HNGG7XDI' : 'P-2PB914293B086421VNGG7SDQ',
+                            custom_id: storeName // Distinguish who opened the bot
+                        });
+                    },
+                    onApprove: function (data: any, actions: any) {
+                        console.log('PayPal Subscription Approved:', data.subscriptionID);
+                        handlePaymentSuccess();
+                    },
+                    onError: function (err: any) {
+                        console.error('PayPal Error:', err);
+                    }
+                }).render(`#${containerId}`);
+                setPaypalInitialized(true);
+            }
+        } else if (lastMessage?.type !== 'checkout') {
+            setPaypalInitialized(false);
+        }
+    }, [messages, storeName]);
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -519,13 +557,20 @@ export default function ChatInterface() {
                                                 </div>
                                             </div>
                                         </div>
-                                        <button
-                                            onClick={handlePaymentSuccess}
-                                            className="w-full py-5 text-white rounded-2xl font-black text-[21px] hover:brightness-110 active:scale-95 transition-all shadow-xl shadow-[#06C755]"
-                                            style={{ backgroundColor: LINE_GREEN }}
-                                        >
-                                            立即付款 {selectedPlan.price || '$990'}
-                                        </button>
+                                        {(selectedPlan.price === '$399' || selectedPlan.price === '$990') ? (
+                                            <div className="space-y-4">
+                                                <div id={`paypal-button-container-${m.id}`} className="min-h-[150px]"></div>
+                                                <p className="text-[12px] text-zinc-400 text-center font-medium">點擊「Subscribe」完成支付並自動辨識店家：<b>{storeName}</b></p>
+                                            </div>
+                                        ) : (
+                                            <button
+                                                onClick={handlePaymentSuccess}
+                                                className="w-full py-5 text-white rounded-2xl font-black text-[21px] hover:brightness-110 active:scale-95 transition-all shadow-xl shadow-[#06C755]"
+                                                style={{ backgroundColor: LINE_GREEN }}
+                                            >
+                                                立即付款 {selectedPlan.price || '$990'}
+                                            </button>
+                                        )}
                                     </motion.div>
                                 )}
 

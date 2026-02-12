@@ -16,6 +16,9 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="zh-TW">
+            <head>
+                <script src="https://www.paypal.com/sdk/js?client-id=Aa2CoGPu323kc3ROGqYyMqTBIpx2hfbAjN2G7M7HFQbzSESPM97x4uhCQJhQlExrkhcUoLcGjsv9BuUZ&vault=true&intent=subscription" data-sdk-integration-source="button-factory" async></script>
+            </head>
             <body className={inter.className}>{children}</body>
         </html>
     );

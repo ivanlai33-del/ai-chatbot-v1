@@ -8,6 +8,7 @@ CREATE TABLE bots (
   system_prompt TEXT DEFAULT '你是一個專業的 AI 客服助手。',
   selected_plan TEXT DEFAULT 'Standard',
   status TEXT DEFAULT 'active',
+  mgmt_token UUID DEFAULT uuid_generate_v4(),
   current_period_end TIMESTAMP WITH TIME ZONE DEFAULT (now() + interval '30 days'),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()

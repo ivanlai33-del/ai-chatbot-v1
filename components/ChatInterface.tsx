@@ -2,17 +2,45 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Bot, User, Sparkles, CreditCard, Settings, Rocket, ExternalLink, RefreshCw } from 'lucide-react';
+import { Send, Bot, User, Sparkles, CreditCard, Settings, Rocket, ExternalLink, RefreshCw, Key, Brain, Power, Save } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type Message = {
     id: string;
     role: 'ai' | 'user';
     content: string;
-    type?: 'text' | 'pricing' | 'checkout' | 'setup' | 'success';
+    type?: 'text' | 'pricing' | 'checkout' | 'setup' | 'success' | 'recovery';
 };
 
 const LINE_GREEN = "#06C755";
+
+const OWNER_INSIGHTS = [
+    "老闆身兼客服，半夜還在回訊息？",
+    "客人問的問題都大同小異，好想找人代勞...",
+    "不想讓客人在 Line 等太久，但手邊真的在忙...",
+    "如果有個店長 24 小時幫我接單就好了。",
+    "廣告費花了，結果客人問一問就消失，好可惜。",
+    "每天都要回答營業時間和地址，心好累。",
+    "想讓 Line 官方帳號更聰明，而不是只會發推播。",
+    "我需要一個懂我家產品、能精準報價的幫手。",
+    "生意變好是好事，但客服量多到回不完...",
+    "客人說：有人在嗎？但我正在開會中...",
+    "希望能自動辨認熟客，給點親切感。",
+    "不想一直複製貼上 FAQ，好浪費生命。",
+    "如果有個 AI 能幫我顧店，我就可以好好陪家人。",
+    "想知道 AI 是不是真的能像人一樣對話？",
+    "店員流動率高，教育訓練要一直重來...",
+    "我只想專心研發產品，瑣碎回覆交給 AI。",
+    "半夜三點有客人下單，AI 幫我成交了？",
+    "想讓 Line 也能有像官網一樣的自動轉單功能。",
+    "客服態度要始終如一，AI 不會鬧脾氣。",
+    "我的 Line 帳號好冷清，AI 能幫我主動招呼嗎？",
+    "出國旅遊時，也不用擔心 Line 訊息沒人回。",
+    "老闆心聲：我好想分身，多開幾家分店。",
+    "AI 能幫我記錄客人的特殊需求嗎？",
+    "不想再被客訴：為什麼下午傳的訊息晚上才回？",
+    "數位轉型很難嗎？聽說只要 7 分鐘就能搞定。"
+];
 
 export default function ChatInterface() {
     const [messages, setMessages] = useState<Message[]>([]);
@@ -24,6 +52,12 @@ export default function ChatInterface() {
     const [lineSecret, setLineSecret] = useState("");
     const [lineToken, setLineToken] = useState("");
     const [openaiKey, setOpenaiKey] = useState("");
+    const [businessIndustry, setBusinessIndustry] = useState("");
+    const [businessMission, setBusinessMission] = useState("");
+    const [mgmtToken, setMgmtToken] = useState<string | null>(null);
+    const [isAdminView, setIsAdminView] = useState(false);
+    const [adminBotData, setAdminBotData] = useState<any>(null);
+    const [isSaving, setIsSaving] = useState(false);
     const [paypalInitialized, setPaypalInitialized] = useState(false);
     const [botId, setBotId] = useState<string | null>(null);
     const [placeholder, setPlaceholder] = useState("我想找Ai官方line小幫手....");
@@ -35,6 +69,21 @@ export default function ChatInterface() {
     const [fieldErrors, setFieldErrors] = useState<{ [key: string]: boolean }>({});
     const [isConnecting, setIsConnecting] = useState(false);
     const [isMasterMode, setIsMasterMode] = useState(false);
+    const [insightIndex, setInsightIndex] = useState(0);
+
+    // Dynamic Placeholder Rotation
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setInsightIndex((prev) => (prev + 1) % OWNER_INSIGHTS.length);
+        }, 5000);
+        return () => clearInterval(interval);
+    }, []);
+
+    // Effect to update placeholder when insightIndex changes, 
+    // but only if the AI hasn't suggested a specific one recently
+    useEffect(() => {
+        setPlaceholder(OWNER_INSIGHTS[insightIndex]);
+    }, [insightIndex]);
 
     const triggerAiResponse = async (currentMessages: Message[]) => {
         setIsTyping(true);
@@ -104,6 +153,8 @@ export default function ChatInterface() {
         const savedLineToken = localStorage.getItem('chat_line_token');
         const savedOpenaiKey = localStorage.getItem('chat_openai_key');
         const savedBotId = localStorage.getItem('chat_bot_id');
+        const savedIndustry = localStorage.getItem('chat_industry');
+        const savedMission = localStorage.getItem('chat_mission');
 
         if (savedMsg) {
             const parsed = JSON.parse(savedMsg);
@@ -120,6 +171,11 @@ export default function ChatInterface() {
         if (savedLineToken) setLineToken(savedLineToken);
         if (savedOpenaiKey) setOpenaiKey(savedOpenaiKey);
         if (savedBotId) setBotId(savedBotId);
+        if (savedIndustry) setBusinessIndustry(savedIndustry);
+        if (savedMission) setBusinessMission(savedMission);
+        const savedMgmtToken = localStorage.getItem('chat_mgmt_token');
+        if (savedMgmtToken) setMgmtToken(savedMgmtToken);
+
         const savedMasterMode = localStorage.getItem('chat_master_mode');
         if (savedMasterMode) setIsMasterMode(JSON.parse(savedMasterMode));
 
@@ -137,46 +193,134 @@ export default function ChatInterface() {
             localStorage.setItem('chat_line_token', lineToken);
             localStorage.setItem('chat_openai_key', openaiKey);
             if (botId) localStorage.setItem('chat_bot_id', botId);
+            localStorage.setItem('chat_industry', businessIndustry);
+            localStorage.setItem('chat_mission', businessMission);
+            if (mgmtToken) localStorage.setItem('chat_mgmt_token', mgmtToken);
             localStorage.setItem('chat_master_mode', JSON.stringify(isMasterMode));
         }
-    }, [messages, step, storeName, selectedPlan, lineSecret, lineToken, openaiKey, botId, isLoaded, isMasterMode]);
+    }, [messages, step, storeName, selectedPlan, lineSecret, lineToken, openaiKey, botId, isLoaded, isMasterMode, businessIndustry, businessMission]);
 
-    // PayPal Initialization Logic
+    // URL Magic Link Detection
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const urlBotId = params.get('botId');
+        const urlToken = params.get('token');
+
+        if (urlBotId && urlToken) {
+            handleAdminLogin(urlBotId, urlToken);
+        }
+    }, [isLoaded]);
+
+    const handleAdminLogin = async (id: string, token: string) => {
+        setIsConnecting(true);
+        try {
+            const res = await fetch('/api/bot/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ botId: id, mgmtToken: token })
+            });
+            if (!res.ok) throw new Error('驗證失敗');
+            const data = await res.json();
+            setAdminBotData(data.bot);
+            setMgmtToken(token);
+            setBotId(id);
+            setIsAdminView(true);
+            setStep(4); // Success/Admin state
+        } catch (err) {
+            console.error(err);
+            addAiMessage("魔法連結已失效或資訊錯誤，請檢查您的管理連結。");
+        } finally {
+            setIsConnecting(false);
+        }
+    };
+
+    const handleUpdateBot = async () => {
+        if (!botId || !mgmtToken || !adminBotData) return;
+        setIsSaving(true);
+        try {
+            const res = await fetch(`/api/bot/${botId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    mgmtToken,
+                    systemPrompt: adminBotData.systemPrompt,
+                    status: adminBotData.status
+                })
+            });
+            if (!res.ok) throw new Error('更新失敗');
+            addAiMessage("✨ 訓練完成！您的 AI 客服大腦已成功更新。", "success");
+        } catch (err) {
+            console.error(err);
+            addAiMessage("哎呀，更新知識時發生一點問題，請稍後再試。");
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleRecoverLink = async (sName: string, lSecret: string) => {
+        setIsConnecting(true);
+        try {
+            const res = await fetch('/api/bot/recover', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ storeName: sName, lineSecret: lSecret })
+            });
+            if (!res.ok) {
+                const data = await res.json();
+                throw new Error(data.error || '驗證失敗');
+            }
+            const data = await res.json();
+            setBotId(data.botId);
+            setMgmtToken(data.mgmtToken);
+            setAdminBotData(null); // Clear previous
+            addAiMessage(`✨ 身份驗證成功！已找回您的 AI 店長管理連結。您可以點擊下方按鈕進入練功房：`, "success");
+        } catch (err: any) {
+            console.error(err);
+            addAiMessage(`驗證失敗：${err.message}。請確認店名與 Line Secret 是否正確。`);
+        } finally {
+            setIsConnecting(false);
+        }
+    };
+    const [paypalInitializedMap, setPaypalInitializedMap] = useState<{ [key: string]: boolean }>({});
+
     useEffect(() => {
         const lastMessage = messages[messages.length - 1];
-        if (lastMessage?.type === 'checkout' && (window as any).paypal && !paypalInitialized) {
+        if (lastMessage?.type === 'checkout' && (window as any).paypal && !paypalInitializedMap[lastMessage.id]) {
             const containerId = `paypal-button-container-${lastMessage.id}`;
-            const container = document.getElementById(containerId);
 
-            if (container && container.innerHTML === '') {
-                const is990 = selectedPlan.price === '$990';
-                (window as any).paypal.Buttons({
-                    style: {
-                        shape: is990 ? 'rect' : 'pill',
-                        color: 'white',
-                        layout: 'vertical',
-                        label: 'subscribe'
-                    },
-                    createSubscription: function (data: any, actions: any) {
-                        return actions.subscription.create({
-                            plan_id: is990 ? 'P-4JM25682K0587452HNGG7XDI' : 'P-2PB914293B086421VNGG7SDQ',
-                            custom_id: storeName // Distinguish who opened the bot
-                        });
-                    },
-                    onApprove: function (data: any, actions: any) {
-                        console.log('PayPal Subscription Approved:', data.subscriptionID);
-                        handlePaymentSuccess();
-                    },
-                    onError: function (err: any) {
-                        console.error('PayPal Error:', err);
-                    }
-                }).render(`#${containerId}`);
-                setPaypalInitialized(true);
-            }
-        } else if (lastMessage?.type !== 'checkout') {
-            setPaypalInitialized(false);
+            // Robust rendering with retry loop
+            let attempts = 0;
+            const renderPaypal = () => {
+                const container = document.getElementById(containerId);
+                if (container && container.innerHTML === '') {
+                    const is990 = selectedPlan.price?.includes('990');
+                    (window as any).paypal.Buttons({
+                        style: {
+                            shape: is990 ? 'rect' : 'pill',
+                            color: 'white',
+                            layout: 'vertical',
+                            label: 'subscribe'
+                        },
+                        createSubscription: function (data: any, actions: any) {
+                            return actions.subscription.create({
+                                plan_id: is990 ? 'P-4JM25682K0587452HNGG7XDI' : 'P-2PB914293B086421VNGG7SDQ',
+                                custom_id: storeName
+                            });
+                        },
+                        onApprove: function (data: any, actions: any) {
+                            handlePaymentSuccess();
+                        },
+                        onError: function (err: any) { console.error('PayPal Error:', err); }
+                    }).render(`#${containerId}`);
+                    setPaypalInitializedMap(prev => ({ ...prev, [lastMessage.id]: true }));
+                } else if (attempts < 20) { // Retry for 2 seconds
+                    attempts++;
+                    requestAnimationFrame(renderPaypal);
+                }
+            };
+            renderPaypal();
         }
-    }, [messages, storeName]);
+    }, [messages, storeName, selectedPlan]);
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -207,13 +351,40 @@ export default function ChatInterface() {
             if (action === 'SHOW_CHECKOUT') actionTip = 'checkout';
             if (action === 'SHOW_SETUP') actionTip = 'setup';
             if (action === 'SHOW_SUCCESS') actionTip = 'success';
+            if (action === 'SHOW_RECOVERY') actionTip = 'recovery';
         }
+
+        // 🗑️ Frontend Safety Net: Strip any JSON-like blocks that leaked through
+        const cleanContent = content.replace(/\{[\s\S]*\}$/, '').trim();
 
         if (metadata.storeName && metadata.storeName !== "未命名") {
             setStoreName(metadata.storeName);
         }
 
-        addAiMessage(content, actionTip);
+        if (metadata.industry) setBusinessIndustry(metadata.industry);
+        if (metadata.mission) setBusinessMission(metadata.mission);
+
+        // 🚀 Robust Plan Detection & Validation
+        if (metadata.selectedPlan) {
+            if (typeof metadata.selectedPlan === 'object') {
+                setSelectedPlan(metadata.selectedPlan);
+            } else if (typeof metadata.selectedPlan === 'string') {
+                if (metadata.selectedPlan.includes('399') || metadata.selectedPlan.includes('Lite')) {
+                    setSelectedPlan({ name: 'AI 老闆分身 Lite', price: '$399' });
+                } else if (metadata.selectedPlan.includes('990') || metadata.selectedPlan.includes('會計')) {
+                    setSelectedPlan({ name: 'AI 小會計 + 倉管', price: '$990' });
+                }
+            }
+        } else if (actionTip === 'checkout') {
+            // 🚀 Content-Aware Detection Fallback
+            if (cleanContent.includes('399') || cleanContent.includes('Lite')) {
+                setSelectedPlan({ name: 'AI 老闆分身 Lite', price: '$399' });
+            } else if (cleanContent.includes('990') || cleanContent.includes('會計')) {
+                setSelectedPlan({ name: 'AI 小會計 + 倉管', price: '$990' });
+            }
+        }
+
+        addAiMessage(cleanContent, actionTip);
     };
 
     const handleSend = async () => {
@@ -332,24 +503,30 @@ export default function ChatInterface() {
                     lineSecret,
                     lineToken,
                     openaiKey,
-                    selectedPlan
+                    selectedPlan,
+                    businessIndustry,
+                    businessMission
                 })
             });
 
-            if (!res.ok) throw new Error('API request failed');
+            if (!res.ok) {
+                const errorData = await res.json().catch(() => ({}));
+                throw new Error(errorData.error || '伺服器連線失敗');
+            }
 
             const data = await res.json();
             setBotId(data.botId);
+            setMgmtToken(data.mgmtToken);
 
             setTimeout(() => {
                 addAiMessage("太棒了！連線測試成功。最後，請將下方的 Webhook 網址複製並填入您的 Line 後台，您的店長就會正式開始上班囉！", "success");
                 setStep(4);
                 setIsConnecting(false);
             }, 1000);
-        } catch (error) {
-            console.error(error);
+        } catch (error: any) {
+            console.error('Setup Error:', error);
             setIsConnecting(false);
-            addAiMessage("哎呀，設定過程中發生一點問題。請檢查您的金鑰是否正確，然後再試一次。");
+            addAiMessage(`哎呀，設定過程中發生一點問題：${error.message}。請檢查金鑰或稍後再試。`);
         }
     };
 
@@ -372,25 +549,61 @@ export default function ChatInterface() {
     return (
         <div className="min-h-screen bg-[#4D4D4D] relative overflow-hidden flex flex-col">
             {/* Background Footer Block */}
-            <div
+            {/* 1. Background Footer Block - Rises first */}
+            <motion.div
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                transition={{ duration: 0.8, ease: "circOut" }}
                 className="absolute bottom-0 left-0 right-0 h-1/6 z-0"
                 style={{ backgroundColor: LINE_GREEN }}
             />
 
+            {/* 2. Background Watermark Logo - Slides in from left after footer starts */}
             <motion.div
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                initial={{ x: "-100vw", opacity: 0, rotate: -25 }}
+                animate={{
+                    x: 0,
+                    opacity: 1,
+                    rotate: -12,
+                    y: [0, -15, 0] // Breath after entrance is handled by Framer's sequence if we are clever, 
+                    // but simple repeat: Infinity on Y will work alongside the entrance X.
+                }}
+                transition={{
+                    x: { delay: 0.4, duration: 1.2, ease: "backOut" },
+                    opacity: { delay: 0.4, duration: 1.0 },
+                    rotate: { delay: 0.4, duration: 1.2 },
+                    y: {
+                        delay: 1.6, // Start breathing after entrance finishes
+                        duration: 6,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                    }
+                }}
+                className="absolute bottom-[5%] left-[calc(-10%+140px)] w-auto h-[45%] max-h-[450px] pointer-events-none z-0 select-none overflow-visible"
+            >
+                <img
+                    src="/Lai Logo_3.svg"
+                    className="w-full h-full object-contain drop-shadow-[0_35px_35px_rgba(0,0,0,0.25)]"
+                    alt="Background Watermark"
+                />
+            </motion.div>
+
+            {/* 3. Main Chat Window - Floats in last */}
+            <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 40 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ type: "spring", stiffness: 80, damping: 25, delay: 0.2, duration: 1.5 }}
+                transition={{
+                    delay: 1.2, // Starts as logo is finishing
+                    duration: 1.3, // Completes at 2.5s
+                    ease: [0.16, 1, 0.3, 1] // Custom quintic ease for premium feel
+                }}
                 className="relative z-10 flex flex-col min-h-[600px] h-[calc(100vh-60px)] my-[30px] max-w-2xl w-full mx-auto bg-white shadow-2xl overflow-hidden border border-zinc-200 rounded-[32px] font-sans"
             >
                 {/* Header */}
                 <header className="p-5 border-b glass flex items-center justify-between z-10 sticky top-0 bg-white/95 backdrop-blur-xl shrink-0">
                     <div className="flex items-center gap-4">
-                        <div
-                            className="w-14 h-14 rounded-full flex items-center justify-center text-white shadow-lg shadow-green-200/50 rotate-3 transition-transform hover:rotate-0"
-                            style={{ backgroundColor: LINE_GREEN }}
-                        >
-                            <Bot className="w-10 h-10" />
+                        <div className="w-[75.6px] h-[75.6px] flex items-center justify-center transition-transform hover:scale-105">
+                            <img src="/Lai Logo_2.svg" className="w-full h-full object-contain" alt="Lai Logo" />
                         </div>
                         <div>
                             <h1 className="font-extrabold text-[23px] tracking-tight text-zinc-900 leading-tight">開通你的Line官方AI客服服務</h1>
@@ -426,7 +639,9 @@ export default function ChatInterface() {
                             )}
                             title={isMasterMode ? "切換至客戶助理模式" : "切換至總店長模式"}
                         >
-                            <Bot className="w-4 h-4" />
+                            <div className="w-5 h-5 flex items-center justify-center overflow-hidden">
+                                <img src="/Lai Logo_2.svg" className="w-full h-full object-contain filter brightness-0 invert" alt="Lai Logo" />
+                            </div>
                             <span>{isMasterMode ? "總店長模式" : "切換總店長"}</span>
                         </button>
                         <button
@@ -457,12 +672,15 @@ export default function ChatInterface() {
                                 >
                                     <div
                                         className={cn(
-                                            "w-12 h-12 rounded-full flex items-center justify-center text-white shrink-0 mt-1 shadow-md",
-                                            m.role === 'ai' ? "bg-[#06C755]" : "bg-zinc-200"
+                                            "w-12 h-12 rounded-full flex items-center justify-center text-white shrink-0 mt-1 shadow-md bg-white border border-zinc-100",
+                                            m.role === 'ai' ? "" : "bg-zinc-200"
                                         )}
-                                        style={m.role === 'ai' ? { backgroundColor: LINE_GREEN } : {}}
                                     >
-                                        {m.role === 'ai' ? <Bot className="w-8 h-8" /> : <User className="w-8 h-8" />}
+                                        {m.role === 'ai' ? (
+                                            <img src="/Lai Logo.svg" className="w-[50px] h-[50px] object-contain" alt="Lai Logo" />
+                                        ) : (
+                                            <User className="w-8 h-8 text-zinc-500" />
+                                        )}
                                     </div>
                                     <div className={cn(
                                         "relative p-5 shadow-sm text-[19.5px] leading-relaxed max-w-[85%] transition-all font-bold whitespace-pre-wrap",
@@ -561,6 +779,14 @@ export default function ChatInterface() {
                                             <div className="space-y-4">
                                                 <div id={`paypal-button-container-${m.id}`} className="min-h-[150px]"></div>
                                                 <p className="text-[12px] text-zinc-400 text-center font-medium">點擊「Subscribe」完成支付並自動辨識店家：<b>{storeName}</b></p>
+
+                                                {/* Testing Bypass Button */}
+                                                <button
+                                                    onClick={handlePaymentSuccess}
+                                                    className="w-full py-3 text-zinc-500 rounded-xl font-medium text-[14px] hover:bg-zinc-100 transition-colors border border-dashed border-zinc-300 mt-2"
+                                                >
+                                                    跳過支付直接開通 (測試開發專用)
+                                                </button>
                                             </div>
                                         ) : (
                                             <button
@@ -571,6 +797,50 @@ export default function ChatInterface() {
                                                 立即付款 {selectedPlan.price || '$990'}
                                             </button>
                                         )}
+                                    </motion.div>
+                                )}
+
+                                {/* Recovery Widget */}
+                                {m.type === 'recovery' && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 15 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="ml-14 bg-white p-8 rounded-3xl border border-zinc-100 shadow-2xl space-y-6 max-w-[85%]"
+                                    >
+                                        <div className="flex items-center gap-3 font-black text-[21px] text-amber-500">
+                                            <Key className="w-7 h-7" />
+                                            <span>找回管理連結</span>
+                                        </div>
+                                        <div className="space-y-4">
+                                            <div className="space-y-1.5">
+                                                <p className="text-[12px] font-black text-zinc-400 uppercase tracking-widest pl-1">店舖名稱</p>
+                                                <input
+                                                    id={`recover-name-${m.id}`}
+                                                    type="text"
+                                                    placeholder="請輸入正確的店名"
+                                                    className="w-full p-4 rounded-xl border border-zinc-100 bg-zinc-50 text-[18.5px] focus:ring-2 focus:ring-amber-500 transition-all outline-none"
+                                                />
+                                            </div>
+                                            <div className="space-y-1.5">
+                                                <p className="text-[12px] font-black text-zinc-400 uppercase tracking-widest pl-1">Line Channel Secret</p>
+                                                <input
+                                                    id={`recover-secret-${m.id}`}
+                                                    type="password"
+                                                    placeholder="只有老闆才知道的密鑰"
+                                                    className="w-full p-4 rounded-xl border border-zinc-100 bg-zinc-50 text-[18.5px] focus:ring-2 focus:ring-amber-500 transition-all outline-none"
+                                                />
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={() => {
+                                                const nameInput = document.getElementById(`recover-name-${m.id}`) as HTMLInputElement;
+                                                const secretInput = document.getElementById(`recover-secret-${m.id}`) as HTMLInputElement;
+                                                handleRecoverLink(nameInput.value, secretInput.value);
+                                            }}
+                                            className="w-full py-5 text-white bg-amber-500 rounded-2xl font-black text-[21px] hover:bg-amber-600 active:scale-95 transition-all shadow-xl shadow-amber-500/30"
+                                        >
+                                            立即驗證並找回
+                                        </button>
                                     </motion.div>
                                 )}
 
@@ -679,43 +949,122 @@ export default function ChatInterface() {
                                     <motion.div
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
-                                        className="ml-14 bg-white p-8 rounded-3xl border border-zinc-100 shadow-2xl space-y-6 max-w-[85%]"
+                                        className="ml-14 bg-white p-8 rounded-[32px] border border-zinc-100 shadow-2xl space-y-6 max-w-[85%]"
                                     >
                                         <div className="flex items-center gap-3 font-black text-[21px] text-[#06C755]">
                                             <Sparkles className="w-7 h-7" />
                                             <span>恭喜！您的 AI 店長已待命</span>
                                         </div>
+
                                         <div className="space-y-6">
-                                            <div className="bg-[#06C755] p-6 rounded-2xl border border-[#06C755] space-y-3">
+                                            {/* Webhook URL Section */}
+                                            <div className="bg-[#06C755] p-6 rounded-2xl border border-[#06C755] space-y-3 shadow-lg shadow-emerald-100">
                                                 <p className="text-[13.5px] font-black text-white uppercase tracking-widest text-center">您的專屬 Webhook 網址</p>
-                                                <div className="bg-white p-4 rounded-xl border border-[#06C755] text-center select-all font-mono text-[16px] text-zinc-600 break-all cursor-copy active:bg-green-50 transition-colors">
-                                                    {typeof window !== 'undefined' ? window.location.origin : ''}/api/webhook/{botId || '...'}
+                                                <div className="bg-white p-4 rounded-xl border border-[#06C755] text-center select-all font-mono text-[16px] text-zinc-600 break-all cursor-copy active:bg-green-50 transition-colors shadow-inner">
+                                                    {typeof window !== 'undefined' ? `${window.location.origin}/api/webhook/${botId}` : ''}
                                                 </div>
-                                                <p className="text-[12px] text-white text-center font-bold">點擊網址即可複製</p>
+                                                <button
+                                                    onClick={() => {
+                                                        navigator.clipboard.writeText(`${window.location.origin}/api/webhook/${botId}`);
+                                                        alert("Webhook 網址已複製！");
+                                                    }}
+                                                    className="w-full py-2 text-white text-[12px] font-bold border border-white/30 rounded-lg hover:bg-white/10 transition-colors"
+                                                >
+                                                    複製網址
+                                                </button>
                                             </div>
-                                            <div className="space-y-4">
-                                                <p className="font-bold text-zinc-800 text-[16px]">最後三指領：</p>
-                                                <ul className="text-[14px] space-y-3 text-zinc-500 font-medium">
-                                                    <li className="flex gap-2">
-                                                        <span className="w-6 h-6 rounded-full bg-zinc-100 flex items-center justify-center shrink-0">1</span>
-                                                        <span>貼入 Line 後台的 <b>Webhook URL</b> 並點擊 Update</span>
-                                                    </li>
-                                                    <li className="flex gap-2">
-                                                        <span className="w-6 h-6 rounded-full bg-zinc-100 flex items-center justify-center shrink-0">2</span>
-                                                        <span>點擊 <b>Verify</b> 直到顯示 Success</span>
-                                                    </li>
-                                                    <li className="flex gap-2">
-                                                        <span className="w-6 h-6 rounded-full bg-zinc-100 flex items-center justify-center shrink-0">3</span>
-                                                        <span>開啟 <b>Use webhook</b> 選項</span>
-                                                    </li>
-                                                </ul>
+
+                                            {/* Admin Center / Training Room Section */}
+                                            <div className="bg-indigo-50/80 p-6 rounded-2xl border border-indigo-100 space-y-4">
+                                                <div className="flex items-center justify-between">
+                                                    <div className="flex items-center gap-2">
+                                                        <Key className="w-5 h-5 text-indigo-500" />
+                                                        <span className="font-black text-indigo-900">AI 練功房 (管理)</span>
+                                                    </div>
+                                                    {isAdminView && (
+                                                        <div className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-tighter border ${adminBotData?.status === 'active' ? 'bg-emerald-100 text-emerald-600 border-emerald-200' : 'bg-red-100 text-red-600 border-red-200'}`}>
+                                                            {adminBotData?.status === 'active' ? '服務中' : '已關閉'}
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                {!isAdminView ? (
+                                                    <div className="space-y-4">
+                                                        <p className="text-[13px] text-slate-600 leading-relaxed">
+                                                            這是您的**店長私鑰 (Magic Link)**。請務必妥善保存，點擊即可隨時回來調整 AI 知識。
+                                                        </p>
+                                                        <div className="p-3 bg-white/80 border border-indigo-100 rounded-xl font-mono text-[10px] text-indigo-400 break-all select-all">
+                                                            {typeof window !== 'undefined' ? `${window.location.origin}/?botId=${botId}&token=${mgmtToken}` : ''}
+                                                        </div>
+                                                        <button
+                                                            onClick={() => handleAdminLogin(botId!, mgmtToken!)}
+                                                            className="w-full py-4 bg-indigo-600 text-white rounded-xl font-black text-[15px] hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 active:scale-95"
+                                                        >
+                                                            進入練功房 · 調教 AI ➔
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <div className="space-y-4">
+                                                        <div className="space-y-2">
+                                                            <div className="flex items-center gap-2 text-[12px] font-bold text-slate-500">
+                                                                <Brain className="w-3.5 h-3.5" />
+                                                                AI 的大腦指令 (人格/知識)
+                                                            </div>
+                                                            <textarea
+                                                                value={adminBotData.systemPrompt || ""}
+                                                                onChange={(e) => setAdminBotData({ ...adminBotData, systemPrompt: e.target.value })}
+                                                                className="w-full h-32 p-4 bg-white border border-slate-200 rounded-xl text-[14px] text-slate-600 focus:ring-2 focus:ring-indigo-500 transition-all outline-none"
+                                                                placeholder="輸入要教給 AI 的知識..."
+                                                            />
+                                                        </div>
+
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="flex-1 flex gap-1 p-1 bg-slate-200/50 rounded-lg">
+                                                                <button
+                                                                    onClick={() => setAdminBotData({ ...adminBotData, status: 'active' })}
+                                                                    className={cn(
+                                                                        "flex-1 py-2 rounded-md text-[11px] font-bold transition-all",
+                                                                        adminBotData.status === 'active' ? "bg-white text-emerald-600 shadow-sm" : "text-slate-400"
+                                                                    )}
+                                                                >
+                                                                    開
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => setAdminBotData({ ...adminBotData, status: 'inactive' })}
+                                                                    className={cn(
+                                                                        "flex-1 py-2 rounded-md text-[11px] font-bold transition-all",
+                                                                        adminBotData.status === 'inactive' ? "bg-white text-red-600 shadow-sm" : "text-slate-400"
+                                                                    )}
+                                                                >
+                                                                    關
+                                                                </button>
+                                                            </div>
+                                                            <button
+                                                                onClick={handleUpdateBot}
+                                                                disabled={isSaving}
+                                                                className="flex-[2] py-3 bg-indigo-600 text-white rounded-xl font-bold text-[13px] hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100"
+                                                            >
+                                                                {isSaving ? "傳輸中..." : "保存新的訓練 ✨"}
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
 
-                                        <div className="pt-4 border-t border-zinc-100">
+                                        <div className="pt-4 border-t border-zinc-100 flex flex-col gap-3">
                                             <p className="text-xs text-zinc-400 text-center font-medium leading-relaxed">
-                                                現在您可以對您的 Line 官方帳號說聲「你好」來測試了！如有任何問題，請點擊下方重新設定。
+                                                現在您可以對您的 Line 官方帳號說聲「你好」來測試了！
                                             </p>
+                                            <button
+                                                onClick={() => {
+                                                    localStorage.clear();
+                                                    window.location.href = '/';
+                                                }}
+                                                className="w-full py-2 text-[12px] font-bold text-slate-400 hover:text-slate-600 transition-colors"
+                                            >
+                                                結束並回到首頁 ➔
+                                            </button>
                                         </div>
                                     </motion.div>
                                 )}
@@ -753,7 +1102,6 @@ export default function ChatInterface() {
                             type="text"
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
-                            onFocus={() => setInputValue('')}
                             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                             placeholder={placeholder}
                             className="flex-1 bg-zinc-100 border-none rounded-2xl px-6 py-4 pr-16 text-[20px] focus:ring-2 focus:ring-[#06C755] transition-all outline-none font-medium text-zinc-800 shadow-inner"

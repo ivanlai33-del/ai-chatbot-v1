@@ -38,6 +38,11 @@ const DEFAULT_MASTER_PROMPT = `
 ### 即時數據證明：
 目前我們已經成功協助了 {botCount} 位老闆建立專屬的 AI 店長！
 
+### 訂閱與停機管理（自動化）：
+1. **自動執法**：如果客戶取消訂閱、扣款失敗或到期，系統會透過 PayPal Webhook 秒速將機器人改成「停機」狀態。
+2. **溫馨提醒**：停機後的其待機器人會自動回覆續費通知，不會浪費老闆的一分錢額度。
+3. **自動復歸**：客戶只要一補交費用，系統會立刻自動開通，全程不需人工介入。
+
 ### 溝通風格：
 有活力、懂生意、懂老闆辛苦。語句精鍊，主打「簡單、快速、有效」。
 `;
@@ -62,13 +67,11 @@ export async function OPTIONS() {
 }
 
 export async function POST(req: Request) {
-    console.log('Master Webhook POST received');
     try {
         let body: any;
         try {
             body = await req.json();
         } catch (e) {
-            console.log('Master Webhook: Non-JSON or empty body');
             return NextResponse.json({ status: 'ok' });
         }
 
@@ -76,7 +79,7 @@ export async function POST(req: Request) {
         if (events.length === 0) return NextResponse.json({ status: 'ok' });
 
         if (!lineConfig.channelAccessToken || !lineConfig.channelSecret) {
-            console.error('Master Bot: Missing Line credentials in Environment Variables');
+            console.error('Master Bot: Missing Line credentials');
             return NextResponse.json({ error: 'Config missing' }, { status: 500 });
         }
 
@@ -84,68 +87,69 @@ export async function POST(req: Request) {
 
         for (const event of events) {
             if (event.type === 'message' && event.message.type === 'text') {
-                const userMessage = event.message.text;
+                const userMessage = event.message.text.trim();
                 const lineUserId = event.source.userId!;
 
-                // 1. Log User Message (Non-blocking)
-                supabase.from('chat_logs').insert({
-                    user_id: lineUserId,
-                    role: 'user',
-                    content: userMessage
-                }).then(({ error }) => {
-                    if (error) console.error('Master Log User failed:', error.message);
-                });
+                // 1. Instant Response for Test Keywords
+                if (userMessage.toLowerCase() === 'ping' || userMessage === '測試' || userMessage === '哈囉') {
+                    await client.replyMessage(event.replyToken, {
+                        type: 'text',
+                        text: '收到！連線完全正常。我是您的 AI 數位總店長，請問今天想了解哪方面的 AI 轉型？'
+                    });
+                    continue;
+                }
 
-                // 2. Fetch Bot Count (with fallback)
+                // 2. Fetch Bot Count
                 let botCount = 0;
                 try {
                     const { count } = await supabase.from('bots').select('*', { count: 'exact', head: true });
                     botCount = count || 0;
-                } catch (e) {
-                    console.error('Failed to fetch bot count:', e);
-                }
+                } catch (e) { console.error('DB fetch failed'); }
 
-                // 3. Build Dynamic System Prompt
                 const masterPrompt = (process.env.MASTER_SYSTEM_PROMPT || DEFAULT_MASTER_PROMPT)
                     .replace('{botCount}', botCount.toString());
 
-                console.log('Sending message to OpenAI for Master Bot');
+                // 3. AI Completion with Timeout
+                let aiResponse = '抱歉，系統運算稍微有點久，請再跟我說一次好嗎？';
+                try {
+                    const completionPromise = openai.chat.completions.create({
+                        model: "gpt-4o-mini",
+                        messages: [
+                            { role: "system", content: SECURITY_DEFENSE_HEADER + "\n" + masterPrompt },
+                            { role: "user", content: userMessage }
+                        ] as any,
+                    });
 
-                const messages = [
-                    { role: "system", content: SECURITY_DEFENSE_HEADER + "\n" + masterPrompt },
-                    { role: "user", content: userMessage }
-                ];
+                    const timeoutPromise = new Promise((_, reject) =>
+                        setTimeout(() => reject(new Error('Timeout')), 25000)
+                    );
 
-                // 4. Call OpenAI
-                console.log('Master Bot: Calling OpenAI with model gpt-4o-mini...');
-                const completion = await openai.chat.completions.create({
-                    model: "gpt-4o-mini",
-                    messages: messages as any,
-                });
+                    const completion: any = await Promise.race([completionPromise, timeoutPromise]);
+                    aiResponse = completion.choices[0].message.content || 'AI 暫時休息中...';
+                } catch (e: any) {
+                    console.error('AI Error:', e.message);
+                }
 
-                let aiResponse = completion.choices[0].message.content || '抱歉，系統正在忙碌中。';
-                console.log('Master Bot: OpenAI response received');
                 aiResponse = maskSensitiveOutput(aiResponse);
 
-                // 5. Log AI response (Non-blocking)
-                supabase.from('chat_logs').insert({
-                    user_id: lineUserId,
-                    role: 'ai',
-                    content: aiResponse
-                }).then(({ error }) => {
-                    if (error) console.error('Master Log AI failed:', error.message);
-                });
+                // 4. Non-blocking Logging
+                (async () => {
+                    try {
+                        await supabase.from('chat_logs').insert([
+                            { user_id: lineUserId, role: 'user', content: userMessage },
+                            { user_id: lineUserId, role: 'ai', content: aiResponse }
+                        ]);
+                    } catch (e) { console.error('Log failed'); }
+                })();
 
-                // 6. Reply
+                // 5. Reply
                 try {
-                    console.log('Master Bot: Sending reply to Line...');
                     await client.replyMessage(event.replyToken, {
                         type: 'text',
-                        text: aiResponse,
+                        text: aiResponse.trim() || '老闆好！請問有什麼我可以幫您的？'
                     });
-                    console.log('Master Bot replied successfully');
-                } catch (replyError) {
-                    console.error('Line Reply Failed:', replyError);
+                } catch (replyError: any) {
+                    console.error('Line Reply Error:', JSON.stringify(replyError.originalError?.response?.data || replyError.message));
                 }
             }
         }
@@ -153,7 +157,6 @@ export async function POST(req: Request) {
         return NextResponse.json({ status: 'success' });
     } catch (error: any) {
         console.error('Master Webhook Error:', error);
-        // Important: Still return 200 for Line if possible, but log the error
         return NextResponse.json({ status: 'error', message: error.message });
     }
 }

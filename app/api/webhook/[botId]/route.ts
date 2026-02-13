@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { decrypt } from '@/lib/encryption';
 
 export async function GET() {
-    return new Response('Bot Webhook is Active. Use POST for Line events.', { status: 200 });
+    return new Response('Bot Webhook is Active.', { status: 200 });
 }
 
 export async function POST(
@@ -15,19 +15,15 @@ export async function POST(
     const botId = params.botId;
 
     try {
-        // Line verification may send empty body or different content types
         let body: any;
         try {
             body = await req.json();
         } catch (e) {
-            console.log('Received empty or non-JSON body in bot-webhook');
             return NextResponse.json({ status: 'ok' });
         }
 
         const events: WebhookEvent[] = body.events || [];
-        if (events.length === 0) {
-            return NextResponse.json({ status: 'success', message: 'No events to process' });
-        }
+        if (events.length === 0) return NextResponse.json({ status: 'ok' });
 
         // 1. Fetch bot config from Supabase
         const { data: bot, error: botError } = await supabase
@@ -41,13 +37,32 @@ export async function POST(
             return NextResponse.json({ status: 'error', message: 'Bot not found' }, { status: 404 });
         }
 
+        // 1.5 Subscription Status Check
+        if (bot.status !== 'active') {
+            const body = await req.json().catch(() => ({ events: [] }));
+            const events: WebhookEvent[] = body.events || [];
+            const client = new Client({
+                channelAccessToken: decrypt(bot.line_channel_access_token),
+                channelSecret: decrypt(bot.line_channel_secret),
+            });
+
+            for (const event of events) {
+                if (event.type === 'message' && event.message.type === 'text') {
+                    await client.replyMessage(event.replyToken, {
+                        type: 'text',
+                        text: '【系統通知】老闆您好，本 AI 服務目前已到期或停機。為了不中斷您的生意，請聯繫總店長或前往管理後台完成續費，感謝您的支持！'
+                    });
+                }
+            }
+            return NextResponse.json({ status: 'suspended' });
+        }
+
         // 2. Decrypt credentials & Setup Fallbacks
         const lineConfig = {
             channelAccessToken: decrypt(bot.line_channel_access_token),
             channelSecret: decrypt(bot.line_channel_secret),
         };
 
-        // Managed Key Strategy: Use bot's key if exists, otherwise fallback to server's master key
         const decryptedUserKey = bot.openai_api_key ? decrypt(bot.openai_api_key) : "";
         const openaiApiKey = decryptedUserKey || process.env.MASTER_OPENAI_KEY || process.env.OPENAI_API_KEY;
 
@@ -56,20 +71,16 @@ export async function POST(
 
         for (const event of events) {
             if (event.type === 'message' && event.message.type === 'text') {
-                const userMessage = event.message.text;
+                const userMessage = event.message.text.trim();
                 const lineUserId = event.source.userId!;
 
-                // 3. Log user message (Non-blocking)
-                supabase.from('chat_logs').insert({
-                    bot_id: botId,
-                    user_id: lineUserId,
-                    role: 'user',
-                    content: userMessage
-                }).then(({ error }) => {
-                    if (error) console.error('Logging User Msg failed:', error.message);
-                });
+                // A. Instant Test
+                if (userMessage === 'ping' || userMessage === '測試') {
+                    await client.replyMessage(event.replyToken, { type: 'text', text: '收到！連線正常。' });
+                    continue;
+                }
 
-                // 4. Fetch history for context (last 10 messages)
+                // B. Fetch History
                 const { data: history } = await supabase
                     .from('chat_logs')
                     .select('role, content')
@@ -86,33 +97,44 @@ export async function POST(
                     }))
                 ];
 
-                // 5. Call OpenAI with history
-                console.log('Calling OpenAI with model gpt-4o-mini...');
-                const completion = await openai.chat.completions.create({
-                    model: "gpt-4o-mini",
-                    messages: messages as any,
-                });
+                // C. Call OpenAI with Timeout
+                let aiResponse = '抱歉，我現在無法回答。';
+                try {
+                    const completionPromise = openai.chat.completions.create({
+                        model: "gpt-4o-mini",
+                        messages: [
+                            ...messages,
+                            { role: "user", content: userMessage }
+                        ] as any,
+                    });
 
-                const aiResponse = completion.choices[0].message.content || '抱歉，我現在無法回答。';
-                console.log('OpenAI response received');
+                    const timeoutPromise = new Promise((_, reject) =>
+                        setTimeout(() => reject(new Error('Timeout')), 25000)
+                    );
 
-                // 6. Log AI response (Non-blocking)
-                supabase.from('chat_logs').insert({
-                    bot_id: botId,
-                    user_id: lineUserId,
-                    role: 'ai',
-                    content: aiResponse
-                }).then(({ error }) => {
-                    if (error) console.error('Logging AI Msg failed:', error.message);
-                });
+                    const completion: any = await Promise.race([completionPromise, timeoutPromise]);
+                    aiResponse = completion.choices[0].message.content || '...';
+                } catch (e: any) { console.error('AI Error:', e.message); }
 
-                // 7. Reply via Line
-                console.log('Sending reply to Line...');
-                await client.replyMessage(event.replyToken, {
-                    type: 'text',
-                    text: aiResponse,
-                });
-                console.log('Line reply sent successfully');
+                // D. Non-blocking Logging
+                (async () => {
+                    try {
+                        await supabase.from('chat_logs').insert([
+                            { bot_id: botId, user_id: lineUserId, role: 'user', content: userMessage },
+                            { bot_id: botId, user_id: lineUserId, role: 'ai', content: aiResponse }
+                        ]);
+                    } catch (e) { console.error('Log failed'); }
+                })();
+
+                // E. Reply
+                try {
+                    await client.replyMessage(event.replyToken, {
+                        type: 'text',
+                        text: aiResponse.trim() || '收到您的訊息！'
+                    });
+                } catch (replyError: any) {
+                    console.error('Line API Error:', JSON.stringify(replyError.originalError?.response?.data || replyError.message));
+                }
             }
         }
 

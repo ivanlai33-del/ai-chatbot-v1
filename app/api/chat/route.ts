@@ -216,8 +216,9 @@ export async function POST(req: NextRequest) {
                 if (functionName === "analyze_stock_market") {
                     try {
                         const symbol = args.symbol.includes('.') ? args.symbol : \`\${args.symbol}.TW\`;
-                        const quote: any = await yahooFinance.quote(symbol);
-                        const history: any[] = await yahooFinance.historical(symbol, {
+                        const yf = new (yahooFinance as any)();
+                        const quote: any = await yf.quote(symbol);
+                        const history: any[] = await yf.historical(symbol, {
                             period1: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000),
                             interval: '1d'
                         });

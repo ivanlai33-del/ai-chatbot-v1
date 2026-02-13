@@ -177,6 +177,7 @@ export async function POST(
 
                 // C. Call OpenAI with Tool Support
                 let aiResponse = '';
+                const yf = new (yahooFinance as any)();
                 try {
                     const response = await openai.chat.completions.create({
                         model: "gpt-4o-mini",
@@ -261,12 +262,12 @@ export async function POST(
                                     let symbol = args.symbol;
                                     // Basic heuristic: if it's 4 digits, assume .TW
                                     if (/^\d{4}$/.test(symbol)) symbol = `${symbol}.TW`;
-                                    const quote: any = await yahooFinance.quote(symbol);
+                                    const quote: any = await yf.quote(symbol);
                                     const to = new Date();
                                     const from = new Date();
                                     from.setDate(from.getDate() - 45);
 
-                                    const history: any[] = await yahooFinance.historical(symbol, {
+                                    const history: any[] = await yf.historical(symbol, {
                                         period1: from,
                                         interval: '1d'
                                     });

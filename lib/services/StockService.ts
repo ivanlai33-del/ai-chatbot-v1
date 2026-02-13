@@ -16,8 +16,27 @@ export class StockService {
     private static FINMIND_URL = 'https://api.finmindtrade.com/api/v4/data';
     private static TOKEN = process.env.FINMIND_TOKEN;
 
-    static async getTaiwanStockData(symbol: string): Promise<StockData | null> {
+    static async getTaiwanStockData(symbolOrName: string): Promise<StockData | null> {
         try {
+            let symbol = symbolOrName;
+
+            // If it's not a 4-digit code, try to find the code by name
+            if (!/^\d{4}$/.test(symbolOrName)) {
+                const searchRes = await axios.get(this.FINMIND_URL, {
+                    params: {
+                        dataset: 'TaiwanStockInfo',
+                        token: this.TOKEN
+                    }
+                });
+                const allInfo = searchRes.data.data;
+                const match = allInfo.find((s: any) => s.stock_name === symbolOrName || s.stock_id === symbolOrName);
+                if (match) {
+                    symbol = match.stock_id;
+                } else {
+                    return null;
+                }
+            }
+
             // 1. Get Real-time Price (TaiwanStockPrice)
             const priceRes = await axios.get(this.FINMIND_URL, {
                 params: {

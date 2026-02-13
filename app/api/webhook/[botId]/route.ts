@@ -118,15 +118,18 @@ export async function POST(
                     ...(history || []).reverse().map((m: any) => ({
                         role: m.role === 'ai' ? 'assistant' : m.role,
                         content: m.content
-                    })),
-                    { role: "user", content: userMessage }
+                    }))
                 ];
 
                 // Intent Interceptor (Real-time Context Pre-fetching)
                 const intercepted = await IntentInterceptor.intercept(userMessage);
                 if (intercepted.intent !== 'chat') {
-                    messages[0].content += `\n\n[重要：即時資訊預載]\n使用者目前詢問的是 ${intercepted.intent}。以下是幫您抓取好的真實數據，請務必根據此數據進行分析並回覆：\n${JSON.stringify(intercepted.data, null, 2)}\n`;
+                    messages.push({
+                        role: "system",
+                        content: `[重要：即時資訊預載]\n使用者目前詢問的是 ${intercepted.intent}。以下是幫您抓取好的真實數據，請務必根據此數據直接進行分析並回覆（絕對不要再問「需要什麼分析」）：\n${JSON.stringify(intercepted.data, null, 2)}`
+                    });
                 }
+                messages.push({ role: "user", content: userMessage });
 
                 // B. Define Tools
                 const tools: OpenAI.Chat.Completions.ChatCompletionTool[] = [
@@ -166,6 +169,34 @@ export async function POST(
                                 properties: {
                                     timeframe: { type: "string", enum: ["today", "this_month", "all_time"], description: "時間範圍" }
                                 }
+                            }
+                        }
+                    },
+                    {
+                        type: "function",
+                        function: {
+                            name: "analyze_stock_market",
+                            description: "獲取股市即時報價與技術分析數據（含支撐壓力）",
+                            parameters: {
+                                type: "object",
+                                properties: {
+                                    symbol: { type: "string", description: "股票代號，例如 2330.TW 或 AAPL" }
+                                },
+                                required: ["symbol"]
+                            }
+                        }
+                    },
+                    {
+                        type: "function",
+                        function: {
+                            name: "get_current_weather",
+                            description: "獲取指定地點的即時天氣、溫度與氣象建議",
+                            parameters: {
+                                type: "object",
+                                properties: {
+                                    location: { type: "string", description: "地點名稱，例如 台北市、台中、Taipei" }
+                                },
+                                required: ["location"]
                             }
                         }
                     }
@@ -234,6 +265,13 @@ export async function POST(
                                     gross_profit: totalRevenue - totalCost,
                                     profit_margin: totalRevenue > 0 ? ((totalRevenue - totalCost) / totalRevenue * 100).toFixed(2) + "%" : "0%"
                                 });
+                            } else if (functionName === "analyze_stock_market") {
+                                const symbol = args.symbol.includes('.') ? args.symbol.split('.')[0] : args.symbol;
+                                const data = await IntentInterceptor.intercept(symbol);
+                                functionResponse = JSON.stringify(data.data || { error: "查無此股票數據" });
+                            } else if (functionName === "get_current_weather") {
+                                const data = await IntentInterceptor.intercept(args.location + "天氣");
+                                functionResponse = JSON.stringify(data.data || { error: "查無此天氣數據" });
                             }
 
                             toolMessages.push({

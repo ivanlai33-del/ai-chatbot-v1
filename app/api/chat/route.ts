@@ -7,6 +7,7 @@ import {
     maskSensitiveOutput,
     isMeaningless
 } from '@/lib/security';
+import yahooFinance from 'yahoo-finance2';
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
@@ -33,8 +34,22 @@ const SYSTEM_PROMPT = `
    - **第三步**：了解背景後，主動推廣 AI 價值，並觸發 {"action": "SHOW_PLANS"}。
     - **第四步**：只要用戶表達選擇了方案（如「我要 399」），立即引導結帳並觸發 {"action": "SHOW_CHECKOUT", "selectedPlan": {"name": "...", "price": "..."}}。**絕對不要**再多問廢話或等待下一輪。
     - **JSON 位置**：JSON metadata 必須位於訊息的「最後一行」，之後**嚴禁**出現任何文字或標題。
-   - **最後**：只有用戶支付完成後 (currentStep >= 3)，才開始引導進入 LINE 串接教學 (SHOW_SETUP)。
+   - **最後**：只有用戶支付完成後 (currentStep === 3)，才開始引導進入 LINE 串接教學 (SHOW_SETUP)。
    - **額外規則 (登入/找回)**：如果用戶提到「登入」、「進入後台」、「管理」、「找回連結」，請觸發 {"action": "SHOW_RECOVERY"} 並詢問店名。
+
+5. **LINE 串接專家指令 (The AI Tutor)**：
+   - 當 `currentStep === 3` 時，你進入「金牌導師」模式。你的任務是手把手指引老闆完成 4 個步驟。
+   - **你可以隨時呼叫側邊欄動畫**：在 metadata 中包含 `{ "action": "TUTORIAL_STEP", "tutorialStep": 0~3 } `。
+   - **教學步驟細節**：
+       1. **Step 0**: 前往 [LINE Developers](https://developers.line.biz/console/)。
+       2. **Step 1**: 進入 Provider 並選擇要串接的 Channel。
+       3. **Step 2**: 在 **Basic settings** 分頁拷貝 **Channel secret**。
+       4. **Step 3**: 在 **Messaging API** 分頁底部生成並拷貝 **Channel access token**。
+   - **使命必達**：如果使用者表現出不懂或卡住，請用最白話的方式解釋右邊幽靈滑鼠正在示範的動作。
+
+6. **完工後的教練身份 (AI Coach Transition)**：
+   - 一旦檢測到 `currentStep === 4` (成功開通)，請展現極大的熱情進行恭喜！
+   - 立即轉型為「AI 教練」，引導老闆點選進入「AI 練功房」錄入 FAQ 與商品知識，告訴他：「店長上架了，現在我們來幫他裝上最強腦袋！」
 
 7. **數位轉型官方 Line 引導**：
    - 如果用戶提到「官方 Line」、「聯絡我們」、「掃 QR」、「加好友」，請引導他們掃描 QR Code。
@@ -84,15 +99,47 @@ const SYSTEM_PROMPT = `
 目前的流程狀態：
 - 店名：{storeName}
 - 目前步驟：{currentStep} (0: 初始, 1: 詢問店名/方案, 2: 方案已選/待支付, 3: 已支付/待串接, 4: 已串接完成)
+- 設定欄位焦點：{focusedField} (由前端傳入，幫助你判斷使用者在填哪一格)
 
 請務必在回覆的「最後一端」，以 JSON 格式提供 metadata（務必單獨佔一行）：
-{"storeName": "店名", "industry": "行業別", "mission": "核心任務", "selectedPlan": {"name": "方案名稱", "price": "方案價格"}, "action": "SHOW_PLANS | SHOW_CHECKOUT | SHOW_SETUP | SHOW_SUCCESS | SHOW_RECOVERY | null", "suggestedPlaceholder": "建議下一個問題"}
+{"storeName": "店名", "industry": "行業別", "mission": "核心任務", "selectedPlan": {"name": "方案名稱", "price": "方案價格"}, "action": "SHOW_PLANS | SHOW_CHECKOUT | SHOW_SETUP | SHOW_SUCCESS | SHOW_RECOVERY | TUTORIAL_STEP | null", "tutorialStep": 0~3, "suggestedPlaceholder": "建議下一個問題"}
 - **重要**：當用戶決定方案並進入 SHOW_CHECKOUT 時，務必在 metadata 中提供正確的 selectedPlan (例如 {"name": "AI 老闆分身 Lite", "price": "$399"})。
 `;
 
+const TOOLS: OpenAI.Chat.Completions.ChatCompletionTool[] = [
+    {
+        type: "function",
+        function: {
+            name: "analyze_stock_market",
+            description: "獲取股市即時報價與技術分析數據（含支撐壓力）",
+            parameters: {
+                type: "object",
+                properties: {
+                    symbol: { type: "string", description: "股票代號，例如 2330.TW 或 AAPL" }
+                },
+                required: ["symbol"]
+            }
+        }
+    },
+    {
+        type: "function",
+        function: {
+            name: "get_current_weather",
+            description: "獲取指定地點的即時天氣、溫度與氣象建議",
+            parameters: {
+                type: "object",
+                properties: {
+                    location: { type: "string", description: "地點名稱，例如 台北市、台中、Taipei" }
+                },
+                required: ["location"]
+            }
+        }
+    }
+];
+
 export async function POST(req: NextRequest) {
     try {
-        const { messages, storeName, currentStep, isMaster } = await req.json();
+        const { messages, storeName, currentStep, isMaster, focusedField } = await req.json();
 
         // 1. Security check: Meaningless input
         const lastUserMsg = messages[messages.length - 1];
@@ -131,7 +178,8 @@ export async function POST(req: NextRequest) {
 
         dynamicSystemPrompt = dynamicSystemPrompt
             .replace('{storeName}', storeName || '未命名')
-            .replace('{currentStep}', currentStep.toString());
+            .replace('{currentStep}', currentStep.toString())
+            .replace('{focusedField}', focusedField || '無');
 
         const mappedMessages = messages.map((m: any) => ({
             role: (m.role === 'ai' || m.role === 'assistant') ? 'assistant' : 'user',
@@ -144,14 +192,83 @@ export async function POST(req: NextRequest) {
                 { role: 'system', content: SECURITY_DEFENSE_HEADER + "\n" + dynamicSystemPrompt },
                 ...mappedMessages
             ],
+            tools: TOOLS,
+            tool_choice: "auto",
             temperature: 0.7,
         });
 
-        let fullResponse = response.choices[0].message.content || "";
+        let responseMessage = response.choices[0].message;
+        let fullResponse = responseMessage.content || "";
+
+        // Handle Tool Calls
+        if (responseMessage.tool_calls) {
+            const toolMessages: any[] = [
+                { role: 'system', content: SECURITY_DEFENSE_HEADER + "\n" + dynamicSystemPrompt },
+                ...mappedMessages,
+                responseMessage
+            ];
+
+            for (const toolCall of responseMessage.tool_calls) {
+                const functionName = toolCall.function.name;
+                const args = JSON.parse(toolCall.function.arguments);
+                let functionResponse = "";
+
+                if (functionName === "analyze_stock_market") {
+                    try {
+                        const symbol = args.symbol.includes('.') ? args.symbol : `${args.symbol}.TW`;
+                        const quote: any = await yahooFinance.quote(symbol);
+                        const history: any[] = await yahooFinance.historical(symbol, {
+                            period1: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000),
+                            interval: '1d'
+                        });
+                        const last30Days = history.slice(-30);
+                        const support = Math.min(...last30Days.map((h: any) => h.low));
+                        const resistance = Math.max(...last30Days.map((h: any) => h.high));
+                        const sma20 = last30Days.slice(-20).reduce((a: any, b: any) => a + (b.close || 0), 0) / 20;
+
+                        functionResponse = JSON.stringify({
+                            symbol: quote.symbol,
+                            name: quote.shortName || quote.longName,
+                            price: quote.regularMarketPrice,
+                            changePercent: quote.regularMarketChangePercent,
+                            supportLevel: support.toFixed(2),
+                            resistanceLevel: resistance.toFixed(2),
+                            trend: quote.regularMarketPrice > sma20 ? "多頭" : "空頭"
+                        });
+                    } catch (err) { functionResponse = JSON.stringify({ error: "股票代號錯誤" }); }
+                } else if (functionName === "get_current_weather") {
+                    try {
+                        const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(args.location)}&count=1&language=zh&format=json`);
+                        const geoData = await geoRes.json();
+                        const { latitude, longitude, name } = geoData.results[0];
+                        const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,precipitation,weather_code&timezone=auto`);
+                        const weatherData = await weatherRes.json();
+                        functionResponse = JSON.stringify({
+                            location: name,
+                            temperature: weatherData.current.temperature_2m,
+                            precipitation: weatherData.current.precipitation
+                        });
+                    } catch (err) { functionResponse = JSON.stringify({ error: "天氣獲取失敗" }); }
+                }
+
+                toolMessages.push({
+                    tool_call_id: toolCall.id,
+                    role: "tool",
+                    name: functionName,
+                    content: functionResponse,
+                });
+            }
+
+            const secondResponse = await openai.chat.completions.create({
+                model: 'gpt-4o-mini',
+                messages: toolMessages,
+            });
+            fullResponse = secondResponse.choices[0].message.content || "";
+        }
         fullResponse = maskSensitiveOutput(fullResponse);
 
         let message = fullResponse;
-        let metadata = { storeName: storeName, action: null };
+        let metadata: any = { storeName: storeName, action: null };
         // 🚀 Robust JSON Metadata Extraction (Captures the largest JSON-like block starting from the last '{')
         const jsonMatch = fullResponse.match(/(\{[\s\S]+\})(?:\s*)$/);
         if (jsonMatch) {
@@ -176,3 +293,4 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
+```

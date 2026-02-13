@@ -14,6 +14,13 @@ type Message = {
 
 const LINE_GREEN = "#06C755";
 
+const TUTORIAL_POSITIONS = [
+    { x: 500, y: 350 }, // Step 0: Login
+    { x: 450, y: 400 }, // Step 1: Channel
+    { x: 600, y: 550 }, // Step 2: Secret
+    { x: 600, y: 700 }, // Step 3: Token
+];
+
 const OWNER_INSIGHTS = [
     "老闆身兼客服，半夜還在回訊息？",
     "客人問的問題都大同小異，好想找人代勞...",
@@ -42,6 +49,114 @@ const OWNER_INSIGHTS = [
     "數位轉型很難嗎？聽說只要 7 分鐘就能搞定。"
 ];
 
+// --- Sub-components for Phase 28: Interactive Onboarding Wizard ---
+
+const GhostCursor = ({ targetX, targetY, isVisible }: { targetX: number, targetY: number, isVisible: boolean }) => (
+    <motion.div
+        initial={{ opacity: 0, x: 0, y: 0 }}
+        animate={{
+            opacity: isVisible ? 1 : 0,
+            x: targetX,
+            y: targetY,
+            scale: isVisible ? 1 : 0.5
+        }}
+        transition={{
+            type: "spring",
+            damping: 25,
+            stiffness: 120,
+            mass: 0.8
+        }}
+        className="fixed pointer-events-none z-[200] w-8 h-8 filter drop-shadow-lg"
+    >
+        <svg viewBox="0 0 24 24" className="w-full h-full text-[#06C755] fill-current">
+            <path d="M5.5 3l13.5 13.5-5.5 1.5 3 4-2.5 2-3.5-4.5-5 3.5z" />
+        </svg>
+        <motion.div
+            animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
+            transition={{ repeat: Infinity, duration: 2 }}
+            className="absolute inset-0 bg-[#06C755]/30 rounded-full blur-md"
+        />
+    </motion.div>
+);
+
+const MockLineUI = ({ step }: { step: number }) => (
+    <div className="bg-[#f4f5f7] border border-zinc-200 rounded-2xl overflow-hidden shadow-inner font-sans text-xs">
+        {/* Mock Header */}
+        <div className="bg-[#1e252d] text-white p-3 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+                <div className="w-5 h-5 bg-[#06C755] rounded-sm flex items-center justify-center font-bold text-[10px]">L</div>
+                <span className="font-bold">LINE Developers</span>
+            </div>
+            <div className="w-6 h-6 rounded-full bg-zinc-600"></div>
+        </div>
+
+        {/* Mock Sidebar & Body */}
+        <div className="flex h-48">
+            <div className="w-16 bg-[#2c343e] p-2 space-y-2">
+                <div className="h-2 bg-zinc-500 rounded-sm"></div>
+                <div className="h-2 bg-zinc-600 rounded-sm w-3/4"></div>
+                <div className="h-2 bg-[#06C755] rounded-sm mt-4"></div>
+            </div>
+            <div className="flex-1 p-4 bg-white space-y-3">
+                {step === 0 && (
+                    <div className="flex flex-col items-center justify-center h-full space-y-4">
+                        <div className="w-12 h-12 bg-zinc-100 rounded-full flex items-center justify-center">
+                            <Rocket className="w-6 h-6 text-zinc-300" />
+                        </div>
+                        <div className="px-6 py-2 bg-[#06C755] text-white rounded-md font-bold text-[10px] shadow-sm">Log in to Console</div>
+                    </div>
+                )}
+                {step === 1 && (
+                    <div className="space-y-4">
+                        <div className="text-zinc-400 font-bold text-[8px] uppercase tracking-wider">Recently visited channel</div>
+                        <div className="p-3 border-2 border-green-500 rounded-lg flex items-center gap-3 bg-green-50">
+                            <div className="w-8 h-8 bg-zinc-100 rounded-md border flex items-center justify-center"><Bot className="w-4 h-4 text-zinc-400" /></div>
+                            <div>
+                                <div className="h-2 bg-zinc-800 rounded-sm w-16 mb-1"></div>
+                                <div className="h-1 bg-zinc-400 rounded-sm w-10"></div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {step === 2 && (
+                    <div className="space-y-4 pt-4">
+                        <div className="flex gap-4 border-b border-zinc-100">
+                            <div className="pb-2 border-b-2 border-green-500 text-green-600 font-bold scale-110">Basic settings</div>
+                            <div className="pb-2 text-zinc-300 font-bold">Messaging API</div>
+                        </div>
+                        <div className="space-y-1">
+                            <div className="h-2 bg-zinc-100 rounded-sm w-20"></div>
+                            <div className="p-2 bg-zinc-50 border border-green-400 rounded-md font-mono text-[9px] text-zinc-400 flex justify-between items-center">
+                                <span>1688****************1688</span>
+                                <RefreshCw className="w-3 h-3 text-green-500" />
+                            </div>
+                            <div className="flex items-center gap-1 text-[8px] text-green-500 font-bold animate-pulse">
+                                <Power className="w-2 h-2" /> 拷貝此欄位
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {step === 3 && (
+                    <div className="space-y-4 pt-4">
+                        <div className="flex gap-4 border-b border-zinc-100">
+                            <div className="pb-2 text-zinc-300 font-bold">Basic settings</div>
+                            <div className="pb-2 border-b-2 border-green-500 text-green-600 font-bold scale-110">Messaging API</div>
+                        </div>
+                        <div className="h-24 overflow-y-auto space-y-3 pt-2">
+                            <div className="h-1 bg-zinc-100 rounded-sm w-full"></div>
+                            <div className="h-1 bg-zinc-100 rounded-sm w-3/4"></div>
+                            <div className="p-3 bg-zinc-50 border border-zinc-100 rounded-lg space-y-2">
+                                <div className="h-2 bg-zinc-800 rounded-sm w-24"></div>
+                                <div className="py-2 px-4 bg-green-500 text-white rounded text-[8px] font-bold text-center">Issue</div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
+    </div>
+);
+
 export default function ChatInterface() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [inputValue, setInputValue] = useState('');
@@ -58,6 +173,14 @@ export default function ChatInterface() {
     const [isAdminView, setIsAdminView] = useState(false);
     const [adminBotData, setAdminBotData] = useState<any>(null);
     const [isSaving, setIsSaving] = useState(false);
+    const [tutorialStep, setTutorialStep] = useState(0);
+
+    useEffect(() => {
+        const lastMsg = messages[messages.length - 1];
+        if (lastMsg?.type === 'setup' && (lastMsg as any).metadata?.tutorialStep !== undefined) {
+            setTutorialStep((lastMsg as any).metadata.tutorialStep);
+        }
+    }, [messages]);
     const [paypalInitialized, setPaypalInitialized] = useState(false);
     const [botId, setBotId] = useState<string | null>(null);
     const [placeholder, setPlaceholder] = useState("我想找Ai官方line小幫手....");
@@ -637,8 +760,17 @@ export default function ChatInterface() {
 
     if (!isLoaded) return null;
 
+    const isSetupActive = step === 3;
+
     return (
         <div className="min-h-screen bg-[#4D4D4D] relative overflow-hidden flex flex-col select-none">
+            {/* Ghost Mouse - Phase 28 */}
+            <GhostCursor
+                isVisible={isSetupActive && messages.length > 0}
+                targetX={TUTORIAL_POSITIONS[tutorialStep]?.x || 500}
+                targetY={TUTORIAL_POSITIONS[tutorialStep]?.y || 500}
+            />
+
             {/* Background Footer Block */}
             {/* 1. Background Footer Block - Rises first */}
             <motion.div
@@ -682,14 +814,78 @@ export default function ChatInterface() {
             {/* 3. Main Chat Window - Floats in last */}
             <motion.div
                 initial={{ opacity: 0, scale: 0.95, y: 40 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
+                animate={{
+                    opacity: 1,
+                    y: 0,
+                    scale: isLoaded ? 1 : 0.95,
+                    x: isSetupActive ? "-15%" : "0%"
+                }}
                 transition={{
                     delay: 1.2, // Starts as logo is finishing
                     duration: 1.3, // Completes at 2.5s
                     ease: [0.16, 1, 0.3, 1] // Custom quintic ease for premium feel
                 }}
-                className="relative z-10 flex flex-col min-h-[600px] h-[calc(100vh-60px)] my-[30px] max-w-2xl w-full mx-auto bg-white shadow-2xl overflow-hidden border border-zinc-200 rounded-[32px] font-sans"
+                className="relative z-10 flex flex-col min-h-[600px] h-[calc(100vh-60px)] my-[30px] max-w-2xl w-full mx-auto bg-white shadow-2xl overflow-hidden border border-zinc-200 rounded-[32px] font-sans transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
             >
+                {/* Sidecar Instruction Panel - Phase 28 */}
+                <AnimatePresence>
+                    {isSetupActive && (
+                        <motion.div
+                            initial={{ opacity: 0, x: 100 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 100 }}
+                            transition={{ duration: 0.8, ease: "circOut" }}
+                            className="absolute -right-full top-0 bottom-0 w-[80%] bg-zinc-50 border-l border-zinc-200 shadow-[-20px_0_40px_rgba(0,0,0,0.05)] z-0 p-8 flex flex-col gap-6"
+                            style={{ right: "-75%" }}
+                        >
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm border border-zinc-100">
+                                    <img src="/Lai Logo_2.svg" className="w-8 h-8" alt="Lai Logo" />
+                                </div>
+                                <div>
+                                    <h3 className="font-black text-zinc-900 text-lg">開通導引經靈</h3>
+                                    <p className="text-zinc-400 text-xs font-bold uppercase tracking-widest">Setup Instructions</p>
+                                </div>
+                            </div>
+
+                            <div className="flex-1 overflow-y-auto pr-2 space-y-6 scroll-smooth">
+                                {[
+                                    { title: "1. 登入 LINE Developers", step: 0, desc: "點擊按鈕進入後台，建議使用與 Line 官方帳號同一個帳號登入。" },
+                                    { title: "2. 選擇您的 Channel", step: 1, desc: "在首頁找到您要串接的那個店家的 Channel 區塊。" },
+                                    { title: "3. 獲取 Channel Secret", step: 2, desc: "進入 Basic settings 頁籤，向下捲動即可找到並拷貝 Secret。" },
+                                    { title: "4. 獲取 Access Token", step: 3, desc: "切換到 Messaging API 頁籤，滾動到底部點擊 Issue 生成 Token。" }
+                                ].map((item, idx) => (
+                                    <motion.div
+                                        key={idx}
+                                        className={cn(
+                                            "p-5 rounded-3xl border transition-all duration-500",
+                                            (lineSecret && idx === 2) || (lineToken && idx === 3)
+                                                ? "bg-green-50 border-green-200 shadow-sm"
+                                                : "bg-white border-zinc-100 shadow-sm hover:border-zinc-300"
+                                        )}
+                                    >
+                                        <div className="flex justify-between items-center mb-4">
+                                            <h4 className="font-black text-zinc-800 text-[16px]">{item.title}</h4>
+                                            {((lineSecret && idx === 2) || (lineToken && idx === 3)) && (
+                                                <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                                                    <Save className="w-3 h-3 text-white" />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <MockLineUI step={item.step} />
+                                        <p className="mt-4 text-zinc-500 text-xs leading-relaxed font-medium">{item.desc}</p>
+                                    </motion.div>
+                                ))}
+                            </div>
+
+                            <div className="bg-white p-4 rounded-2xl border border-zinc-100 text-[10px] text-zinc-400 font-bold flex items-center gap-2">
+                                <Sparkles className="w-4 h-4 text-amber-500" />
+                                總店長小提醒：跟著右邊範例點選，就不會錯囉！
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
                 {/* Header */}
                 <header className="p-5 border-b glass flex items-center justify-between z-10 sticky top-0 bg-white/95 backdrop-blur-xl shrink-0">
                     <div className="flex items-center gap-4">

@@ -9,6 +9,7 @@ import {
 } from '@/lib/security';
 import yahooFinance from 'yahoo-finance2';
 import { IntentInterceptor } from '@/lib/services/IntentInterceptor';
+import { ForexService } from '@/lib/services/ForexService';
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
@@ -137,13 +138,29 @@ const TOOLS: OpenAI.Chat.Completions.ChatCompletionTool[] = [
         type: "function",
         function: {
             name: "get_current_weather",
-            description: "獲取指定地點的即時天氣、溫度與氣象建議",
+            description: "獲取台灣各縣市的即時天氣報告，包含溫度、降雨機率與氣象建議",
             parameters: {
                 type: "object",
                 properties: {
-                    location: { type: "string", description: "地點名稱，例如 台北市、台中、Taipei" }
+                    location: { type: "string", description: "台灣縣市名稱，如：台北市、台中市、台南市" }
                 },
                 required: ["location"]
+            }
+        }
+    },
+    {
+        type: "function",
+        function: {
+            name: "analyze_forex_rate",
+            description: "查詢國際匯率報價與換算，例如美金兌台幣 (USD/TWD)",
+            parameters: {
+                type: "object",
+                properties: {
+                    from: { type: "string", description: "來源貨幣代碼 (如 USD)" },
+                    to: { type: "string", description: "目標貨幣代碼 (如 TWD)" },
+                    amount: { type: "number", description: "換算金額，預設為 1" }
+                },
+                required: ["from", "to"]
             }
         }
     }
@@ -213,6 +230,8 @@ export async function POST(req: NextRequest) {
             });
         }
 
+        console.log("Combined Messages sent to OpenAI:", JSON.stringify(combinedMessages, null, 2));
+
         const response = await openai.chat.completions.create({
             model: 'gpt-4o-mini',
             messages: combinedMessages,
@@ -220,6 +239,8 @@ export async function POST(req: NextRequest) {
             tool_choice: "auto",
             temperature: 0.7,
         });
+
+        console.log("Raw OpenAI Response Choice 0:", JSON.stringify(response.choices[0], null, 2));
 
         let responseMessage = response.choices[0].message;
         let fullResponse = responseMessage.content || "";
@@ -274,6 +295,11 @@ export async function POST(req: NextRequest) {
                             precipitation: weatherData.current.precipitation
                         });
                     } catch (err) { functionResponse = JSON.stringify({ error: "天氣獲取失敗" }); }
+                } else if (functionName === "analyze_forex_rate") {
+                    try {
+                        const forexData = await ForexService.getLatestRate(args.from, args.to, args.amount || 1);
+                        functionResponse = JSON.stringify(forexData || { error: "匯率獲取失敗" });
+                    } catch (err) { functionResponse = JSON.stringify({ error: "匯率服務暫時不可用" }); }
                 }
 
                 toolMessages.push({

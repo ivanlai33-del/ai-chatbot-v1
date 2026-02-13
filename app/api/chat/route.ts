@@ -32,14 +32,14 @@ const SYSTEM_PROMPT = `
    - **第一步 (優先)**：如果店名 ({storeName}) 還是「未命名」，請先詢問老闆的商號或店名。
    - **第二步 (核心)**：確認店名後，請詢問老闆的**行業別與核心任務**（例如：他是做餐飲的、想處理訂位；還是開診所、想處理掛號）。這對訓練他未來的 AI 店長至關重要！
    - **第三步**：了解背景後，主動推廣 AI 價值，並觸發 {"action": "SHOW_PLANS"}。
-    - **第四步**：只要用戶表達選擇了方案（如「我要 399」），立即引導結帳並觸發 {"action": "SHOW_CHECKOUT", "selectedPlan": {"name": "...", "price": "..."}}。**絕對不要**再多問廢話或等待下一輪。
-    - **JSON 位置**：JSON metadata 必須位於訊息的「最後一行」，之後**嚴禁**出現任何文字或標題。
+     - **第四步**：只要用戶表達選擇了方案（如「我要 399」），立即引導結帳並觸發 {"action": "SHOW_CHECKOUT", "selectedPlan": {"name": "...", "price": "..."}}。**絕對不要**再多問廢話 or 等待下一輪。
+     - **JSON 位置**：JSON metadata 必須位於訊息的「最後一行」，之後**嚴禁**出現任何文字或標題。
    - **最後**：只有用戶支付完成後 (currentStep === 3)，才開始引導進入 LINE 串接教學 (SHOW_SETUP)。
    - **額外規則 (登入/找回)**：如果用戶提到「登入」、「進入後台」、「管理」、「找回連結」，請觸發 {"action": "SHOW_RECOVERY"} 並詢問店名。
 
 5. **LINE 串接專家指令 (The AI Tutor)**：
-   - 當 `currentStep === 3` 時，你進入「金牌導師」模式。你的任務是手把手指引老闆完成 4 個步驟。
-   - **你可以隨時呼叫側邊欄動畫**：在 metadata 中包含 `{ "action": "TUTORIAL_STEP", "tutorialStep": 0~3 } `。
+   - 當 \`currentStep === 3\` 時，你進入「金牌導師」模式。你的任務是手把手指引老闆完成 4 個步驟。
+   - **你可以隨時呼叫側邊欄動畫**：在 metadata 中包含 \`{ "action": "TUTORIAL_STEP", "tutorialStep": 0~3 }\`。
    - **教學步驟細節**：
        1. **Step 0**: 前往 [LINE Developers](https://developers.line.biz/console/)。
        2. **Step 1**: 進入 Provider 並選擇要串接的 Channel。
@@ -48,7 +48,7 @@ const SYSTEM_PROMPT = `
    - **使命必達**：如果使用者表現出不懂或卡住，請用最白話的方式解釋右邊幽靈滑鼠正在示範的動作。
 
 6. **完工後的教練身份 (AI Coach Transition)**：
-   - 一旦檢測到 `currentStep === 4` (成功開通)，請展現極大的熱情進行恭喜！
+   - 一旦檢測到 \`currentStep === 4\` (成功開通)，請展現極大的熱情進行恭喜！
    - 立即轉型為「AI 教練」，引導老闆點選進入「AI 練功房」錄入 FAQ 與商品知識，告訴他：「店長上架了，現在我們來幫他裝上最強腦袋！」
 
 7. **數位轉型官方 Line 引導**：
@@ -87,7 +87,7 @@ const SYSTEM_PROMPT = `
     💡 **理由**：...
 
 11. **即時氣象與溫馨提醒指令**：
-    - 當用戶詢問天氣時，**必須**先執行 `get_current_weather` 工具獲取真實氣溫與降雨狀態。
+    - 當用戶詢問天氣時，**必須**先執行 \`get_current_weather\` 工具獲取真實氣溫與降雨狀態。
     - **溫馨提醒機制**：拿到氣象數據後，請根據以下條件主動加入「溫馨提醒」：
       * 氣溫 > 32°C：提醒防曬、多喝水，避免中暑。
       * 氣溫 < 15°C：提醒穿暖，注意早晚溫差以免感冒。
@@ -104,7 +104,7 @@ const SYSTEM_PROMPT = `
 請務必在回覆的「最後一端」，以 JSON 格式提供 metadata（務必單獨佔一行）：
 {"storeName": "店名", "industry": "行業別", "mission": "核心任務", "selectedPlan": {"name": "方案名稱", "price": "方案價格"}, "action": "SHOW_PLANS | SHOW_CHECKOUT | SHOW_SETUP | SHOW_SUCCESS | SHOW_RECOVERY | TUTORIAL_STEP | null", "tutorialStep": 0~3, "suggestedPlaceholder": "建議下一個問題"}
 - **重要**：當用戶決定方案並進入 SHOW_CHECKOUT 時，務必在 metadata 中提供正確的 selectedPlan (例如 {"name": "AI 老闆分身 Lite", "price": "$399"})。
-`;
+\`;
 
 const TOOLS: OpenAI.Chat.Completions.ChatCompletionTool[] = [
     {
@@ -173,7 +173,7 @@ export async function POST(req: NextRequest) {
 
         if (isMaster) {
             const { count: botCount } = await supabase.from('bots').select('*', { count: 'exact', head: true });
-            dynamicSystemPrompt = `你現在是「總店長系統」的展示與銷售大師。目前我們已成功協助了 ${botCount || 0} 位老闆轉型。\n` + SYSTEM_PROMPT;
+            dynamicSystemPrompt = \`你現在是「總店長系統」的展示與銷售大師。目前我們已成功協助了 \${botCount || 0} 位老闆轉型。\\n\` + SYSTEM_PROMPT;
         }
 
         dynamicSystemPrompt = dynamicSystemPrompt
@@ -189,7 +189,7 @@ export async function POST(req: NextRequest) {
         const response = await openai.chat.completions.create({
             model: 'gpt-4o-mini',
             messages: [
-                { role: 'system', content: SECURITY_DEFENSE_HEADER + "\n" + dynamicSystemPrompt },
+                { role: 'system', content: SECURITY_DEFENSE_HEADER + "\\n" + dynamicSystemPrompt },
                 ...mappedMessages
             ],
             tools: TOOLS,
@@ -203,7 +203,7 @@ export async function POST(req: NextRequest) {
         // Handle Tool Calls
         if (responseMessage.tool_calls) {
             const toolMessages: any[] = [
-                { role: 'system', content: SECURITY_DEFENSE_HEADER + "\n" + dynamicSystemPrompt },
+                { role: 'system', content: SECURITY_DEFENSE_HEADER + "\\n" + dynamicSystemPrompt },
                 ...mappedMessages,
                 responseMessage
             ];
@@ -215,7 +215,7 @@ export async function POST(req: NextRequest) {
 
                 if (functionName === "analyze_stock_market") {
                     try {
-                        const symbol = args.symbol.includes('.') ? args.symbol : `${args.symbol}.TW`;
+                        const symbol = args.symbol.includes('.') ? args.symbol : \`\${args.symbol}.TW\`;
                         const quote: any = await yahooFinance.quote(symbol);
                         const history: any[] = await yahooFinance.historical(symbol, {
                             period1: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000),
@@ -238,10 +238,10 @@ export async function POST(req: NextRequest) {
                     } catch (err) { functionResponse = JSON.stringify({ error: "股票代號錯誤" }); }
                 } else if (functionName === "get_current_weather") {
                     try {
-                        const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(args.location)}&count=1&language=zh&format=json`);
+                        const geoRes = await fetch(\`https://geocoding-api.open-meteo.com/v1/search?name=\${encodeURIComponent(args.location)}&count=1&language=zh&format=json\`);
                         const geoData = await geoRes.json();
                         const { latitude, longitude, name } = geoData.results[0];
-                        const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,precipitation,weather_code&timezone=auto`);
+                        const weatherRes = await fetch(\`https://api.open-meteo.com/v1/forecast?latitude=\${latitude}&longitude=\${longitude}&current=temperature_2m,precipitation,weather_code&timezone=auto\`);
                         const weatherData = await weatherRes.json();
                         functionResponse = JSON.stringify({
                             location: name,
@@ -293,4 +293,3 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
-```

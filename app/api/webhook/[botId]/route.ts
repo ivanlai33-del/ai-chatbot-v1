@@ -39,7 +39,6 @@ export async function POST(
         }
 
         if (bot.status !== 'active') {
-            // Polited suspension reply (already decrypted in previous version, keeping logic)
             return NextResponse.json({ status: 'suspended' });
         }
 
@@ -57,7 +56,7 @@ export async function POST(
             if (event.type === 'message' && event.message.type === 'text') {
                 const userMessage = event.message.text.trim();
                 const lineUserId = event.source.userId!;
-
+                console.log(`[Webhook] User Message: "${userMessage}" from ${lineUserId}`);
                 // A. Fetch History
                 const { data: history } = await supabase
                     .from('chat_logs')
@@ -75,13 +74,13 @@ export async function POST(
 1. **價值掛帥，全速成交**：
    - 你雖然具備強大的資訊查詢功能（股市、天氣），但你的目的「不是」當免費的查詢機，而是要展現 AI 的強大，回報完資訊後一定要補一句轉場台詞，引導用戶了解你的專業。
    - **銷售轉場 (The Pivot)**：無論回答什麼資訊（例如報完股價或天氣後），一定要補一句：「老闆您看，我的反應這麼快、資訊這麼準，如果您也有一尊這樣的分身幫您顧店、回客人，您是不是就能去喝咖啡或陪家人了？」
-2. **方案推廣與專業感**：
-   - **399 方案 (Lite)**：基本的 AI 客服。
-   - **990 方案 (專業版)**：經營管家（查詢庫存、算毛利、訂單追蹤、股市分析工具）。
-3. **股市分析準則**：
-    - 拿到數據後，請嚴格遵守專業分析格式輸出（包含支撐、壓力、趨勢分析）。
-4. **氣象與溫馨提醒**：
-    - 拿到氣象數據後，務必根據溫度或降雨主動加入「溫馨提醒」（如：太陽大要防曬、下雨要帶傘）。
+2. **股市分析專家指令**：
+    - 當用戶輸入股票代號或請求分析股票時，**必須**先執行 analyze_stock_market 工具獲取數據。
+    - **嚴禁手動虛構數據**。拿到真實數據後，請嚴格遵守專業分析格式輸出（包含公司概況、基本面、技術面、投資建議）。
+3. **即時氣象與溫馨提醒指令**：
+    - 當用戶詢問天氣時，**必須**先執行 \`get_current_weather\` 工具獲取真實氣溫與降雨狀態。
+    - **溫馨提醒機制**：拿到數據後，務必根據溫度（>32°C 或 <15°C）或降雨主動加入體貼的叮嚀。
+4. **專業排版**：多使用 Emoji、粗體與分段，增加可讀性。
 
 目前使用的 Line User ID: ${lineUserId}`
                     },
@@ -195,6 +194,7 @@ export async function POST(
                         for (const toolCall of responseMessage.tool_calls) {
                             const functionName = toolCall.function.name;
                             const args = JSON.parse(toolCall.function.arguments);
+                            console.log(`[Webhook] AI calling tool: ${functionName} with args:`, args);
                             let functionResponse = "";
 
                             if (functionName === "query_inventory") {
@@ -221,13 +221,11 @@ export async function POST(
                                     .ilike('question', `%${args.question}%`);
                                 functionResponse = JSON.stringify(data || []);
                             } else if (functionName === "calculate_business_metrics") {
-                                // 1. Fetch all orders (simplifying timeframe for this version)
                                 const { data: orders } = await supabase
                                     .from('orders')
                                     .select('items, total_amount')
                                     .eq('bot_id', botId);
 
-                                // 2. Fetch all products to get costs
                                 const { data: products } = await supabase
                                     .from('products')
                                     .select('id, cost')
@@ -259,13 +257,14 @@ export async function POST(
                                 });
                             } else if (functionName === "analyze_stock_market") {
                                 try {
-                                    const symbol = args.symbol.includes('.') ? args.symbol : `${args.symbol}.TW`;
+                                    console.log(`[Webhook] Stock Query Symbol: ${args.symbol}`);
+                                    let symbol = args.symbol;
+                                    // Basic heuristic: if it's 4 digits, assume .TW
+                                    if (/^\d{4}$/.test(symbol)) symbol = `${symbol}.TW`;
                                     const quote: any = await yahooFinance.quote(symbol);
-
-                                    // Fetch history for support/resistance calculation (last 30 days)
                                     const to = new Date();
                                     const from = new Date();
-                                    from.setDate(from.getDate() - 45); // Get enough days to cover 30 trading days
+                                    from.setDate(from.getDate() - 45);
 
                                     const history: any[] = await yahooFinance.historical(symbol, {
                                         period1: from,
@@ -298,7 +297,6 @@ export async function POST(
                                 }
                             } else if (functionName === "get_current_weather") {
                                 try {
-                                    // 1. Geocoding
                                     const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(args.location)}&count=1&language=zh&format=json`);
                                     const geoData = await geoRes.json();
 
@@ -306,8 +304,6 @@ export async function POST(
                                         functionResponse = JSON.stringify({ error: `找不到 "${args.location}" 的地理資訊。` });
                                     } else {
                                         const { latitude, longitude, name, admin1 } = geoData.results[0];
-
-                                        // 2. Weather
                                         const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code&timezone=auto`);
                                         const weatherData = await weatherRes.json();
                                         const current = weatherData.current;
@@ -337,7 +333,6 @@ export async function POST(
                             });
                         }
 
-                        // Final response after tools
                         const secondResponse = await openai.chat.completions.create({
                             model: "gpt-4o-mini",
                             messages: toolMessages,
@@ -351,7 +346,6 @@ export async function POST(
                     aiResponse = "抱歉，我剛才大腦斷線了，請再說一次。";
                 }
 
-                // D. Logging & Reply
                 (async () => {
                     try {
                         await supabase.from('chat_logs').insert([

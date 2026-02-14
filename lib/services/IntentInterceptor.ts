@@ -29,14 +29,14 @@ export class IntentInterceptor {
 
         // 2. Weather Detection
         const counties = ["基隆", "臺北", "新北", "桃園", "新竹", "苗栗", "臺中", "彰化", "南投", "雲林", "嘉義", "臺南", "高雄", "屏東", "宜蘭", "花蓮", "臺東", "澎湖", "金門", "連江", "板橋", "淡水", "三重", "中永和"];
-        const weatherKeywords = ["天氣", "下雨", "氣溫", "溫度", "氣象", "冷嗎", "熱嗎", "太陽", "陰天", "降雨", "預報"];
+        const weatherKeywords = ["天氣", "下雨", "氣溫", "溫度", "氣象", "冷嗎", "熱嗎", "太陽", "陰天", "降雨", "預報", "幾度", "冷不冷", "熱不熱"];
 
         const foundCounty = counties.find(c => normalized.includes(c));
         const hasWeatherKeyword = weatherKeywords.some(k => normalized.includes(k));
 
         if (foundCounty || hasWeatherKeyword) {
             const county = foundCounty || "臺北";
-            const fullCountyName = county.endsWith("市") || county.endsWith("縣")
+            const fullCountyName = county.endsWith("市") || county.endsWith("運") || county.endsWith("縣")
                 ? county
                 : county + (["臺北", "臺中", "臺南", "高雄", "新北", "桃園"].includes(county) ? "市" : "縣");
 
@@ -48,10 +48,11 @@ export class IntentInterceptor {
             }
         }
 
-        // 3. Forex Detection
-        const forexKeywords = ["匯率", "美金", "台幣", "幣值", "換錢", "USD", "TWD", "兌換", "美金多少", "價格"];
+        // 3. Forex Detection (Adding Gold as it often uses similar logic or is asked in financial context)
+        const forexKeywords = ["匯率", "美金", "台幣", "幣值", "換錢", "USD", "TWD", "兌換", "美金多少", "價格", "黃金", "Gold", "日幣", "JPY"];
         if (forexKeywords.some(k => normalized.toUpperCase().includes(k.toUpperCase()))) {
             try {
+                // If asking about Gold, we might need a different tool, but for now let's tag as forex so we can force a financial tool call
                 const forexData = await ForexService.getLatestRate('USD', 'TWD', 1);
                 return { intent: 'forex', data: forexData };
             } catch (e) {

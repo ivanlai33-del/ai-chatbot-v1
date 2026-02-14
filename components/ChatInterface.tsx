@@ -641,7 +641,8 @@ export default function ChatInterface() {
                 body: JSON.stringify({
                     messages: newMessages.map(m => ({ role: m.role, content: m.content })),
                     storeName,
-                    currentStep: step
+                    currentStep: step,
+                    isMaster: isMasterMode
                 })
             });
 

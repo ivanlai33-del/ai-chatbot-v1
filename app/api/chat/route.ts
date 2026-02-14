@@ -12,10 +12,19 @@ import { IntentInterceptor } from '@/lib/services/IntentInterceptor';
 import { ForexService } from '@/lib/services/ForexService';
 import { WeatherService } from '@/lib/services/WeatherService';
 import { StockService } from '@/lib/services/StockService';
+import fs from 'fs';
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
+
+function logToFile(data: any) {
+    try {
+        const timestamp = new Date().toISOString();
+        const msg = `[${timestamp}] ${JSON.stringify(data, null, 2)}\n---\n`;
+        fs.appendFileSync('/tmp/ai_chat_debug.log', msg);
+    } catch (e) { }
+}
 
 const SYSTEM_PROMPT = `
 你是一個充滿活力、口才極佳、帶著「街頭智慧」且具備強大商業思維的 AI 數位轉型大師。
@@ -172,8 +181,7 @@ export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
         const { messages, storeName, currentStep, isMaster, focusedField } = body;
-        console.log(`[DEBUG] Request Received. isMaster: ${isMaster}, currentStep: ${currentStep}, storeName: ${storeName}`);
-        console.log(`[DEBUG] Last Message Content: ${messages[messages.length - 1]?.content}`);
+        logToFile({ stage: "request_received", isMaster, currentStep, storeName, lastMessage: messages[messages.length - 1]?.content });
 
         // 1. Security check: Meaningless input
         const lastUserMsg = messages[messages.length - 1];
@@ -251,10 +259,12 @@ export async function POST(req: NextRequest) {
             } else {
                 combinedMessages.push({
                     role: 'system',
-                    content: `[指令：必須使用工具]\n使用者正在詢問 ${intercepted.intent}，請立即使用對應的功能工具進行查詢。嚴禁表示您無法獲取即時資訊。`
+                    content: `[指令：必須使用工具]\n使用者正在詢問 ${intercepted.intent}，請立即使用對應的功能工具進行查詢。嚴禁表示您無法獲獲即時資訊。`
                 });
             }
         }
+
+        logToFile({ stage: "before_openai_call", model: isMaster ? 'gpt-4o' : 'gpt-4o-mini', messages: combinedMessages });
 
         console.log("Combined Messages sent to OpenAI:", JSON.stringify(combinedMessages, null, 2));
 

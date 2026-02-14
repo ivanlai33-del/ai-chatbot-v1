@@ -22,8 +22,11 @@ function logToFile(data: any) {
     try {
         const timestamp = new Date().toISOString();
         const msg = `[${timestamp}] ${JSON.stringify(data, null, 2)}\n---\n`;
-        fs.appendFileSync('/tmp/ai_chat_debug.log', msg);
-    } catch (e) { }
+        // Log to project root
+        fs.appendFileSync('ai_chat_debug.log', msg);
+    } catch (e) {
+        console.error("Logger Error:", e);
+    }
 }
 
 const SYSTEM_PROMPT = `
@@ -178,6 +181,7 @@ const TOOLS: OpenAI.Chat.Completions.ChatCompletionTool[] = [
 ];
 
 export async function POST(req: NextRequest) {
+    logToFile({ stage: "POST_START" });
     try {
         const body = await req.json();
         const { messages, storeName, currentStep, isMaster, focusedField } = body;

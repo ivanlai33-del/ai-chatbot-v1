@@ -371,6 +371,11 @@ export async function POST(req: NextRequest) {
             }
         }
 
+        if (isMaster) {
+            message = `[核心 3.0：數據優先模式] ${message}`;
+        } else {
+            message = `[分身 3.0：數據執行模式] ${message}`;
+        }
         return NextResponse.json({ message, metadata });
     } catch (error: any) {
         console.error('Chat API Error:', error);

@@ -215,30 +215,60 @@ export async function POST(req: NextRequest) {
             .replace('{currentStep}', currentStep.toString())
             .replace('{focusedField}', focusedField || '無');
 
-        const mappedMessages = messages.map((m: any) => ({
-            role: (m.role === 'ai' || m.role === 'assistant') ? 'assistant' : 'user',
-            content: m.content
-        }));
+        const mappedMessages = messages.map((m: any) => {
+            // Clean up messages from potential JSON metadata strings that might be appended 
+            // from previous turns to prevent persona cross-contamination
+            let cleanedContent = m.content;
+            if (typeof cleanedContent === 'string') {
+                cleanedContent = cleanedContent.replace(/\{"storeName":[\s\S]+\}$/, '').trim();
+            }
+
+            return {
+                role: (m.role === 'ai' || m.role === 'assistant') ? 'assistant' : 'user',
+                content: cleanedContent
+            };
+        });
 
         const combinedMessages: any[] = [
             { role: 'system', content: SECURITY_DEFENSE_HEADER + "\n" + dynamicSystemPrompt },
             ...mappedMessages
         ];
 
-        if (intercepted.intent !== 'chat' && intercepted.data && !intercepted.data.status) {
-            combinedMessages.push({
-                role: 'system',
-                content: `[重要：即時資訊預載]\n使用者目前詢問的是 ${intercepted.intent}。以下是幫您抓取好的真實數據，請務必根據此數據直接進行分析並回覆：\n${JSON.stringify(intercepted.data, null, 2)}`
-            });
+        if (intercepted.intent !== 'chat') {
+            const prefetchData = intercepted.data;
+            if (prefetchData && !prefetchData.error && prefetchData.status !== "ready_for_tool_call") {
+                combinedMessages.push({
+                    role: 'system',
+                    content: `[重要：即時資訊已就緒]\n目前已為您自動抓得 ${intercepted.intent} 數據：\n${JSON.stringify(prefetchData, null, 2)}\n請針對此數據直接進行分析，展現您的即時性與專業度，然後轉場到銷售機會。`
+                });
+            } else {
+                combinedMessages.push({
+                    role: 'system',
+                    content: `[指令：必須使用工具]\n使用者正在詢問 ${intercepted.intent}，請立即使用對應的功能工具進行查詢。嚴禁表示您無法獲取即時資訊。`
+                });
+            }
         }
 
         console.log("Combined Messages sent to OpenAI:", JSON.stringify(combinedMessages, null, 2));
+
+        // Determine tool_choice: If intent detected but no data, force it.
+        let toolChoice: any = "auto";
+        if (intercepted.intent !== 'chat' && (!intercepted.data || intercepted.data.status === "ready_for_tool_call")) {
+            const toolMap: Record<string, string> = {
+                'weather': 'get_current_weather',
+                'stock': 'analyze_stock_market',
+                'forex': 'analyze_forex_rate'
+            };
+            if (toolMap[intercepted.intent]) {
+                toolChoice = { type: 'function', function: { name: toolMap[intercepted.intent] } };
+            }
+        }
 
         const response = await openai.chat.completions.create({
             model: isMaster ? 'gpt-4o' : 'gpt-4o-mini',
             messages: combinedMessages,
             tools: TOOLS,
-            tool_choice: "auto",
+            tool_choice: toolChoice,
             temperature: 0.7,
         });
 

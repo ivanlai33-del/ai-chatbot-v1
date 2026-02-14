@@ -42,16 +42,14 @@ export class IntentInterceptor {
                 : county + (["臺北", "臺中", "臺南", "高雄", "新北", "桃園"].includes(county) ? "市" : "縣");
 
             const weatherData = await WeatherService.getCountyForecast(fullCountyName);
-            // Even if weatherData is null, we return the intent. 
-            // We use a specific instruction to trigger tool usage.
-            return { intent: 'weather', data: weatherData || { status: "ready_for_tool_call", instruction: "請直接呼叫 get_current_weather 工具以獲取詳細資訊。" } };
+            return { intent: 'weather', data: weatherData };
         }
 
         // 3. Forex Detection
         const forexKeywords = ["匯率", "美金", "台幣", "幣值", "換錢", "USD", "TWD", "兌換", "美金多少"];
         if (forexKeywords.some(k => normalized.toUpperCase().includes(k.toUpperCase()))) {
             const forexData = await ForexService.getLatestRate('USD', 'TWD', 1);
-            return { intent: 'forex', data: forexData || { status: "ready_for_tool_call", instruction: "請直接呼叫 analyze_forex_rate 工具進行匯率查詢。" } };
+            return { intent: 'forex', data: forexData };
         }
 
         return { intent: 'chat', data: null };

@@ -10,6 +10,8 @@ import {
 import yahooFinance from 'yahoo-finance2';
 import { IntentInterceptor } from '@/lib/services/IntentInterceptor';
 import { ForexService } from '@/lib/services/ForexService';
+import { WeatherService } from '@/lib/services/WeatherService';
+import { StockService } from '@/lib/services/StockService';
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
@@ -223,10 +225,10 @@ export async function POST(req: NextRequest) {
             ...mappedMessages
         ];
 
-        if (intercepted.intent !== 'chat') {
+        if (intercepted.intent !== 'chat' && intercepted.data && !intercepted.data.status) {
             combinedMessages.push({
                 role: 'system',
-                content: `[重要：即時資訊預載]\n使用者目前詢問的是 ${intercepted.intent}。以下是幫您抓取好的真實數據，請務必根據此數據直接進行分析並回覆（絕對不要再問「需要什麼分析」）：\n${JSON.stringify(intercepted.data, null, 2)}`
+                content: `[重要：即時資訊預載]\n使用者目前詢問的是 ${intercepted.intent}。以下是幫您抓取好的真實數據，請務必根據此數據直接進行分析並回覆：\n${JSON.stringify(intercepted.data, null, 2)}`
             });
         }
 
@@ -260,41 +262,14 @@ export async function POST(req: NextRequest) {
 
                 if (functionName === "analyze_stock_market") {
                     try {
-                        const symbol = args.symbol.includes('.') ? args.symbol : `${args.symbol}.TW`;
-                        const yf = new (yahooFinance as any)();
-                        const quote: any = await yf.quote(symbol);
-                        const history: any[] = await yf.historical(symbol, {
-                            period1: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000),
-                            interval: '1d'
-                        });
-                        const last30Days = history.slice(-30);
-                        const support = Math.min(...last30Days.map((h: any) => h.low));
-                        const resistance = Math.max(...last30Days.map((h: any) => h.high));
-                        const sma20 = last30Days.slice(-20).reduce((a: any, b: any) => a + (b.close || 0), 0) / 20;
-
-                        functionResponse = JSON.stringify({
-                            symbol: quote.symbol,
-                            name: quote.shortName || quote.longName,
-                            price: quote.regularMarketPrice,
-                            changePercent: quote.regularMarketChangePercent,
-                            supportLevel: support.toFixed(2),
-                            resistanceLevel: resistance.toFixed(2),
-                            trend: quote.regularMarketPrice > sma20 ? "多頭" : "空頭"
-                        });
-                    } catch (err) { functionResponse = JSON.stringify({ error: "股票代號錯誤" }); }
+                        const stockData = await StockService.getTaiwanStockData(args.symbol);
+                        functionResponse = JSON.stringify(stockData || { error: "找不到該股票或暫無數據" });
+                    } catch (err) { functionResponse = JSON.stringify({ error: "股市服務暫時不可用" }); }
                 } else if (functionName === "get_current_weather") {
                     try {
-                        const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(args.location)}&count=1&language=zh&format=json`);
-                        const geoData = await geoRes.json();
-                        const { latitude, longitude, name } = geoData.results[0];
-                        const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,precipitation,weather_code&timezone=auto`);
-                        const weatherData = await weatherRes.json();
-                        functionResponse = JSON.stringify({
-                            location: name,
-                            temperature: weatherData.current.temperature_2m,
-                            precipitation: weatherData.current.precipitation
-                        });
-                    } catch (err) { functionResponse = JSON.stringify({ error: "天氣獲取失敗" }); }
+                        const weatherData = await WeatherService.getCountyForecast(args.location);
+                        functionResponse = JSON.stringify(weatherData || { error: "天氣獲取失敗" });
+                    } catch (err) { functionResponse = JSON.stringify({ error: "天氣服務暫時不可用" }); }
                 } else if (functionName === "analyze_forex_rate") {
                     try {
                         const forexData = await ForexService.getLatestRate(args.from, args.to, args.amount || 1);

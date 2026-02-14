@@ -233,7 +233,7 @@ export async function POST(req: NextRequest) {
         console.log("Combined Messages sent to OpenAI:", JSON.stringify(combinedMessages, null, 2));
 
         const response = await openai.chat.completions.create({
-            model: 'gpt-4o-mini',
+            model: isMaster ? 'gpt-4o' : 'gpt-4o-mini',
             messages: combinedMessages,
             tools: TOOLS,
             tool_choice: "auto",
@@ -311,7 +311,7 @@ export async function POST(req: NextRequest) {
             }
 
             const secondResponse = await openai.chat.completions.create({
-                model: 'gpt-4o-mini',
+                model: isMaster ? 'gpt-4o' : 'gpt-4o-mini',
                 messages: toolMessages,
             });
             fullResponse = secondResponse.choices[0].message.content || "";

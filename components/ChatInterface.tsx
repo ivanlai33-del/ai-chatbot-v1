@@ -199,6 +199,9 @@ export default function ChatInterface() {
     const [isConnecting, setIsConnecting] = useState(false);
     const [isMasterMode, setIsMasterMode] = useState(false);
     const [insightIndex, setInsightIndex] = useState(0);
+    const [rawMessages, setRawMessages] = useState<Message[]>([]);
+    const [isRawTyping, setIsRawTyping] = useState(false);
+    const [showComparison, setShowComparison] = useState(false);
 
     // Dynamic Placeholder Rotation
     useEffect(() => {
@@ -635,6 +638,19 @@ export default function ChatInterface() {
         setIsTyping(true);
 
         try {
+            const rawPromise = showComparison ? fetch('/api/chat/raw', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    messages: [...rawMessages, userMsg].map(m => ({ role: m.role, content: m.content }))
+                })
+            }).then(r => r.json()) : Promise.resolve(null);
+
+            if (showComparison) {
+                setRawMessages(prev => [...prev, userMsg]);
+                setIsRawTyping(true);
+            }
+
             const res = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -645,6 +661,12 @@ export default function ChatInterface() {
                     isMaster: isMasterMode
                 })
             });
+
+            const rawData = await rawPromise;
+            if (rawData) {
+                setRawMessages(prev => [...prev, { id: Date.now().toString(), role: 'ai', content: rawData.message }]);
+                setIsRawTyping(false);
+            }
 
             if (!res.ok) {
                 const errorData = await res.json().catch(() => ({}));
@@ -668,6 +690,7 @@ export default function ChatInterface() {
         } catch (error: any) {
             console.error('handleSend Error:', error);
             setIsTyping(false);
+            setIsRawTyping(false);
             addAiMessage("哎呀，我這邊訊號跳跳的，老闆可以再跟我說一次嗎？");
         }
     };
@@ -932,20 +955,35 @@ export default function ChatInterface() {
                             </div>
                             <span>{isMasterMode ? "總店長模式" : "切換總店長"}</span>
                         </button>
-                        <button
-                            onClick={() => setShowResetConfirm(true)}
-                            className="w-10 h-10 rounded-full flex items-center justify-center text-zinc-400 border border-zinc-200 hover:bg-zinc-50 hover:text-zinc-600 transition-all shrink-0"
-                            title="重新設定"
-                        >
-                            <RefreshCw className="w-5 h-5" />
-                        </button>
-                    </div>
-                </header>
+                    </button>
+                    <button
+                        onClick={() => setShowComparison(!showComparison)}
+                        className={cn(
+                            "flex items-center gap-2 px-4 py-2 rounded-full font-bold text-sm transition-all shadow-sm border",
+                            showComparison
+                                ? "bg-purple-500 text-white border-purple-500 shadow-purple-500/20"
+                                : "bg-zinc-100 text-zinc-500 border-zinc-200 hover:bg-zinc-200"
+                        )}
+                        title="開啟對照大腦視窗"
+                    >
+                        <Brain className="w-4 h-4" />
+                        <span>驗證模式</span>
+                    </button>
+                </div>
+            </header>
 
-                {/* Messages */}
+            {/* Messages Container */}
+            <div className={cn(
+                "flex-1 overflow-hidden transition-all duration-700",
+                showComparison ? "flex flex-row divide-x divide-zinc-200" : "flex flex-col"
+            )}>
+                {/* Main Chat Pane */}
                 <div
                     ref={scrollRef}
-                    className="flex-1 overflow-y-auto p-6 space-y-8 scroll-smooth bg-zinc-50/20"
+                    className={cn(
+                        "flex-1 overflow-y-auto p-6 space-y-8 scroll-smooth bg-zinc-50/20",
+                        showComparison ? "w-1/2" : "w-full"
+                    )}
                 >
                     <AnimatePresence>
                         {messages.map((m) => (
@@ -991,7 +1029,7 @@ export default function ChatInterface() {
                                                             <div key={lineIdx} className="mt-4 mb-2">
                                                                 <div className="flex items-center gap-2">
                                                                     <div className="w-1.5 h-6 bg-indigo-500 rounded-full" />
-                                                                    <span className="font-extrabold text-[21px] text-zinc-900 tracking-tight">{headerMatch[2]}</span>
+                                                                    <span className="font-extrabold text-[15px] text-zinc-900 tracking-tight">{headerMatch[2]}</span>
                                                                 </div>
                                                             </div>
                                                         );
@@ -1071,471 +1109,16 @@ export default function ChatInterface() {
                                                 )}
                                             >
                                                 <div className="flex justify-between items-center mb-1.5">
-                                                    <span className="font-extrabold text-[21px] text-zinc-800">{p.name}</span>
-                                                    <span className="font-black text-[23px]" style={{ color: LINE_GREEN }}>{p.price}</span>
+                                                    <span className="font-extrabold text-[15px] text-zinc-800">{p.name}</span>
+                                                    <span className="font-black text-[18px]" style={{ color: LINE_GREEN }}>{p.price}</span>
                                                 </div>
-                                                <p className="text-[16px] text-zinc-500 font-medium">{p.desc}</p>
+                                                <p className="text-[12px] text-zinc-500 font-medium">{p.desc}</p>
                                             </button>
                                         ))}
                                     </motion.div>
                                 )}
 
-                                {/* Checkout Widget */}
-                                {m.type === 'checkout' && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 15 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        className="ml-14 bg-white p-8 rounded-3xl border border-zinc-100 shadow-2xl space-y-6 max-w-[85%]"
-                                    >
-                                        <div className="flex items-center gap-3 font-black text-[21px]" style={{ color: LINE_GREEN }}>
-                                            <CreditCard className="w-7 h-7" />
-                                            <span>安全加密結帳</span>
-                                        </div>
-                                        <div className="space-y-4">
-                                            <div className="bg-zinc-50 p-4 rounded-xl border border-zinc-100 flex justify-between items-center mb-2">
-                                                <span className="text-zinc-500 font-bold text-[16px]">已選方案</span>
-                                                <span className="font-black text-zinc-900 text-[21px]">{selectedPlan.name || '標準型'} ({selectedPlan.price || '$990'})</span>
-                                            </div>
-                                            <div className="space-y-1.5">
-                                                <p className="text-[12px] font-black text-zinc-400 uppercase tracking-widest pl-1">信用卡卡號</p>
-                                                <input type="text" placeholder="XXXX XXXX XXXX XXXX" className="w-full p-4 rounded-xl border border-zinc-100 bg-zinc-50 text-[18.5px] focus:ring-2 focus:ring-green-500 transition-all outline-none" />
-                                            </div>
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <div className="space-y-1.5">
-                                                    <p className="text-[12px] font-black text-zinc-400 pl-1 uppercase tracking-widest">有效期</p>
-                                                    <input type="text" placeholder="MM/YY" className="w-full p-4 rounded-xl border border-zinc-100 bg-zinc-50 text-[18.5px] focus:ring-2 focus:ring-green-500 transition-all outline-none" />
-                                                </div>
-                                                <div className="space-y-1.5">
-                                                    <p className="text-[2px] font-black text-zinc-400 pl-1 uppercase tracking-widest">CVC</p>
-                                                    <input type="text" placeholder="123" className="w-full p-4 rounded-xl border border-zinc-100 bg-zinc-50 text-[18.5px] focus:ring-2 focus:ring-green-500 transition-all outline-none" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {(selectedPlan.price === '$399' || selectedPlan.price === '$990') ? (
-                                            <div className="space-y-4">
-                                                <div id={`paypal-button-container-${m.id}`} className="min-h-[150px]"></div>
-                                                <p className="text-[12px] text-zinc-400 text-center font-medium">點擊「Subscribe」完成支付並自動辨識店家：<b>{storeName}</b></p>
-
-                                                {/* Testing Bypass Button */}
-                                                <button
-                                                    onClick={handlePaymentSuccess}
-                                                    className="w-full py-3 text-zinc-500 rounded-xl font-medium text-[14px] hover:bg-zinc-100 transition-colors border border-dashed border-zinc-300 mt-2"
-                                                >
-                                                    跳過支付直接開通 (測試開發專用)
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            <button
-                                                onClick={handlePaymentSuccess}
-                                                className="w-full py-5 text-white rounded-2xl font-black text-[21px] hover:brightness-110 active:scale-95 transition-all shadow-xl shadow-[#06C755]"
-                                                style={{ backgroundColor: LINE_GREEN }}
-                                            >
-                                                立即付款 {selectedPlan.price || '$990'}
-                                            </button>
-                                        )}
-                                    </motion.div>
-                                )}
-
-                                {/* Recovery Widget */}
-                                {m.type === 'recovery' && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 15 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        className="ml-14 bg-white p-8 rounded-3xl border border-zinc-100 shadow-2xl space-y-6 max-w-[85%]"
-                                    >
-                                        <div className="flex items-center gap-3 font-black text-[21px] text-amber-500">
-                                            <Key className="w-7 h-7" />
-                                            <span>找回管理連結</span>
-                                        </div>
-                                        <div className="space-y-4">
-                                            <div className="space-y-1.5">
-                                                <p className="text-[12px] font-black text-zinc-400 uppercase tracking-widest pl-1">店舖名稱</p>
-                                                <input
-                                                    id={`recover-name-${m.id}`}
-                                                    type="text"
-                                                    placeholder="請輸入正確的店名"
-                                                    className="w-full p-4 rounded-xl border border-zinc-100 bg-zinc-50 text-[18.5px] focus:ring-2 focus:ring-amber-500 transition-all outline-none"
-                                                />
-                                            </div>
-                                            <div className="space-y-1.5">
-                                                <p className="text-[12px] font-black text-zinc-400 uppercase tracking-widest pl-1">Line Channel Secret</p>
-                                                <input
-                                                    id={`recover-secret-${m.id}`}
-                                                    type="password"
-                                                    placeholder="只有老闆才知道的密鑰"
-                                                    className="w-full p-4 rounded-xl border border-zinc-100 bg-zinc-50 text-[18.5px] focus:ring-2 focus:ring-amber-500 transition-all outline-none"
-                                                />
-                                            </div>
-                                        </div>
-                                        <button
-                                            onClick={() => {
-                                                const nameInput = document.getElementById(`recover-name-${m.id}`) as HTMLInputElement;
-                                                const secretInput = document.getElementById(`recover-secret-${m.id}`) as HTMLInputElement;
-                                                handleRecoverLink(nameInput.value, secretInput.value);
-                                            }}
-                                            className="w-full py-5 text-white bg-amber-500 rounded-2xl font-black text-[21px] hover:bg-amber-600 active:scale-95 transition-all shadow-xl shadow-amber-500/30"
-                                        >
-                                            立即驗證並找回
-                                        </button>
-                                    </motion.div>
-                                )}
-
-                                {/* Setup Widget */}
-                                {m.type === 'setup' && (
-                                    <motion.div
-                                        initial={{ opacity: 0, scale: 0.95 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        className="ml-14 bg-white p-8 rounded-3xl border border-zinc-100 shadow-2xl space-y-6 max-w-[85%]"
-                                    >
-                                        <div className="flex items-center gap-2 font-black text-[21px]" style={{ color: LINE_GREEN }}>
-                                            <Settings className="w-7 h-7 animate-spin-slow" />
-                                            <span>Line 串接精靈</span>
-                                        </div>
-                                        <div className="space-y-6">
-                                            <div className="bg-[#06C755] p-5 rounded-2xl border border-[#06C755]">
-                                                <p className="text-[15px] text-white font-black mb-3 uppercase tracking-widest">第一步：前往您的官方Line開發者後台</p>
-                                                <a
-                                                    href="https://developers.line.biz/console/"
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="flex items-center justify-between group bg-white hover:bg-zinc-50 p-4 rounded-xl transition-all border border-zinc-200 shadow-sm"
-                                                >
-                                                    <span className="font-bold text-zinc-700 text-[16.5px]">Line Developers Console</span>
-                                                    <ExternalLink className="w-4.5 h-4.5 text-zinc-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                                                </a>
-                                            </div>
-                                            <div className="space-y-4">
-                                                <div className="space-y-2">
-                                                    <label className="text-[12px] font-black text-zinc-500 uppercase tracking-widest pl-1">Channel Secret</label>
-                                                    <input
-                                                        type="password"
-                                                        value={lineSecret}
-                                                        onChange={(e) => {
-                                                            setLineSecret(e.target.value);
-                                                            if (fieldErrors.lineSecret) setFieldErrors(prev => ({ ...prev, lineSecret: false }));
-                                                        }}
-                                                        placeholder="位於「Basic settings」頁籤下"
-                                                        className={cn(
-                                                            "w-full p-4 rounded-xl bg-zinc-50 border text-[18.5px] text-zinc-800 placeholder:text-zinc-400 focus:ring-2 outline-none transition-all",
-                                                            fieldErrors.lineSecret ? "border-red-500 focus:ring-red-100" : "border-zinc-100 focus:border-green-500 focus:ring-green-100"
-                                                        )}
-                                                    />
-                                                    {fieldErrors.lineSecret && <p className="text-[10px] text-red-500 font-bold pl-1 mt-1">此欄位不可為空</p>}
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <label className="text-[12px] font-black text-zinc-500 uppercase tracking-widest pl-1">Access Token</label>
-                                                    <input
-                                                        type="password"
-                                                        value={lineToken}
-                                                        onChange={(e) => {
-                                                            setLineToken(e.target.value);
-                                                            if (fieldErrors.lineToken) setFieldErrors(prev => ({ ...prev, lineToken: false }));
-                                                        }}
-                                                        placeholder="位於「Messaging API」頁籤底部"
-                                                        className={cn(
-                                                            "w-full p-4 rounded-xl bg-zinc-50 border text-[18.5px] text-zinc-800 placeholder:text-zinc-400 focus:ring-2 outline-none transition-all",
-                                                            fieldErrors.lineToken ? "border-red-500 focus:ring-red-100" : "border-zinc-100 focus:border-green-500 focus:ring-green-100"
-                                                        )}
-                                                    />
-                                                    {fieldErrors.lineToken && <p className="text-[10px] text-red-500 font-bold pl-1 mt-1">此欄位不可為空</p>}
-                                                </div>
-                                                {!(selectedPlan.name?.includes('399') || selectedPlan.name?.includes('990') || selectedPlan.name?.includes('Lite') || selectedPlan.name?.includes('會計')) && (
-                                                    <div className="space-y-2">
-                                                        <label className="text-[12px] font-black text-zinc-500 uppercase tracking-widest pl-1">OpenAI API Key (進階選配)</label>
-                                                        <input
-                                                            type="password"
-                                                            value={openaiKey}
-                                                            onChange={(e) => {
-                                                                setOpenaiKey(e.target.value);
-                                                                if (fieldErrors.openaiKey) setFieldErrors(prev => ({ ...prev, openaiKey: false }));
-                                                            }}
-                                                            placeholder="sk-..."
-                                                            className={cn(
-                                                                "w-full p-4 rounded-xl bg-zinc-50 border text-[18.5px] text-zinc-800 placeholder:text-zinc-400 focus:ring-2 outline-none transition-all",
-                                                                fieldErrors.openaiKey ? "border-red-500 focus:ring-red-100" : "border-zinc-100 focus:border-green-500 focus:ring-green-100"
-                                                            )}
-                                                        />
-                                                        {fieldErrors.openaiKey && <p className="text-[10px] text-red-500 font-bold pl-1 mt-1">此欄位不可為空</p>}
-                                                        <p className="text-[11px] text-zinc-400 pl-1 font-medium">399/990 方案由我們託管，免填此項。</p>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                        <button
-                                            onClick={handleSetupComplete}
-                                            disabled={isConnecting}
-                                            className={cn(
-                                                "w-full py-5 rounded-2xl font-black text-[21px] flex items-center justify-center gap-3 shadow-xl transition-all text-white",
-                                                isConnecting ? "bg-zinc-400 cursor-not-allowed shadow-none" : "hover:brightness-110 active:scale-95 shadow-[#06C755]/50"
-                                            )}
-                                            style={!isConnecting ? { backgroundColor: LINE_GREEN } : {}}
-                                        >
-                                            {isConnecting ? (
-                                                <RefreshCw className="w-7 h-7 animate-spin" />
-                                            ) : (
-                                                <Rocket className="w-7 h-7" />
-                                            )}
-                                            <span>{isConnecting ? "正在連線測試..." : "完成串接 · 開放店長上班"}</span>
-                                        </button>
-                                    </motion.div>
-                                )}
-
-                                {/* Success Widget */}
-                                {m.type === 'success' && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        className="ml-14 bg-white p-8 rounded-[32px] border border-zinc-100 shadow-2xl space-y-6 max-w-[85%]"
-                                    >
-                                        <div className="flex items-center gap-3 font-black text-[21px] text-[#06C755]">
-                                            <Sparkles className="w-7 h-7" />
-                                            <span>恭喜！您的 AI 店長已待命</span>
-                                        </div>
-
-                                        <div className="space-y-6">
-                                            {/* Webhook URL Section */}
-                                            <div className="bg-[#06C755] p-6 rounded-2xl border border-[#06C755] space-y-3 shadow-lg shadow-emerald-100">
-                                                <p className="text-[13.5px] font-black text-white uppercase tracking-widest text-center">您的專屬 Webhook 網址</p>
-                                                <div className="bg-white p-4 rounded-xl border border-[#06C755] text-center select-all font-mono text-[16px] text-zinc-600 break-all cursor-copy active:bg-green-50 transition-colors shadow-inner">
-                                                    {typeof window !== 'undefined' ? `${window.location.origin}/api/webhook/${botId}` : ''}
-                                                </div>
-                                                <button
-                                                    onClick={() => {
-                                                        navigator.clipboard.writeText(`${window.location.origin}/api/webhook/${botId}`);
-                                                        alert("Webhook 網址已複製！");
-                                                    }}
-                                                    className="w-full py-2 text-white text-[12px] font-bold border border-white/30 rounded-lg hover:bg-white/10 transition-colors"
-                                                >
-                                                    複製網址
-                                                </button>
-                                            </div>
-
-                                            {/* Admin Center / Training Room Section */}
-                                            <div className="bg-indigo-50/80 p-6 rounded-2xl border border-indigo-100 space-y-4">
-                                                <div className="flex items-center justify-between">
-                                                    <div className="flex items-center gap-2">
-                                                        <Key className="w-5 h-5 text-indigo-500" />
-                                                        <span className="font-black text-indigo-900">AI 練功房 (管理)</span>
-                                                    </div>
-                                                    {isAdminView && (
-                                                        <div className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-tighter border ${adminBotData?.status === 'active' ? 'bg-emerald-100 text-emerald-600 border-emerald-200' : 'bg-red-100 text-red-600 border-red-200'}`}>
-                                                            {adminBotData?.status === 'active' ? '服務中' : '已關閉'}
-                                                        </div>
-                                                    )}
-                                                </div>
-
-                                                {!isAdminView ? (
-                                                    <div className="space-y-4">
-                                                        <p className="text-[13px] text-slate-600 leading-relaxed">
-                                                            這是您的**店長私鑰 (Magic Link)**。請務必妥善保存，點擊即可隨時回來調整 AI 知識。
-                                                        </p>
-                                                        <div className="p-3 bg-white/80 border border-indigo-100 rounded-xl font-mono text-[10px] text-indigo-400 break-all select-all">
-                                                            {typeof window !== 'undefined' ? `${window.location.origin}/?botId=${botId}&token=${mgmtToken}` : ''}
-                                                        </div>
-                                                        <button
-                                                            onClick={() => handleAdminLogin(botId!, mgmtToken!)}
-                                                            className="w-full py-4 bg-indigo-600 text-white rounded-xl font-black text-[15px] hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 active:scale-95"
-                                                        >
-                                                            進入練功房 · 管理中心 ➔
-                                                        </button>
-                                                    </div>
-                                                ) : (
-                                                    <div className="space-y-4">
-                                                        {/* Admin Tabs */}
-                                                        <div className="flex border-b border-slate-200">
-                                                            {(['brain', 'products', 'faq', 'orders'] as const).map((tab) => (
-                                                                <button
-                                                                    key={tab}
-                                                                    onClick={() => setAdminTab(tab)}
-                                                                    className={cn(
-                                                                        "flex-1 py-3 text-[12px] font-black transition-all border-b-2",
-                                                                        adminTab === tab ? "border-indigo-500 text-indigo-600" : "border-transparent text-slate-400"
-                                                                    )}
-                                                                >
-                                                                    {tab === 'brain' ? 'AI 大腦' : tab === 'products' ? '商品/課程' : tab === 'faq' ? '知識庫' : '訂單'}
-                                                                </button>
-                                                            ))}
-                                                        </div>
-
-                                                        {/* Tab Content */}
-                                                        <div className="min-h-[300px] max-h-[400px] overflow-y-auto pr-1">
-                                                            {adminTab === 'brain' && (
-                                                                <div className="space-y-4 pt-2">
-                                                                    <div className="space-y-2">
-                                                                        <div className="flex items-center gap-2 text-[12px] font-bold text-slate-500">
-                                                                            <Brain className="w-3.5 h-3.5" />
-                                                                            AI 的大腦指令 (人格/知識)
-                                                                        </div>
-                                                                        <textarea
-                                                                            value={adminBotData.systemPrompt || ""}
-                                                                            onChange={(e) => setAdminBotData({ ...adminBotData, systemPrompt: e.target.value })}
-                                                                            className="w-full h-40 p-4 bg-white border border-slate-200 rounded-xl text-[14px] text-slate-600 focus:ring-2 focus:ring-indigo-500 transition-all outline-none"
-                                                                            placeholder="輸入要教給 AI 的知識..."
-                                                                        />
-                                                                    </div>
-                                                                    <div className="flex items-center gap-3">
-                                                                        <div className="flex-1 flex gap-1 p-1 bg-slate-200/50 rounded-lg">
-                                                                            <button
-                                                                                onClick={() => setAdminBotData({ ...adminBotData, status: 'active' })}
-                                                                                className={cn(
-                                                                                    "flex-1 py-2 rounded-md text-[11px] font-bold transition-all",
-                                                                                    adminBotData.status === 'active' ? "bg-white text-emerald-600 shadow-sm" : "text-slate-400"
-                                                                                )}
-                                                                            >
-                                                                                開啟
-                                                                            </button>
-                                                                            <button
-                                                                                onClick={() => setAdminBotData({ ...adminBotData, status: 'inactive' })}
-                                                                                className={cn(
-                                                                                    "flex-1 py-2 rounded-md text-[11px] font-bold transition-all",
-                                                                                    adminBotData.status === 'inactive' ? "bg-white text-red-600 shadow-sm" : "text-slate-400"
-                                                                                )}
-                                                                            >
-                                                                                關閉
-                                                                            </button>
-                                                                        </div>
-                                                                        <button
-                                                                            onClick={handleUpdateBot}
-                                                                            disabled={isSaving}
-                                                                            className="flex-[2] py-3 bg-indigo-600 text-white rounded-xl font-bold text-[13px] hover:bg-indigo-700 transition-all"
-                                                                        >
-                                                                            {isSaving ? "傳輸中..." : "保存新的訓練 ✨"}
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                            )}
-
-                                                            {adminTab === 'products' && (
-                                                                <div className="space-y-4 pt-2">
-                                                                    <div className="bg-white p-4 rounded-xl border border-dashed border-indigo-200 space-y-3">
-                                                                        <input
-                                                                            type="text"
-                                                                            placeholder="商品或課程名稱"
-                                                                            value={newProduct.name}
-                                                                            onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-                                                                            className="w-full p-3 bg-slate-50 border border-slate-100 rounded-lg text-sm"
-                                                                        />
-                                                                        <div className="grid grid-cols-3 gap-2">
-                                                                            <input
-                                                                                type="number"
-                                                                                placeholder="售價"
-                                                                                value={newProduct.price}
-                                                                                onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
-                                                                                className="p-3 bg-slate-50 border border-slate-100 rounded-lg text-sm"
-                                                                            />
-                                                                            <input
-                                                                                type="number"
-                                                                                placeholder="成本"
-                                                                                value={newProduct.cost}
-                                                                                onChange={(e) => setNewProduct({ ...newProduct, cost: e.target.value })}
-                                                                                className="p-3 bg-slate-50 border border-slate-100 rounded-lg text-sm"
-                                                                            />
-                                                                            <input
-                                                                                type="number"
-                                                                                placeholder="庫存"
-                                                                                value={newProduct.stock_quantity}
-                                                                                onChange={(e) => setNewProduct({ ...newProduct, stock_quantity: e.target.value })}
-                                                                                className="p-3 bg-slate-50 border border-slate-100 rounded-lg text-sm"
-                                                                            />
-                                                                        </div>
-                                                                        <button
-                                                                            onClick={handleAddProduct}
-                                                                            className="w-full py-2 bg-indigo-500 text-white rounded-lg font-bold text-sm"
-                                                                        >
-                                                                            新增商品/課程
-                                                                        </button>
-                                                                    </div>
-                                                                    <div className="space-y-2">
-                                                                        {products.map((p: any) => (
-                                                                            <div key={p.id} className="p-3 bg-white border border-slate-100 rounded-xl flex justify-between items-center">
-                                                                                <div>
-                                                                                    <p className="font-bold text-sm text-slate-800">{p.name}</p>
-                                                                                    <p className="text-[10px] text-slate-400">售價: ${p.price} | 庫存: {p.stock_quantity}</p>
-                                                                                </div>
-                                                                                <div className="text-right">
-                                                                                    <p className="text-[10px] text-emerald-500 font-bold">預估毛利: ${p.price - p.cost}</p>
-                                                                                </div>
-                                                                            </div>
-                                                                        ))}
-                                                                    </div>
-                                                                </div>
-                                                            )}
-
-                                                            {adminTab === 'faq' && (
-                                                                <div className="space-y-4 pt-2">
-                                                                    <div className="bg-white p-4 rounded-xl border border-dashed border-indigo-200 space-y-3">
-                                                                        <input
-                                                                            type="text"
-                                                                            placeholder="常見問題 (Q)"
-                                                                            value={newFaq.question}
-                                                                            onChange={(e) => setNewFaq({ ...newFaq, question: e.target.value })}
-                                                                            className="w-full p-3 bg-slate-50 border border-slate-100 rounded-lg text-sm"
-                                                                        />
-                                                                        <textarea
-                                                                            placeholder="回答內容 (A)"
-                                                                            value={newFaq.answer}
-                                                                            onChange={(e) => setNewFaq({ ...newFaq, answer: e.target.value })}
-                                                                            className="w-full p-3 h-20 bg-slate-50 border border-slate-100 rounded-lg text-sm"
-                                                                        />
-                                                                        <button
-                                                                            onClick={handleAddFaq}
-                                                                            className="w-full py-2 bg-indigo-500 text-white rounded-lg font-bold text-sm"
-                                                                        >
-                                                                            新增知識
-                                                                        </button>
-                                                                    </div>
-                                                                    <div className="space-y-2">
-                                                                        {faqList.map((f: any) => (
-                                                                            <div key={f.id} className="p-3 bg-white border border-slate-100 rounded-xl space-y-1">
-                                                                                <p className="font-bold text-sm text-indigo-600">Q: {f.question}</p>
-                                                                                <p className="text-[12px] text-slate-500">A: {f.answer}</p>
-                                                                            </div>
-                                                                        ))}
-                                                                    </div>
-                                                                </div>
-                                                            )}
-
-                                                            {adminTab === 'orders' && (
-                                                                <div className="space-y-4 pt-2">
-                                                                    <div className="space-y-2">
-                                                                        {orders.length === 0 && <p className="text-center py-10 text-slate-400 text-sm italic">目前尚無訂單紀錄</p>}
-                                                                        {orders.map((o: any) => (
-                                                                            <div key={o.id} className="p-4 bg-white border border-slate-100 rounded-xl space-y-2">
-                                                                                <div className="flex justify-between items-center">
-                                                                                    <span className="text-[10px] font-black uppercase py-0.5 px-2 bg-slate-100 rounded-full text-slate-500">{o.status}</span>
-                                                                                    <span className="text-[10px] text-slate-400">{new Date(o.created_at).toLocaleString()}</span>
-                                                                                </div>
-                                                                                <div className="flex justify-between items-center">
-                                                                                    <p className="font-bold text-slate-800">總額: ${o.total_amount}</p>
-                                                                                    <p className="text-[12px] text-indigo-500 font-medium">客戶: {o.line_user_id.slice(0, 8)}...</p>
-                                                                                </div>
-                                                                            </div>
-                                                                        ))}
-                                                                    </div>
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-
-                                        <div className="pt-4 border-t border-zinc-100 flex flex-col gap-3">
-                                            <p className="text-xs text-zinc-400 text-center font-medium leading-relaxed">
-                                                現在您可以對您的 Line 官方帳號說聲「你好」來測試了！
-                                            </p>
-                                            <button
-                                                onClick={() => {
-                                                    localStorage.clear();
-                                                    window.location.href = '/';
-                                                }}
-                                                className="w-full py-2 text-[12px] font-bold text-slate-400 hover:text-slate-600 transition-colors"
-                                            >
-                                                結束並回到首頁 ➔
-                                            </button>
-                                        </div>
-                                    </motion.div>
-                                )}
+                                {/* Related widgets (Checkout, Recovery, Setup, Success) remain here... */}
                             </div>
                         ))}
                         {isTyping && (
@@ -1560,8 +1143,547 @@ export default function ChatInterface() {
                     </AnimatePresence>
                 </div>
 
-                {/* Input */}
-                <footer className="p-6 border-t bg-white z-10 sticky bottom-0 shadow-[0_-4px_30px_rgba(0,0,0,0.04)] shrink-0">
+                {/* Raw AI Comparison Pane */}
+                {showComparison && (
+                    <div className="w-1/2 flex flex-col bg-purple-50/10 h-full overflow-hidden">
+                        <div className="p-4 bg-purple-50 border-b border-purple-100 flex items-center justify-between">
+                            <span className="font-black text-purple-600 text-xs uppercase tracking-widest flex items-center gap-2">
+                                <Sparkles className="w-3 h-3" /> 實驗室：純淨 GPT-4o (無邏輯層)
+                            </span>
+                        </div>
+                        <div
+                            className="flex-1 overflow-y-auto p-6 space-y-6 scroll-smooth bg-purple-50/5"
+                        >
+                            <AnimatePresence>
+                                {rawMessages.map((m) => (
+                                    <motion.div
+                                        key={m.id}
+                                        initial={{ opacity: 0, x: 20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        className={cn(
+                                            "flex items-start gap-3",
+                                            m.role === 'user' ? "flex-row-reverse" : ""
+                                        )}
+                                    >
+                                        <div className={cn(
+                                            "w-8 h-8 rounded-full flex items-center justify-center text-white shrink-0 shadow-sm",
+                                            m.role === 'ai' ? "bg-purple-500" : "bg-zinc-300"
+                                        )}>
+                                            {m.role === 'ai' ? <Brain className="w-5 h-5" /> : <User className="w-5 h-5" />}
+                                        </div>
+                                        <div className={cn(
+                                            "p-4 rounded-2xl text-sm leading-relaxed max-w-[90%] font-bold shadow-sm",
+                                            m.role === 'ai'
+                                                ? "bg-white border border-purple-100 text-zinc-800 rounded-tl-none"
+                                                : "bg-purple-500 text-white rounded-tr-none ml-auto"
+                                        )}>
+                                            {m.content}
+                                        </div>
+                                    </motion.div>
+                                ))}
+                                {isRawTyping && (
+                                    <div className="flex items-start gap-3">
+                                        <div className="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center shadow-md animate-pulse">
+                                            <Brain className="w-5 h-5 text-white" />
+                                        </div>
+                                        <div className="px-5 py-3 bg-white border border-purple-100 rounded-2xl rounded-tl-none flex gap-1 items-center shadow-sm">
+                                            <span className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce [animation-delay:-0.3s]" />
+                                            <span className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce [animation-delay:-0.15s]" />
+                                            <span className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce" />
+                                        </div>
+                                    </div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            {/* Checkout Widget */}
+            {m.type === 'checkout' && (
+                <motion.div
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="ml-14 bg-white p-8 rounded-3xl border border-zinc-100 shadow-2xl space-y-6 max-w-[85%]"
+                >
+                    <div className="flex items-center gap-3 font-black text-[21px]" style={{ color: LINE_GREEN }}>
+                        <CreditCard className="w-7 h-7" />
+                        <span>安全加密結帳</span>
+                    </div>
+                    <div className="space-y-4">
+                        <div className="bg-zinc-50 p-4 rounded-xl border border-zinc-100 flex justify-between items-center mb-2">
+                            <span className="text-zinc-500 font-bold text-[16px]">已選方案</span>
+                            <span className="font-black text-zinc-900 text-[21px]">{selectedPlan.name || '標準型'} ({selectedPlan.price || '$990'})</span>
+                        </div>
+                        <div className="space-y-1.5">
+                            <p className="text-[12px] font-black text-zinc-400 uppercase tracking-widest pl-1">信用卡卡號</p>
+                            <input type="text" placeholder="XXXX XXXX XXXX XXXX" className="w-full p-4 rounded-xl border border-zinc-100 bg-zinc-50 text-[18.5px] focus:ring-2 focus:ring-green-500 transition-all outline-none" />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                                <p className="text-[12px] font-black text-zinc-400 pl-1 uppercase tracking-widest">有效期</p>
+                                <input type="text" placeholder="MM/YY" className="w-full p-4 rounded-xl border border-zinc-100 bg-zinc-50 text-[18.5px] focus:ring-2 focus:ring-green-500 transition-all outline-none" />
+                            </div>
+                            <div className="space-y-1.5">
+                                <p className="text-[2px] font-black text-zinc-400 pl-1 uppercase tracking-widest">CVC</p>
+                                <input type="text" placeholder="123" className="w-full p-4 rounded-xl border border-zinc-100 bg-zinc-50 text-[18.5px] focus:ring-2 focus:ring-green-500 transition-all outline-none" />
+                            </div>
+                        </div>
+                    </div>
+                    {(selectedPlan.price === '$399' || selectedPlan.price === '$990') ? (
+                        <div className="space-y-4">
+                            <div id={`paypal-button-container-${m.id}`} className="min-h-[150px]"></div>
+                            <p className="text-[12px] text-zinc-400 text-center font-medium">點擊「Subscribe」完成支付並自動辨識店家：<b>{storeName}</b></p>
+
+                            {/* Testing Bypass Button */}
+                            <button
+                                onClick={handlePaymentSuccess}
+                                className="w-full py-3 text-zinc-500 rounded-xl font-medium text-[14px] hover:bg-zinc-100 transition-colors border border-dashed border-zinc-300 mt-2"
+                            >
+                                跳過支付直接開通 (測試開發專用)
+                            </button>
+                        </div>
+                    ) : (
+                        <button
+                            onClick={handlePaymentSuccess}
+                            className="w-full py-5 text-white rounded-2xl font-black text-[21px] hover:brightness-110 active:scale-95 transition-all shadow-xl shadow-[#06C755]"
+                            style={{ backgroundColor: LINE_GREEN }}
+                        >
+                            立即付款 {selectedPlan.price || '$990'}
+                        </button>
+                    )}
+                </motion.div>
+            )}
+
+            {/* Recovery Widget */}
+            {m.type === 'recovery' && (
+                <motion.div
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="ml-14 bg-white p-8 rounded-3xl border border-zinc-100 shadow-2xl space-y-6 max-w-[85%]"
+                >
+                    <div className="flex items-center gap-3 font-black text-[21px] text-amber-500">
+                        <Key className="w-7 h-7" />
+                        <span>找回管理連結</span>
+                    </div>
+                    <div className="space-y-4">
+                        <div className="space-y-1.5">
+                            <p className="text-[12px] font-black text-zinc-400 uppercase tracking-widest pl-1">店舖名稱</p>
+                            <input
+                                id={`recover-name-${m.id}`}
+                                type="text"
+                                placeholder="請輸入正確的店名"
+                                className="w-full p-4 rounded-xl border border-zinc-100 bg-zinc-50 text-[18.5px] focus:ring-2 focus:ring-amber-500 transition-all outline-none"
+                            />
+                        </div>
+                        <div className="space-y-1.5">
+                            <p className="text-[12px] font-black text-zinc-400 uppercase tracking-widest pl-1">Line Channel Secret</p>
+                            <input
+                                id={`recover-secret-${m.id}`}
+                                type="password"
+                                placeholder="只有老闆才知道的密鑰"
+                                className="w-full p-4 rounded-xl border border-zinc-100 bg-zinc-50 text-[18.5px] focus:ring-2 focus:ring-amber-500 transition-all outline-none"
+                            />
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => {
+                            const nameInput = document.getElementById(`recover-name-${m.id}`) as HTMLInputElement;
+                            const secretInput = document.getElementById(`recover-secret-${m.id}`) as HTMLInputElement;
+                            handleRecoverLink(nameInput.value, secretInput.value);
+                        }}
+                        className="w-full py-5 text-white bg-amber-500 rounded-2xl font-black text-[21px] hover:bg-amber-600 active:scale-95 transition-all shadow-xl shadow-amber-500/30"
+                    >
+                        立即驗證並找回
+                    </button>
+                </motion.div>
+            )}
+
+            {/* Setup Widget */}
+            {m.type === 'setup' && (
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="ml-14 bg-white p-8 rounded-3xl border border-zinc-100 shadow-2xl space-y-6 max-w-[85%]"
+                >
+                    <div className="flex items-center gap-2 font-black text-[21px]" style={{ color: LINE_GREEN }}>
+                        <Settings className="w-7 h-7 animate-spin-slow" />
+                        <span>Line 串接精靈</span>
+                    </div>
+                    <div className="space-y-6">
+                        <div className="bg-[#06C755] p-5 rounded-2xl border border-[#06C755]">
+                            <p className="text-[15px] text-white font-black mb-3 uppercase tracking-widest">第一步：前往您的官方Line開發者後台</p>
+                            <a
+                                href="https://developers.line.biz/console/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center justify-between group bg-white hover:bg-zinc-50 p-4 rounded-xl transition-all border border-zinc-200 shadow-sm"
+                            >
+                                <span className="font-bold text-zinc-700 text-[16.5px]">Line Developers Console</span>
+                                <ExternalLink className="w-4.5 h-4.5 text-zinc-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                            </a>
+                        </div>
+                        <div className="space-y-4">
+                            <div className="space-y-2">
+                                <label className="text-[12px] font-black text-zinc-500 uppercase tracking-widest pl-1">Channel Secret</label>
+                                <input
+                                    type="password"
+                                    value={lineSecret}
+                                    onChange={(e) => {
+                                        setLineSecret(e.target.value);
+                                        if (fieldErrors.lineSecret) setFieldErrors(prev => ({ ...prev, lineSecret: false }));
+                                    }}
+                                    placeholder="位於「Basic settings」頁籤下"
+                                    className={cn(
+                                        "w-full p-4 rounded-xl bg-zinc-50 border text-[18.5px] text-zinc-800 placeholder:text-zinc-400 focus:ring-2 outline-none transition-all",
+                                        fieldErrors.lineSecret ? "border-red-500 focus:ring-red-100" : "border-zinc-100 focus:border-green-500 focus:ring-green-100"
+                                    )}
+                                />
+                                {fieldErrors.lineSecret && <p className="text-[10px] text-red-500 font-bold pl-1 mt-1">此欄位不可為空</p>}
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[12px] font-black text-zinc-500 uppercase tracking-widest pl-1">Access Token</label>
+                                <input
+                                    type="password"
+                                    value={lineToken}
+                                    onChange={(e) => {
+                                        setLineToken(e.target.value);
+                                        if (fieldErrors.lineToken) setFieldErrors(prev => ({ ...prev, lineToken: false }));
+                                    }}
+                                    placeholder="位於「Messaging API」頁籤底部"
+                                    className={cn(
+                                        "w-full p-4 rounded-xl bg-zinc-50 border text-[18.5px] text-zinc-800 placeholder:text-zinc-400 focus:ring-2 outline-none transition-all",
+                                        fieldErrors.lineToken ? "border-red-500 focus:ring-red-100" : "border-zinc-100 focus:border-green-500 focus:ring-green-100"
+                                    )}
+                                />
+                                {fieldErrors.lineToken && <p className="text-[10px] text-red-500 font-bold pl-1 mt-1">此欄位不可為空</p>}
+                            </div>
+                            {!(selectedPlan.name?.includes('399') || selectedPlan.name?.includes('990') || selectedPlan.name?.includes('Lite') || selectedPlan.name?.includes('會計')) && (
+                                <div className="space-y-2">
+                                    <label className="text-[12px] font-black text-zinc-500 uppercase tracking-widest pl-1">OpenAI API Key (進階選配)</label>
+                                    <input
+                                        type="password"
+                                        value={openaiKey}
+                                        onChange={(e) => {
+                                            setOpenaiKey(e.target.value);
+                                            if (fieldErrors.openaiKey) setFieldErrors(prev => ({ ...prev, openaiKey: false }));
+                                        }}
+                                        placeholder="sk-..."
+                                        className={cn(
+                                            "w-full p-4 rounded-xl bg-zinc-50 border text-[18.5px] text-zinc-800 placeholder:text-zinc-400 focus:ring-2 outline-none transition-all",
+                                            fieldErrors.openaiKey ? "border-red-500 focus:ring-red-100" : "border-zinc-100 focus:border-green-500 focus:ring-green-100"
+                                        )}
+                                    />
+                                    {fieldErrors.openaiKey && <p className="text-[10px] text-red-500 font-bold pl-1 mt-1">此欄位不可為空</p>}
+                                    <p className="text-[11px] text-zinc-400 pl-1 font-medium">399/990 方案由我們託管，免填此項。</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    <button
+                        onClick={handleSetupComplete}
+                        disabled={isConnecting}
+                        className={cn(
+                            "w-full py-5 rounded-2xl font-black text-[21px] flex items-center justify-center gap-3 shadow-xl transition-all text-white",
+                            isConnecting ? "bg-zinc-400 cursor-not-allowed shadow-none" : "hover:brightness-110 active:scale-95 shadow-[#06C755]/50"
+                        )}
+                        style={!isConnecting ? { backgroundColor: LINE_GREEN } : {}}
+                    >
+                        {isConnecting ? (
+                            <RefreshCw className="w-7 h-7 animate-spin" />
+                        ) : (
+                            <Rocket className="w-7 h-7" />
+                        )}
+                        <span>{isConnecting ? "正在連線測試..." : "完成串接 · 開放店長上班"}</span>
+                    </button>
+                </motion.div>
+            )}
+
+            {/* Success Widget */}
+            {m.type === 'success' && (
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="ml-14 bg-white p-8 rounded-[32px] border border-zinc-100 shadow-2xl space-y-6 max-w-[85%]"
+                >
+                    <div className="flex items-center gap-3 font-black text-[21px] text-[#06C755]">
+                        <Sparkles className="w-7 h-7" />
+                        <span>恭喜！您的 AI 店長已待命</span>
+                    </div>
+
+                    <div className="space-y-6">
+                        {/* Webhook URL Section */}
+                        <div className="bg-[#06C755] p-6 rounded-2xl border border-[#06C755] space-y-3 shadow-lg shadow-emerald-100">
+                            <p className="text-[13.5px] font-black text-white uppercase tracking-widest text-center">您的專屬 Webhook 網址</p>
+                            <div className="bg-white p-4 rounded-xl border border-[#06C755] text-center select-all font-mono text-[16px] text-zinc-600 break-all cursor-copy active:bg-green-50 transition-colors shadow-inner">
+                                {typeof window !== 'undefined' ? `${window.location.origin}/api/webhook/${botId}` : ''}
+                            </div>
+                            <button
+                                onClick={() => {
+                                    navigator.clipboard.writeText(`${window.location.origin}/api/webhook/${botId}`);
+                                    alert("Webhook 網址已複製！");
+                                }}
+                                className="w-full py-2 text-white text-[12px] font-bold border border-white/30 rounded-lg hover:bg-white/10 transition-colors"
+                            >
+                                複製網址
+                            </button>
+                        </div>
+
+                        {/* Admin Center / Training Room Section */}
+                        <div className="bg-indigo-50/80 p-6 rounded-2xl border border-indigo-100 space-y-4">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    <Key className="w-5 h-5 text-indigo-500" />
+                                    <span className="font-black text-indigo-900">AI 練功房 (管理)</span>
+                                </div>
+                                {isAdminView && (
+                                    <div className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-tighter border ${adminBotData?.status === 'active' ? 'bg-emerald-100 text-emerald-600 border-emerald-200' : 'bg-red-100 text-red-600 border-red-200'}`}>
+                                        {adminBotData?.status === 'active' ? '服務中' : '已關閉'}
+                                    </div>
+                                )}
+                            </div>
+
+                            {!isAdminView ? (
+                                <div className="space-y-4">
+                                    <p className="text-[13px] text-slate-600 leading-relaxed">
+                                        這是您的**店長私鑰 (Magic Link)**。請務必妥善保存，點擊即可隨時回來調整 AI 知識。
+                                    </p>
+                                    <div className="p-3 bg-white/80 border border-indigo-100 rounded-xl font-mono text-[10px] text-indigo-400 break-all select-all">
+                                        {typeof window !== 'undefined' ? `${window.location.origin}/?botId=${botId}&token=${mgmtToken}` : ''}
+                                    </div>
+                                    <button
+                                        onClick={() => handleAdminLogin(botId!, mgmtToken!)}
+                                        className="w-full py-4 bg-indigo-600 text-white rounded-xl font-black text-[15px] hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 active:scale-95"
+                                    >
+                                        進入練功房 · 管理中心 ➔
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    {/* Admin Tabs */}
+                                    <div className="flex border-b border-slate-200">
+                                        {(['brain', 'products', 'faq', 'orders'] as const).map((tab) => (
+                                            <button
+                                                key={tab}
+                                                onClick={() => setAdminTab(tab)}
+                                                className={cn(
+                                                    "flex-1 py-3 text-[12px] font-black transition-all border-b-2",
+                                                    adminTab === tab ? "border-indigo-500 text-indigo-600" : "border-transparent text-slate-400"
+                                                )}
+                                            >
+                                                {tab === 'brain' ? 'AI 大腦' : tab === 'products' ? '商品/課程' : tab === 'faq' ? '知識庫' : '訂單'}
+                                            </button>
+                                        ))}
+                                    </div>
+
+                                    {/* Tab Content */}
+                                    <div className="min-h-[300px] max-h-[400px] overflow-y-auto pr-1">
+                                        {adminTab === 'brain' && (
+                                            <div className="space-y-4 pt-2">
+                                                <div className="space-y-2">
+                                                    <div className="flex items-center gap-2 text-[12px] font-bold text-slate-500">
+                                                        <Brain className="w-3.5 h-3.5" />
+                                                        AI 的大腦指令 (人格/知識)
+                                                    </div>
+                                                    <textarea
+                                                        value={adminBotData.systemPrompt || ""}
+                                                        onChange={(e) => setAdminBotData({ ...adminBotData, systemPrompt: e.target.value })}
+                                                        className="w-full h-40 p-4 bg-white border border-slate-200 rounded-xl text-[14px] text-slate-600 focus:ring-2 focus:ring-indigo-500 transition-all outline-none"
+                                                        placeholder="輸入要教給 AI 的知識..."
+                                                    />
+                                                </div>
+                                                <div className="flex items-center gap-3">
+                                                    <div className="flex-1 flex gap-1 p-1 bg-slate-200/50 rounded-lg">
+                                                        <button
+                                                            onClick={() => setAdminBotData({ ...adminBotData, status: 'active' })}
+                                                            className={cn(
+                                                                "flex-1 py-2 rounded-md text-[11px] font-bold transition-all",
+                                                                adminBotData.status === 'active' ? "bg-white text-emerald-600 shadow-sm" : "text-slate-400"
+                                                            )}
+                                                        >
+                                                            開啟
+                                                        </button>
+                                                        <button
+                                                            onClick={() => setAdminBotData({ ...adminBotData, status: 'inactive' })}
+                                                            className={cn(
+                                                                "flex-1 py-2 rounded-md text-[11px] font-bold transition-all",
+                                                                adminBotData.status === 'inactive' ? "bg-white text-red-600 shadow-sm" : "text-slate-400"
+                                                            )}
+                                                        >
+                                                            關閉
+                                                        </button>
+                                                    </div>
+                                                    <button
+                                                        onClick={handleUpdateBot}
+                                                        disabled={isSaving}
+                                                        className="flex-[2] py-3 bg-indigo-600 text-white rounded-xl font-bold text-[13px] hover:bg-indigo-700 transition-all"
+                                                    >
+                                                        {isSaving ? "傳輸中..." : "保存新的訓練 ✨"}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {adminTab === 'products' && (
+                                            <div className="space-y-4 pt-2">
+                                                <div className="bg-white p-4 rounded-xl border border-dashed border-indigo-200 space-y-3">
+                                                    <input
+                                                        type="text"
+                                                        placeholder="商品或課程名稱"
+                                                        value={newProduct.name}
+                                                        onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+                                                        className="w-full p-3 bg-slate-50 border border-slate-100 rounded-lg text-sm"
+                                                    />
+                                                    <div className="grid grid-cols-3 gap-2">
+                                                        <input
+                                                            type="number"
+                                                            placeholder="售價"
+                                                            value={newProduct.price}
+                                                            onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+                                                            className="p-3 bg-slate-50 border border-slate-100 rounded-lg text-sm"
+                                                        />
+                                                        <input
+                                                            type="number"
+                                                            placeholder="成本"
+                                                            value={newProduct.cost}
+                                                            onChange={(e) => setNewProduct({ ...newProduct, cost: e.target.value })}
+                                                            className="p-3 bg-slate-50 border border-slate-100 rounded-lg text-sm"
+                                                        />
+                                                        <input
+                                                            type="number"
+                                                            placeholder="庫存"
+                                                            value={newProduct.stock_quantity}
+                                                            onChange={(e) => setNewProduct({ ...newProduct, stock_quantity: e.target.value })}
+                                                            className="p-3 bg-slate-50 border border-slate-100 rounded-lg text-sm"
+                                                        />
+                                                    </div>
+                                                    <button
+                                                        onClick={handleAddProduct}
+                                                        className="w-full py-2 bg-indigo-500 text-white rounded-lg font-bold text-sm"
+                                                    >
+                                                        新增商品/課程
+                                                    </button>
+                                                </div>
+                                                <div className="space-y-2">
+                                                    {products.map((p: any) => (
+                                                        <div key={p.id} className="p-3 bg-white border border-slate-100 rounded-xl flex justify-between items-center">
+                                                            <div>
+                                                                <p className="font-bold text-sm text-slate-800">{p.name}</p>
+                                                                <p className="text-[10px] text-slate-400">售價: ${p.price} | 庫存: {p.stock_quantity}</p>
+                                                            </div>
+                                                            <div className="text-right">
+                                                                <p className="text-[10px] text-emerald-500 font-bold">預估毛利: ${p.price - p.cost}</p>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {adminTab === 'faq' && (
+                                            <div className="space-y-4 pt-2">
+                                                <div className="bg-white p-4 rounded-xl border border-dashed border-indigo-200 space-y-3">
+                                                    <input
+                                                        type="text"
+                                                        placeholder="常見問題 (Q)"
+                                                        value={newFaq.question}
+                                                        onChange={(e) => setNewFaq({ ...newFaq, question: e.target.value })}
+                                                        className="w-full p-3 bg-slate-50 border border-slate-100 rounded-lg text-sm"
+                                                    />
+                                                    <textarea
+                                                        placeholder="回答內容 (A)"
+                                                        value={newFaq.answer}
+                                                        onChange={(e) => setNewFaq({ ...newFaq, answer: e.target.value })}
+                                                        className="w-full p-3 h-20 bg-slate-50 border border-slate-100 rounded-lg text-sm"
+                                                    />
+                                                    <button
+                                                        onClick={handleAddFaq}
+                                                        className="w-full py-2 bg-indigo-500 text-white rounded-lg font-bold text-sm"
+                                                    >
+                                                        新增知識
+                                                    </button>
+                                                </div>
+                                                <div className="space-y-2">
+                                                    {faqList.map((f: any) => (
+                                                        <div key={f.id} className="p-3 bg-white border border-slate-100 rounded-xl space-y-1">
+                                                            <p className="font-bold text-sm text-indigo-600">Q: {f.question}</p>
+                                                            <p className="text-[12px] text-slate-500">A: {f.answer}</p>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {adminTab === 'orders' && (
+                                            <div className="space-y-4 pt-2">
+                                                <div className="space-y-2">
+                                                    {orders.length === 0 && <p className="text-center py-10 text-slate-400 text-sm italic">目前尚無訂單紀錄</p>}
+                                                    {orders.map((o: any) => (
+                                                        <div key={o.id} className="p-4 bg-white border border-slate-100 rounded-xl space-y-2">
+                                                            <div className="flex justify-between items-center">
+                                                                <span className="text-[10px] font-black uppercase py-0.5 px-2 bg-slate-100 rounded-full text-slate-500">{o.status}</span>
+                                                                <span className="text-[10px] text-slate-400">{new Date(o.created_at).toLocaleString()}</span>
+                                                            </div>
+                                                            <div className="flex justify-between items-center">
+                                                                <p className="font-bold text-slate-800">總額: ${o.total_amount}</p>
+                                                                <p className="text-[12px] text-indigo-500 font-medium">客戶: {o.line_user_id.slice(0, 8)}...</p>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-zinc-100 flex flex-col gap-3">
+                        <p className="text-xs text-zinc-400 text-center font-medium leading-relaxed">
+                            現在您可以對您的 Line 官方帳號說聲「你好」來測試了！
+                        </p>
+                        <button
+                            onClick={() => {
+                                localStorage.clear();
+                                window.location.href = '/';
+                            }}
+                            className="w-full py-2 text-[12px] font-bold text-slate-400 hover:text-slate-600 transition-colors"
+                        >
+                            結束並回到首頁 ➔
+                        </button>
+                    </div>
+                </motion.div>
+            )}
+        </div>
+    ))
+}
+{
+    isTyping && (
+        <motion.div
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-start gap-4"
+        >
+            <div
+                className="w-12 h-12 rounded-full flex items-center justify-center text-white shrink-0 shadow-md"
+                style={{ backgroundColor: LINE_GREEN }}
+            >
+                <Bot className="w-8 h-8" />
+            </div>
+            <div className="bg-white border border-zinc-200 rounded-2xl rounded-tl-none flex gap-1.5 items-center px-6 py-5 shadow-sm">
+                <span className="w-2 h-2 bg-[#06C755] rounded-full animate-bounce [animation-delay:-0.3s]" />
+                <span className="w-2 h-2 bg-[#06C755] rounded-full animate-bounce [animation-delay:-0.15s]" />
+                <span className="w-2 h-2 bg-[#06C755] rounded-full animate-bounce" />
+            </div>
+        </motion.div>
+    )
+}
+                    </AnimatePresence >
+                </div >
+
+    {/* Input */ }
+    < footer className = "p-6 border-t bg-white z-10 sticky bottom-0 shadow-[0_-4px_30px_rgba(0,0,0,0.04)] shrink-0" >
                     <motion.div
                         animate={{ scale: inputValue ? 1.02 : 1 }}
                         className="relative flex items-center gap-3"
@@ -1586,70 +1708,72 @@ export default function ChatInterface() {
                     <p className="text-[12px] font-black text-center text-zinc-400 mt-4 uppercase tracking-[0.2em]">
                         Powered by Global AI Network · Secure & Encrypted
                     </p>
-                </footer>
+                </footer >
 
-                {/* WebView Overlay */}
-                <AnimatePresence>
-                    {viewMode === 'webview' && activeWebViewUrl && (
-                        <motion.div
-                            initial={{ x: "100%" }}
-                            animate={{ x: 0 }}
-                            exit={{ x: "100%" }}
-                            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                            className="absolute inset-x-0 bottom-0 top-[88px] bg-white z-[50] flex flex-col"
+    {/* WebView Overlay */ }
+    <AnimatePresence>
+{
+    viewMode === 'webview' && activeWebViewUrl && (
+        <motion.div
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="absolute inset-x-0 bottom-0 top-[88px] bg-white z-[50] flex flex-col"
+        >
+            <div className="flex-1 relative bg-zinc-50">
+                {activeWebViewUrl.includes('manager.line.biz') || activeWebViewUrl.includes('account.line.biz') ? (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center p-12 text-center bg-zinc-50">
+                        <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center text-[#06C755] mb-6 shadow-sm">
+                            <ExternalLink className="w-10 h-10" />
+                        </div>
+                        <h3 className="text-xl font-black text-zinc-900 mb-3">此網頁受到安全保護</h3>
+                        <p className="text-zinc-500 font-medium mb-8 max-w-sm">LINE 管理後台與部分加密頁面不允許直接嵌入。請點擊下方的綠色按鈕開啟新視窗進行操作。</p>
+                        <a
+                            href={activeWebViewUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-10 py-5 bg-[#06C755] text-white rounded-2xl font-black text-lg shadow-xl shadow-green-200 hover:brightness-110 active:scale-95 transition-all flex items-center gap-3"
                         >
-                            <div className="flex-1 relative bg-zinc-50">
-                                {activeWebViewUrl.includes('manager.line.biz') || activeWebViewUrl.includes('account.line.biz') ? (
-                                    <div className="absolute inset-0 flex flex-col items-center justify-center p-12 text-center bg-zinc-50">
-                                        <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center text-[#06C755] mb-6 shadow-sm">
-                                            <ExternalLink className="w-10 h-10" />
-                                        </div>
-                                        <h3 className="text-xl font-black text-zinc-900 mb-3">此網頁受到安全保護</h3>
-                                        <p className="text-zinc-500 font-medium mb-8 max-w-sm">LINE 管理後台與部分加密頁面不允許直接嵌入。請點擊下方的綠色按鈕開啟新視窗進行操作。</p>
-                                        <a
-                                            href={activeWebViewUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="px-10 py-5 bg-[#06C755] text-white rounded-2xl font-black text-lg shadow-xl shadow-green-200 hover:brightness-110 active:scale-95 transition-all flex items-center gap-3"
-                                        >
-                                            <ExternalLink className="w-6 h-6" />
-                                            <span>在新視窗開啟網頁</span>
-                                        </a>
-                                    </div>
-                                ) : (
-                                    <>
-                                        <iframe
-                                            src={activeWebViewUrl}
-                                            className="w-full h-full border-none"
-                                            title="Resource Viewer"
-                                        />
-                                        {/* Fallback for other sites that might block frames */}
-                                        <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-white via-white/90 to-transparent flex flex-col items-center text-center opacity-0 hover:opacity-100 transition-opacity">
-                                            <p className="text-zinc-500 font-bold mb-3 text-sm">如果網頁未正常顯示，請點擊：</p>
-                                            <a
-                                                href={activeWebViewUrl}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="px-6 py-3 bg-zinc-800 text-white rounded-xl font-bold text-sm shadow-lg flex items-center gap-2"
-                                            >
-                                                <ExternalLink className="w-4 h-4" />
-                                                在新視窗開啟
-                                            </a>
-                                        </div>
-                                    </>
-                                )}
-                            </div>
-                            <div className="p-4 bg-white border-t flex justify-center">
-                                <button
-                                    onClick={() => setViewMode('chat')}
-                                    className="px-8 py-3 bg-zinc-100 text-zinc-600 rounded-full font-bold hover:bg-zinc-200 transition-all"
-                                >
-                                    返回對話
-                                </button>
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                            <ExternalLink className="w-6 h-6" />
+                            <span>在新視窗開啟網頁</span>
+                        </a>
+                    </div>
+                ) : (
+                    <>
+                        <iframe
+                            src={activeWebViewUrl}
+                            className="w-full h-full border-none"
+                            title="Resource Viewer"
+                        />
+                        {/* Fallback for other sites that might block frames */}
+                        <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-white via-white/90 to-transparent flex flex-col items-center text-center opacity-0 hover:opacity-100 transition-opacity">
+                            <p className="text-zinc-500 font-bold mb-3 text-sm">如果網頁未正常顯示，請點擊：</p>
+                            <a
+                                href={activeWebViewUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="px-6 py-3 bg-zinc-800 text-white rounded-xl font-bold text-sm shadow-lg flex items-center gap-2"
+                            >
+                                <ExternalLink className="w-4 h-4" />
+                                在新視窗開啟
+                            </a>
+                        </div>
+                    </>
+                )}
+            </div>
+            <div className="p-4 bg-white border-t flex justify-center">
+                <button
+                    onClick={() => setViewMode('chat')}
+                    className="px-8 py-3 bg-zinc-100 text-zinc-600 rounded-full font-bold hover:bg-zinc-200 transition-all"
+                >
+                    返回對話
+                </button>
+            </div>
+        </motion.div>
+    )
+}
+                </AnimatePresence >
 
                 <AnimatePresence>
                     {showResetConfirm && (
@@ -1713,7 +1837,7 @@ export default function ChatInterface() {
                     background: transparent;
                 }
                 `}</style>
-            </motion.div>
-        </div>
+            </motion.div >
+        </div >
     );
 }

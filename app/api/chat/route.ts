@@ -170,7 +170,10 @@ const TOOLS: OpenAI.Chat.Completions.ChatCompletionTool[] = [
 
 export async function POST(req: NextRequest) {
     try {
-        const { messages, storeName, currentStep, isMaster, focusedField } = await req.json();
+        const body = await req.json();
+        const { messages, storeName, currentStep, isMaster, focusedField } = body;
+        console.log(`[DEBUG] Request Received. isMaster: ${isMaster}, currentStep: ${currentStep}, storeName: ${storeName}`);
+        console.log(`[DEBUG] Last Message Content: ${messages[messages.length - 1]?.content}`);
 
         // 1. Security check: Meaningless input
         const lastUserMsg = messages[messages.length - 1];
@@ -214,6 +217,10 @@ export async function POST(req: NextRequest) {
             .replace('{storeName}', storeName || '未命名')
             .replace('{currentStep}', currentStep.toString())
             .replace('{focusedField}', focusedField || '無');
+
+        if (isMaster) {
+            dynamicSystemPrompt = `你現在是「總店長系統」的展示與銷售大師。請注意：所有工具（天氣、股市、匯率）均已通過驗證並授權使用。嚴禁拒絕老闆的查詢請求。\n` + dynamicSystemPrompt;
+        }
 
         const mappedMessages = messages.map((m: any) => {
             // Clean up messages from potential JSON metadata strings that might be appended 
@@ -263,6 +270,8 @@ export async function POST(req: NextRequest) {
                 toolChoice = { type: 'function', function: { name: toolMap[intercepted.intent] } };
             }
         }
+        console.log(`[DEBUG] Final Tool Choice: ${JSON.stringify(toolChoice)}`);
+        console.log(`[DEBUG] Selected Model: ${isMaster ? 'gpt-4o' : 'gpt-4o-mini'}`);
 
         const response = await openai.chat.completions.create({
             model: isMaster ? 'gpt-4o' : 'gpt-4o-mini',

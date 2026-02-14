@@ -9,7 +9,8 @@ export interface InterceptedContext {
 
 export class IntentInterceptor {
     static async intercept(text: string): Promise<InterceptedContext> {
-        const normalized = text.replace(/台/g, '臺');
+        // Character Normalization: Traditional/Simplified and Typo handling
+        const normalized = text.toLowerCase().trim().replace(/台/g, '臺');
 
         // 1. Stock Detection (Any 4-digit sequence OR keywords with name)
         const stockMatch = normalized.match(/(\d{4})/);

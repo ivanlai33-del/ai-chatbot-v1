@@ -23,13 +23,16 @@ export class StockService {
             // If it's not a 4-digit code, try to find the code by name
             if (!/^\d{4}$/.test(symbolOrName)) {
                 const searchRes = await axios.get(this.FINMIND_URL, {
-                    params: {
-                        dataset: 'TaiwanStockInfo',
-                        token: this.TOKEN
-                    }
+                    params: { dataset: 'TaiwanStockInfo', token: this.TOKEN }
                 });
-                const allInfo = searchRes.data.data;
-                const match = allInfo.find((s: any) => s.stock_name === symbolOrName || s.stock_id === symbolOrName);
+                const allInfo = searchRes.data.data || [];
+                // Clean the search query
+                const cleanName = symbolOrName.replace(/[股份有限公代碼股票行情]/g, '').trim();
+                const match = allInfo.find((s: any) =>
+                    s.stock_name === cleanName ||
+                    s.stock_name.includes(cleanName) ||
+                    s.stock_id === symbolOrName
+                );
                 if (match) {
                     symbol = match.stock_id;
                 } else {

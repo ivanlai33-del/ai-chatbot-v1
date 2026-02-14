@@ -12,20 +12,14 @@ export class IntentInterceptor {
         // Character Normalization: Traditional/Simplified and Typo handling
         const normalized = text.toLowerCase().trim().replace(/台/g, '臺');
 
-        // 1. Stock Detection (Any 4-digit sequence OR keywords with name)
+        // 1. Stock Detection
         const stockMatch = normalized.match(/(\d{4})/);
-        const hasStockKeyword = ["股價", "分析", "股票", "行情"].some(k => normalized.includes(k));
+        const hasStockKeyword = ["股價", "分析", "股票", "行情", "代碼"].some(k => normalized.includes(k));
 
-        if (stockMatch) {
-            const stockData = await StockService.getTaiwanStockData(stockMatch[1]);
-            if (stockData) return { intent: 'stock', data: stockData };
-        } else if (hasStockKeyword) {
-            // Try to use the text before/after keyword as a name
-            const searchName = normalized.replace(/[請問幫我查看看的行情股價分析?？\s]/g, '');
-            if (searchName.length >= 2) {
-                const stockData = await StockService.getTaiwanStockData(searchName);
-                if (stockData) return { intent: 'stock', data: stockData };
-            }
+        if (stockMatch || hasStockKeyword) {
+            const query = stockMatch ? stockMatch[1] : normalized.replace(/[請問幫我查看看的行情股價分析?？\s]/g, '');
+            const stockData = await StockService.getTaiwanStockData(query);
+            return { intent: 'stock', data: stockData || { status: "ready_for_tool_call" } };
         }
 
         // 2. Weather Detection
@@ -43,19 +37,18 @@ export class IntentInterceptor {
 
             try {
                 const weatherData = await WeatherService.getCountyForecast(fullCountyName);
-                return { intent: 'weather', data: weatherData };
+                return { intent: 'weather', data: weatherData || { status: "ready_for_tool_call" } };
             } catch (e) {
                 return { intent: 'weather', data: { status: "ready_for_tool_call" } };
             }
         }
 
-        // 3. Forex Detection (Adding Gold as it often uses similar logic or is asked in financial context)
+        // 3. Forex Detection
         const forexKeywords = ["匯率", "美金", "台幣", "幣值", "換錢", "USD", "TWD", "兌換", "美金多少", "價格", "黃金", "Gold", "日幣", "JPY"];
         if (forexKeywords.some(k => normalized.toUpperCase().includes(k.toUpperCase()))) {
             try {
-                // If asking about Gold, we might need a different tool, but for now let's tag as forex so we can force a financial tool call
                 const forexData = await ForexService.getLatestRate('USD', 'TWD', 1);
-                return { intent: 'forex', data: forexData };
+                return { intent: 'forex', data: forexData || { status: "ready_for_tool_call" } };
             } catch (e) {
                 return { intent: 'forex', data: { status: "ready_for_tool_call" } };
             }

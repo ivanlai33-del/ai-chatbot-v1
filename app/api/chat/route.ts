@@ -330,6 +330,7 @@ export async function POST(req: NextRequest) {
             });
             fullResponse = secondResponse.choices[0].message.content || "";
         }
+        console.log(`[DEBUG] Full AI Response: ${fullResponse}`);
         fullResponse = maskSensitiveOutput(fullResponse);
 
         let message = fullResponse;

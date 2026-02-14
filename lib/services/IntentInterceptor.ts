@@ -14,10 +14,11 @@ export class IntentInterceptor {
 
         // 1. Stock Detection
         const stockMatch = normalized.match(/(\d{4})/);
-        const hasStockKeyword = ["股價", "分析", "股票", "行情", "代碼"].some(k => normalized.includes(k));
+        const stockKeywords = ["股價", "分析", "股票", "行情", "代碼", "財報", "台積電", "鴻海", "聯發科", "長榮", "陽明", "萬海", "中鋼", "富邦金", "國泰金", "廣達", "緯創"];
+        const hasStockKeyword = stockKeywords.some(k => normalized.includes(k.replace(/台/g, '臺')));
 
         if (stockMatch || hasStockKeyword) {
-            const query = stockMatch ? stockMatch[1] : normalized.replace(/[請問幫我查看看的行情股價分析?？\s]/g, '');
+            const query = stockMatch ? stockMatch[1] : normalized.replace(/[請問幫我查看看的行情股價分析?？\s代碼股票]/g, '');
             const stockData = await StockService.getTaiwanStockData(query);
             return { intent: 'stock', data: stockData || { status: "ready_for_tool_call" } };
         }
@@ -44,8 +45,8 @@ export class IntentInterceptor {
         }
 
         // 3. Forex Detection
-        const forexKeywords = ["匯率", "美金", "台幣", "幣值", "換錢", "USD", "TWD", "兌換", "美金多少", "價格", "黃金", "Gold", "日幣", "JPY"];
-        if (forexKeywords.some(k => normalized.toUpperCase().includes(k.toUpperCase()))) {
+        const forexKeywords = ["匯率", "美金", "台幣", "幣值", "換錢", "USD", "TWD", "兌換", "美金多少", "價格", "黃金", "gold", "日幣", "jpy", "匯率多少"];
+        if (forexKeywords.some(k => normalized.includes(k.replace(/台/g, '臺')))) {
             try {
                 const forexData = await ForexService.getLatestRate('USD', 'TWD', 1);
                 return { intent: 'forex', data: forexData || { status: "ready_for_tool_call" } };

@@ -27,12 +27,15 @@ export class StockService {
                 });
                 const allInfo = searchRes.data.data || [];
                 // Clean the search query
-                const cleanName = symbolOrName.replace(/[股份有限公代碼股票行情]/g, '').trim();
-                const match = allInfo.find((s: any) =>
-                    s.stock_name === cleanName ||
-                    s.stock_name.includes(cleanName) ||
-                    s.stock_id === symbolOrName
-                );
+                const cleanQuery = symbolOrName.replace(/[股份有限公代碼股票行情]/g, '').trim().replace(/台/g, '臺');
+
+                const match = allInfo.find((s: any) => {
+                    const normalizedName = s.stock_name.replace(/台/g, '臺');
+                    return normalizedName === cleanQuery ||
+                        normalizedName.includes(cleanQuery) ||
+                        s.stock_id === symbolOrName
+                });
+
                 if (match) {
                     symbol = match.stock_id;
                 } else {

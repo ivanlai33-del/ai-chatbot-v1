@@ -8,64 +8,77 @@ const supabase = createClient(
 
 export async function POST(req: Request) {
     try {
-        const body = await req.json();
-        const { name, industry, systemPrompt } = body;
-
-        if (!name || !systemPrompt) {
-            return NextResponse.json({ success: false, error: 'Missing required fields' }, { status: 400 });
+        // 1. Authenticate the Partner via Bearer Token
+        const authHeader = req.headers.get('authorization');
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return NextResponse.json({ success: false, error: 'Unauthorized: Missing or invalid Bearer token' }, { status: 401 });
         }
 
-        // Simulate deployment delay
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        const apiKey = authHeader.split(' ')[1];
 
-        // 1. Get the first/active partner (mocking session context for demo)
-        const { data: partners } = await supabase
+        // 2. Validate Partner API Key in DB
+        const { data: partner, error: partnerError } = await supabase
             .from('partners')
             .select('*')
-            .order('created_at', { ascending: false })
-            .limit(1);
+            .eq('api_key', apiKey)
+            .single();
 
-        let partnerId = null;
-        if (partners && partners.length > 0) {
-            partnerId = partners[0].id;
-
-            // Deduct a slot
-            if (partners[0].slots_purchased > 0) {
-                await supabase
-                    .from('partners')
-                    .update({ slots_purchased: partners[0].slots_purchased - 1 })
-                    .eq('id', partnerId);
-            }
+        if (partnerError || !partner) {
+            return NextResponse.json({ success: false, error: 'Unauthorized: Invalid API Key' }, { status: 401 });
         }
 
-        // 2. Create the Bot in the database
+        // 3. Parse Request Payload
+        const body = await req.json();
+        const { store_name, system_prompt, industry = 'Financial/StockRadar' } = body;
+
+        if (!store_name) {
+            return NextResponse.json({ success: false, error: 'Bad Request: "store_name" is required' }, { status: 400 });
+        }
+
+        // 4. Check available slots (unless unlimited)
+        if (partner.slots_purchased <= 0) {
+            return NextResponse.json({ success: false, error: 'Forbidden: No available slots remaining' }, { status: 403 });
+        }
+
+        // 5. Deduct slot
+        if (partner.slots_purchased < 999999) { // 999999 representing unlimited
+            await supabase
+                .from('partners')
+                .update({ slots_purchased: partner.slots_purchased - 1 })
+                .eq('id', partner.id);
+        }
+
+        // 6. Create the Bot in the database
+        // We set owner_type to 'partner' to signify this was created via the API
+        const defaultPrompt = system_prompt || "你是一個專業的 AI 客服助手。請使用條列式重點回答，並保持客氣禮貌。";
+
         const newBot = {
-            name,
-            industry,
-            system_prompt: systemPrompt,
-            partner_id: partnerId,
-            is_active: true
+            store_name,
+            system_prompt: defaultPrompt,
+            partner_id: partner.id,
+            owner_type: 'partner',
+            status: 'active'
         };
 
         const { data: botData, error: botError } = await supabase
             .from('bots')
             .insert([newBot])
-            .select()
+            .select('id, mgmt_token, store_name, created_at')
             .single();
 
         if (botError) {
             console.error("Bot DB insert error:", botError.message);
-            // Fallback for UI if DB table missing
-            return NextResponse.json({
-                success: true,
-                bot: { id: 'mock_bot_' + Date.now(), ...newBot }
-            });
+            return NextResponse.json({ success: false, error: 'Failed to provision bot.' }, { status: 500 });
         }
 
+        // 7. Return success response with Bot credentials
         return NextResponse.json({
             success: true,
-            bot: botData
-        });
+            bot_id: botData.id,
+            mgmt_token: botData.mgmt_token,
+            store_name: botData.store_name,
+            message: "Bot provisioned successfully. Please direct the user to their LINE Bot to bind their owner account."
+        }, { status: 201 });
 
     } catch (error: any) {
         console.error('Provision API Error:', error);

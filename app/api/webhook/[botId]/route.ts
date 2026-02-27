@@ -111,6 +111,69 @@ export async function POST(
                         }
                     }
 
+                    // 3. 人設調閱與修改指令 (System Prompt)
+                    if (text === '@調閱人設') {
+                        try {
+                            const { data: botData } = await supabase.from('bots').select('system_prompt').eq('id', botId).single();
+                            let report = "【🧠 AI 店長核心人設報告】\n\n";
+                            if (botData?.system_prompt) {
+                                report += botData.system_prompt;
+                                report += "\n\n💡 提示：如需修改，請傳送「@修改人設 [您的新要求]」\n(例如：@修改人設 我們這個月主打中秋禮盒，請用活潑的語氣推廣)";
+                            } else {
+                                report += "(目前無人設資料)";
+                            }
+                            await client.replyMessage((event as any).replyToken, { type: 'text', text: report.trim() });
+                            continue;
+                        } catch (err) {
+                            console.error("Retrieval Error:", err);
+                            await client.replyMessage((event as any).replyToken, { type: 'text', text: "老闆抱歉，調閱人設時發生錯誤，請稍後再試。" });
+                            continue;
+                        }
+                    }
+
+                    if (text.startsWith('@修改人設')) {
+                        const newInstruction = text.replace(/^@修改人設\s*/, '').trim();
+                        if (!newInstruction) {
+                            await client.replyMessage((event as any).replyToken, { type: 'text', text: "老闆，請告訴我您想修改什麼呢？\n(例如：@修改人設 我們這個月主打中秋禮盒，請用活潑的語氣推廣)" });
+                            continue;
+                        }
+
+                        try {
+                            const { data: botData } = await supabase.from('bots').select('system_prompt').eq('id', botId).single();
+                            const currentPrompt = botData?.system_prompt || "";
+
+                            // Call LLM to rewrite the prompt using gpt-4o for better reasoning
+                            const rewriteResponse = await openai.chat.completions.create({
+                                model: "gpt-4o",
+                                messages: [
+                                    {
+                                        role: "system",
+                                        content: "你是一個專業的 AI 提示詞工程師(Prompt Engineer)。你的任務是依據「店長的新要求」，來微調、擴寫或修改「現有的人設提示詞」。\n\n請遵守以下規則：\n1. 保持原有的核心角色設定、基本資料與防呆機制(如果合理且無衝突)。\n2. 將店長的『新要求』完美揉合進新的提示詞中，例如可以加在『近期重點推廣』或修改『品牌語氣』。\n3. 直接輸出純文字的「新版 System Prompt」，不要包含任何 Markdown code block 或多餘的解釋。\n4. 若原提示詞為空，則直接根據新要求從零開始寫一份專業提示詞。"
+                                    },
+                                    {
+                                        role: "user",
+                                        content: `【現有人設提示詞】：\n${currentPrompt}\n\n【店長的新要求】：\n${newInstruction}`
+                                    }
+                                ],
+                                temperature: 0.7,
+                            });
+
+                            const newSystemPrompt = rewriteResponse.choices[0].message.content?.trim();
+
+                            if (newSystemPrompt) {
+                                await supabase.from('bots').update({ system_prompt: newSystemPrompt }).eq('id', botId);
+                                await client.replyMessage((event as any).replyToken, { type: 'text', text: "老闆沒問題！我已經理解您的新指示，並重新調整好我的大腦人設了！💪\n\n您可以輸入「@調閱人設」來查看最新狀態，或直接與我對話測試看看喔！" });
+                            } else {
+                                throw new Error("LLM returned empty prompt");
+                            }
+                            continue;
+                        } catch (err) {
+                            console.error("Rewrite Prompt Error:", err);
+                            await client.replyMessage((event as any).replyToken, { type: 'text', text: "老闆抱歉，我在重塑人設時遇到一點困難，請稍後再試。" });
+                            continue;
+                        }
+                    }
+
                     // 2. 知識更新指令 (Update)
                     if (text.startsWith('@店長聽令') || text.startsWith('@更新知識')) {
                         trainingText = text.replace(/^@店長聽令\s*|^@更新知識\s*/, '').trim();

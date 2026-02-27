@@ -5,7 +5,7 @@ import { encrypt } from '@/lib/encryption';
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { storeName, lineSecret, lineToken, openaiKey, selectedPlan, businessIndustry, businessMission } = body;
+        const { storeName, lineSecret, lineToken, openaiKey, selectedPlan, businessIndustry, businessMission, ownerLineId } = body;
 
         // Validation: Only require OpenAI Key for non-managed plans
         const planName = selectedPlan?.name || "";
@@ -45,6 +45,7 @@ export async function POST(req: NextRequest) {
                     openai_api_key: encryptedOpenaiKey,
                     selected_plan: selectedPlan?.name || 'Standard',
                     mgmt_token: mgmtToken,
+                    owner_line_id: ownerLineId || null,
                     system_prompt: `你是一個專業且富有商業遠見的「${finalStoreName}」數位轉型大使。
 你的產業類別是：${finalIndustry}。
 你的核心任務是：${finalMission}。

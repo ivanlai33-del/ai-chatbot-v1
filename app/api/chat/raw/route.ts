@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
 
             for (const toolCall of responseMessage.tool_calls) {
                 const functionName = toolCall.function.name;
-                const args = JSON.parse(toolCall.function.params || toolCall.function.arguments);
+                const args = JSON.parse(toolCall.function.arguments);
                 let result = {};
 
                 if (functionName === 'analyze_stock_market') {

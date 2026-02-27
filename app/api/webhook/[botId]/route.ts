@@ -53,9 +53,106 @@ export async function POST(
         const openai = new OpenAI({ apiKey: openaiApiKey });
 
         for (const event of events) {
+            const lineUserId = event.source.userId!;
+            const isOwner = lineUserId === bot.owner_line_id;
+
+            // --- KNOWLEDGE UPDATE INTERCEPTION (Owner Only) ---
+            if (isOwner) {
+                let trainingText = "";
+
+                if (event.type === 'message' && event.message.type === 'text') {
+                    const text = event.message.text.trim();
+                    if (text.startsWith('@店長聽令') || text.startsWith('@更新知識')) {
+                        trainingText = text.replace(/^@店長聽令\s*|^@更新知識\s*/, '').trim();
+                    }
+                } else if (event.type === 'message' && event.message.type === 'audio') {
+                    // For audio, we always assume it's a training command from the owner
+                    try {
+                        const stream = await client.getMessageContent(event.message.id);
+
+                        // Whisper requires a File-like object or a stream with a known filename.
+                        // We will convert the readable stream to a buffer.
+                        const chunks = [];
+                        for await (const chunk of stream) {
+                            chunks.push(chunk);
+                        }
+                        const buffer = Buffer.concat(chunks);
+
+                        // OpenAI Node SDK expects a File for audio transcriptions. 
+                        const audioFile = new File([buffer], 'audio.m4a', { type: 'audio/m4a' });
+
+                        const transcription = await openai.audio.transcriptions.create({
+                            file: audioFile,
+                            model: 'whisper-1'
+                        });
+
+                        trainingText = transcription.text;
+                    } catch (error) {
+                        console.error("Audio Processing Error:", error);
+                        await client.replyMessage((event as any).replyToken, {
+                            type: 'text',
+                            text: "老闆抱歉，我剛剛耳朵不太好，沒聽清楚您的語音指令，能請您再說一次嗎？"
+                        });
+                        continue; // Skip the rest of the loop for this event
+                    }
+                }
+
+                if (trainingText) {
+                    try {
+                        // Classify the intent using LLM
+                        const classificationResponse = await openai.chat.completions.create({
+                            model: "gpt-4o-mini",
+                            response_format: { type: "json_object" },
+                            messages: [
+                                {
+                                    role: "system",
+                                    content: `你是一個知識分類員。請閱讀店長的話，判斷這是一條「常見問題(FAQ)」還是「商品資訊(Product)」。
+請輸出 JSON 格式：
+如果是 FAQ：{"type": "faq", "question": "客戶可能會問的問題", "answer": "回答內容"}
+如果是 產品：{"type": "product", "name": "商品名稱", "price": 價格數字(若無提則設為0), "cost": 成本數字(若無提則設為0)}
+不要輸出多餘的字元。`
+                                },
+                                { role: "user", content: trainingText }
+                            ]
+                        });
+
+                        const result = JSON.parse(classificationResponse.choices[0].message.content || "{}");
+                        let replyMsg = "";
+
+                        if (result.type === 'faq') {
+                            await supabase.from('faq').insert([{ bot_id: botId, question: result.question, answer: result.answer }]);
+                            replyMsg = `老闆收到！我已經把這條知識記下來了：\nQ: ${result.question}\nA: ${result.answer}`;
+                        } else if (result.type === 'product') {
+                            // Simple upsert logic
+                            const { data: existingProduct } = await supabase.from('products').select('id').eq('bot_id', botId).eq('name', result.name).single();
+                            if (existingProduct) {
+                                await supabase.from('products').update({ price: result.price, cost: result.cost }).eq('id', existingProduct.id);
+                                replyMsg = `老闆收到！商品「${result.name}」的價格已更新為 ${result.price} 元。`;
+                            } else {
+                                await supabase.from('products').insert([{ bot_id: botId, name: result.name, price: result.price, cost: result.cost }]);
+                                replyMsg = `老闆收到！新商品「${result.name}」已上架，價格為 ${result.price} 元。`;
+                            }
+                        } else {
+                            replyMsg = `老闆抱歉，我不太確定這條指令要存在哪裡，能請您換個說法嗎？（聽到的內容：${trainingText}）`;
+                        }
+
+                        // Reply to owner and move to next event
+                        await client.replyMessage((event as any).replyToken, { type: 'text', text: replyMsg });
+                        continue;
+                    } catch (error) {
+                        console.error("Training Processing Error:", error);
+                        await client.replyMessage((event as any).replyToken, {
+                            type: 'text',
+                            text: "老闆抱歉，我剛剛腦袋卡住了，沒能記下您的指令，請稍後再試..."
+                        });
+                        continue;
+                    }
+                }
+            }
+
+            // --- NORMAL CHAT PROCESSING ---
             if (event.type === 'message' && event.message.type === 'text') {
                 const userMessage = event.message.text.trim();
-                const lineUserId = event.source.userId!;
 
                 // A. Fetch History
                 const { data: history } = await supabase

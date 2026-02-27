@@ -62,6 +62,39 @@ export async function POST(
 
                 if (event.type === 'message' && event.message.type === 'text') {
                     const text = event.message.text.trim();
+
+                    // 1. 知識調閱指令 (Retrieval)
+                    if (text === '@調閱知識') {
+                        try {
+                            const { data: faqs } = await supabase.from('faq').select('*').eq('bot_id', botId);
+                            const { data: products } = await supabase.from('products').select('*').eq('bot_id', botId);
+
+                            let report = "【📊 AI 練功房知識庫清單】\n\n";
+
+                            report += "🛍️ ［商品/服務清單］\n";
+                            if (products && products.length > 0) {
+                                products.forEach(p => report += `- ${p.name}: $${p.price}\n`);
+                            } else {
+                                report += "(目前無商品資料)\n";
+                            }
+
+                            report += "\n💡 ［常見問題 FAQ］\n";
+                            if (faqs && faqs.length > 0) {
+                                faqs.forEach(f => report += `Q: ${f.question}\nA: ${f.answer}\n---\n`);
+                            } else {
+                                report += "(目前無常見問題)\n";
+                            }
+
+                            await client.replyMessage((event as any).replyToken, { type: 'text', text: report.trim() });
+                            continue; // Skip the rest, we are done handling this event
+                        } catch (err) {
+                            console.error("Retrieval Error:", err);
+                            await client.replyMessage((event as any).replyToken, { type: 'text', text: "老闆抱歉，調閱資料時發生錯誤，請稍後再試。" });
+                            continue;
+                        }
+                    }
+
+                    // 2. 知識更新指令 (Update)
                     if (text.startsWith('@店長聽令') || text.startsWith('@更新知識')) {
                         trainingText = text.replace(/^@店長聽令\s*|^@更新知識\s*/, '').trim();
                     }

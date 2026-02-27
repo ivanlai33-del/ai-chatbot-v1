@@ -54,6 +54,23 @@ export async function POST(
 
         for (const event of events) {
             const lineUserId = event.source.userId!;
+
+            // --- AUTO-BINDING MECHANISM (For old bots) ---
+            if (event.type === 'message' && event.message.type === 'text' && event.message.text.trim() === '@我是店長') {
+                if (!bot.owner_line_id) {
+                    await supabase.from('bots').update({ owner_line_id: lineUserId }).eq('id', botId);
+                    bot.owner_line_id = lineUserId; // Update local memory
+                    await client.replyMessage((event as any).replyToken, { type: 'text', text: "🔑 綁定成功！您現在已經被系統識別為本店最高權限的店長了！\n\n您可以立刻試試看輸入：\n「@調閱知識」來查看知識庫\n或輸入「@店長聽令 ...」來新增知識。" });
+                    continue;
+                } else if (bot.owner_line_id === lineUserId) {
+                    await client.replyMessage((event as any).replyToken, { type: 'text', text: "您已經是本店的店長囉！不用重複綁定。" });
+                    continue;
+                } else {
+                    await client.replyMessage((event as any).replyToken, { type: 'text', text: "抱歉，本店已經有綁定其他店長了，無法更換。" });
+                    continue;
+                }
+            }
+
             const isOwner = lineUserId === bot.owner_line_id;
 
             // --- KNOWLEDGE UPDATE INTERCEPTION (Owner Only) ---

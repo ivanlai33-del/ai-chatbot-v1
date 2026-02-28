@@ -360,13 +360,8 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
 
     useEffect(() => {
         if (messages.length === 0) {
-            setMessages([{
-                id: '1',
-                role: 'ai',
-                content: isSaaS
-                    ? '您好！我是您的 **SaaS 技術轉型顧問**。不論您是想開發教育系統、餐飲或是美業系統，我都能協助您將 AI 引擎完美嵌入您的平台。我們今天從哪個產業開始討論？'
-                    : '老闆您好～我是AI店長，我能在七分鐘內幫您的Line官方帳號也升級成跟我一樣的智能AI店長！我們先從您的店名開始吧？您的Line官方帳號的名稱或者店名是？'
-            }]);
+            // Start with empty messages — no default greeting
+            setMessages([]);
         }
     }, [isSaaS]);
     const [inputValue, setInputValue] = useState('');
@@ -378,13 +373,7 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
     const [lineToken, setLineToken] = useState("");
 
     const resetChat = () => {
-        setMessages([{
-            id: '1',
-            role: 'ai',
-            content: isSaaS
-                ? '您好！我是您的 **SaaS 技術轉型顧問**。不論您是想開發教育系統、餐飲或是美業系統，我都能協助您將 AI 引擎完美嵌入您的平台。我們今天從哪個產業開始討論？'
-                : '老闆您好～我是AI店長，我能在七分鐘內幫您的Line官方帳號也升級成跟我一樣的智能AI店長！我們先從您的店名開始吧？您的Line官方帳號的名稱或者店名是？'
-        }]);
+        setMessages([]);
         setInputValue('');
         setStep(0);
         setStoreName('');
@@ -1208,9 +1197,9 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                                                             </div>
                                                                         );
 
-                                                                        // Bold Text
+                                                                        // Bold Text — strip ** and render as plain text
                                                                         const boldMatch = part.match(/\*\*(.*?)\*\*/);
-                                                                        if (boldMatch) return <span key={i} className="font-black text-zinc-900 mx-0.5">{boldMatch[1]}</span>;
+                                                                        if (boldMatch) return <span key={i}>{boldMatch[1]}</span>;
 
                                                                         // Links
                                                                         if (part.match(/^https?:\/\//)) {

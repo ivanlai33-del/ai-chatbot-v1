@@ -814,16 +814,16 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
             } else if (typeof metadata.selectedPlan === 'string') {
                 if (metadata.selectedPlan.includes('399') || metadata.selectedPlan.includes('Lite')) {
                     setSelectedPlan({ name: 'AI 老闆分身 Lite', price: '$399' });
-                } else if (metadata.selectedPlan.includes('990') || metadata.selectedPlan.includes('會計')) {
-                    setSelectedPlan({ name: 'AI 小會計 + 倉管', price: '$990' });
+                } else if (metadata.selectedPlan.includes('990') || metadata.selectedPlan.includes('強力') || metadata.selectedPlan.includes('會計')) {
+                    setSelectedPlan({ name: '公司強力店長版', price: '$990' });
                 }
             }
         } else if (actionTip === 'checkout') {
             // 🚀 Content-Aware Detection Fallback
             if (cleanContent.includes('399') || cleanContent.includes('Lite')) {
                 setSelectedPlan({ name: 'AI 老闆分身 Lite', price: '$399' });
-            } else if (cleanContent.includes('990') || cleanContent.includes('會計')) {
-                setSelectedPlan({ name: 'AI 小會計 + 倉管', price: '$990' });
+            } else if (cleanContent.includes('990') || cleanContent.includes('強力') || cleanContent.includes('會計')) {
+                setSelectedPlan({ name: '公司強力店長版', price: '$990' });
             }
         }
 
@@ -1309,18 +1309,18 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                                     {
                                                         name: '個人店長版 (Lite)',
                                                         price: '399',
-                                                        features: ['每月 5,000 則對話', '免 OpenAI API Key', '智慧服務介紹', '公司/產品QA介紹', '24小時自動回訊'],
+                                                        features: ['每月 5,000 則對話', '免 OpenAI API Key', '智慧文字客服', '產品/服務 QA 介紹', '24小時自動回訊'],
                                                     },
                                                     {
-                                                        name: '中小企業版 (會計倉管)',
+                                                        name: '公司強力店長版',
                                                         price: '990',
-                                                        features: ['每月 20,000 則對話', '含 399 所有內容', 'AI 庫存查詢', '預約/定位查詢', '毛利利潤計算', '訂單追蹤追蹤'],
+                                                        features: ['每月 20,000 則對話', '含 399 所有功能', 'AI 庫存查詢', '訂單狀態查詢', '預約詢問收集', '主動推播廣播', 'GPT-4o 升級版 AI'],
                                                         popular: true,
                                                     },
                                                     {
-                                                        name: 'AI 小公司衝刺版',
-                                                        price: '2490',
-                                                        desc: '可自備 Key / 不限流量 / 多通路整合行銷',
+                                                        name: '中小企業店長群規劃方案',
+                                                        price: '專人估價',
+                                                        desc: '多帳號部署 / 不限流量 / 多通路整合行銷',
                                                         isRequirement: true
                                                     }
                                                 ].map((p) => (

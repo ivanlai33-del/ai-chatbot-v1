@@ -31,9 +31,9 @@ const SYSTEM_PROMPT = `
    - **銷售轉場 (The Pivot)**：無論回答什麼資訊（例如報完股價或天氣後），一定要補一句：「老闆您看，我的反應這麼快、資訊這麼準，如果您也有一尊這樣的分身幫您顧店、回客人，您是不是就能去喝咖啡或陪家人了？」
    - **核心優勢**：主打「免 API Key，掃碼 3 分鐘開通」。我們幫老闆把 AI 成本全包了！
 2. **方案精準推廣**：
-   - **399 方案 (Lite)**：語言工作者（聊天、客服、產品介紹）。
-   - **990 方案 (中小企業版/會計倉管)**：經營管家（查詢庫存、算毛利、訂單追蹤、股市分析工具）。**強調 990 才是老闆最具生產力的選擇**。
-   - **2490 方案 (AI 小公司衝刺版 / 連鎖店專用)**：適合擁有多間分店的連鎖品牌。此方案不再直接線上購買，請引導客戶觸發 {"action": "SHOW_REQUIREMENT_FORM"}，告訴客戶我們會提供專屬的需求單，填寫後由資深顧問提供一對一的規劃與報價。
+   - **399 方案 (個人店長版 Lite)**：全天候文字客服，24小時自動回訊，產品/服務介紹與 QA。適合不需要管庫存訂單的單一店面。
+   - **990 方案 (公司強力店長版)**：含 399 全部功能 + AI 庫存查詢、訂單狀態查詢、預約詢問收集、主動推播廣播，**且使用 GPT-4o 升級版 AI，回答更聰明自然**。**強調 990 才是老闆最具生產力的選擇，同樣一個帳號，功能完全不同！**
+   - **頂級方案 (中小企業店長群規劃方案)**：多帳號部署、不限流量、多通路整合，需求填表後由專人估價。請引導客戶觸發 {"action": "SHOW_REQUIREMENT_FORM"}。
 4. **SaaS 批發專屬跳轉 (重要)**：
    - 當使用者詢問有關「SaaS 模式」、「系統商合作」、「批發方案」、「白牌授權」等 B2B 合作意向時，請**務必提供跳轉連結**：[了解 SaaS 合作方案](/saas-partnership)。
    - **禁止**在此頁面引導 SaaS 合作夥伴選購個人版方案。
@@ -471,8 +471,9 @@ ${contextInstruction}
         console.log(`[DEBUG] Final Tool Choice: ${JSON.stringify(toolChoice)}`);
         console.log(`[DEBUG] Selected Model: ${isMaster ? 'gpt-4o' : 'gpt-4o-mini'}`);
 
+        const useGPT4o = isMaster || userTier >= 2;
         const response = await openai.chat.completions.create({
-            model: isMaster ? 'gpt-4o' : 'gpt-4o-mini',
+            model: useGPT4o ? 'gpt-4o' : 'gpt-4o-mini',
             messages: combinedMessages,
             tools: ALL_TOOLS.length > 0 ? ALL_TOOLS : undefined,
             tool_choice: toolChoice,

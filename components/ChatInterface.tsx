@@ -1317,7 +1317,7 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                                     {
                                                         name: '公司強力店長版',
                                                         price: '990',
-                                                        features: ['每月 20,000 則對話', '含 399 所有功能', 'AI 庫存查詢', '訂單狀態查詢', '預約詢問收集', '主動推播廣播', 'GPT-4o 升級版 AI'],
+                                                        features: ['每月 20,000 則對話', '含 399 所有功能', 'AI 庫存查詢', '訂單狀態查詢', '預約詢問收集', 'GPT-4o 升級版 AI'],
                                                         popular: true,
                                                     },
                                                     {

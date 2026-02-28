@@ -541,9 +541,9 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
         if (savedMsg) {
             const parsed = JSON.parse(savedMsg);
             setMessages(parsed);
-            if (parsed.length === 0) triggerGreeting();
+            if (parsed.length === 0 && !isSaaS) triggerGreeting();
         } else {
-            triggerGreeting();
+            if (!isSaaS) triggerGreeting();
         }
 
         if (savedStep) setStep(parseInt(savedStep));
@@ -1043,7 +1043,7 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
         setBotId(null);
         setShowResetConfirm(false);
         localStorage.clear();
-        triggerGreeting();
+        if (!isSaaS) triggerGreeting();
     };
 
     if (!isLoaded) return null;

@@ -1338,8 +1338,8 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                                             }
                                                         }}
                                                         className={cn(
-                                                            "p-5 rounded-2xl border-2 text-left transition-all hover:scale-[1.02] active:scale-95 bg-white shadow-sm",
-                                                            p.popular ? "border-[#06C755] shadow-xl shadow-[#06C755]/50" : "border-zinc-100"
+                                                            "p-5 rounded-2xl border-2 text-left transition-all active:scale-95 bg-white shadow-sm",
+                                                            "border-zinc-100 hover:border-[#06C755] hover:shadow-xl hover:shadow-[#06C755]/40 hover:scale-[1.02]"
                                                         )}
                                                     >
                                                         <div className="flex justify-between items-center mb-1.5">

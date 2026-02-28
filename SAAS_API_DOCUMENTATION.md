@@ -9,7 +9,7 @@ All API requests must be authenticated using your unique SaaS Partner API Key. I
 
 ---
 
-## Endpoint: Provision Bot
+## 1. Endpoint: Provision Bot
 Creates a new AI Chatbot instance and automatically deducts one slot from your purchased quota (if applicable).
 
 - **URL**: `POST https://ai-chatbot-v1-phi.vercel.app/api/partner/provision`
@@ -35,12 +35,78 @@ Creates a new AI Chatbot instance and automatically deducts one slot from your p
   "message": "Bot provisioned successfully. Please direct the user to their LINE Bot to bind their owner account."
 }
 ```
-**Important:** The `bot_id` returned is the unique identifier for this bot. You should associate this `bot_id` with the corresponding user in your own database.
 
-### Error Responses
-- **401 Unauthorized**: Missing or invalid Bearer token.
-- **400 Bad Request**: Missing required payload fields (e.g., `store_name`).
-- **403 Forbidden**: Your partner account has exhausted its purchased slots.
+---
+
+## 2. Endpoint: Multicast Proactive Push
+Sends a notification message to multiple LINE users simultaneously. This is highly optimized using LINE's Multicast API to prevent rate limits and handle massive concurrent alerts.
+
+- **URL**: `POST https://ai-chatbot-v1-phi.vercel.app/api/partner/multicast`
+- **Headers**:
+  - `Content-Type: application/json`
+  - `Authorization: Bearer <API_KEY>`
+
+### Request Body
+```json
+{
+  "bot_ids": [
+    "1b9498a4-62c0-4f9f-994a-74664a1a4d16",
+    "another-bot-id"
+  ],
+  "messages": [
+    {
+      "type": "text",
+      "text": "🚨【StockRadar 緊急警報】🚨\n\n您追蹤的「台積電 (2330)」出現大量買單，已經突破前高！請立即查看您的投資組合。"
+    }
+  ]
+}
+```
+**Constraints**:
+- `bot_ids`: Array of strings. Max 5000 IDs per request. Our system will automatically resolve these back to their mapped LINE User IDs and chunk them for LINE API dispatching.
+- `messages`: Standard LINE Messaging API Array (Max 5 message objects).
+
+### Success Response (HTTP 200)
+```json
+{
+  "success": true,
+  "message": "Multicast operation completed.",
+  "stats": {
+    "requested_bots": 2,
+    "resolved_active_line_ids": 2,
+    "successfully_sent": 2,
+    "failed": 0
+  }
+}
+```
+
+---
+
+## 3. Endpoint: Server-To-Server Account Binding
+Programmatically binds a specific LINE User ID to a provisioned bot. Use this to skip the manual `@我是店長` or `#綁定` text commands if you already have the user's LINE ID captured via LINE Login (LIFF or Web Login) on your platform.
+
+- **URL**: `POST https://ai-chatbot-v1-phi.vercel.app/api/partner/bind`
+- **Headers**:
+  - `Content-Type: application/json`
+  - `Authorization: Bearer <API_KEY>`
+
+### Request Body
+```json
+{
+  "bot_id": "1b9498a4-62c0-4f9f-994a-74664a1a4d16",
+  "line_user_id": "U1234567890abcdef1234567890abcdef"
+}
+```
+
+### Success Response (HTTP 200)
+```json
+{
+  "success": true,
+  "bot_id": "1b9498a4-62c0-4f9f-994a-74664a1a4d16",
+  "line_user_id": "U1234567890abcdef1234567890abcdef",
+  "store_name": "StockRadar Assistant - User123",
+  "message": "Account successfully bound."
+}
+```
 
 ---
 
@@ -52,3 +118,4 @@ Creates a new AI Chatbot instance and automatically deducts one slot from your p
 3. **Store the ID**: Save the returned `bot_id` in your database linked to that user's account.
 4. **User Engagement**: Direct the user to add the central LINE Official Account.
 5. **Binding**: Instruct the user to type `@我是店長` into the LINE chat. Our system will automatically recognize the first person to do this as the owner of that newly provisioned bot session.
+6. **Trigger Alerts**: When an alert condition is met in your system, aggregate all affected users' `bot_id`s and call our `/api/partner/multicast` endpoint once to send the notification out simultaneously.

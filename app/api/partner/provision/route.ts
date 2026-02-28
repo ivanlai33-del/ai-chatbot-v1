@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { checkRateLimit } from '@/lib/middleware/rateLimit';
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -25,6 +26,15 @@ export async function POST(req: Request) {
 
         if (partnerError || !partner) {
             return NextResponse.json({ success: false, error: 'Unauthorized: Invalid API Key' }, { status: 401 });
+        }
+
+        // 2.5. Rate Limit Check (60 provisions per minute per partner)
+        const rl = checkRateLimit(`provision:${partner.id}`, 60, 60_000);
+        if (!rl.allowed) {
+            return NextResponse.json(
+                { success: false, error: 'Too Many Requests: Rate limit exceeded. Slow down.' },
+                { status: 429, headers: { 'Retry-After': String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } }
+            );
         }
 
         // 3. Parse Request Payload

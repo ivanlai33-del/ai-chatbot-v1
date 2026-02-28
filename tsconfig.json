@@ -34,6 +34,14 @@
     ".next/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "*.ts",
+    "diagnose_apis_final.ts",
+    "add_partner.ts",
+    "check_bots.ts",
+    "check_schema.ts",
+    "find_tables.ts",
+    "test_connection.ts",
+    "test_forex.ts"
   ]
 }

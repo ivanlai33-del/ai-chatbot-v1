@@ -4,6 +4,8 @@ import OpenAI from 'openai';
 import { supabase } from '@/lib/supabase';
 import { decrypt } from '@/lib/encryption';
 import { IntentInterceptor } from '@/lib/services/IntentInterceptor';
+import { GenericToolsRegistry, GenericToolsPayload } from '@/lib/services/tools';
+import { markAsProcessed, getIdempotencyKey } from '@/lib/middleware/idempotency';
 
 export async function GET() {
     return new Response('Bot Webhook is Active.', { status: 200 });
@@ -55,14 +57,86 @@ export async function POST(
         for (const event of events) {
             const lineUserId = event.source.userId!;
 
-            // --- AUTO-BINDING MECHANISM (For old bots) ---
+            // --- IDEMPOTENCY GUARD (Prevent duplicate processing from LINE retries) ---
+            const idempotencyKey = getIdempotencyKey(event);
+            if (idempotencyKey && !markAsProcessed(idempotencyKey)) {
+                console.log(`[Idempotency] Skipping duplicate event: ${idempotencyKey}`);
+                continue;
+            }
+
+            // --- DYNAMIC ROUTING & BINDING FOR SAAS PARTNERS ---
+            let activeBot = bot; // Default to the hooked bot
+
+            if (event.type === 'message' && event.message.type === 'text') {
+                const text = event.message.text.trim();
+
+                // 1. Account Binding Command (#綁定)
+                if (text.startsWith('#綁定')) {
+                    const mgmtToken = text.replace(/^#綁定\s*/, '').trim();
+                    if (!mgmtToken) {
+                        await client.replyMessage((event as any).replyToken, { type: 'text', text: "請輸入有效的綁定碼。例如：#綁定 1234-5678" });
+                        continue;
+                    }
+
+                    // Look up the sub-bot to bind
+                    const { data: subBotToBind } = await supabase
+                        .from('bots')
+                        .select('id, owner_line_id, store_name')
+                        .eq('mgmt_token', mgmtToken)
+                        .eq('partner_id', bot.partner_id) // ensure it belongs to the same SaaS
+                        .single();
+
+                    if (!subBotToBind) {
+                        await client.replyMessage((event as any).replyToken, { type: 'text', text: "❌ 綁定失敗：無效的綁定碼或該機器人不屬於此系統。" });
+                        continue;
+                    }
+
+                    // Proceed to bind
+                    await supabase.from('bots').update({ owner_line_id: lineUserId }).eq('id', subBotToBind.id);
+                    await client.replyMessage((event as any).replyToken, {
+                        type: 'text',
+                        text: `✅ 綁定成功！您已成功連接您的專屬助理【${subBotToBind.store_name}】。\n\n之後您在這裡說的話，都會由您的專屬助理為您解答！`
+                    });
+                    continue;
+                }
+            }
+
+            // 2. Dynamic Routing (Sub-Bot Lookup)
+            // If this webhook belongs to a partner's Central OA, try to find the user's bound sub-bot
+            if (bot.partner_id) {
+                const { data: subBot } = await supabase
+                    .from('bots')
+                    .select('*')
+                    .eq('partner_id', bot.partner_id)
+                    .eq('owner_line_id', lineUserId)
+                    .neq('id', bot.id) // Not the central bot itself
+                    .eq('status', 'active')
+                    .order('created_at', { ascending: false })
+                    .limit(1)
+                    .single();
+
+                if (subBot) {
+                    activeBot = subBot; // 🧠 BRAIN SWAP: The active bot is now the user's specific SaaS sub-bot
+                } else if (bot.owner_type === 'partner') {
+                    // It's a Central OA, but user hasn't bound anything. Fallback gently.
+                    if (event.type === 'message' && event.message.type === 'text' && !event.message.text.trim().startsWith('@我是店長')) {
+                        await client.replyMessage((event as any).replyToken, {
+                            type: 'text',
+                            text: "⚠️ 您尚未綁定專屬的 AI 助理帳號喔！\n請從您的系統後台點擊綁定連結，或輸入「#綁定 [您的綁定碼]」來啟用專屬服務。"
+                        });
+                        continue;
+                    }
+                }
+            }
+
+            // --- AUTO-BINDING MECHANISM (For old standalone bots) ---
             if (event.type === 'message' && event.message.type === 'text' && event.message.text.trim() === '@我是店長') {
-                if (!bot.owner_line_id) {
-                    await supabase.from('bots').update({ owner_line_id: lineUserId }).eq('id', botId);
-                    bot.owner_line_id = lineUserId; // Update local memory
+                if (!activeBot.owner_line_id) {
+                    await supabase.from('bots').update({ owner_line_id: lineUserId }).eq('id', activeBot.id);
+                    activeBot.owner_line_id = lineUserId; // Update local memory
                     await client.replyMessage((event as any).replyToken, { type: 'text', text: "🔑 綁定成功！您現在已經被系統識別為本店最高權限的店長了！\n\n您可以立刻試試看輸入：\n「@調閱知識」來查看知識庫\n或輸入「@店長聽令 ...」來新增知識。" });
                     continue;
-                } else if (bot.owner_line_id === lineUserId) {
+                } else if (activeBot.owner_line_id === lineUserId) {
                     await client.replyMessage((event as any).replyToken, { type: 'text', text: "您已經是本店的店長囉！不用重複綁定。" });
                     continue;
                 } else {
@@ -71,7 +145,7 @@ export async function POST(
                 }
             }
 
-            const isOwner = lineUserId === bot.owner_line_id;
+            const isOwner = lineUserId === activeBot.owner_line_id;
 
             // --- KNOWLEDGE UPDATE INTERCEPTION (Owner Only) ---
             if (isOwner) {
@@ -396,20 +470,7 @@ export async function POST(
                             }
                         }
                     },
-                    {
-                        type: "function",
-                        function: {
-                            name: "get_current_weather",
-                            description: "獲取指定地點的即時天氣、溫度與氣象建議",
-                            parameters: {
-                                type: "object",
-                                properties: {
-                                    location: { type: "string", description: "地點名稱，例如 台北市、台中、Taipei" }
-                                },
-                                required: ["location"]
-                            }
-                        }
-                    }
+                    ...GenericToolsPayload
                 ];
 
                 // C. Call OpenAI
@@ -482,6 +543,9 @@ export async function POST(
                             } else if (functionName === "get_current_weather") {
                                 const data = await IntentInterceptor.intercept(args.location + "天氣");
                                 functionResponse = JSON.stringify(data.data || { error: "查無此天氣數據" });
+                            } else if (GenericToolsRegistry[functionName]) {
+                                // Execute any Generic Tool from the Registry dynamically
+                                functionResponse = await GenericToolsRegistry[functionName].execute(args);
                             }
 
                             toolMessages.push({

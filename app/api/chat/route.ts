@@ -178,6 +178,20 @@ let STATIC_TOOLS: OpenAI.Chat.Completions.ChatCompletionTool[] = [
                 required: ["from", "to"]
             }
         }
+    },
+    {
+        type: "function",
+        function: {
+            name: "analyze_stock_market",
+            description: "查詢台灣股市即時收盤價格、技術分析趨勢、支撐壓力區，適用於台股代號（如 2330、2317）或公司名稱（如台積電、鴻海）",
+            parameters: {
+                type: "object",
+                properties: {
+                    symbol: { type: "string", description: "台股代號（如 2330）或公司名稱（如台積電）" }
+                },
+                required: ["symbol"]
+            }
+        }
     }
 ];
 

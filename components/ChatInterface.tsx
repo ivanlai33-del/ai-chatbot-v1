@@ -626,6 +626,9 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
             if (res.ok) {
                 setNewProduct({ name: '', price: '', stock_quantity: '', purchase_url: '' });
                 fetchAdminData();
+            } else {
+                const err = await res.json();
+                alert(err.error || '新增失敗');
             }
         } catch (err) { console.error(err); }
         setIsSaving(false);
@@ -1810,6 +1813,13 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
 
                                                                     {adminTab === 'products' && (
                                                                         <div className="space-y-4 pt-2">
+                                                                            <div className="flex items-center justify-between px-1">
+                                                                                <span className="text-xs text-slate-500">熱門商品席位</span>
+                                                                                <span className={`text-xs font-bold ${products.length >= 50 ? 'text-red-500' : products.length >= 40 ? 'text-amber-500' : 'text-indigo-500'}`}>{products.length} / 50</span>
+                                                                            </div>
+                                                                            <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                                                                                <div className={`h-full rounded-full transition-all ${products.length >= 50 ? 'bg-red-400' : products.length >= 40 ? 'bg-amber-400' : 'bg-indigo-400'}`} style={{ width: `${Math.min((products.length / 50) * 100, 100)}%` }} />
+                                                                            </div>
                                                                             <div className="bg-white p-4 rounded-xl border border-dashed border-indigo-200 space-y-3">
                                                                                 <input
                                                                                     type="text"

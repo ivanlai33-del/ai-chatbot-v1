@@ -31,6 +31,10 @@ export async function POST(
     if (!bot) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     if (bot.selected_plan?.includes('399')) return NextResponse.json({ error: '此方案不包含商品管理功能，請先升級。' }, { status: 403 });
 
+    // Enforce 50-product limit for 990 plan
+    const { count } = await supabase.from('products').select('id', { count: 'exact', head: true }).eq('bot_id', params.botId);
+    if ((count ?? 0) >= 50) return NextResponse.json({ error: '已達 50 件商品上限，請刪除舊商品後再新增。' }, { status: 403 });
+
     const { data, error } = await supabase.from('products').insert([
         {
             bot_id: params.botId,

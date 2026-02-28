@@ -23,40 +23,13 @@ interface SaaSChatInterfaceProps {
 }
 
 export default function SaaSChatInterface({ storeName, isMaster, isSaaS = true, focusedField, currentStep, isActivation = false, isProvisioning = false, botKnowledge, pageContext }: SaaSChatInterfaceProps) {
-    const getInitialMessage = () => {
-        if (isProvisioning || pageContext === 'provision') {
-            return '老闆您好～我是AI店長，我能在七分鐘內幫您的Line官方帳號也升級成跟我一樣的智能AI店長！我們先從您的店名開始吧？您的Line官方帳號的名稱或者店名是？';
-        }
-        if (pageContext === 'landing') {
-            return '您好！我是您的 **AI 系統導入顧問**。想了解如何將我們強大的 AI 大腦 API 串接至貴公司的 POS/CRM 系統中嗎？我可以為您說明 Partner Token 的運作機制！';
-        }
-        if (pageContext === 'dashboard') {
-            return '總指揮官您好！這裡是您的 **SaaS 管理中心**。您可以從這裡查看目前已核發的AI店長席位總數，並監控旗下所有 AI 店長的運作狀態。有任何系統設定問題歡迎問我。';
-        }
-        if (pageContext === 'knowledge') {
-            return '您好！這裡是 **AI 練功房**。在這裡設定的 Master Prompt 會同步套用到您旗下的各個分店大腦中。不確定怎麼寫 Prompt 嗎？我可以教您！';
-        }
-        // Default (subscribe or others)
-        return '您好！我是您的 **AI 系統導入專家**。我能協助您評估最適合貴公司的 API 批發授權方案。\n\n請問您目前開發的系統屬於哪個產業類型？預計發行給多少終端店家使用？';
-    };
-
-    const [messages, setMessages] = useState<Message[]>([
-        {
-            id: '1',
-            role: 'ai',
-            content: getInitialMessage()
-        }
-    ]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const [inputValue, setInputValue] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
 
     const resetChat = () => {
-        setMessages([{
-            id: Date.now().toString(),
-            role: 'ai',
-            content: getInitialMessage()
-        }]);
+        setMessages([]);
         setInputValue('');
         setIsTyping(false);
     };
@@ -160,7 +133,7 @@ export default function SaaSChatInterface({ storeName, isMaster, isSaaS = true, 
                                 ? 'bg-slate-800/60 border border-slate-700/50 text-slate-300'
                                 : 'bg-indigo-600/20 border border-indigo-500/30 text-indigo-200'
                                 }`}>
-                                {m.content}
+                                {m.content.replace(/\*\*(.*?)\*\*/g, '$1')}
                             </div>
                         </motion.div>
                     ))}

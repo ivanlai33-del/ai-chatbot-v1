@@ -22,7 +22,7 @@ export async function POST(
     req: Request,
     { params }: { params: { botId: string } }
 ) {
-    const { name, price, cost, stock_quantity, mgmtToken } = await req.json();
+    const { name, price, cost, stock_quantity, purchase_url, mgmtToken } = await req.json();
 
     if (!mgmtToken) return NextResponse.json({ error: 'Missing token' }, { status: 401 });
 
@@ -36,8 +36,9 @@ export async function POST(
             bot_id: params.botId,
             name,
             price: Number(price),
-            cost: Number(cost),
-            stock_quantity: Number(stock_quantity)
+            cost: cost ? Number(cost) : null,
+            stock_quantity: Number(stock_quantity),
+            purchase_url: purchase_url || null
         }
     ]).select().single();
 

@@ -164,7 +164,7 @@ export async function POST(
 
                             report += "🛍️ ［商品/服務清單］\n";
                             if (products && products.length > 0) {
-                                products.forEach(p => report += `- ${p.name}: $${p.price}\n`);
+                                products.forEach(p => report += `- ${p.name}: $${p.price}${p.purchase_url ? `\n  🔗 購買: ${p.purchase_url}` : ''}\n`);
                             } else {
                                 report += "(目前無商品資料)\n";
                             }

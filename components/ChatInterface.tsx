@@ -403,7 +403,7 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
     const [products, setProducts] = useState<any[]>([]);
     const [faqList, setFaqList] = useState<any[]>([]);
     const [orders, setOrders] = useState<any[]>([]);
-    const [newProduct, setNewProduct] = useState({ name: '', price: '', cost: '', stock_quantity: '' });
+    const [newProduct, setNewProduct] = useState({ name: '', price: '', stock_quantity: '', purchase_url: '' });
     const [newFaq, setNewFaq] = useState({ question: '', answer: '' });
     const [showResetConfirm, setShowResetConfirm] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -624,7 +624,7 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                 body: JSON.stringify({ ...newProduct, mgmtToken })
             });
             if (res.ok) {
-                setNewProduct({ name: '', price: '', cost: '', stock_quantity: '' });
+                setNewProduct({ name: '', price: '', stock_quantity: '', purchase_url: '' });
                 fetchAdminData();
             }
         } catch (err) { console.error(err); }
@@ -1818,7 +1818,7 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                                                                     onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
                                                                                     className="w-full p-3 bg-slate-50 border border-slate-100 rounded-lg text-sm"
                                                                                 />
-                                                                                <div className="grid grid-cols-3 gap-2">
+                                                                                <div className="grid grid-cols-2 gap-2">
                                                                                     <input
                                                                                         type="number"
                                                                                         placeholder="售價"
@@ -1828,19 +1828,19 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                                                                     />
                                                                                     <input
                                                                                         type="number"
-                                                                                        placeholder="成本"
-                                                                                        value={newProduct.cost}
-                                                                                        onChange={(e) => setNewProduct({ ...newProduct, cost: e.target.value })}
-                                                                                        className="p-3 bg-slate-50 border border-slate-100 rounded-lg text-sm"
-                                                                                    />
-                                                                                    <input
-                                                                                        type="number"
-                                                                                        placeholder="庫存"
+                                                                                        placeholder="庫存數量"
                                                                                         value={newProduct.stock_quantity}
                                                                                         onChange={(e) => setNewProduct({ ...newProduct, stock_quantity: e.target.value })}
                                                                                         className="p-3 bg-slate-50 border border-slate-100 rounded-lg text-sm"
                                                                                     />
                                                                                 </div>
+                                                                                <input
+                                                                                    type="url"
+                                                                                    placeholder="購買連結（選填）例：https://shopee.tw/item/xxx"
+                                                                                    value={newProduct.purchase_url}
+                                                                                    onChange={(e) => setNewProduct({ ...newProduct, purchase_url: e.target.value })}
+                                                                                    className="w-full p-3 bg-slate-50 border border-slate-100 rounded-lg text-sm"
+                                                                                />
                                                                                 <button
                                                                                     onClick={handleAddProduct}
                                                                                     className="w-full py-2 bg-indigo-500 text-white rounded-lg font-bold text-sm"
@@ -1853,10 +1853,14 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                                                                     <div key={p.id} className="p-3 bg-white border border-slate-100 rounded-xl flex justify-between items-center">
                                                                                         <div>
                                                                                             <p className="font-bold text-sm text-slate-800">{p.name}</p>
-                                                                                            <p className="text-[10px] text-slate-400">售價: ${p.price} | 庫存: {p.stock_quantity}</p>
+                                                                                            <p className="text-[10px] text-slate-400">售價: ${p.price} | 庫存: {p.stock_quantity ?? '未設定'}</p>
                                                                                         </div>
                                                                                         <div className="text-right">
-                                                                                            <p className="text-[10px] text-emerald-500 font-bold">預估毛利: ${p.price - p.cost}</p>
+                                                                                            {p.purchase_url ? (
+                                                                                                <a href={p.purchase_url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-indigo-500 font-bold underline">🔗 賣場連結</a>
+                                                                                            ) : (
+                                                                                                <p className="text-[10px] text-slate-300">無連結</p>
+                                                                                            )}
                                                                                         </div>
                                                                                     </div>
                                                                                 ))}

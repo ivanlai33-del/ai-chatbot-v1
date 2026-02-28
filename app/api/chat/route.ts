@@ -7,27 +7,18 @@ import {
     maskSensitiveOutput,
     isMeaningless
 } from '@/lib/security';
-import yahooFinance from 'yahoo-finance2';
 import { IntentInterceptor } from '@/lib/services/IntentInterceptor';
 import { ForexService } from '@/lib/services/ForexService';
 import { WeatherService } from '@/lib/services/WeatherService';
 import { StockService } from '@/lib/services/StockService';
-import fs from 'fs';
-import axios from 'axios';
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
 
 function logToFile(data: any) {
-    try {
-        const timestamp = new Date().toISOString();
-        const msg = `[${timestamp}] ${JSON.stringify(data, null, 2)}\n---\n`;
-        // Use absolute path for reliability
-        fs.appendFileSync('/Users/ivanlai/.gemini/antigravity/scratch/ai-chatbot-v1/ai_chat_debug.log', msg);
-    } catch (e) {
-        console.error("Logger Error:", e);
-    }
+    // Serverless-safe logger: use console.log only (no filesystem access)
+    console.log('[ChatAPI]', JSON.stringify(data));
 }
 
 const SYSTEM_PROMPT = `
@@ -510,10 +501,9 @@ ${contextInstruction}
                     if (dynamicMapping) {
                         try {
                             const baseUrl = dynamicMapping.ai_external_services.api_base_url;
-                            // Route: baseURL + /tool_name (e.g. .../stock/get_stock_info)
-                            // or just use a query param
-                            const apiRes = await axios.get(`${baseUrl}/stock`, { params: args });
-                            functionResponse = JSON.stringify(apiRes.data.data || { error: "服務查詢失敗" });
+                            const fetchRes = await fetch(`${baseUrl}/stock?${new URLSearchParams(args).toString()}`);
+                            const fetchData = await fetchRes.json();
+                            functionResponse = JSON.stringify(fetchData.data || { error: "服務查詢失敗" });
                         } catch (err) { functionResponse = JSON.stringify({ error: "外部服務目前無法連通" }); }
                     } else if (functionName === "analyze_stock_market") {
                         // Compatibility Fallback

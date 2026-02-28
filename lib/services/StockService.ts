@@ -51,7 +51,21 @@ const STOCK_NAMES: Record<string, string> = {
     '2379': '瑞昱半導體',
     '3034': '聯詠',
     '6415': '矽力-KY',
+    '2357': '華碩',
+    '2353': '宏碁',
+    '3045': '台灣大哥大',
+    '2498': '宏達電',
+    '2376': '技嘉',
 };
+
+// Reverse lookup: Chinese name → stock code
+const NAME_TO_CODE: Record<string, string> = Object.entries(STOCK_NAMES).reduce((acc, [code, name]) => {
+    acc[name] = code;
+    // Also add common short forms
+    const shortName = name.replace(/股份有限公司|有限公司|科技|集團|控股|電腦|精密工業|海運|金控/g, '').trim();
+    if (shortName && shortName !== name) acc[shortName] = code;
+    return acc;
+}, {} as Record<string, string>);
 
 export class StockService {
     private static FINMIND_API = 'https://api.finmindtrade.com/api/v4/data';
@@ -62,8 +76,15 @@ export class StockService {
      */
     static async getTaiwanStockData(symbolInput: string): Promise<StockData | null> {
         try {
-            // Normalize: strip .TW suffix, ensure 4-digit format
-            const symbol = symbolInput.replace(/\.TW$/i, '').replace(/[^0-9A-Za-z]/g, '');
+            let symbol = symbolInput.trim();
+
+            // 1. Check if it's a Chinese company name → look up code
+            if (NAME_TO_CODE[symbol]) {
+                symbol = NAME_TO_CODE[symbol];
+            } else {
+                // 2. Normalize: strip .TW suffix and non-alphanumeric chars
+                symbol = symbol.replace(/\.TW$/i, '').replace(/[^0-9A-Za-z]/g, '');
+            }
             if (!symbol) return null;
 
             // Fetch last 30 days of data for trend calculation

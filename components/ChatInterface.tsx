@@ -1084,10 +1084,10 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                 <img src="/Lai Logo_2.svg" className="w-full h-full object-contain" alt="Lai Logo" />
                             </div>
                             <div>
-                                <h1 className="font-extrabold text-[23px] tracking-tight text-zinc-900 leading-tight">開通你的Line官方AI客服服務</h1>
+                                <h1 className="font-extrabold text-[23px] tracking-tight text-zinc-900 leading-tight">開通你的Line官方Ai智能店長</h1>
                                 <div className="flex items-center gap-1.5">
                                     <span className="flex h-2 w-2 rounded-full bg-[#06C755] animate-pulse" />
-                                    <p className="text-[12px] font-black text-zinc-400 uppercase tracking-widest">{viewMode === 'webview' ? 'Resource Viewer' : 'Activate Your Line Official AI Service'}</p>
+                                    <p className="text-[12px] font-black text-zinc-400 uppercase tracking-widest">{viewMode === 'webview' ? 'Resource Viewer' : 'Activate Your Line Official Ai Smart Manager'}</p>
                                 </div>
                             </div>
                         </div>

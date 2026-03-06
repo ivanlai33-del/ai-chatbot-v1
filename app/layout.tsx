@@ -5,6 +5,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
+    metadataBase: new URL('https://bot.ycideas.com'),
     title: {
         default: "Line 官方 Ai 智能店長｜24H 自動化銷售與客服助手",
         template: "%s | Ai 智能店長"

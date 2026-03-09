@@ -22,7 +22,7 @@ export const metadata: Metadata = {
         siteName: "Ai 智能店長",
         images: [
             {
-                url: "/og-image.png",
+                url: "/og-image.jpeg",
                 width: 1200,
                 height: 630,
                 alt: "Line 官方 Ai 智能店長",
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
         card: "summary_large_image",
         title: "Line 官方 Ai 智能店長｜24H 自動化銷售與客服助手",
         description: "專為個人與公司打造的 LINE 官方帳號專屬店長。24 小時不打烊的金牌銷售員。",
-        images: ["/og-image.png"],
+        images: ["/og-image.jpeg"],
     },
     robots: {
         index: true,

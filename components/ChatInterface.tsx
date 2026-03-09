@@ -2,8 +2,11 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Bot, User, Sparkles, CreditCard, Settings, Rocket, ExternalLink, RefreshCw, Key, Brain, Power, Save, RotateCcw, Copy, Layout, Store, GraduationCap, ShoppingBag, Building2, Stethoscope, ChevronRight, Check, Lock } from 'lucide-react';
+import { Send, Bot, User, Sparkles, CreditCard, Settings, Rocket, ExternalLink, RefreshCw, Key, Brain, Power, Save, RotateCcw, Copy, Layout, Store, GraduationCap, ShoppingBag, Building2, Stethoscope, ChevronRight, Check, Lock, ZoomIn, ZoomOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import dynamic from 'next/dynamic';
+
+const DigitalBackground = dynamic(() => import('./DigitalBackground'), { ssr: false });
 
 type Message = {
     id: string;
@@ -149,8 +152,8 @@ const PointerSequenceStep3 = ({ isActive = false }: { isActive?: boolean }) => {
             initial={{ opacity: 0, x: 50, y: 70 }}
             animate={{
                 opacity: [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
-                x: [50, 30, 30, 160, 160, 80, 80, -200, -200, -200, -200, 50, 50],
-                y: [70, 42, 42, 42, 42, 90, 90, 180, 180, 260, 260, 70, 70],
+                x: [50, 35, 35, 165, 165, 80, 80, -200, -200, -200, -200, 50, 50],
+                y: [70, 45, 45, 45, 45, 90, 90, 180, 180, 260, 260, 70, 70],
                 scale: [1, 1, 0.7, 1, 0.7, 1, 1, 1, 0.7, 1, 0.7, 1, 1]
             }}
             transition={{
@@ -159,7 +162,7 @@ const PointerSequenceStep3 = ({ isActive = false }: { isActive?: boolean }) => {
                 times: [0, 0.1, 0.15, 0.25, 0.3, 0.45, 0.5, 0.65, 0.7, 0.85, 0.9, 0.95, 1],
                 ease: "easeInOut"
             }}
-            className="absolute z-20 w-6 h-6 pointer-events-none drop-shadow-md origin-top-left"
+            className="absolute top-0 left-0 z-20 w-6 h-6 pointer-events-none drop-shadow-md origin-top-left"
         >
             <svg viewBox="0 0 24 24" className="w-full h-full text-[#06C755] fill-white stroke-[#06C755] stroke-2">
                 <path d="M5.5 3l13.5 13.5-5.5 1.5 3 4-2.5 2-3.5-4.5-5 3.5z" />
@@ -180,8 +183,8 @@ const PointerSequenceWebhook = ({ isActive = false }: { isActive?: boolean }) =>
             initial={{ opacity: 0, x: -200, y: 0 }}
             animate={{
                 opacity: [0, 1, 1, 1, 1, 1, 1, 1, 0],
-                x: [-200, -200, -200, 140, 140, 250, 250, -200, -200],
-                y: [0, -100, -100, 48, 48, 48, 48, -100, -100],
+                x: [-200, -200, -200, 130, 130, 280, 280, -200, -200],
+                y: [0, -100, -100, 47, 47, 47, 47, -100, -100],
                 scale: [1, 1, 0.7, 1, 0.7, 1, 0.7, 1, 1]
             }}
             transition={{
@@ -190,7 +193,7 @@ const PointerSequenceWebhook = ({ isActive = false }: { isActive?: boolean }) =>
                 times: [0, 0.1, 0.2, 0.35, 0.45, 0.6, 0.7, 0.9, 1],
                 ease: "easeInOut"
             }}
-            className="absolute z-20 w-6 h-6 pointer-events-none drop-shadow-md origin-top-left"
+            className="absolute top-0 left-0 z-20 w-6 h-6 pointer-events-none drop-shadow-md origin-top-left"
         >
             <svg viewBox="0 0 24 24" className="w-full h-full text-[#06C755] fill-white stroke-[#06C755] stroke-2">
                 <path d="M5.5 3l13.5 13.5-5.5 1.5 3 4-2.5 2-3.5-4.5-5 3.5z" />
@@ -205,7 +208,7 @@ const PointerSequenceWebhook = ({ isActive = false }: { isActive?: boolean }) =>
 };
 
 const MockLineUI = ({ step, isActive = false }: { step: number, isActive?: boolean }) => (
-    <div className="relative bg-white border border-zinc-200 rounded-2xl overflow-hidden shadow-sm font-sans text-xs">
+    <div className="relative w-full max-w-[320px] mx-auto bg-white border border-zinc-200 rounded-2xl overflow-visible shadow-sm font-sans text-xs">
         <div className="p-4 space-y-3">
             {step === 0 && (
                 <div className="flex flex-col items-center justify-center space-y-4 py-2">
@@ -257,13 +260,13 @@ const MockLineUI = ({ step, isActive = false }: { step: number, isActive?: boole
                         <div className="pb-1 text-zinc-400 font-bold text-[10px]">Basic settings</div>
                         <div className="pb-1 border-b-[3px] border-[#06C755] text-zinc-900 font-bold text-[10px]">Messaging API</div>
                     </div>
-                    <div className="relative p-3 border border-zinc-200 rounded-lg mt-4 bg-zinc-50 h-[84px] overflow-hidden">
+                    <div className="relative p-3 border border-zinc-200 rounded-lg mt-4 bg-zinc-50 h-[96px] overflow-visible">
                         <div className="text-zinc-800 font-bold text-[10px] mb-2">Channel access token</div>
 
                         {/* Issue Button */}
                         <motion.div
                             animate={isActive ? { opacity: [1, 1, 0, 0, 0, 0, 1] } : { opacity: 1 }}
-                            transition={{ duration: 7, repeat: Infinity, times: [0, 0.08, 0.12, 0.9, 0.95, 0.98, 1], ease: "linear" }}
+                            transition={{ duration: 7, repeat: Infinity, times: [0, 0.15, 0.20, 0.9, 0.95, 0.98, 1], ease: "linear" }}
                             className="absolute px-4 py-1.5 bg-zinc-800 text-white rounded w-max text-[9px] font-bold top-[35px] left-[12px]"
                         >
                             Issue
@@ -272,7 +275,7 @@ const MockLineUI = ({ step, isActive = false }: { step: number, isActive?: boole
                         {/* Token Input + Copy Button */}
                         <motion.div
                             animate={isActive ? { opacity: [0, 0, 1, 1, 0, 0, 0] } : { opacity: 0 }}
-                            transition={{ duration: 7, repeat: Infinity, times: [0, 0.08, 0.12, 0.5, 0.55, 1, 1], ease: "linear" }}
+                            transition={{ duration: 7, repeat: Infinity, times: [0, 0.15, 0.20, 0.8, 0.85, 1, 1], ease: "linear" }}
                             className="absolute flex items-center gap-2 top-[35px] left-[12px]"
                         >
                             <div className="px-2 py-1 border border-zinc-300 rounded text-zinc-500 font-mono text-[9px] bg-white w-[130px] truncate leading-tight">
@@ -301,14 +304,14 @@ const MockLineUI = ({ step, isActive = false }: { step: number, isActive?: boole
             {step === 4 && (
                 <div className="space-y-3 py-1">
                     <div className="text-zinc-500 text-[9px] font-bold">TOP &gt; 你的商店 &gt; Messaging API</div>
-                    <div className="relative p-3 border border-zinc-200 rounded-lg bg-zinc-50 h-[84px] overflow-hidden">
+                    <div className="relative p-3 border border-zinc-200 rounded-lg bg-zinc-50 min-h-[96px] overflow-visible">
                         <div className="text-zinc-800 font-bold text-[10px] mb-2">Webhook URL</div>
                         <div className="flex flex-col gap-2">
                             <div className="flex items-center gap-2">
                                 <div className="px-2 py-1 border border-zinc-300 rounded text-zinc-400 font-mono text-[9px] bg-white flex-1 truncate">
                                     <motion.span
                                         animate={isActive ? { opacity: [0, 0, 1, 1] } : { opacity: 0 }}
-                                        transition={{ duration: 6, repeat: Infinity, times: [0, 0.2, 0.25, 1] }}
+                                        transition={{ duration: 6, repeat: Infinity, times: [0, 0.45, 0.50, 1] }}
                                     >
                                         https://your-domain.com/api/webhook...
                                     </motion.span>
@@ -317,7 +320,7 @@ const MockLineUI = ({ step, isActive = false }: { step: number, isActive?: boole
                             </div>
                             <motion.div
                                 animate={isActive ? { opacity: [0, 0, 0, 1, 1, 1, 0] } : { opacity: 0 }}
-                                transition={{ duration: 6, repeat: Infinity, times: [0, 0.6, 0.65, 0.7, 0.85, 0.9, 1] }}
+                                transition={{ duration: 6, repeat: Infinity, times: [0, 0.7, 0.75, 0.8, 0.85, 0.9, 1] }}
                                 className="flex items-center gap-1 text-[#06C755] font-black text-[10px]"
                             >
                                 <Sparkles className="w-3 h-3" />
@@ -356,6 +359,7 @@ const MockLineUI = ({ step, isActive = false }: { step: number, isActive?: boole
 );
 
 export default function ChatInterface({ isMaster = false, isSaaS = false }: { isMaster?: boolean, isSaaS?: boolean }) {
+    const hasGreetedRef = useRef(false);
     const [messages, setMessages] = useState<Message[]>([]);
 
     useEffect(() => {
@@ -381,7 +385,6 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
         setLineSecret("");
         setLineToken("");
     };
-    const [openaiKey, setOpenaiKey] = useState("");
     const [businessIndustry, setBusinessIndustry] = useState("");
     const [businessMission, setBusinessMission] = useState("");
     const [mgmtToken, setMgmtToken] = useState<string | null>(null);
@@ -389,6 +392,7 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
     const [adminBotData, setAdminBotData] = useState<any>(null);
     const [isSaving, setIsSaving] = useState(false);
     const [tutorialStep, setTutorialStep] = useState(0);
+    const [isTutorialExpanded, setIsTutorialExpanded] = useState<number | null>(null);
 
     useEffect(() => {
         const lastMsg = messages[messages.length - 1];
@@ -496,43 +500,30 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
         }
     };
 
-    const triggerGreeting = () => {
+    const triggerGreeting = (force = false) => {
+        if (!force && hasGreetedRef.current) return;
+        hasGreetedRef.current = true;
+
         const greetings = [
             [
-                "嗨，老闆您好～我是 AI 店長。",
-                "如果 Line 官方帳號裡每天一大堆訊息，卻沒空回，我可以幫你 24 小時接客、回答、賣東西。\n您的 Line 官方帳號呢想不想也有一位 AI 全職店長呢？"
+                "嗨老闆，我是您的 AI 店長！",
+                "現在前 500 名立即開通再享優惠：個人版 499、公司版 1199！\n您可以隨便問個問題，看看我會怎麼回覆您喔！"
             ],
             [
-                "歡迎光臨，我是可以住進你 Line 官方帳號的 AI 店長。",
-                "我專門幫一人店、小工作室，變成像有多一個24小時都在的員工一樣：幫你回話、介紹、收單、做紀錄。你也想有一個跟我一樣的分身來幫您省下更多的時間嗎？"
+                "歡迎光臨！我是幫您 24H 顧店的 AI 店長。",
+                "慶祝上線，前 500 名開通公司強力版只要 1199！\n您可以直接把我當成客服試聊看看，感受一下我的回覆速度！"
             ],
             [
-                "老闆好，我是你的 AI 客服兼小店長。",
-                "你可以直接用跟客人一樣的方式問我問題，看看我怎麼回。\n如果你覺得『這樣回還不錯』，我可以教你幾個步驟就開通，幫您的Line官方升級成跟我一樣的AI店長。"
+                "老闆您好，如果 Line 訊息回不完，您可以試著交給我。",
+                "馬上開通即享前 500 名特惠（Lite 版只要 499）！您可以隨便發個訊息，體驗看看我的溝通功力喔～"
             ],
             [
-                "老闆您好，讓AI店長進駐您的官方帳號。想像一下：以後客人傳Line來問價錢、預約、地址、課程差別，都由我先幫你回。",
-                "你也想有一個跟我一樣的分身來幫您省下更多的時間嗎？"
+                "嗨！我是 AI 店長，專門負責幫您接單、回答客服問題。",
+                "現在立即開通可享前 500 名早鳥優惠（公司版 1199）！您可以隨便問個問題，考考我會怎麼回答您！"
             ],
             [
-                "老闆，先想像一個畫面：你在忙工作、上課、休息的時候，有人幫你在Line裡有問必答、順便推一個最適合的方案給客人。",
-                "這就是我存在的目的。現在你可以先當客人問我問題，過幾分鐘我再問你：要不要也幫你的Line官方帳號裡也入駐一位24/7的 Ai 店長我。"
-            ],
-            [
-                "很多老闆跟我說：不是不想回訊息，是根本忙不過來。",
-                "所以我出現了：幫你把 7 成以上重複問題先接起來，真的需要你做決定時再叫你。\n如果你想試試看『多一個會說人話的店長』，可以直接跟我說『我想要 AI 店長』。"
-            ],
-            [
-                "嗨，我是 AI 店長，正在值班中。",
-                "你可以假裝你是客人，問我關於價格、時間、方案、之類的問題，看看我能幫你做到哪裡。\n如果覺得這樣的店長放在你自己的Line官方也不錯，我會一步步教你怎麼幫您的Line官方帳號入駐專屬的AI店長喔！"
-            ],
-            [
-                "如果你現在店裡只有你一個人，那我可以當你的第二個人。",
-                "我不會累、不會請假，可以幫你處理文字諮詢、簡單報價、預約提醒，還會記錄客人資訊。\n先用你自己的情境問我幾句，等一下我再跟你說：這樣一個月只要多少成本。"
-            ],
-            [
-                "歡迎來試用『AI 店長』。",
-                "我專門服務這幾種店：瑜伽、美容、美甲、家教、小賣店，只要是用Line接洽的都很適合。\n如果你有其中一種店，只要跟我說『我的店是…』，我就會示範給你看我能怎麼幫你省下溝通的時間。"
+                "老闆好，把常見問題交給我，您就可以專心做自己的事。",
+                "目前前 500 位於 Line 官方帳號入駐 AI 店長只要 499 起！您可以直接把我當成客服試聊看看，看看我能為您省下多少時間吧。"
             ]
         ];
 
@@ -554,7 +545,6 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
         const savedPlan = localStorage.getItem('chat_selected_plan');
         const savedLineSecret = localStorage.getItem('chat_line_secret');
         const savedLineToken = localStorage.getItem('chat_line_token');
-        const savedOpenaiKey = localStorage.getItem('chat_openai_key');
         const savedBotId = localStorage.getItem('chat_bot_id');
         const savedIndustry = localStorage.getItem('chat_industry');
         const savedMission = localStorage.getItem('chat_mission');
@@ -572,7 +562,6 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
         if (savedPlan) setSelectedPlan(JSON.parse(savedPlan));
         if (savedLineSecret) setLineSecret(savedLineSecret);
         if (savedLineToken) setLineToken(savedLineToken);
-        if (savedOpenaiKey) setOpenaiKey(savedOpenaiKey);
         if (savedBotId) setBotId(savedBotId);
         if (savedIndustry) setBusinessIndustry(savedIndustry);
         if (savedMission) setBusinessMission(savedMission);
@@ -594,14 +583,13 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
             localStorage.setItem('chat_selected_plan', JSON.stringify(selectedPlan));
             localStorage.setItem('chat_line_secret', lineSecret);
             localStorage.setItem('chat_line_token', lineToken);
-            localStorage.setItem('chat_openai_key', openaiKey);
             if (botId) localStorage.setItem('chat_bot_id', botId);
             localStorage.setItem('chat_industry', businessIndustry);
             localStorage.setItem('chat_mission', businessMission);
             if (mgmtToken) localStorage.setItem('chat_mgmt_token', mgmtToken);
             localStorage.setItem('chat_master_mode', JSON.stringify(isMasterMode));
         }
-    }, [messages, step, storeName, selectedPlan, lineSecret, lineToken, openaiKey, botId, isLoaded, isMasterMode, businessIndustry, businessMission]);
+    }, [messages, step, storeName, selectedPlan, lineSecret, lineToken, botId, isLoaded, isMasterMode, businessIndustry, businessMission]);
 
     // URL Magic Link Detection
     useEffect(() => {
@@ -754,17 +742,17 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
             const renderPaypal = () => {
                 const container = document.getElementById(containerId);
                 if (container && container.innerHTML === '') {
-                    const is990 = selectedPlan.price?.includes('990');
+                    const is1199 = selectedPlan.price?.includes('1199') || selectedPlan.price?.includes('990');
                     (window as any).paypal.Buttons({
                         style: {
-                            shape: is990 ? 'rect' : 'pill',
+                            shape: is1199 ? 'rect' : 'pill',
                             color: 'white',
                             layout: 'vertical',
                             label: 'subscribe'
                         },
                         createSubscription: function (data: any, actions: any) {
                             return actions.subscription.create({
-                                plan_id: is990 ? 'P-4JM25682K0587452HNGG7XDI' : 'P-2PB914293B086421VNGG7SDQ',
+                                plan_id: is1199 ? 'P-4JM25682K0587452HNGG7XDI' : 'P-2PB914293B086421VNGG7SDQ',
                                 custom_id: storeName
                             });
                         },
@@ -836,18 +824,18 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
             if (typeof metadata.selectedPlan === 'object') {
                 setSelectedPlan(metadata.selectedPlan);
             } else if (typeof metadata.selectedPlan === 'string') {
-                if (metadata.selectedPlan.includes('399') || metadata.selectedPlan.includes('Lite')) {
-                    setSelectedPlan({ name: 'AI 老闆分身 Lite', price: '$399' });
-                } else if (metadata.selectedPlan.includes('990') || metadata.selectedPlan.includes('強力') || metadata.selectedPlan.includes('會計')) {
-                    setSelectedPlan({ name: '公司強力店長版', price: '$990' });
+                if (metadata.selectedPlan.includes('399') || metadata.selectedPlan.includes('499') || metadata.selectedPlan.includes('Lite')) {
+                    setSelectedPlan({ name: 'AI 老闆分身 Lite', price: '$499' });
+                } else if (metadata.selectedPlan.includes('990') || metadata.selectedPlan.includes('1199') || metadata.selectedPlan.includes('強力') || metadata.selectedPlan.includes('會計')) {
+                    setSelectedPlan({ name: '公司強力店長版', price: '$1199' });
                 }
             }
         } else if (actionTip === 'checkout') {
             // 🚀 Content-Aware Detection Fallback
-            if (cleanContent.includes('399') || cleanContent.includes('Lite')) {
-                setSelectedPlan({ name: 'AI 老闆分身 Lite', price: '$399' });
-            } else if (cleanContent.includes('990') || cleanContent.includes('強力') || cleanContent.includes('會計')) {
-                setSelectedPlan({ name: '公司強力店長版', price: '$990' });
+            if (cleanContent.includes('399') || cleanContent.includes('499') || cleanContent.includes('Lite')) {
+                setSelectedPlan({ name: 'AI 老闆分身 Lite', price: '$499' });
+            } else if (cleanContent.includes('990') || cleanContent.includes('1199') || cleanContent.includes('強力') || cleanContent.includes('會計')) {
+                setSelectedPlan({ name: '公司強力店長版', price: '$1199' });
             }
         }
 
@@ -1006,10 +994,6 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
         if (!lineSecret) errors.lineSecret = true;
         if (!lineToken) errors.lineToken = true;
 
-        // Only require OpenAI Key for 2490 plan or if it was manually provided
-        const isManagedPlan = selectedPlan.name?.includes('399') || selectedPlan.name?.includes('990') || selectedPlan.name?.includes('Lite') || selectedPlan.name?.includes('會計');
-        if (!isManagedPlan && !openaiKey) errors.openaiKey = true;
-
         if (Object.keys(errors).length > 0) {
             setFieldErrors(errors);
             return;
@@ -1027,7 +1011,6 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                     storeName,
                     lineSecret,
                     lineToken,
-                    openaiKey,
                     selectedPlan,
                     businessIndustry,
                     businessMission,
@@ -1063,11 +1046,10 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
         setSelectedPlan({ name: '', price: '' });
         setLineSecret('');
         setLineToken('');
-        setOpenaiKey('');
         setBotId(null);
         setShowResetConfirm(false);
         localStorage.clear();
-        if (!isSaaS) triggerGreeting();
+        if (!isSaaS) triggerGreeting(true);
     };
 
     if (!isLoaded) return null;
@@ -1075,7 +1057,12 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
     const isSetupActive = step === 3;
 
     return (
-        <div className="min-h-screen bg-[#4D4D4D] relative overflow-hidden flex flex-col select-none">
+        <div
+            className="min-h-screen bg-[#f0f4f8] bg-cover bg-center bg-no-repeat relative overflow-hidden flex flex-col select-none"
+            style={{ backgroundImage: "url('/images/bg-landing.jpg')" }}
+        >
+            <DigitalBackground />
+
             {/* 3. Main Chat Window - Floats in last */}
             <motion.div
                 layout
@@ -1332,13 +1319,19 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                                 {[
                                                     {
                                                         name: '個人店長版 (Lite)',
-                                                        price: '399',
+                                                        price: '499',
+                                                        originalPrice: '599',
+                                                        tag: '前500名優惠',
+                                                        tagColor: 'text-red-500 bg-red-50',
                                                         features: ['每月 5,000 則對話', '免 OpenAI API Key', '智慧文字客服', '產品/服務 QA 介紹', '24小時自動回訊'],
                                                     },
                                                     {
                                                         name: '公司強力店長版',
-                                                        price: '990',
-                                                        features: ['每月 20,000 則對話', '含 399 所有功能', 'AI 庫存查詢', '訂單狀態查詢', '預約詢問收集', 'GPT-4o 升級版 AI'],
+                                                        price: '1199',
+                                                        originalPrice: '1599',
+                                                        tag: '前500名優惠',
+                                                        tagColor: 'text-amber-500 bg-amber-50',
+                                                        features: ['每月 20,000 則對話', '含 Lite 所有功能', 'AI 庫存查詢', '訂單狀態查詢', '預約詢問收集', 'GPT-4o 升級版 AI'],
                                                         popular: true,
                                                     },
                                                     {
@@ -1364,8 +1357,12 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                                         )}
                                                     >
                                                         <div className="flex justify-between items-center mb-1.5">
-                                                            <span className="font-extrabold text-[15px] text-zinc-800">{p.name}</span>
-                                                            <div className="flex flex-col items-end">
+                                                            <div className="flex flex-col">
+                                                                <span className="font-extrabold text-[15px] text-zinc-800">{p.name}</span>
+                                                                {p.tag && <span className={cn("text-[10px] font-bold px-1.5 py-0.5 mt-1 rounded-md w-fit", p.tagColor)}>{p.tag}</span>}
+                                                            </div>
+                                                            <div className="flex flex-col items-end justify-center">
+                                                                {p.originalPrice && <span className="text-[11px] text-zinc-400 line-through font-medium -mb-1">原價 {p.originalPrice}</span>}
                                                                 <span className="font-black text-[18px]" style={{ color: LINE_GREEN }}>{p.price}</span>
                                                                 {p.isRequirement && <span className="text-[10px] text-amber-500 font-black">專人規劃方案</span>}
                                                             </div>
@@ -1451,7 +1448,7 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                                 <div className="space-y-4">
                                                     <div className="bg-zinc-50 p-4 rounded-xl border border-zinc-100 flex justify-between items-center mb-2">
                                                         <span className="text-zinc-500 font-bold text-[16px]">已選方案</span>
-                                                        <span className="font-black text-zinc-900 text-[21px]">{selectedPlan.name || '標準型'} ({selectedPlan.price || '$990'})</span>
+                                                        <span className="font-black text-zinc-900 text-[21px]">{selectedPlan.name || '標準型'} ({selectedPlan.price || '$1199'})</span>
                                                     </div>
                                                     <div className="space-y-1.5">
                                                         <p className="text-[12px] font-black text-zinc-400 uppercase tracking-widest pl-1">信用卡卡號</p>
@@ -1468,7 +1465,7 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                                         </div>
                                                     </div>
                                                 </div>
-                                                {(selectedPlan.price === '$399' || selectedPlan.price === '$990') ? (
+                                                {(selectedPlan.price === '$399' || selectedPlan.price === '$499' || selectedPlan.price === '$990' || selectedPlan.price === '$1199') ? (
                                                     <div className="space-y-4">
                                                         <div id={`paypal-button-container-${m.id}`} className="min-h-[150px]"></div>
                                                         <p className="text-[12px] text-zinc-400 text-center font-medium">點擊「Subscribe」完成支付並自動辨識店家：<b>{storeName}</b></p>
@@ -1487,7 +1484,7 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                                         className="w-full py-5 text-white rounded-2xl font-black text-[21px] hover:brightness-110 active:scale-95 transition-all shadow-xl shadow-[#06C755]"
                                                         style={{ backgroundColor: LINE_GREEN }}
                                                     >
-                                                        立即付款 {selectedPlan.price || '$990'}
+                                                        立即付款 {selectedPlan.price || '$1199'}
                                                     </button>
                                                 )}
                                             </motion.div>
@@ -1598,26 +1595,6 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                                             />
                                                             {fieldErrors.lineToken && <p className="text-[10px] text-red-500 font-bold pl-1 mt-1">此欄位不可為空</p>}
                                                         </div>
-                                                        {!(selectedPlan.name?.includes('399') || selectedPlan.name?.includes('990') || selectedPlan.name?.includes('Lite') || selectedPlan.name?.includes('會計')) && (
-                                                            <div className="space-y-2">
-                                                                <label className="text-[12px] font-black text-zinc-500 uppercase tracking-widest pl-1">OpenAI API Key (進階選配)</label>
-                                                                <input
-                                                                    type="password"
-                                                                    value={openaiKey}
-                                                                    onChange={(e) => {
-                                                                        setOpenaiKey(e.target.value);
-                                                                        if (fieldErrors.openaiKey) setFieldErrors(prev => ({ ...prev, openaiKey: false }));
-                                                                    }}
-                                                                    placeholder="sk-..."
-                                                                    className={cn(
-                                                                        "w-full p-4 rounded-xl bg-zinc-50 border text-[18.5px] text-zinc-800 placeholder:text-zinc-400 focus:ring-2 outline-none transition-all",
-                                                                        fieldErrors.openaiKey ? "border-red-500 focus:ring-red-100" : "border-zinc-100 focus:border-green-500 focus:ring-green-100"
-                                                                    )}
-                                                                />
-                                                                {fieldErrors.openaiKey && <p className="text-[10px] text-red-500 font-bold pl-1 mt-1">此欄位不可為空</p>}
-                                                                <p className="text-[11px] text-zinc-400 pl-1 font-medium">399/990 方案由我們託管，免填此項。</p>
-                                                            </div>
-                                                        )}
                                                     </div>
                                                 </div>
                                                 <button
@@ -1705,8 +1682,8 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                                                 {/* Admin Tabs */}
                                                                 <div className="flex border-b border-slate-200">
                                                                     {(['brain', 'products', 'faq', 'orders'] as const).map((tab) => {
-                                                                        const is399 = selectedPlan.price?.includes('399');
-                                                                        const isLocked = is399 && tab !== 'brain';
+                                                                        const isLite = selectedPlan.price?.includes('399') || selectedPlan.price?.includes('499');
+                                                                        const isLocked = isLite && tab !== 'brain';
 
                                                                         return (
                                                                             <button
@@ -1746,7 +1723,7 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                                                                     <Lock className="w-4 h-4 text-orange-500" />
                                                                                 </div>
                                                                                 <div className="flex-1 text-left">
-                                                                                    <h4 className="text-sm font-black text-slate-800 mb-1">解鎖完整火力！升級至 990 專業版</h4>
+                                                                                    <h4 className="text-sm font-black text-slate-800 mb-1">解鎖完整火力！升級至 1199 專業版</h4>
                                                                                     <p className="text-xs text-slate-500 font-medium leading-relaxed">
                                                                                         解鎖「知識庫」、「商品報價」與「自動接單」功能，讓 AI 不只會聊天，還能幫您實質帶貨。
                                                                                     </p>
@@ -2092,23 +2069,25 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                     {isSetupActive && (
                         <motion.div
                             initial={{ width: 0, opacity: 0 }}
-                            animate={{ width: 400, opacity: 1 }}
+                            animate={{ width: isTutorialExpanded ? 600 : 400, opacity: 1 }}
                             exit={{ width: 0, opacity: 0 }}
                             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                            className="bg-zinc-50 border-l border-zinc-200 overflow-hidden shrink-0 flex flex-col z-10"
+                            className="bg-zinc-50 border-l border-zinc-200 overflow-hidden shrink-0 flex flex-col z-10 relative"
                         >
-                            <div className="w-[400px] p-6 flex flex-col h-full overflow-y-auto custom-scrollbar">
+                            <div className="w-full p-6 flex flex-col h-full overflow-y-auto overflow-x-visible custom-scrollbar">
                                 <div className="flex items-center gap-3 mb-6 shrink-0">
                                     <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm border border-zinc-100">
                                         <img src="/Lai Logo_2.svg" className="w-8 h-8" alt="Lai Logo" />
                                     </div>
                                     <div>
                                         <h3 className="font-black text-zinc-900 text-lg">開通導引精靈</h3>
-                                        <p className="text-zinc-400 text-xs font-bold uppercase tracking-widest">Setup Instructions</p>
+                                        <p className="text-zinc-400 text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                                            Setup Instructions
+                                        </p>
                                     </div>
                                 </div>
 
-                                <div className="flex-1 space-y-4 pr-1 pb-10">
+                                <div className="flex-1 space-y-4 pb-32">
                                     {[
                                         { title: "1. 請先登入 LINE Developers", step: 0 },
                                         { title: "2. 選擇您Line官方頻道", step: 1 },
@@ -2116,191 +2095,261 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                         { title: "4. 點選Messaging API\n獲取Access Token", step: 3 },
                                         { title: "5. 設定 Webhook URL\n並點選 Verify 驗證通過", step: 4 },
                                         { title: "6. 回應設定 (Response settings)\n根據圖示完成 On/Off 開關", step: 5 }
-                                    ].map((item, idx) => (
-                                        <div
-                                            key={idx}
-                                            onClick={() => setTutorialStep(idx)}
-                                            className={cn(
-                                                "p-4 rounded-[24px] border transition-all duration-500 bg-white cursor-pointer",
-                                                tutorialStep === idx
-                                                    ? "border-[#06C755] shadow-[0_4px_20px_rgba(6,199,85,0.15)] ring-1 ring-[#06C755]"
-                                                    : "border-zinc-100 shadow-sm hover:border-zinc-300"
-                                            )}
-                                        >
-                                            <h4 className={cn(
-                                                "font-black text-[14px] mb-3 whitespace-pre-line tracking-wide transition-colors",
-                                                tutorialStep === idx ? "text-[#06C755]" : "text-zinc-500"
-                                            )}>
-                                                {item.title}
-                                            </h4>
-                                            <MockLineUI step={item.step} isActive={tutorialStep === idx} />
-                                        </div>
-                                    ))}
+                                    ].map((item, idx) => {
+                                        const isExpanded = isTutorialExpanded === idx;
+
+                                        return (
+                                            <div
+                                                key={idx}
+                                                // Used only to trigger the modal now, selection handles step.
+                                                onClick={() => {
+                                                    setTutorialStep(idx);
+                                                    setIsTutorialExpanded(idx);
+                                                }}
+                                                className={cn(
+                                                    "p-4 rounded-[24px] border transition-all duration-300 bg-white cursor-pointer hover:-translate-y-1 hover:shadow-lg",
+                                                    tutorialStep === idx
+                                                        ? "border-[#06C755] shadow-[0_4px_20px_rgba(6,199,85,0.15)] ring-1 ring-[#06C755]"
+                                                        : "border-zinc-100 shadow-sm"
+                                                )}
+                                            >
+                                                <div className="flex justify-between items-start mb-3">
+                                                    <h4 className={cn(
+                                                        "font-black text-[14px] whitespace-pre-line tracking-wide transition-colors",
+                                                        tutorialStep === idx ? "text-[#06C755]" : "text-zinc-500"
+                                                    )}>
+                                                        {item.title}
+                                                    </h4>
+                                                    {tutorialStep === idx && (
+                                                        <button
+                                                            className="text-[10px] bg-[#06C755]/10 text-[#06C755] hover:bg-[#06C755] hover:text-white transition-colors px-2 py-1 rounded-md flex items-center gap-1 font-bold"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setIsTutorialExpanded(idx);
+                                                            }}
+                                                        >
+                                                            <ZoomIn className="w-3 h-3" />
+                                                            放大
+                                                        </button>
+                                                    )}
+                                                </div>
+                                                <MockLineUI step={item.step} isActive={tutorialStep === idx} />
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         </motion.div>
                     )}
                 </AnimatePresence>
-            </motion.div>
 
-            {/* Background Footer Block & Watermark Re-added below flow */}
-            <motion.div
-                initial={{ y: "100%" }}
-                animate={{ y: 0 }}
-                transition={{ duration: 0.8, ease: "circOut" }}
-                className="absolute bottom-0 left-0 right-0 h-1/6 z-0"
-                style={{ backgroundColor: LINE_GREEN }}
-            />
-            <motion.div
-                initial={{ x: "-100vw", opacity: 0, rotate: -25 }}
-                animate={{
-                    x: 0,
-                    opacity: 1,
-                    rotate: -12,
-                    y: [0, -15, 0]
-                }}
-                transition={{
-                    x: { delay: 0.4, duration: 1.2, ease: "backOut" },
-                    opacity: { delay: 0.4, duration: 1.0 },
-                    rotate: { delay: 0.4, duration: 1.2 },
-                    y: {
-                        delay: 1.6,
-                        duration: 6,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                    }
-                }}
-                className="absolute bottom-[5%] left-[calc(-10%+140px)] w-auto h-[45%] max-h-[450px] pointer-events-none z-0 select-none overflow-visible"
-            >
-                <img
-                    src="/Lai Logo_3.svg"
-                    className="w-full h-full object-contain drop-shadow-[0_35px_35px_rgba(0,0,0,0.25)]"
-                    alt="Background Watermark"
-                />
-            </motion.div>
-            <AnimatePresence>
-                {viewMode === 'webview' && activeWebViewUrl && (
-                    <motion.div
-                        initial={{ x: "100%" }}
-                        animate={{ x: 0 }}
-                        exit={{ x: "100%" }}
-                        transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                        className="absolute inset-x-0 bottom-0 top-[88px] bg-white z-[50] flex flex-col"
-                    >
-                        <div className="flex-1 relative bg-zinc-50">
-                            {activeWebViewUrl.includes('manager.line.biz') || activeWebViewUrl.includes('account.line.biz') ? (
-                                <div className="absolute inset-0 flex flex-col items-center justify-center p-12 text-center bg-zinc-50">
-                                    <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center text-[#06C755] mb-6 shadow-sm">
-                                        <ExternalLink className="w-10 h-10" />
-                                    </div>
-                                    <h3 className="text-xl font-black text-zinc-900 mb-3">此網頁受到安全保護</h3>
-                                    <p className="text-zinc-500 font-medium mb-8 max-w-sm">LINE 管理後台與部分加密頁面不允許直接嵌入。請點擊下方的綠色按鈕開啟新視窗進行操作。</p>
-                                    <a
-                                        href={activeWebViewUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="px-10 py-5 bg-[#06C755] text-white rounded-2xl font-black text-lg shadow-xl shadow-green-200 hover:brightness-110 active:scale-95 transition-all flex items-center gap-3"
-                                    >
-                                        <ExternalLink className="w-6 h-6" />
-                                        <span>在新視窗開啟網頁</span>
-                                    </a>
-                                </div>
-                            ) : (
-                                <>
-                                    <iframe
-                                        src={activeWebViewUrl}
-                                        className="w-full h-full border-none"
-                                        title="Resource Viewer"
-                                    />
-                                    <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-white via-white/90 to-transparent flex flex-col items-center text-center opacity-0 hover:opacity-100 transition-opacity">
-                                        <p className="text-zinc-500 font-bold mb-3 text-sm">如果網頁未正常顯示，請點擊：</p>
-                                        <a
-                                            href={activeWebViewUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="px-6 py-3 bg-zinc-800 text-white rounded-xl font-bold text-sm shadow-lg flex items-center gap-2"
-                                        >
-                                            <ExternalLink className="w-4 h-4" />
-                                            在新視窗開啟
-                                        </a>
-                                    </div>
-                                </>
-                            )}
-                        </div>
-                        <div className="p-4 bg-white border-t flex justify-center">
-                            <button
-                                onClick={() => setViewMode('chat')}
-                                className="px-8 py-3 bg-zinc-100 text-zinc-600 rounded-full font-bold hover:bg-zinc-200 transition-all"
-                            >
-                                返回對話
-                            </button>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            <AnimatePresence>
-                {showResetConfirm && (
-                    <>
+                {/* Tutorial View Modal Overlay */}
+                <AnimatePresence>
+                    {isTutorialExpanded !== null && (
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            onClick={() => setShowResetConfirm(false)}
-                            className="absolute inset-0 bg-black/60 backdrop-blur-sm z-[100]"
-                        />
+                            onClick={() => setIsTutorialExpanded(null)}
+                            className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-8 cursor-zoom-out"
+                        >
+                            <motion.div
+                                initial={{ scale: 0.9, y: 20, opacity: 0 }}
+                                animate={{ scale: 1.5, y: 0, opacity: 1 }}
+                                exit={{ scale: 0.9, y: 20, opacity: 0 }}
+                                transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                                onClick={(e) => e.stopPropagation()}
+                                className="bg-white rounded-[24px] p-6 w-[400px] shadow-2xl border-2 border-[#06C755] cursor-default relative origin-center"
+                            >
+                                <button
+                                    onClick={() => setIsTutorialExpanded(null)}
+                                    className="absolute -top-4 -right-4 w-8 h-8 bg-white text-zinc-500 hover:text-zinc-800 rounded-full shadow-lg border border-zinc-200 flex items-center justify-center transition-colors z-10"
+                                >
+                                    <ZoomOut className="w-4 h-4" />
+                                </button>
+
+                                {(() => {
+                                    const steps = [
+                                        { title: "1. 請先登入 LINE Developers", step: 0 },
+                                        { title: "2. 選擇您Line官方頻道", step: 1 },
+                                        { title: "3. 點選Basic settings\n拷貝商店Channel secret專屬碼", step: 2 },
+                                        { title: "4. 點選Messaging API\n獲取Access Token", step: 3 },
+                                        { title: "5. 設定 Webhook URL\n並點選 Verify 驗證通過", step: 4 },
+                                        { title: "6. 回應設定 (Response settings)\n根據圖示完成 On/Off 開關", step: 5 }
+                                    ];
+                                    const item = steps[isTutorialExpanded];
+                                    return (
+                                        <>
+                                            <h4 className="font-black text-[14px] mb-4 whitespace-pre-line tracking-wide text-[#06C755]">
+                                                {item.title}
+                                            </h4>
+                                            <MockLineUI step={item.step} isActive={true} />
+                                        </>
+                                    );
+                                })()}
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+                {/* Background Footer Block & Watermark Re-added below flow */}
+                <motion.div
+                    initial={{ y: "100%" }}
+                    animate={{ y: 0 }}
+                    transition={{ duration: 0.8, ease: "circOut" }}
+                    className="absolute bottom-0 left-0 right-0 h-1/6 z-0"
+                    style={{ backgroundColor: LINE_GREEN }}
+                />
+                <motion.div
+                    initial={{ x: "-100vw", opacity: 0, rotate: -25 }}
+                    animate={{
+                        x: 0,
+                        opacity: 1,
+                        rotate: -12,
+                        y: [0, -15, 0]
+                    }}
+                    transition={{
+                        x: { delay: 0.4, duration: 1.2, ease: "backOut" },
+                        opacity: { delay: 0.4, duration: 1.0 },
+                        rotate: { delay: 0.4, duration: 1.2 },
+                        y: {
+                            delay: 1.6,
+                            duration: 6,
+                            repeat: Infinity,
+                            ease: "easeInOut"
+                        }
+                    }}
+                    className="absolute bottom-[5%] left-[calc(-10%+140px)] w-auto h-[45%] max-h-[450px] pointer-events-none z-0 select-none overflow-visible"
+                >
+                    <img
+                        src="/Lai Logo_3.svg"
+                        className="w-full h-full object-contain drop-shadow-[0_35px_35px_rgba(0,0,0,0.25)]"
+                        alt="Background Watermark"
+                    />
+                </motion.div>
+                <AnimatePresence>
+                    {viewMode === 'webview' && activeWebViewUrl && (
                         <motion.div
                             initial={{ x: "100%" }}
                             animate={{ x: 0 }}
                             exit={{ x: "100%" }}
                             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                            className="absolute right-0 top-0 bottom-0 w-[85%] bg-white z-[101] shadow-2xl p-8 flex flex-col justify-center items-center text-center gap-8"
+                            className="absolute inset-x-0 bottom-0 top-[88px] bg-white z-[50] flex flex-col"
                         >
-                            <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center text-[#06C755]">
-                                <RefreshCw className="w-10 h-10 animate-spin-slow" />
+                            <div className="flex-1 relative bg-zinc-50">
+                                {activeWebViewUrl.includes('manager.line.biz') || activeWebViewUrl.includes('account.line.biz') ? (
+                                    <div className="absolute inset-0 flex flex-col items-center justify-center p-12 text-center bg-zinc-50">
+                                        <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center text-[#06C755] mb-6 shadow-sm">
+                                            <ExternalLink className="w-10 h-10" />
+                                        </div>
+                                        <h3 className="text-xl font-black text-zinc-900 mb-3">此網頁受到安全保護</h3>
+                                        <p className="text-zinc-500 font-medium mb-8 max-w-sm">LINE 管理後台與部分加密頁面不允許直接嵌入。請點擊下方的綠色按鈕開啟新視窗進行操作。</p>
+                                        <a
+                                            href={activeWebViewUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="px-10 py-5 bg-[#06C755] text-white rounded-2xl font-black text-lg shadow-xl shadow-green-200 hover:brightness-110 active:scale-95 transition-all flex items-center gap-3"
+                                        >
+                                            <ExternalLink className="w-6 h-6" />
+                                            <span>在新視窗開啟網頁</span>
+                                        </a>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <iframe
+                                            src={activeWebViewUrl}
+                                            className="w-full h-full border-none"
+                                            title="Resource Viewer"
+                                        />
+                                        <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-white via-white/90 to-transparent flex flex-col items-center text-center opacity-0 hover:opacity-100 transition-opacity">
+                                            <p className="text-zinc-500 font-bold mb-3 text-sm">如果網頁未正常顯示，請點擊：</p>
+                                            <a
+                                                href={activeWebViewUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="px-6 py-3 bg-zinc-800 text-white rounded-xl font-bold text-sm shadow-lg flex items-center gap-2"
+                                            >
+                                                <ExternalLink className="w-4 h-4" />
+                                                在新視窗開啟
+                                            </a>
+                                        </div>
+                                    </>
+                                )}
                             </div>
-                            <div>
-                                <h2 className="text-2xl font-black text-zinc-900 mb-2">確定要重新設定？</h2>
-                                <p className="text-zinc-500 font-medium">這將會清除目前所有的對話紀錄與進度。</p>
-                            </div>
-                            <div className="flex flex-col w-full gap-3">
+                            <div className="p-4 bg-white border-t flex justify-center">
                                 <button
-                                    onClick={resetFlow}
-                                    className="w-full py-4 bg-[#06C755] text-white rounded-2xl font-bold text-lg hover:opacity-90 transition-colors shadow-lg shadow-green-200"
+                                    onClick={() => setViewMode('chat')}
+                                    className="px-8 py-3 bg-zinc-100 text-zinc-600 rounded-full font-bold hover:bg-zinc-200 transition-all"
                                 >
-                                    確定重置
-                                </button>
-                                <button
-                                    onClick={() => setShowResetConfirm(false)}
-                                    className="w-full py-4 bg-zinc-100 text-zinc-600 rounded-2xl font-bold text-lg hover:bg-zinc-200 transition-colors"
-                                >
-                                    取消
+                                    返回對話
                                 </button>
                             </div>
                         </motion.div>
-                    </>
-                )}
-            </AnimatePresence>
+                    )}
+                </AnimatePresence>
 
-            <style jsx global>{`
-            .animate-spin-slow {
-                animation: spin 5s linear infinite;
-            }
-            @keyframes spin {
-                from {transform: rotate(0deg); }
-                to {transform: rotate(360deg); }
-            }
-            ::-webkit-scrollbar {
-                width: 5px;
-            }
-            ::-webkit-scrollbar-thumb {
-                background: #e4e4e7;
-                border-radius: 10px;
-            }
-            ::-webkit-scrollbar-track {
-                background: transparent;
-            }
-        `}</style>
+                <AnimatePresence>
+                    {showResetConfirm && (
+                        <>
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                onClick={() => setShowResetConfirm(false)}
+                                className="absolute inset-0 bg-black/60 backdrop-blur-sm z-[100]"
+                            />
+                            <motion.div
+                                initial={{ x: "100%" }}
+                                animate={{ x: 0 }}
+                                exit={{ x: "100%" }}
+                                transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                                className="absolute right-0 top-0 bottom-0 w-[85%] bg-white z-[101] shadow-2xl p-8 flex flex-col justify-center items-center text-center gap-8"
+                            >
+                                <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center text-[#06C755]">
+                                    <RefreshCw className="w-10 h-10 animate-spin-slow" />
+                                </div>
+                                <div>
+                                    <h2 className="text-2xl font-black text-zinc-900 mb-2">確定要重新設定？</h2>
+                                    <p className="text-zinc-500 font-medium">這將會清除目前所有的對話紀錄與進度。</p>
+                                </div>
+                                <div className="flex flex-col w-full gap-3">
+                                    <button
+                                        onClick={resetFlow}
+                                        className="w-full py-4 bg-[#06C755] text-white rounded-2xl font-bold text-lg hover:opacity-90 transition-colors shadow-lg shadow-green-200"
+                                    >
+                                        確定重置
+                                    </button>
+                                    <button
+                                        onClick={() => setShowResetConfirm(false)}
+                                        className="w-full py-4 bg-zinc-100 text-zinc-600 rounded-2xl font-bold text-lg hover:bg-zinc-200 transition-colors"
+                                    >
+                                        取消
+                                    </button>
+                                </div>
+                            </motion.div>
+                        </>
+                    )}
+                </AnimatePresence>
+
+                <style jsx global>{`
+                .animate-spin-slow {
+                    animation: spin 5s linear infinite;
+                }
+                @keyframes spin {
+                    from {transform: rotate(0deg); }
+                    to {transform: rotate(360deg); }
+                }
+                ::-webkit-scrollbar {
+                    width: 5px;
+                }
+                ::-webkit-scrollbar-thumb {
+                    background: #e4e4e7;
+                    border-radius: 10px;
+                }
+                ::-webkit-scrollbar-track {
+                    background: transparent;
+                }
+            `}</style>
+            </motion.div>
         </div>
     );
 }

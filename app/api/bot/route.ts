@@ -10,7 +10,9 @@ export async function POST(req: NextRequest) {
         // Validation: Only require OpenAI Key for non-managed plans
         const planName = selectedPlan?.name || "";
         const isManagedPlan = planName.includes('399') ||
+            planName.includes('499') ||
             planName.includes('990') ||
+            planName.includes('1199') ||
             planName.includes('Lite') ||
             planName.includes('會計');
 

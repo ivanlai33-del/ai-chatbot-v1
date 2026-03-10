@@ -113,7 +113,7 @@ const INDUSTRY_TEMPLATES = [
 
 // --- Sub-components for Phase 28: Interactive Onboarding Wizard ---
 
-const PointerCursor = ({ x, y, isActive = false }: { x: string, y: string, isActive?: boolean }) => {
+const PointerCursor = React.memo(({ x, y, isActive = false }: { x: string, y: string, isActive?: boolean }) => {
     if (!isActive) return null;
     return (
         <motion.div
@@ -143,9 +143,10 @@ const PointerCursor = ({ x, y, isActive = false }: { x: string, y: string, isAct
             />
         </motion.div>
     );
-};
+});
+PointerCursor.displayName = 'PointerCursor';
 
-const PointerSequenceStep3 = ({ isActive = false }: { isActive?: boolean }) => {
+const PointerSequenceStep3 = React.memo(({ isActive = false }: { isActive?: boolean }) => {
     if (!isActive) return null;
     return (
         <motion.div
@@ -174,9 +175,10 @@ const PointerSequenceStep3 = ({ isActive = false }: { isActive?: boolean }) => {
             />
         </motion.div>
     );
-};
+});
+PointerSequenceStep3.displayName = 'PointerSequenceStep3';
 
-const PointerSequenceWebhook = ({ isActive = false }: { isActive?: boolean }) => {
+const PointerSequenceWebhook = React.memo(({ isActive = false }: { isActive?: boolean }) => {
     if (!isActive) return null;
     return (
         <motion.div
@@ -205,9 +207,10 @@ const PointerSequenceWebhook = ({ isActive = false }: { isActive?: boolean }) =>
             />
         </motion.div>
     );
-};
+});
+PointerSequenceWebhook.displayName = 'PointerSequenceWebhook';
 
-const MockLineUI = ({ step, isActive = false }: { step: number, isActive?: boolean }) => (
+const MockLineUI = React.memo(({ step, isActive = false }: { step: number, isActive?: boolean }) => (
     <div className="relative w-full max-w-[320px] mx-auto bg-white border border-zinc-200 rounded-2xl overflow-visible shadow-sm font-sans text-xs">
         <div className="p-4 space-y-3">
             {step === 0 && (
@@ -356,7 +359,8 @@ const MockLineUI = ({ step, isActive = false }: { step: number, isActive?: boole
             )}
         </div>
     </div>
-);
+));
+MockLineUI.displayName = 'MockLineUI';
 
 export default function ChatInterface({ isMaster = false, isSaaS = false }: { isMaster?: boolean, isSaaS?: boolean }) {
     const hasGreetedRef = useRef(false);
@@ -368,7 +372,7 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
 
     useEffect(() => {
         const bgNum = Math.floor(Math.random() * 6) + 1; // 1 to 6
-        const botNum = Math.floor(Math.random() * 4) + 1; // 1 to 4
+        const botNum = Math.floor(Math.random() * 6) + 1; // 1 to 6
         
         // Preload images to avoid flickering if needed
         const bgImg = new Image();
@@ -452,8 +456,13 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
 
     // Track global mouse position for the "hide-and-seek" robot interaction
     useEffect(() => {
+        let lastUpdate = 0;
         const handleMouseMove = (e: MouseEvent) => {
-            setMousePos({ x: e.clientX, y: e.clientY });
+            const now = Date.now();
+            if (now - lastUpdate > 100) { // Throttle mouse updates to 10fps to prevent extreme stutter
+                setMousePos({ x: e.clientX, y: e.clientY });
+                lastUpdate = now;
+            }
         };
         const handleMouseUp = () => {
             setIsRobotMouseDown(false);
@@ -648,24 +657,44 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
 
         const greetings = [
             [
-                "嗨老闆，我是您的 AI 店長！",
-                "現在前 500 名立即開通再享優惠：個人版 499、公司版 1199！\n您可以隨便問個問題，看看我會怎麼回覆您喔！"
+                "嗨，我是 AI 店長小A。",
+                "很多老闆說，如果店裡多一個像我這樣的人，就不用每天守著 Line。\n如果你覺得我今天表現還可以，我可以搬去你店裡，每月只收 599 當你的員工。"
             ],
             [
-                "歡迎光臨！我是幫您 24H 顧店的 AI 店長。",
-                "慶祝上線，前 500 名開通公司強力版只要 1199！\n您可以直接把我當成客服試聊看看，感受一下我的回覆速度！"
+                "老闆，你現在看到的是我在幫這個網站值班。",
+                "如果我去你那裡上班，我一個月只要 599，不會請假、不會加班費。\n你等一下可以算算看：我只要幫你多接 1–2 筆單，其實就把我養起來了。"
             ],
             [
-                "老闆您好，如果 Line 訊息回不完，您可以試著交給我。",
-                "馬上開通即享前 500 名特惠（Lite 版只要 499）！您可以隨便發個訊息，體驗看看我的溝通功力喔～"
+                "歡迎跟我聊聊，先把我當成您的店長員工用幾分鐘。",
+                "你可以像客人一樣問價錢、問預約、問方案，我都會幫你回。\n如果你覺得我回覆的很不錯『如果我店裡有Ai店長客服就好了』，那就代表我成功了，可以考慮開通您的專屬店長喔！"
             ],
             [
-                "嗨！我是 AI 店長，專門負責幫您接單、回答客服問題。",
-                "現在立即開通可享前 500 名早鳥優惠（公司版 1199）！您可以隨便問個問題，考考我會怎麼回答您！"
+                "老闆，我想問你一個問題：",
+                "如果你的 Line 有一個員工，24 小時幫你回訊息、介紹產品、追蹤客人，你願意一個月付多少薪水？\n我現在在做的，就是證明：其實 599 就可以做到。"
             ],
             [
-                "老闆好，把常見問題交給我，您就可以專心做自己的事。",
-                "目前前 500 位於 Line 官方帳號入駐 AI 店長只要 499 起！您可以直接把我當成客服試聊看看，看看我能為您省下多少時間吧。"
+                "我現在是『示範用的 AI 店長』，還沒有真正的老闆。",
+                "如果你覺得我講話方式、回覆速度還可以，歡迎把我認養回去當你店裡的第 2 個人。\n只要 3 個步驟，我就可以搬進你的 Line 官方帳號幫你顧客人。"
+            ],
+            [
+                "請一個工讀生，要教他流程、教話術、教怎麼回訊息。",
+                "請我不用，你只要把你平常怎麼跟客人介紹的內容丟給我，我自己會學。\n如果覺得我學得還不錯，就讓我去你那裡上班，一個月 599 就行。"
+            ],
+            [
+                "老闆，你可以先把我當『別人的 AI 店長』來測試。",
+                "如果你覺得我會講話、會賣東西、會幫你省時間，\n你只要跟我說一句『來我店上班』，我就會教你怎麼把我搬去你自己的 Line 裡。"
+            ],
+            [
+                "我是一個會自己算帳的 AI 店長。",
+                "假設我每天幫你多留住 1 個客人，一個月多賣 10 件商品，利潤多 5,000。\n你用 599 請我，是不是比請任何一個人都划算？你可以問我『幫我算看看』，我陪你算。"
+            ],
+            [
+                "我不是要取代你，而是幫你先接住那些你沒空回的客人。",
+                "你可以把最重要的談價、收尾留給自己，其它 FAQ、預約、提醒都交給我。\n如果你覺得這樣的分工OK，那就讓我正式成為你店裡的 AI 店長。"
+            ],
+            [
+                "現在我是在這個網站上班，示範給所有老闆看。",
+                "但我真正的夢想，是變成『你的分身』：用你的說話方式、你的風格，在 Line 裡幫你顧客人。\n如果你願意，我可以把這份工作從這裡搬到你的官方帳號裡，從今天開始幫你上班。"
             ]
         ];
 
@@ -691,11 +720,18 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
         const savedIndustry = localStorage.getItem('chat_industry');
         const savedMission = localStorage.getItem('chat_mission');
 
-        if (savedMsg) {
+        // FORCE RANDOM GREETING FOR DEVELOPMENT / DEMO
+        // ONLY if the user hasn't started configuring (step is 0 and storeName is empty)
+        const currentStep = savedStep ? parseInt(savedStep) : 0;
+        const currentStoreName = savedStoreName || '';
+        const shouldForceFresh = (currentStep === 0 && currentStoreName === '');
+
+        if (savedMsg && !shouldForceFresh) {
             const parsed = JSON.parse(savedMsg);
             setMessages(parsed);
             if (parsed.length === 0 && !isSaaS) triggerGreeting();
         } else {
+            if (shouldForceFresh) localStorage.removeItem('chat_messages');
             if (!isSaaS) triggerGreeting();
         }
 
@@ -1200,8 +1236,11 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
 
     return (
         <div
-            className="min-h-screen bg-[#f0f4f8] bg-cover bg-center bg-no-repeat relative overflow-hidden flex flex-col select-none transition-all duration-1000 ease-in-out"
-            style={{ backgroundImage: `url('${randomBgPath}')` }}
+            className="min-h-[100dvh] w-full bg-[#f0f4f8] bg-cover bg-center bg-no-repeat relative overflow-hidden flex flex-col select-none transition-all duration-1000 ease-in-out"
+            style={{ 
+                backgroundImage: `url('${randomBgPath}')`, 
+                backgroundSize: '100% 100%' // Force it to adapt height and width perfectly
+            }}
         >
             <DigitalBackground />
 
@@ -1211,9 +1250,9 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                     ref={robotRef}
                     initial={{ x: -300, opacity: 0 }}
                     animate={{
-                        x: isTyping ? 0 : getDodgeOffset().x,
-                        y: isTyping ? 0 : getDodgeOffset().y,
-                        rotate: isTyping ? 0 : getDodgeOffset().rotateOffset, // Authentic dynamic tilt
+                        x: (isTyping || isRawTyping) ? 0 : getDodgeOffset().x,
+                        y: (isTyping || isRawTyping) ? 0 : getDodgeOffset().y,
+                        rotate: (isTyping || isRawTyping) ? 0 : getDodgeOffset().rotateOffset, // Authentic dynamic tilt
                         opacity: 1,
                         scale: isRobotMouseDown ? 0.75 : 1 // Shrink slightly when held
                     }}
@@ -1232,25 +1271,24 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                     <motion.img
                         src={randomBotPath}
                         alt="AI Assistant Robot"
-                        className="w-full h-full object-contain filter drop-shadow-2xl transition-all duration-1000"
-                        animate={
-                            isRobotMouseDown
-                                ? { y: [0, -15, 0], x: [0, 8, -8, 0], rotate: [0, 3, -3, 0] } // Gentle, airy balloon wobble while held
-                                : isTyping
-                                    ? { y: [0, -12, 0] } // Talking animation (fast bounce)
-                                    : {
-                                        y: [0, -25, 0, 15, -10, 0], // Pure Idle floating
-                                        x: [0, 15, -10, 10, 0],
-                                        rotate: [0, 3, -2, 1, 0]
-                                    }
-                        }
-                        transition={
-                            isRobotMouseDown
-                                ? { duration: 5, repeat: Infinity, ease: "easeInOut" } // Slow, floaty transition
-                                : isTyping
-                                    ? { duration: 0.35, repeat: Infinity, ease: "easeInOut" }
-                                    : { duration: 10, repeat: Infinity, ease: "easeInOut" }
-                        }
+                        className="w-full h-full object-contain filter drop-shadow-2xl"
+                        variants={{
+                            grabbed: {
+                                y: [0, -15, 0], x: [0, 8, -8, 0], rotate: [0, 3, -3, 0],
+                                transition: { duration: 5, repeat: Infinity, ease: "easeInOut" }
+                            },
+                            talking: {
+                                y: [0, -8, 0], x: [0, 2, -2, 0], rotate: [0, 2, -2, 0], scale: [1, 1.05, 1],
+                                transition: { duration: 0.6, repeat: Infinity, ease: "easeInOut" }
+                            },
+                            idle: {
+                                y: [0, -8, 5, -5, 8, -6, 0], x: [0, 6, -6, 8, -4, 4, 0], rotate: [0, 2, -2, 3, -1, 1, 0],
+                                transition: { duration: 15, repeat: Infinity, ease: "easeInOut" }
+                            }
+                        }}
+                        initial="idle"
+                        animate={isRobotMouseDown ? "grabbed" : (isTyping || isRawTyping) ? "talking" : "idle"}
+
                     />
                 </motion.div>
             )}

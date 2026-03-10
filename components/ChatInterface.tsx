@@ -426,6 +426,130 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
     const [enquiryNeeds, setEnquiryNeeds] = useState("");
     const [isSubmittingEnquiry, setIsSubmittingEnquiry] = useState(false);
     const [showUpsell, setShowUpsell] = useState(false);
+    const [robotClicks, setRobotClicks] = useState(0);
+    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+    const [isRobotMouseDown, setIsRobotMouseDown] = useState(false);
+    const robotRef = useRef<HTMLDivElement>(null);
+    const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+    // Track global mouse position for the "hide-and-seek" robot interaction
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            setMousePos({ x: e.clientX, y: e.clientY });
+        };
+        const handleMouseUp = () => {
+            setIsRobotMouseDown(false);
+        };
+
+        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('mouseup', handleMouseUp);
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, []);
+
+    // Helper to calculate distance, dodge offset, and rotational tilt
+    const getDodgeOffset = () => {
+        if (!robotRef.current || isTyping || isSaaS) return { x: 0, y: 0, rotateOffset: 0 };
+        const rect = robotRef.current.getBoundingClientRect();
+
+        // Current animated position
+        const currentScreenX = rect.left + rect.width / 2;
+        const currentScreenY = rect.top + rect.height / 2;
+
+        const dx = mousePos.x - currentScreenX;
+        const dy = mousePos.y - currentScreenY;
+        const distance = Math.max(Math.sqrt(dx * dx + dy * dy), 1); // Avoid division by zero
+
+        if (isRobotMouseDown) {
+            // Find layout position by subtracting current transform
+            let currentTranslateX = 0;
+            let currentTranslateY = 0;
+            const transform = window.getComputedStyle(robotRef.current).transform;
+            if (transform && transform !== 'none') {
+                const match = transform.match(/matrix\((.+)\)/);
+                if (match) {
+                    const values = match[1].split(', ');
+                    currentTranslateX = parseFloat(values[4]);
+                    currentTranslateY = parseFloat(values[5]);
+                }
+            }
+
+            const layoutCenterX = currentScreenX - currentTranslateX;
+            const layoutCenterY = currentScreenY - currentTranslateY;
+
+            // Target location: Bottom of robot touching mouse, so center is half height above mouse
+            // Increase string float height by 100% per user request
+            const targetScreenX = mousePos.x;
+            const targetScreenY = mousePos.y - rect.height - 80;
+
+            const pullX = targetScreenX - layoutCenterX;
+            const pullY = targetScreenY - layoutCenterY;
+
+            // Authentic Balloon Rotation: 
+            // `dx` represents how far behind the cursor the robot currently is (tracking error / velocity).
+            // If mouse goes right (dx > 0), the robot is dragged from the bottom rightwards.
+            // Air resistance pushes the top left (counter-clockwise -> negative rotation).
+            const rotateOffset = -dx * 0.15;
+
+            return { x: pullX, y: pullY, rotateOffset };
+        }
+
+        // Interaction radius (dodge)
+        const radius = 150;
+
+        if (distance < radius) {
+            // Calculate push intensity based on how close the mouse is
+            const force = (radius - distance) / radius;
+            // Push away from the mouse
+            const pushX = -(dx / distance) * force * 100; // max push 100px
+            const pushY = -(dy / distance) * force * 100;
+
+            // Dodge rotation: lean away from cursor
+            return { x: pushX, y: pushY, rotateOffset: pushX * 0.15 };
+        }
+
+        return { x: 0, y: 0, rotateOffset: 0 };
+    };
+
+    // Pre-defined AI introductions for the easter egg
+    const aiPitchMessages = [
+        "嘿！被你發現了我的小秘密！😆 既然都點我了，不如讓我成為你的專屬 AI 店長？我能幫你 24 小時自動回覆 Line 訊息，再也沒有漏單的煩惱！🚀",
+        "哎呀，戳到我了啦！🤖 身為您的神級店長，我不只會自動回覆常見問題，還能根據你的行業特性引導客人下單唷！快來體驗看看吧！",
+        "看來你手速很不錯喔！😎 但我處理客服的速度更快！交給我，您可以省下 80% 的客服時間，專心把產品做好、做大！",
+        "哇喔，被捉到了！✨ 偷偷告訴你，現在前 500 名入駐我們 AI 店長平台的，還有專屬早鳥優惠價喔！每個月只要 499 元起就可以帶我回家！",
+        "不要再戳我了啦～很癢耶！😂 如果您有實體店面或是網拍，一定要試試看我的自動銷售功能，我可是推坑客人結帳的高手喔！🛍️"
+    ];
+
+    // Easter Egg: 4 Clicks on Robot triggers a playful AI message (resets after 1s)
+    const handleRobotClick = () => {
+        if (clickTimeoutRef.current) {
+            clearTimeout(clickTimeoutRef.current);
+        }
+
+        const newCount = robotClicks + 1;
+
+        if (newCount >= 4) {
+            const randomMsg = aiPitchMessages[Math.floor(Math.random() * aiPitchMessages.length)];
+            setMessages(prev => [
+                ...prev,
+                {
+                    id: crypto.randomUUID(),
+                    role: 'ai',
+                    content: randomMsg,
+                    timestamp: new Date()
+                }
+            ]);
+            setRobotClicks(0); // reset count
+        } else {
+            setRobotClicks(newCount);
+            // Reset counter if no click happens within 1 second
+            clickTimeoutRef.current = setTimeout(() => {
+                setRobotClicks(0);
+            }, 1000);
+        }
+    };
 
     // Dynamic Placeholder Rotation
     useEffect(() => {
@@ -1062,6 +1186,56 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
             style={{ backgroundImage: "url('/images/bg-landing.jpg')" }}
         >
             <DigitalBackground />
+
+            {/* Floating Robot Avatar */}
+            {!isSaaS && (
+                <motion.div
+                    ref={robotRef}
+                    initial={{ x: -300, opacity: 0 }}
+                    animate={{
+                        x: isTyping ? 0 : getDodgeOffset().x,
+                        y: isTyping ? 0 : getDodgeOffset().y,
+                        rotate: isTyping ? 0 : getDodgeOffset().rotateOffset, // Authentic dynamic tilt
+                        opacity: 1,
+                        scale: isRobotMouseDown ? 0.75 : 1 // Shrink slightly when held
+                    }}
+                    transition={{
+                        x: { type: "spring", stiffness: isRobotMouseDown ? 15 : 40, damping: isRobotMouseDown ? 25 : 15 },
+                        y: { type: "spring", stiffness: isRobotMouseDown ? 20 : 40, damping: isRobotMouseDown ? 25 : 15 },
+                        rotate: { type: "spring", stiffness: 35, damping: 20 },
+                        scale: { duration: 1.2, ease: "easeInOut" },
+                        opacity: { delay: 1.5, duration: 1.8 }
+                    }}
+                    style={{ transformOrigin: "bottom center" }} // Anchor the rotation at the bottom like a balloon string
+                    className="absolute left-[2%] md:left-[8%] lg:left-[12%] xl:left-[16%] bottom-[5%] md:bottom-[15%] z-30 pointer-events-auto w-32 md:w-48 lg:w-56 cursor-pointer"
+                    onPointerDown={() => setIsRobotMouseDown(true)}
+                    onClick={handleRobotClick}
+                >
+                    <motion.img
+                        src="/bot_01.svg"
+                        alt="AI Assistant Robot"
+                        className="w-full h-full object-contain filter drop-shadow-2xl"
+                        animate={
+                            isRobotMouseDown
+                                ? { y: [0, -15, 0], x: [0, 8, -8, 0], rotate: [0, 3, -3, 0] } // Gentle, airy balloon wobble while held
+                                : isTyping
+                                    ? { y: [0, -12, 0] } // Talking animation (fast bounce)
+                                    : {
+                                        y: [0, -25, 0, 15, -10, 0], // Pure Idle floating
+                                        x: [0, 15, -10, 10, 0],
+                                        rotate: [0, 3, -2, 1, 0]
+                                    }
+                        }
+                        transition={
+                            isRobotMouseDown
+                                ? { duration: 5, repeat: Infinity, ease: "easeInOut" } // Slow, floaty transition
+                                : isTyping
+                                    ? { duration: 0.35, repeat: Infinity, ease: "easeInOut" }
+                                    : { duration: 10, repeat: Infinity, ease: "easeInOut" }
+                        }
+                    />
+                </motion.div>
+            )}
 
             {/* 3. Main Chat Window - Floats in last */}
             <motion.div

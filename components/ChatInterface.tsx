@@ -361,6 +361,24 @@ const MockLineUI = ({ step, isActive = false }: { step: number, isActive?: boole
 export default function ChatInterface({ isMaster = false, isSaaS = false }: { isMaster?: boolean, isSaaS?: boolean }) {
     const hasGreetedRef = useRef(false);
     const [messages, setMessages] = useState<Message[]>([]);
+    
+    // Dynamic random backgrounds and bots
+    const [randomBgPath, setRandomBgPath] = useState<string>('/images/bg-landing_1.jpg');
+    const [randomBotPath, setRandomBotPath] = useState<string>('/bot_01.svg');
+
+    useEffect(() => {
+        const bgNum = Math.floor(Math.random() * 6) + 1; // 1 to 6
+        const botNum = Math.floor(Math.random() * 4) + 1; // 1 to 4
+        
+        // Preload images to avoid flickering if needed
+        const bgImg = new Image();
+        bgImg.src = `/images/bg-landing_${bgNum}.jpg`;
+        const botImg = new Image();
+        botImg.src = `/bot_0${botNum}.svg`;
+        
+        setRandomBgPath(bgImg.src);
+        setRandomBotPath(botImg.src);
+    }, []);
 
     useEffect(() => {
         if (messages.length === 0) {
@@ -1182,8 +1200,8 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
 
     return (
         <div
-            className="min-h-screen bg-[#f0f4f8] bg-cover bg-center bg-no-repeat relative overflow-hidden flex flex-col select-none"
-            style={{ backgroundImage: "url('/images/bg-landing.jpg')" }}
+            className="min-h-screen bg-[#f0f4f8] bg-cover bg-center bg-no-repeat relative overflow-hidden flex flex-col select-none transition-all duration-1000 ease-in-out"
+            style={{ backgroundImage: `url('${randomBgPath}')` }}
         >
             <DigitalBackground />
 
@@ -1212,9 +1230,9 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                     onClick={handleRobotClick}
                 >
                     <motion.img
-                        src="/bot_01.svg"
+                        src={randomBotPath}
                         alt="AI Assistant Robot"
-                        className="w-full h-full object-contain filter drop-shadow-2xl"
+                        className="w-full h-full object-contain filter drop-shadow-2xl transition-all duration-1000"
                         animate={
                             isRobotMouseDown
                                 ? { y: [0, -15, 0], x: [0, 8, -8, 0], rotate: [0, 3, -3, 0] } // Gentle, airy balloon wobble while held

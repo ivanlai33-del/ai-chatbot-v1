@@ -17,6 +17,17 @@ type Message = {
 
 const LINE_GREEN = "#06C755";
 
+/** Returns a stable session ID for this browser. Created once, lives in localStorage. */
+function getOrCreateSessionId(): string {
+    if (typeof window === 'undefined') return 'ssr';
+    let sid = localStorage.getItem('brand_dna_session_id');
+    if (!sid) {
+        sid = crypto.randomUUID();
+        localStorage.setItem('brand_dna_session_id', sid);
+    }
+    return sid;
+}
+
 const TUTORIAL_POSITIONS = [
     { x: 500, y: 350 }, // Step 0: Login
     { x: 450, y: 400 }, // Step 1: Channel
@@ -25,7 +36,18 @@ const TUTORIAL_POSITIONS = [
 ];
 
 const OWNER_INSIGHTS = [
+    "一個人開店，不可能 24 小時守著 LINE。現在有人幫你了。",
     "老闆身兼客服，半夜還在回訊息？",
+    "一人店忙不完？讓 AI 店長幫你守 Line、接客、賣東西。",
+    "不用請人、不用加班，每月 499 有一個 24 小時值班的店長。",
+    "客人半夜問價錢、問課程，AI 幫你先回好，早上起床只要確認訂單。",
+    "老闆只要顧現場，Line 上的詢問、報價、預約交給 AI。",
+    "比請一個工讀生便宜 10 倍，卻能幫你多賣好幾萬。",
+    "把你常講的話教給 AI，以後客人問同樣問題，它自動幫你回答。",
+    "Line 訊息從來不漏看、不漏回，客人不再因為等太久跑掉。",
+    "不用懂技術，掃一個 QR，讓 AI 住進你的 Line 官方帳號。",
+    "專為小店設計的 AI 店長：會聊天、會推薦、會幫你記住每個常客。",
+    "你專心做服務，AI 幫你把『問一問就消失的客人』變成真正訂單。",
     "客人問的問題都大同小異，好想找人代勞...",
     "不想讓客人在 Line 等太久，但手邊真的在忙...",
     "如果有個店長 24 小時幫我接單就好了。",
@@ -46,10 +68,7 @@ const OWNER_INSIGHTS = [
     "客服態度要始終如一，AI 不會鬧脾氣。",
     "我的 Line 帳號好冷清，AI 能幫我主動招呼嗎？",
     "出國旅遊時，也不用擔心 Line 訊息沒人回。",
-    "老闆心聲：我好想分身，多開幾家分店。",
-    "AI 能幫我記錄客人的特殊需求嗎？",
-    "不想再被客訴：為什麼下午傳的訊息晚上才回？",
-    "數位轉型很難嗎？聽說只要 7 分鐘就能搞定。"
+    "這套數位轉型很難嗎？聽說只要 3 分鐘就能搞定。"
 ];
 
 const INDUSTRY_TEMPLATES = [
@@ -406,9 +425,22 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
         setSelectedPlan({ name: '', price: '' });
         setLineSecret("");
         setLineToken("");
+        // Clear soul data
+        setIndustryType("");
+        setCompanyName("");
+        setMainServices("");
+        setTargetAudience("");
+        setContactInfo("");
+        ['chat_industry_type','chat_company_name','chat_main_services','chat_target_audience','chat_contact_info'].forEach(k => localStorage.removeItem(k));
     };
     const [businessIndustry, setBusinessIndustry] = useState("");
     const [businessMission, setBusinessMission] = useState("");
+    // 🧠 Soul Data (Five-Sense Intelligence)
+    const [industryType, setIndustryType] = useState("");
+    const [companyName, setCompanyName] = useState("");
+    const [mainServices, setMainServices] = useState("");
+    const [targetAudience, setTargetAudience] = useState("");
+    const [contactInfo, setContactInfo] = useState("");
     const [mgmtToken, setMgmtToken] = useState<string | null>(null);
     const [isAdminView, setIsAdminView] = useState(false);
     const [adminBotData, setAdminBotData] = useState<any>(null);
@@ -743,6 +775,17 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
         if (savedBotId) setBotId(savedBotId);
         if (savedIndustry) setBusinessIndustry(savedIndustry);
         if (savedMission) setBusinessMission(savedMission);
+        // Restore soul data
+        const savedIndustryType = localStorage.getItem('chat_industry_type');
+        const savedCompanyName = localStorage.getItem('chat_company_name');
+        const savedMainServices = localStorage.getItem('chat_main_services');
+        const savedTargetAudience = localStorage.getItem('chat_target_audience');
+        const savedContactInfo = localStorage.getItem('chat_contact_info');
+        if (savedIndustryType) setIndustryType(savedIndustryType);
+        if (savedCompanyName) setCompanyName(savedCompanyName);
+        if (savedMainServices) setMainServices(savedMainServices);
+        if (savedTargetAudience) setTargetAudience(savedTargetAudience);
+        if (savedContactInfo) setContactInfo(savedContactInfo);
         const savedMgmtToken = localStorage.getItem('chat_mgmt_token');
         if (savedMgmtToken) setMgmtToken(savedMgmtToken);
 
@@ -764,10 +807,16 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
             if (botId) localStorage.setItem('chat_bot_id', botId);
             localStorage.setItem('chat_industry', businessIndustry);
             localStorage.setItem('chat_mission', businessMission);
+            // Persist soul data
+            if (industryType) localStorage.setItem('chat_industry_type', industryType);
+            if (companyName) localStorage.setItem('chat_company_name', companyName);
+            if (mainServices) localStorage.setItem('chat_main_services', mainServices);
+            if (targetAudience) localStorage.setItem('chat_target_audience', targetAudience);
+            if (contactInfo) localStorage.setItem('chat_contact_info', contactInfo);
             if (mgmtToken) localStorage.setItem('chat_mgmt_token', mgmtToken);
             localStorage.setItem('chat_master_mode', JSON.stringify(isMasterMode));
         }
-    }, [messages, step, storeName, selectedPlan, lineSecret, lineToken, botId, isLoaded, isMasterMode, businessIndustry, businessMission]);
+    }, [messages, step, storeName, selectedPlan, lineSecret, lineToken, botId, isLoaded, isMasterMode, businessIndustry, businessMission, industryType, companyName, mainServices, targetAudience, contactInfo]);
 
     // URL Magic Link Detection
     useEffect(() => {
@@ -900,7 +949,7 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
             setBotId(data.botId);
             setMgmtToken(data.mgmtToken);
             setAdminBotData(null); // Clear previous
-            addAiMessage(`✨ 身份驗證成功！已找回您的 AI 店長管理連結。您可以點擊下方按鈕進入練功房：`, "success");
+            addAiMessage(`✨ 身份驗證成功！已找回您的 AI 店長管理連結。您可以點擊下方按鈕進入店長智庫：`, "success");
         } catch (err: any) {
             console.error(err);
             addAiMessage(`驗證失敗：${err.message}。請確認店名與 Line Secret 是否正確。`);
@@ -920,7 +969,7 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
             const renderPaypal = () => {
                 const container = document.getElementById(containerId);
                 if (container && container.innerHTML === '') {
-                    const is1199 = selectedPlan.price?.includes('1199') || selectedPlan.price?.includes('990');
+                    const is1199 = selectedPlan.price?.includes('1199');
                     (window as any).paypal.Buttons({
                         style: {
                             shape: is1199 ? 'rect' : 'pill',
@@ -997,22 +1046,40 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
         if (metadata.industry) setBusinessIndustry(metadata.industry);
         if (metadata.mission) setBusinessMission(metadata.mission);
 
+        // 🧠 Soul Data: persist the five intelligence fields whenever AI returns them
+        const dnaUpdate: Record<string, string> = {};
+        if (metadata.industry_type)   { setIndustryType(metadata.industry_type);     dnaUpdate.industry_type   = metadata.industry_type; }
+        if (metadata.company_name)    { setCompanyName(metadata.company_name);       dnaUpdate.company_name    = metadata.company_name; }
+        if (metadata.main_services)   { setMainServices(metadata.main_services);     dnaUpdate.main_services   = metadata.main_services; }
+        if (metadata.target_audience) { setTargetAudience(metadata.target_audience); dnaUpdate.target_audience = metadata.target_audience; }
+        if (metadata.contact_info)    { setContactInfo(metadata.contact_info);       dnaUpdate.contact_info    = metadata.contact_info; }
+
+        // 💾 Persist Brand DNA to Supabase (fire & forget, non-blocking)
+        if (Object.keys(dnaUpdate).length > 0) {
+            const sessionId = getOrCreateSessionId();
+            fetch('/api/brand-dna', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ session_id: sessionId, ...dnaUpdate })
+            }).catch(e => console.warn('[brand-dna] upsert failed:', e));
+        }
+
         // 🚀 Robust Plan Detection & Validation
         if (metadata.selectedPlan) {
             if (typeof metadata.selectedPlan === 'object') {
                 setSelectedPlan(metadata.selectedPlan);
             } else if (typeof metadata.selectedPlan === 'string') {
-                if (metadata.selectedPlan.includes('399') || metadata.selectedPlan.includes('499') || metadata.selectedPlan.includes('Lite')) {
+                if (metadata.selectedPlan.includes('499') || metadata.selectedPlan.includes('Lite')) {
                     setSelectedPlan({ name: 'AI 老闆分身 Lite', price: '$499' });
-                } else if (metadata.selectedPlan.includes('990') || metadata.selectedPlan.includes('1199') || metadata.selectedPlan.includes('強力') || metadata.selectedPlan.includes('會計')) {
+                } else if (metadata.selectedPlan.includes('1199') || metadata.selectedPlan.includes('強力') || metadata.selectedPlan.includes('會計')) {
                     setSelectedPlan({ name: '公司強力店長版', price: '$1199' });
                 }
             }
         } else if (actionTip === 'checkout') {
             // 🚀 Content-Aware Detection Fallback
-            if (cleanContent.includes('399') || cleanContent.includes('499') || cleanContent.includes('Lite')) {
+            if (cleanContent.includes('499') || cleanContent.includes('Lite')) {
                 setSelectedPlan({ name: 'AI 老闆分身 Lite', price: '$499' });
-            } else if (cleanContent.includes('990') || cleanContent.includes('1199') || cleanContent.includes('強力') || cleanContent.includes('會計')) {
+            } else if (cleanContent.includes('1199') || cleanContent.includes('強力') || cleanContent.includes('會計')) {
                 setSelectedPlan({ name: '公司強力店長版', price: '$1199' });
             }
         }
@@ -1192,6 +1259,7 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                     selectedPlan,
                     businessIndustry,
                     businessMission,
+                    sessionId: getOrCreateSessionId(),
                     ownerLineId: "" // TODO: Implement Line Login or Admin binding later to get real Line User ID
                 })
             });
@@ -1553,15 +1621,23 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                                         originalPrice: '599',
                                                         tag: '前500名優惠',
                                                         tagColor: 'text-red-500 bg-red-50',
-                                                        features: ['每月 5,000 則對話', '免 OpenAI API Key', '智慧文字客服', '產品/服務 QA 介紹', '24小時自動回訊'],
+                                                        features: ['每月 5,000 則對話', '免 OpenAI API Key', '智慧文字客服', '產品/服務 QA 介紹', '24小時自動回訊', '品牌 DNA 個性設定'],
                                                     },
                                                     {
                                                         name: '公司強力店長版',
                                                         price: '1199',
                                                         originalPrice: '1599',
-                                                        tag: '前500名優惠',
+                                                        tag: '強力推薦',
                                                         tagColor: 'text-amber-500 bg-amber-50',
-                                                        features: ['每月 20,000 則對話', '含 Lite 所有功能', 'AI 庫存查詢', '訂單狀態查詢', '預約詢問收集', 'GPT-4o 升級版 AI'],
+                                                        features: [
+                                                            '每月 20,000 則對話',
+                                                            '含 Lite 所有功能',
+                                                            '📢 主動廣播推播',
+                                                            '📅 預約自動收集',
+                                                            '📁 PDF 文件上傳學習',
+                                                            '📊 月報分析報表',
+                                                            'GPT-4o 升級版 AI',
+                                                        ],
                                                         popular: true,
                                                     },
                                                     {
@@ -1588,16 +1664,30 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                                     >
                                                         <div className="flex justify-between items-center mb-1.5">
                                                             <div className="flex flex-col">
-                                                                <span className="font-extrabold text-[15px] text-zinc-800">{p.name}</span>
-                                                                {p.tag && <span className={cn("text-[10px] font-bold px-1.5 py-0.5 mt-1 rounded-md w-fit", p.tagColor)}>{p.tag}</span>}
+                                                                <div className="flex items-center gap-2">
+                                                                    <span className="font-extrabold text-[15px] text-zinc-800">{p.name}</span>
+                                                                    {p.popular && (
+                                                                        <span className="px-1.5 py-0.5 bg-amber-500 text-white text-[9px] font-black rounded-full uppercase tracking-tighter">熱門推薦</span>
+                                                                    )}
+                                                                </div>
+                                                                {p.tag && <span className={cn("text-[11.5px] font-bold px-1.5 py-0.5 mt-1 rounded-md w-fit", p.tagColor)}>{p.tag}</span>}
                                                             </div>
                                                             <div className="flex flex-col items-end justify-center">
                                                                 {p.originalPrice && <span className="text-[11px] text-zinc-400 line-through font-medium -mb-1">原價 {p.originalPrice}</span>}
-                                                                <span className="font-black text-[18px]" style={{ color: LINE_GREEN }}>{p.price}</span>
+                                                                <span className="font-black text-[22.5px]" style={{ color: p.popular ? '#F59E0B' : LINE_GREEN }}>{p.price}</span>
                                                                 {p.isRequirement && <span className="text-[10px] text-amber-500 font-black">專人規劃方案</span>}
                                                             </div>
                                                         </div>
-                                                        <p className="text-[12px] text-zinc-500 font-medium">{p.desc}</p>
+                                                        <p className="text-[12px] text-zinc-500 font-medium mb-3">{p.desc}</p>
+                                                        {p.features && (
+                                                            <div className="flex flex-wrap gap-1.5 mt-2">
+                                                                {p.features.map((f, i) => (
+                                                                    <span key={i} className="px-2 py-0.5 bg-zinc-50 border border-zinc-100 rounded-md text-[10px] text-zinc-600 font-bold whitespace-nowrap">
+                                                                        {f}
+                                                                    </span>
+                                                                ))}
+                                                            </div>
+                                                        )}
                                                         {p.isRequirement && (
                                                             <div className="mt-3 flex items-center gap-1 text-[#06C755] font-black text-[11px]">
                                                                 <ChevronRight className="w-4 h-4" /> 填寫需求申請單
@@ -1695,7 +1785,7 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                                         </div>
                                                     </div>
                                                 </div>
-                                                {(selectedPlan.price === '$399' || selectedPlan.price === '$499' || selectedPlan.price === '$990' || selectedPlan.price === '$1199') ? (
+                                                {(selectedPlan.price === '$499' || selectedPlan.price === '$1199') ? (
                                                     <div className="space-y-4">
                                                         <div id={`paypal-button-container-${m.id}`} className="min-h-[150px]"></div>
                                                         <p className="text-[12px] text-zinc-400 text-center font-medium">點擊「Subscribe」完成支付並自動辨識店家：<b>{storeName}</b></p>
@@ -1882,7 +1972,7 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                                         <div className="flex items-center justify-between">
                                                             <div className="flex items-center gap-2">
                                                                 <Key className="w-5 h-5" style={{ color: LINE_GREEN }} />
-                                                                <span className="font-black text-zinc-800">AI 練功房 (管理)</span>
+                                                                <span className="font-black text-zinc-800">AI 店長智庫 (管理)</span>
                                                             </div>
                                                             {isAdminView && (
                                                                 <div className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-tighter border ${adminBotData?.status === 'active' ? 'bg-emerald-100 text-emerald-600 border-emerald-200' : 'bg-red-100 text-red-600 border-red-200'}`}>
@@ -1904,7 +1994,7 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                                                     className="w-full py-4 text-white rounded-xl font-black text-[15px] hover:brightness-110 transition-all shadow-lg active:scale-95"
                                                                     style={{ backgroundColor: LINE_GREEN }}
                                                                 >
-                                                                    進入練功房 · 管理中心 ➔
+                                                                    進入店長智庫 · 管理中心 ➔
                                                                 </button>
                                                             </div>
                                                         ) : (
@@ -1912,7 +2002,7 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                                                 {/* Admin Tabs */}
                                                                 <div className="flex border-b border-slate-200">
                                                                     {(['brain', 'products', 'faq', 'orders'] as const).map((tab) => {
-                                                                        const isLite = selectedPlan.price?.includes('399') || selectedPlan.price?.includes('499');
+                                                                        const isLite = selectedPlan.price?.includes('499');
                                                                         const isLocked = isLite && tab !== 'brain';
 
                                                                         return (

@@ -22,7 +22,7 @@ export default function Sidebar() {
             icon: LayoutDashboard
         },
         {
-            name: 'AI 練功房',
+            name: 'AI 店長智庫',
             href: '/saas-partnership/dashboard/knowledge',
             icon: BrainCircuit
         },

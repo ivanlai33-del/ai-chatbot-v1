@@ -6,6 +6,7 @@ import { decrypt } from '@/lib/encryption';
 import { IntentInterceptor } from '@/lib/services/IntentInterceptor';
 import { GenericToolsRegistry, GenericToolsPayload } from '@/lib/services/tools';
 import { markAsProcessed, getIdempotencyKey } from '@/lib/middleware/idempotency';
+import { acquireSlot, releaseSlot, getConcurrentLimit } from '@/lib/middleware/concurrency';
 
 export async function GET() {
     return new Response('Bot Webhook is Active.', { status: 200 });
@@ -17,17 +18,30 @@ export async function POST(
 ) {
     const botId = params.botId;
 
+    // ⚡ INSTANT 200 — Parse body first, then fire-and-forget processing
+    let body: any;
     try {
-        let body: any;
-        try {
-            body = await req.json();
-        } catch (e) {
-            return NextResponse.json({ status: 'ok' });
-        }
+        body = await req.json();
+    } catch (e) {
+        return NextResponse.json({ status: 'ok' });
+    }
 
-        const events: WebhookEvent[] = body.events || [];
-        if (events.length === 0) return NextResponse.json({ status: 'ok' });
+    const events: WebhookEvent[] = body.events || [];
+    if (events.length === 0) return NextResponse.json({ status: 'ok' });
 
+    // Reply to LINE immediately — prevents LINE retry storms
+    // Processing continues in the background via the fire-and-forget below
+    processEvents(botId, events).catch((err) =>
+        console.error(`[Webhook] Background processing error for bot ${botId}:`, err)
+    );
+
+    return NextResponse.json({ status: 'ok' });
+}
+
+// ─── Background processing (runs after 200 is already returned) ──────────────
+async function processEvents(botId: string, events: WebhookEvent[]) {
+
+    try {
         // 1. Fetch bot config
         const { data: bot, error: botError } = await supabase
             .from('bots')
@@ -37,11 +51,11 @@ export async function POST(
 
         if (botError || !bot) {
             console.error('Bot not found:', botError);
-            return NextResponse.json({ status: 'error', message: 'Bot not found' }, { status: 404 });
+            return; // Background function — just return, no HTTP response needed
         }
 
         if (bot.status !== 'active') {
-            return NextResponse.json({ status: 'suspended' });
+            return; // Bot suspended — silently drop
         }
 
         const lineConfig = {
@@ -473,8 +487,22 @@ export async function POST(
                     ...GenericToolsPayload
                 ];
 
-                // C. Call OpenAI
+                // C. Call OpenAI (with per-bot concurrency soft limit)
                 let aiResponse = '';
+                const concurrentLimit = getConcurrentLimit(activeBot.selected_plan);
+                const slotAcquired = await acquireSlot(botId, concurrentLimit);
+
+                if (!slotAcquired) {
+                    // All slots busy — send friendly queued message via pushMessage
+                    try {
+                        await client.pushMessage(lineUserId, {
+                            type: 'text',
+                            text: '我現在有點忙碌，請稍等一下，我很快就回來！🙏'
+                        });
+                    } catch { /* ignore push errors */ }
+                    continue;
+                }
+
                 try {
                     const response = await openai.chat.completions.create({
                         model: "gpt-4o-mini",
@@ -567,6 +595,8 @@ export async function POST(
                 } catch (e: any) {
                     console.error('AI Error:', e.message);
                     aiResponse = "抱歉，我剛才大腦斷線了，請再說一次。";
+                } finally {
+                    releaseSlot(botId); // Always release the slot
                 }
 
                 // D. Log & Reply
@@ -581,16 +611,35 @@ export async function POST(
                     }
                 })();
 
+                // E. Auto-capture reservation intent (1199 plan only)
+                const is1199 = (activeBot.selected_plan || '').includes('1199') || (activeBot.selected_plan || '').includes('強力');
+                if (is1199) {
+                    const reservationKeywords = ['預約', '訂位', '我要訂', '我想訂', '幫我訂', '我要預訂', '可以預訂'];
+                    const hasReservationIntent = reservationKeywords.some(kw => userMessage.includes(kw));
+                    if (hasReservationIntent) {
+                        // Extract basic info from user message with simple heuristics
+                        const dateMatch = userMessage.match(/([\u4e00-\u9fa5]+[\d\/\-]*[日期天期週月小時午前午後]+[\u4e00-\u9fa5\d\:半]*)|([\d]{1,2}[\/\-][\d]{1,2})/)?.[0] || null;
+                        const serviceMatch = userMessage.match(/[預訂我要訂幫我訂想訂]+([\u4e00-\u9fa5]{2,10})/)?.[1] || null;
+
+                        await supabase.from('reservations').insert({
+                            bot_id: botId,
+                            line_user_id: lineUserId,
+                            requested_date: dateMatch,
+                            service_type: serviceMatch,
+                            note: userMessage,
+                            status: 'pending'
+                        });
+                    }
+                }
+
                 await client.replyMessage(event.replyToken, {
                     type: 'text',
                     text: aiResponse.trim() || '收到您的訊息！'
                 });
-            }
-        }
+            } // end if (event.type === 'message')
+        } // end for (events)
 
-        return NextResponse.json({ status: 'success' });
     } catch (error: any) {
-        console.error('Webhook Global Error:', error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        console.error('[processEvents] Error:', error);
     }
 }

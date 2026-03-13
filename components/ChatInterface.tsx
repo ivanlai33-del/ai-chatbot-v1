@@ -391,13 +391,13 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
 
     useEffect(() => {
         const bgNum = Math.floor(Math.random() * 6) + 1; // 1 to 6
-        const botNum = Math.floor(Math.random() * 6) + 1; // 1 to 6
+        const botNum = Math.floor(Math.random() * 10) + 1; // 1 to 10
         
         // Preload images to avoid flickering if needed
         const bgImg = new Image();
         bgImg.src = `/images/bg-landing_${bgNum}.jpg`;
         const botImg = new Image();
-        botImg.src = `/bot_0${botNum}.svg`;
+        botImg.src = `/bot_${botNum.toString().padStart(2, '0')}.svg`;
         
         setRandomBgPath(bgImg.src);
         setRandomBotPath(botImg.src);
@@ -441,6 +441,8 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
     const [mainServices, setMainServices] = useState("");
     const [targetAudience, setTargetAudience] = useState("");
     const [contactInfo, setContactInfo] = useState("");
+    const [lineUserId, setLineUserId] = useState<string | null>(null);
+    const [lineUserName, setLineUserName] = useState<string | null>(null);
     const [mgmtToken, setMgmtToken] = useState<string | null>(null);
     const [isAdminView, setIsAdminView] = useState(false);
     const [adminBotData, setAdminBotData] = useState<any>(null);
@@ -452,6 +454,46 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
         const lastMsg = messages[messages.length - 1];
         if (lastMsg?.type === 'setup' && (lastMsg as any).metadata?.tutorialStep !== undefined) {
             setTutorialStep((lastMsg as any).metadata.tutorialStep);
+        }
+
+        // Check for LINE Login callback params
+        if (typeof window !== 'undefined') {
+            const params = new URLSearchParams(window.location.search);
+            const lId = params.get('line_id');
+            const lName = params.get('line_name');
+            
+            if (lId) {
+                setLineUserId(lId);
+                localStorage.setItem('line_user_id', lId);
+                if (lName) {
+                    setLineUserName(lName);
+                    localStorage.setItem('line_user_name', lName);
+                }
+                // Clean up URL to avoid re-triggering logic on refresh
+                window.history.replaceState({}, document.title, window.location.pathname);
+
+                // Check for pending plan to resume
+                const pendingPlanStr = localStorage.getItem('pending_plan');
+                if (pendingPlanStr) {
+                    try {
+                        const plan = JSON.parse(pendingPlanStr);
+                        setSelectedPlan(plan);
+                        setStep(2);
+                        setTimeout(() => {
+                            addAiMessage(`${lName || '老闆'} 您好，身份驗證已完成！這是您選擇的方案，請完成支付以正式開通您的 AI 店長：`, "checkout");
+                        }, 1200);
+                        localStorage.removeItem('pending_plan');
+                    } catch (e) {
+                        console.error('Failed to parse pending plan', e);
+                    }
+                }
+            } else {
+                // Try to load from localStorage
+                const savedId = localStorage.getItem('line_user_id');
+                const savedName = localStorage.getItem('line_user_name');
+                if (savedId) setLineUserId(savedId);
+                if (savedName) setLineUserName(savedName);
+            }
         }
     }, [messages]);
     const [paypalInitialized, setPaypalInitialized] = useState(false);
@@ -1186,12 +1228,23 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
 
     const handleSelectPlan = (name: string, price: string) => {
         setSelectedPlan({ name, price });
+        
+        // If not logged in via LINE, redirect to auth
+        if (!lineUserId) {
+            localStorage.setItem('pending_plan', JSON.stringify({ name, price }));
+            // Add a small delay so user sees the "selection" before redirect
+            addAiMessage("太棒了！為了確保您在開通後能直接進入管理後台，請先完成 LINE 身份驗證：");
+            setTimeout(() => {
+                window.location.href = '/api/auth/line';
+            }, 1000);
+            return;
+        }
+
         const content = `我決定選擇 ${name} 方案`;
         setMessages(prev => [...prev, { id: Date.now().toString(), role: 'user', content }]);
         setStep(2);
-        // We could also call the API here to get AI's reaction to the plan choice
         setTimeout(() => {
-            addAiMessage(`太棒了！這是最聰明的選擇。請完成支付以正式開通您的 AI 店長：`, "checkout");
+            addAiMessage(`身分驗證成功！${lineUserName} 老闆您好。這是最聰明的選擇。請完成支付以正式開通您的 AI 店長：`, "checkout");
         }, 800);
     };
 
@@ -1260,7 +1313,7 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                     businessIndustry,
                     businessMission,
                     sessionId: getOrCreateSessionId(),
-                    ownerLineId: "" // TODO: Implement Line Login or Admin binding later to get real Line User ID
+                    ownerLineId: lineUserId || ""
                 })
             });
 

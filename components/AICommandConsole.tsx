@@ -7,6 +7,7 @@ import {
     MessageSquare, 
     Brain, 
     Users, 
+    User,
     Calendar, 
     BarChart3, 
     Settings, 

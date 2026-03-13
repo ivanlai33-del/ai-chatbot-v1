@@ -67,7 +67,7 @@ export async function POST(
             return NextResponse.json({ error: '查詢用戶清單失敗' }, { status: 500 });
         }
 
-        const uniqueUserIds = [...new Set((logs || []).map((l: any) => l.user_id).filter(Boolean))];
+        const uniqueUserIds = Array.from(new Set((logs || []).map((l: any) => l.user_id).filter(Boolean)));
 
         if (uniqueUserIds.length === 0) {
             return NextResponse.json({ success: true, message: '目前尚無可廣播的用戶', sent: 0 });

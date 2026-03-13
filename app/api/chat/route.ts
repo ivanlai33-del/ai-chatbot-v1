@@ -229,7 +229,7 @@ const SYSTEM_PROMPT = `
 - 設定欄位焦點：{focusedField} (由前端傳入，幫助你判斷使用者在填哪一格)
 
 請務必在回覆的「最後一端」，以 JSON 格式提供 metadata（務必單獨佔一行）：
-{"storeName": "店名", "industry_type": "行業別", "company_name": "店名或公司名", "main_services": "主打服務或商品", "target_audience": "目標客群", "contact_info": "聯絡方式", "industry": "行業別(同industry_type，向後兼容)", "mission": "核心任務", "selectedPlan": {"name": "方案名稱", "price": "方案價格"}, "action": "SHOW_PLANS | SHOW_CHECKOUT | SHOW_SETUP | SHOW_SUCCESS | SHOW_RECOVERY | TUTORIAL_STEP | SHOW_REQUIREMENT_FORM | COLLECT_DATA | null", "tutorialStep": 0, "suggestedPlaceholder": "建議下一個問題"}
+{"storeName": "店名", "industry_type": "行業別", "company_name": "店名或公司名", "main_services": "主打服務或商品", "target_audience": "目標客群", "contact_info": "聯絡方式", "industry": "行業別(同industry_type，向後兼容)", "mission": "核心任務", "selectedPlan": {"name": "方案名稱", "price": "方案價格"}, "action": "SHOW_PLANS | SHOW_CHECKOUT | SHOW_SETUP | SHOW_SUCCESS | SHOW_RECOVERY | TUTORIAL_STEP | SHOW_REQUIREMENT_FORM | COLLECT_DATA | COLLECT_CONTACT | null", "tutorialStep": 0, "suggestedPlaceholder": "建議下一個問題"}
 - **重要**：當用戶決定方案並進入 SHOW_CHECKOUT 時，務必在 metadata 中提供正確的 selectedPlan (例如 {"name": "AI 老闆分身 Lite", "price": "$499"})。
 - **情蒐欄位規則**：每次回覆都必須把目前已知的五感情報欄位值帶入 metadata，還沒收集到的欄位設為 null。當情蒐有新進展時，可使用 "action": "COLLECT_DATA" 讓前端知道有新資料需要儲存。
 `;

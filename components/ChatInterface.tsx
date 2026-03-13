@@ -12,7 +12,7 @@ type Message = {
     id: string;
     role: 'ai' | 'user';
     content: string;
-    type?: 'text' | 'pricing' | 'checkout' | 'setup' | 'success' | 'recovery' | 'saas_partner' | 'enterprise' | 'requirement_form';
+    type?: 'text' | 'pricing' | 'checkout' | 'setup' | 'success' | 'recovery' | 'saas_partner' | 'enterprise' | 'requirement_form' | 'contact_cta';
 };
 
 const LINE_GREEN = "#06C755";
@@ -1076,6 +1076,7 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
             if (action === 'SHOW_SAAS_PARTNER') actionTip = 'saas_partner';
             if (action === 'SHOW_ENTERPRISE') actionTip = 'enterprise';
             if (action === 'SHOW_REQUIREMENT_FORM') actionTip = 'requirement_form';
+            if (action === 'COLLECT_CONTACT') actionTip = 'contact_cta';
         }
 
         // 🗑️ Frontend Safety Net: Strip any JSON-like blocks that leaked through
@@ -1806,6 +1807,40 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                                 <p className="text-[11px] text-zinc-400 text-center font-medium leading-relaxed">
                                                     點擊送出即代表同意由 AI 店長專員與您取得聯繫，我們將保護您的個人資訊安全。
                                                 </p>
+                                            </motion.div>
+                                        )}
+                                         {m.type === 'contact_cta' && (
+                                            <motion.div
+                                                initial={{ opacity: 0, scale: 0.95 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                className="ml-14 bg-white p-8 rounded-3xl border border-zinc-100 shadow-2xl space-y-6 max-w-[85%]"
+                                            >
+                                                <div className="flex items-center gap-3 font-black text-[21px] text-zinc-800">
+                                                    <div className="w-10 h-10 rounded-full bg-[#06C755] flex items-center justify-center shadow-lg shadow-green-500/20">
+                                                        <User className="w-6 h-6 text-white" />
+                                                    </div>
+                                                    <span>一鍵綁定 LINE 帳號</span>
+                                                </div>
+                                                <p className="text-[14px] text-zinc-500 font-medium leading-relaxed">
+                                                    點擊下方按鈕即可快速完成身份綁定，不需手動輸入！之後進入管理後台也將以此帳號作為權限憑證。
+                                                </p>
+                                                <button
+                                                    onClick={() => {
+                                                        const redirectUrl = `${window.location.origin}/api/auth/line`;
+                                                        window.location.href = redirectUrl;
+                                                    }}
+                                                    className="w-full py-5 text-white bg-[#06C755] rounded-2xl font-black text-[21px] hover:brightness-105 active:scale-95 transition-all shadow-xl shadow-green-500/30 flex items-center justify-center gap-3"
+                                                >
+                                                    <svg className="w-7 h-7 fill-white" viewBox="0 0 24 24">
+                                                        <path d="M24 10.3c0-4.7-4.5-8.5-10.1-8.5S3.8 5.6 3.8 10.3c0 4.2 3.6 7.7 8.4 8.4-.3.6-.9 2.1-1.1 2.8-.2.8.2.8.5.5 2.1-1.4 4.5-3.3 5.3-4.2C21.6 16.5 24 13.7 24 10.3zm-14.8 3.5c-.3 0-.5-.2-.5-.5v-3.3c0-.3.2-.5.5-.5s.5.2.5.5v3.3c0 .3-.2.5-.5.5zm2.8 0c-.3 0-.5-.2-.5-.5v-3.3c0-.3.2-.5.5-.5s.5.2.5.5v3.3c0 .3-.2.5-.5.5zm2.8 0c-.3 0-.5-.2-.5-.5v-3.3c0-.3.2-.5.5-.5s.5.2.5.5v3.3c0 .3-.2.5-.5.5zm2.8 0c-.3 0-.5-.2-.5-.5v-3.3c0-.3.2-.5.5-.5s.5.2.5.5v3.3c0 .3-.2.5-.5.5z"/>
+                                                    </svg>
+                                                    <span>LINE 一鍵登入</span>
+                                                </button>
+                                                <div className="flex items-center gap-2 justify-center py-2">
+                                                    <div className="h-px bg-zinc-100 flex-1"></div>
+                                                    <span className="text-[11px] text-zinc-300 font-bold uppercase tracking-widest">or continue with chat</span>
+                                                    <div className="h-px bg-zinc-100 flex-1"></div>
+                                                </div>
                                             </motion.div>
                                         )}
                                         {m.type === 'checkout' && (

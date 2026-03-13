@@ -486,6 +486,11 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                     } catch (e) {
                         console.error('Failed to parse pending plan', e);
                     }
+                } else {
+                    // Identity bound before plan selection
+                    setTimeout(() => {
+                        addAiMessage(`${lName || '老闆'} 您好！身份已成功綁定。前五百位加入的專屬優惠我已經幫您留好了，現在來看看最適合您的開通方案吧：`, "pricing");
+                    }, 1200);
                 }
             } else {
                 // Try to load from localStorage
@@ -2084,6 +2089,14 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                                                 >
                                                                     進入店長智庫 · 管理中心 ➔
                                                                 </button>
+                                                                 <button
+                                                                    onClick={() => {
+                                                                        window.location.href = `/console?line_id=${lineUserId || ''}&line_name=${encodeURIComponent(lineUserName || '')}`;
+                                                                    }}
+                                                                    className="w-full py-4 text-white rounded-xl font-black text-[15px] hover:brightness-110 transition-all shadow-lg active:scale-95 bg-[#1e293b] border border-slate-700"
+                                                                 >
+                                                                    🎛️ 進入戰情儀表板 (Retail Console)
+                                                                 </button>
                                                             </div>
                                                         ) : (
                                                             <div className="space-y-4">

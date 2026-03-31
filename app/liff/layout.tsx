@@ -16,17 +16,8 @@ export default function LiffLayout({
   return (
     <LiffProvider liffId={liffId}>
       <div className={`${inter.className} min-h-screen bg-[#0f172a] text-slate-200 selection:bg-indigo-500/30 overflow-x-hidden`}>
-        {/* LIFF specific background effects */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden">
-          {/* Optional Background Image - Un-comment and replace URL below to use a custom background */}
-          {/* 
-          <div 
-            className="absolute inset-0 bg-no-repeat bg-center bg-cover opacity-20"
-            style={{ backgroundImage: 'url("https://your-image-url.jpg")' }} 
-          />
-          */}
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-500/10 blur-[120px] rounded-full" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-500/10 blur-[120px] rounded-full" />
+          {/* Background glows removed for original color fidelity */}
         </div>
         
         {/* LIFF SDK script */}

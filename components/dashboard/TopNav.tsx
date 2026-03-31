@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { Home, Zap, Crown, User, LogOut } from 'lucide-react';
 import Image from 'next/image';
+import { cn } from '@/lib/utils';
 
 interface TopNavProps {
     userName: string;
@@ -37,6 +38,17 @@ export default function TopNav({
 
                 <div className="flex items-center gap-3">
                     <div className="flex items-center gap-1.5 mr-2">
+                        {planLevel === 0 && (
+                            <motion.button
+                                whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(245, 158, 11, 0.4)" }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => window.location.href = '/#pricing'}
+                                className="mr-3 px-4 py-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[11px] font-black rounded-full shadow-lg shadow-orange-500/20 flex items-center gap-1.5 animate-pulse"
+                            >
+                                <Zap className="w-3 h-3 fill-current" />
+                                立即解鎖正式版
+                            </motion.button>
+                        )}
                         <motion.button
                             whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                             onClick={() => window.location.href = '/'}
@@ -46,7 +58,10 @@ export default function TopNav({
                             回首頁
                         </motion.button>
                     </div>
-                    <div className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold ${plan.badge}`}>
+                    <div className={cn(
+                        "flex items-center gap-1.5 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm border",
+                        plan.badge
+                    )}>
                         {PlanIcon && <PlanIcon className={`w-3.5 h-3.5 ${plan.color}`} />}
                         <span className={plan.color}>{plan.label}</span>
                     </div>

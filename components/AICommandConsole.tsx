@@ -10,6 +10,7 @@ import ConsoleLiveFeed from './console/ConsoleLiveFeed';
 import ConsoleQuickActions from './console/ConsoleQuickActions';
 import ConsoleStrategicAdvisor from './console/ConsoleStrategicAdvisor';
 import ConsoleAnalyticsView from './console/ConsoleAnalyticsView';
+import PersonalAnalyticsView from './console/PersonalAnalyticsView';
 
 interface AICommandConsoleProps {
     botId?: string;
@@ -62,9 +63,13 @@ export default function AICommandConsole({ botId, lineUserName, lineUserId }: AI
                         </>
                     )}
 
-                    {activeTab === 'analytics' && <ConsoleAnalyticsView />}
+                    {activeTab === 'analytics' && (
+                         viewMode === 'platform' ? <ConsoleAnalyticsView /> : <PersonalAnalyticsView />
+                    )}
 
-                    {activeTab !== 'dashboard' && activeTab !== 'analytics' && (
+                    {activeTab === 'leads' && <PersonalAnalyticsView />}
+
+                    {activeTab !== 'dashboard' && activeTab !== 'analytics' && activeTab !== 'leads' && (
                         <div className="flex flex-col items-center justify-center h-full opacity-30">
                             <div className="w-20 h-20 rounded-3xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20 mb-6">
                                 <BarChart3 className="w-10 h-10 text-indigo-400/50" />

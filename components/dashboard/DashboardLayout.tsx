@@ -8,6 +8,8 @@ interface DashboardLayoutProps {
     userName: string;
     userPicture: string;
     lineUserId: string;
+    subscriptionStatus: string;
+    nextBillingDate: string;
     planLevel: number;
     onLogout: () => void;
     children: React.ReactNode;
@@ -18,6 +20,8 @@ export default function DashboardLayout({
     userName,
     userPicture,
     lineUserId,
+    subscriptionStatus,
+    nextBillingDate,
     planLevel,
     onLogout,
     children,
@@ -29,6 +33,8 @@ export default function DashboardLayout({
                 userName={userName}
                 userPicture={userPicture}
                 lineUserId={lineUserId}
+                subscriptionStatus={subscriptionStatus}
+                nextBillingDate={nextBillingDate}
                 planLevel={planLevel}
                 planConfig={PLAN_CONFIG}
                 onLogout={onLogout}

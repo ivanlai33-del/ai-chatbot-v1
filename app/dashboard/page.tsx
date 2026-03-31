@@ -53,6 +53,8 @@ export default function DashboardPage() {
             userName={userName}
             userPicture={userPicture}
             lineUserId={typeof document !== 'undefined' ? (document.cookie.split('; ').find(r => r.startsWith('line_user_id='))?.split('=')[1] || '') : ''}
+            subscriptionStatus={planLevel > 0 ? "🟢 服務運行中" : "⚪️ 尚未開通"}
+            nextBillingDate={planLevel > 0 ? "2026/04/15" : "—"}
             planLevel={planLevel}
             onLogout={logout}
             sidebar={

@@ -9,6 +9,7 @@ export const getPricingPlans = (billingCycle: 'monthly' | 'yearly') => [
         period: billingCycle === 'monthly' ? '/月' : '/年',
         description: '限時前 500 名：原價 $599 優惠中',
         features: [
+            '1 組 AI 店長正式上線服役',
             '每月 5,000 則智慧對話',
             '免 OpenAI API Key',
             '🤖 智慧文字客服',
@@ -28,9 +29,10 @@ export const getPricingPlans = (billingCycle: 'monthly' | 'yearly') => [
         features: [
             '可串接 5 組官方帳號AI店長',
             '每月 35,000 則對話 (共享額度)',
-            '各 AI 店長獨立智庫空間',
-            '📁 PDF/網頁 深度學習 RAG',
-            'GPT-4o 旗艦級大腦'
+            '各 AI 店長專屬獨立智庫',
+            '📁 支援 PDF、DOC 文件學習',
+            '📜 每組店長限額 5 份知識文件',
+            'GPT-4o 旗艦級 AI 大腦'
         ],
         icon: <Crown className="w-6 h-6 text-amber-500" />,
         color: 'amber',

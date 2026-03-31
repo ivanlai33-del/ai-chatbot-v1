@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { PLATFORM_NAV_ITEMS, PERSONAL_NAV_ITEMS } from '@/config/console_config';
+import { PLATFORM_NAV_ITEMS, PERSONAL_NAV_ITEMS, PLATFORM_STATS, PERSONAL_STATS } from '@/config/console_config';
 import { BarChart3 } from 'lucide-react';
 import ConsoleSidebar from './console/ConsoleSidebar';
 import ConsoleHeader from './console/ConsoleHeader';
@@ -23,6 +23,7 @@ export default function AICommandConsole({ botId, lineUserName, lineUserId }: AI
     const [viewMode, setViewMode] = useState<'platform' | 'personal'>('platform');
 
     const navItems = viewMode === 'platform' ? PLATFORM_NAV_ITEMS : PERSONAL_NAV_ITEMS;
+    const currentStats = viewMode === 'platform' ? PLATFORM_STATS : PERSONAL_STATS;
     const activeTabLabel = navItems.find(n => n.id === activeTab)?.label || '戰情中心';
 
     return (
@@ -46,7 +47,7 @@ export default function AICommandConsole({ botId, lineUserName, lineUserId }: AI
                 <div className="flex-1 overflow-y-auto p-8 space-y-10">
                     {activeTab === 'dashboard' && (
                         <>
-                            <ConsoleStats />
+                            <ConsoleStats stats={currentStats} />
                             
                             {/* AI Strategic Advisor Section - The "Brain" of the business */}
                             <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">

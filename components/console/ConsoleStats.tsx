@@ -3,12 +3,14 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { CONSOLE_STATS } from '@/config/console_config';
+interface ConsoleStatsProps {
+    stats: any[];
+}
 
-export default function ConsoleStats() {
+export default function ConsoleStats({ stats }: ConsoleStatsProps) {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {CONSOLE_STATS.map((stat, i) => (
+            {stats.map((stat, i) => (
                 <motion.div
                     key={stat.label}
                     initial={{ opacity: 0, y: 20 }}

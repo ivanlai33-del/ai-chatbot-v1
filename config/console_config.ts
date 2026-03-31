@@ -29,11 +29,18 @@ export const PERSONAL_NAV_ITEMS = [
     { id: 'analytics', label: '數據分佈', icon: PieChart },
 ];
 
-export const CONSOLE_STATS = [
+export const PLATFORM_STATS = [
     { label: '本月預計營收', value: '$45,800', icon: LayoutDashboard, trend: '+28%', color: 'from-emerald-400 to-teal-600' },
     { label: '正式開通店長', value: '12', icon: Users, trend: '+2', color: 'from-blue-500 to-indigo-600' },
-    { label: '潛在客戶留資', value: '45', icon: CheckCircle2, trend: '+12', color: 'from-amber-400 to-orange-600' },
+    { label: '潛在營運線索', value: '45', icon: CheckCircle2, trend: '+12', color: 'from-amber-400 to-orange-600' },
     { label: 'API 營運成本比', value: '18.2%', icon: BarChart3, trend: '-2%', color: 'from-purple-500 to-pink-600' },
+];
+
+export const PERSONAL_STATS = [
+    { label: '成功推動留資', value: '28', icon: Users, trend: '+12 位', color: 'from-emerald-400 to-emerald-600' },
+    { label: 'AI 代勞訊息數', value: '1,245', icon: MessageSquare, trend: '+15.2%', color: 'from-indigo-400 to-indigo-600' },
+    { label: '節省客服工時', value: '18.5 小時', icon: Settings, trend: '穩定', color: 'from-amber-400 to-amber-600' },
+    { label: '機器人聽不懂', value: '3 筆', icon: CheckCircle2, trend: '-2 筆', color: 'from-red-400 to-rose-600' },
 ];
 
 export const LIVE_FEED_MOCK = [

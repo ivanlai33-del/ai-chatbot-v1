@@ -19,10 +19,10 @@ export const CONSOLE_NAV_ITEMS = [
 ];
 
 export const CONSOLE_STATS = [
-    { label: '今日總對話', value: '128', icon: MessageSquare, trend: '+12%', color: 'from-blue-500 to-indigo-600' },
-    { label: '新增加好友', value: '34', icon: Users, trend: '+5%', color: 'from-emerald-500 to-teal-600' },
-    { label: '預約攔截', value: '12', icon: Calendar, trend: '穩定', color: 'from-amber-500 to-orange-600' },
-    { label: 'AI 回覆率', value: '98.5%', icon: CheckCircle2, trend: '+1.2%', color: 'from-purple-500 to-pink-600' },
+    { label: '本月預計營收', value: '$45,800', icon: LayoutDashboard, trend: '+28%', color: 'from-emerald-400 to-teal-600' },
+    { label: '正式開通店長', value: '12', icon: Users, trend: '+2', color: 'from-blue-500 to-indigo-600' },
+    { label: '潛在客戶留資', value: '45', icon: CheckCircle2, trend: '+12', color: 'from-amber-400 to-orange-600' },
+    { label: 'API 營運成本比', value: '18.2%', icon: BarChart3, trend: '-2%', color: 'from-purple-500 to-pink-600' },
 ];
 
 export const LIVE_FEED_MOCK = [

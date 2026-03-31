@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Home, Zap, Crown, User, LogOut, Copy, X } from 'lucide-react';
+import { Home, Zap, Crown, User, LogOut, Copy, X, LayoutDashboard } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
@@ -70,6 +70,17 @@ export default function TopNav({
                             <Home className="w-3.5 h-3.5" />
                             回首頁
                         </motion.button>
+                        {planLevel > 0 && (
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => window.location.href = '/console'}
+                                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-all text-[13px] font-black border border-indigo-100 shadow-sm shadow-indigo-500/5 group"
+                            >
+                                <LayoutDashboard className="w-3.5 h-3.5 text-indigo-500 group-hover:rotate-12 transition-transform" />
+                                營運戰情室
+                            </motion.button>
+                        )}
                     </div>
                     <div className={cn(
                         "flex items-center gap-1.5 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm border mr-2",

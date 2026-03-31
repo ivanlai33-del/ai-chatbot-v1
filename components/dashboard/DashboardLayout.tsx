@@ -7,6 +7,7 @@ import { PLAN_CONFIG } from '@/config/dashboard_config';
 interface DashboardLayoutProps {
     userName: string;
     userPicture: string;
+    lineUserId: string;
     planLevel: number;
     onLogout: () => void;
     children: React.ReactNode;
@@ -16,6 +17,7 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({
     userName,
     userPicture,
+    lineUserId,
     planLevel,
     onLogout,
     children,
@@ -26,6 +28,7 @@ export default function DashboardLayout({
             <TopNav 
                 userName={userName}
                 userPicture={userPicture}
+                lineUserId={lineUserId}
                 planLevel={planLevel}
                 planConfig={PLAN_CONFIG}
                 onLogout={onLogout}

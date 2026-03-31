@@ -52,6 +52,7 @@ export default function DashboardPage() {
         <DashboardLayout
             userName={userName}
             userPicture={userPicture}
+            lineUserId={typeof document !== 'undefined' ? (document.cookie.split('; ').find(r => r.startsWith('line_user_id='))?.split('=')[1] || '') : ''}
             planLevel={planLevel}
             onLogout={logout}
             sidebar={

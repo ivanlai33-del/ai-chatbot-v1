@@ -25,10 +25,10 @@ const LiffStickyHeader = ({ logoUrl, scrollRef }: LiffStickyHeaderProps) => {
       style={{ y }}
       className="fixed top-0 left-0 w-full z-[100] pointer-events-none"
     >
-      <div className="w-full flex items-center justify-center pt-[55px]">
-        <div className="w-full px-8 py-5 flex flex-col items-center justify-center gap-4 pointer-events-auto relative z-[101]">
-          <img src={logoUrl} alt="AI Logo" className="w-[84px] h-[84px] min-w-[84px] object-contain drop-shadow-md relative z-[102] block" />
-          <h1 className="text-[48px] font-black tracking-tighter shrink-0 leading-none text-center">
+      <div className="w-full flex items-center justify-center pt-[25px]">
+        <div className="w-full px-8 flex flex-col items-center justify-center gap-4 pointer-events-auto relative z-[101]">
+          <img src={logoUrl} alt="AI Logo" className="w-[76px] h-[76px] min-w-[76px] object-contain drop-shadow-md relative z-[102] block" />
+          <h1 className="text-[43px] font-black tracking-tighter shrink-0 leading-none text-center">
             <span className="text-slate-900">AI </span>
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 via-green-600 to-indigo-600">
               智能店長

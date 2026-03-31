@@ -12,7 +12,7 @@ const LiffHero = ({ logoUrl }: LiffHeroProps) => {
   const targetRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: targetRef,
-    offset: ["start start", "start -400px"]
+    offset: ["start 175px", "start -225px"]
   });
 
   // Fly out to the sides as it approaches the top
@@ -25,7 +25,7 @@ const LiffHero = ({ logoUrl }: LiffHeroProps) => {
       <motion.div style={{ opacity }}>
         <motion.h2
           style={{ x: xLeft }}
-          className="text-[32px] font-black text-slate-800 mb-[9px] tracking-tight mt-[525px]"
+          className="text-[29px] font-black text-slate-800 mb-[9px] tracking-tight mt-[525px]"
         >
           老闆們最愛的 <span className="text-emerald-600">AI</span> 智能店長
         </motion.h2>

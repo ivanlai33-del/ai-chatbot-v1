@@ -7,6 +7,7 @@ import { IntentInterceptor } from '@/lib/services/IntentInterceptor';
 import { GenericToolsRegistry, GenericToolsPayload } from '@/lib/services/tools';
 import { markAsProcessed, getIdempotencyKey } from '@/lib/middleware/idempotency';
 import { acquireSlot, releaseSlot, getConcurrentLimit } from '@/lib/middleware/concurrency';
+import { calculateCost, logTokenUsage } from '@/lib/token-guard';
 
 export async function GET() {
     return new Response('Bot Webhook is Active.', { status: 200 });
@@ -530,11 +531,13 @@ async function processEvents(botId: string, events: WebhookEvent[]) {
                                     .ilike('name', `%${args.keyword}%`);
                                 functionResponse = JSON.stringify(data || []);
                             } else if (functionName === "query_faq") {
+                                // 628SP P1: Research-led optimization for better RAG "hit rate"
+                                // Search both Question AND Answer fields, and handle multiple keywords
                                 const { data } = await supabase
                                     .from('faq')
                                     .select('*')
                                     .eq('bot_id', botId)
-                                    .ilike('question', `%${args.question}%`);
+                                    .or(`question.ilike.%${args.question}%,answer.ilike.%${args.question}%`);
                                 functionResponse = JSON.stringify(data || []);
                             } else if (functionName === "calculate_business_metrics") {
                                 const { data: orders } = await supabase.from('orders').select('*').eq('bot_id', botId);
@@ -589,8 +592,32 @@ async function processEvents(botId: string, events: WebhookEvent[]) {
                             messages: toolMessages,
                         });
                         aiResponse = secondResponse.choices[0].message.content || "";
+
+                        // 628SP P0: Log Token Usage for the final choice
+                        const usage = secondResponse.usage;
+                        if (usage) {
+                            const cost = calculateCost("gpt-4o-mini", usage.prompt_tokens, usage.completion_tokens);
+                            await logTokenUsage(supabase, botId, {
+                                model: "gpt-4o-mini",
+                                prompt_tokens: usage.prompt_tokens,
+                                completion_tokens: usage.completion_tokens,
+                                cost_estimate: cost
+                            });
+                        }
                     } else {
                         aiResponse = responseMessage.content || "";
+                        
+                        // 628SP P0: Log Token Usage for single-turn response
+                        const usage = response.usage;
+                        if (usage) {
+                            const cost = calculateCost("gpt-4o-mini", usage.prompt_tokens, usage.completion_tokens);
+                            await logTokenUsage(supabase, botId, {
+                                model: "gpt-4o-mini",
+                                prompt_tokens: usage.prompt_tokens,
+                                completion_tokens: usage.completion_tokens,
+                                cost_estimate: cost
+                            });
+                        }
                     }
                 } catch (e: any) {
                     console.error('AI Error:', e.message);

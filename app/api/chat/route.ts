@@ -12,6 +12,7 @@ import { ForexService } from '@/lib/services/ForexService';
 import { WeatherService } from '@/lib/services/WeatherService';
 import { StockService } from '@/lib/services/StockService';
 import { checkRateLimit } from '@/lib/middleware/rateLimit';
+import { getRandomNagMessage } from '@/config/trial_nags';
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
@@ -327,7 +328,18 @@ export async function POST(req: NextRequest) {
 
     try {
         const body = await req.json();
-        const { messages, storeName, currentStep, isMaster, isSaaS, isActivation, isProvisioning, botKnowledge, focusedField, userId, pageContext } = body;
+        const { messages, storeName, currentStep, isMaster, isSaaS, isActivation, isProvisioning, botKnowledge, focusedField, userId, pageContext, trialMessageCount = 0, isPaid = false } = body;
+
+        // 🛡️ PLG Trial Interceptor: The 10-message barrier
+        // Only intercept normal bot interactions (skip SaaS setting steps or Master Hub queries)
+        if (!isPaid && trialMessageCount >= 10 && !isMaster && !isSaaS && !isProvisioning) {
+            const nagMessage = getRandomNagMessage();
+            logToFile({ stage: "TRIAL_LIMIT_REACHED", trialMessageCount });
+            return NextResponse.json({
+                message: `${nagMessage}\n\n[👇 立即開通專屬方案]`,
+                metadata: { storeName, action: "SHOW_PLANS" }
+            });
+        }
 
         // Fetch Membership Level for the current user
         let userTier = 0;

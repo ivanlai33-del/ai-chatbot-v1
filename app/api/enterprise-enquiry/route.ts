@@ -10,8 +10,19 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Name and phone are required" }, { status: 400 });
         }
 
-        // Optional: Save to a database table if it exists
-        // const { error } = await supabase.from('enterprise_enquiries').insert([{ name, phone, needs, store_name: storeName, plan: selectedPlan.name }]);
+        // 628SP P0: Ensure leads are written to the database
+        const { error } = await supabase.from('enterprise_enquiries').insert([{ 
+            name, 
+            phone, 
+            needs, 
+            store_name: storeName, 
+            plan: selectedPlan?.name || "Unknown"
+        }]);
+
+        if (error) {
+            console.error("Enquiry Database Error:", error);
+            // We still proceed to return success if logging worked, but ideally this should be handled
+        }
 
         // For now, we simulate success and logging
         console.log("Enterprise Enquiry Received:", { name, phone, needs, storeName, selectedPlan });

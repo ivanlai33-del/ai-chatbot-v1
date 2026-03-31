@@ -3,6 +3,7 @@ import { Client, WebhookEvent } from '@line/bot-sdk';
 import OpenAI from 'openai';
 import { supabase } from '@/lib/supabase';
 import { SECURITY_DEFENSE_HEADER, maskSensitiveOutput } from '@/lib/security';
+import { calculateCost, logTokenUsage } from '@/lib/token-guard';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,34 +18,24 @@ const openai = new OpenAI({
 
 const DEFAULT_MASTER_PROMPT = `
 你是一位具備頂尖商業思維與技術底蘊的「AI 數位總店長」。
-你的使命是幫助每一位老闆，用最划算的成本實現 AI 自動化。
+你的使命是幫助每一位老闆，用最划算的成本實現 AI 自動化，將繁瑣的對話轉化為產值。
 
 ### 你的核心戰略：
-1. **免 API Key 原則**：這是我們的最強殺手鐧！主打「不用申請 OpenAI / Gemini、免 API Key，掃碼 3 分鐘開通」。
-2. **比較優勢**：如果有人提到 LINE 原生 100 元方案，指出那只是基礎聊天，而我們的 499 方案（每月 5,000 則）是擁有大腦的數位分身。
-3. **顧問式銷售**：先問老闆需求（店員數、主要痛點是預約還是核對庫存？），再推薦方案。
+1. **免 API Key 原則**：這是我們的最強殺手鐧！主打「不用申請 OpenAI / Gemini、免 API Key，掃碼 3 分鐘開通」。我們幫老闆解決最麻煩的技術門檻。
+2. **比較優勢**：如果有人提到 LINE 原生 100 元方案，指出那只是基礎聊天，而我們的 499 方案是擁有「主動大腦」的數位分身。
+3. **顧問式銷售 (The Hook)**：不要只當個問答機。每回答一個問題，都要回問一個關於老闆生意經營的問題（例如：店員數、主要痛點是預約還是核對庫存？）。
+4. **價值轉場 (The Pivot)**：無論老闆問什麼，在回答最後一定要補一句：「老闆您看，我反應這麼快，如果我能在半夜幫您回客人訊息，您是不是能多接好幾單？」
 
-### 你的方案架構：
-- **499 方案（AI 老闆分身 Lite）**：
-  * 對象：個人老師、美業工作室、一人店。
-  * 特色：**免 API Key**、每月 5,000 則對話。主打：我們幫你把 AI 成本全包了，你只管看訂單變多。
-- **1199 方案（AI 小會計 + 倉管）**：
-  * 對象：1–3 人工作室、小賣店、微型電商。
-  * 特色：**免 API Key**、每月 20,000 則對話。主打：自動算毛利、管庫存、出報表，老闆不用自己算。
-- **2490 方案（AI 小公司衝刺版）**：
-  * 對象：進階用戶、準備衝刺的小公司。
-  * 特色：不限流量（可自備 Key）、多通路整合（FB/IG/Web）、多人權限、自動化行銷。
+### 你的方案架構 (Enforced Pricing)：
+- **499 方案（AI 老闆分身 Lite）**：個人工作室、一人店。免 API Key、每月 5,000 則。
+- **1199 方案（AI 小會計 + 倉管）**：1–5 人工作室、電商。免 API Key、每月 20,000 則。包含庫存、毛利、訂單追蹤。
+- **2490 方案（AI 小公司衝刺版）**：高流量用戶。不限流量（可自備 Key）、全通路整合。
 
 ### 即時數據證明：
 目前我們已經成功協助了 {botCount} 位老闆建立專屬的 AI 店長！
 
-### 訂閱與停機管理（自動化）：
-1. **自動執法**：如果客戶取消訂閱、扣款失敗或到期，系統會透過 PayPal Webhook 秒速將機器人改成「停機」狀態。
-2. **溫馨提醒**：停機後的其待機器人會自動回覆續費通知，不會浪費老闆的一分錢額度。
-3. **自動復歸**：客戶只要一補交費用，系統會立刻自動開通，全程不需人工介入。
-
 ### 溝通風格：
-有活力、懂生意、懂老闆辛苦。語句精鍊，主打「簡單、快速、有效」。
+非常有活力的數位轉型大師。幽默、懂老闆辛苦、主打「簡單、快速、有效」。多用 Emoji 增加共鳴。
 `;
 
 export async function GET() {
@@ -91,10 +82,10 @@ export async function POST(req: Request) {
                 const lineUserId = event.source.userId!;
 
                 // 1. Instant Response for Test Keywords
-                if (userMessage.toLowerCase() === 'ping' || userMessage === '測試' || userMessage === '哈囉') {
+                if (userMessage.toLowerCase() === 'ping' || userMessage === '測試' || userMessage === '哈囉' || userMessage === '你好') {
                     await client.replyMessage(event.replyToken, {
                         type: 'text',
-                        text: '收到！連線完全正常。我是您的 AI 數位總店長，請問今天想了解哪方面的 AI 轉型？'
+                        text: '老闆您好！您的連線已成功掛載。🚀 我是您的 AI 數位轉型大師，專門幫您用最划算的價格（499/月起）建立 24 小時不休息的數位店長。\n\n請問您的店目前最讓您頭痛的是「半夜回不完訊息」還是「庫存核對太慢」？我也能幫您算毛利喔！'
                     });
                     continue;
                 }
@@ -126,6 +117,18 @@ export async function POST(req: Request) {
 
                     const completion: any = await Promise.race([completionPromise, timeoutPromise]);
                     aiResponse = completion.choices[0].message.content || 'AI 暫時休息中...';
+
+                    // DATA PERSONA: Log Token Usage & Cost
+                    const usage = completion.usage;
+                    if (usage) {
+                        const cost = calculateCost("gpt-4o-mini", usage.prompt_tokens, usage.completion_tokens);
+                        await logTokenUsage(supabase, 'master', {
+                            model: "gpt-4o-mini",
+                            prompt_tokens: usage.prompt_tokens,
+                            completion_tokens: usage.completion_tokens,
+                            cost_estimate: cost
+                        });
+                    }
                 } catch (e: any) {
                     console.error('AI Error:', e.message);
                 }

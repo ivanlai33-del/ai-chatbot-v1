@@ -44,10 +44,11 @@ export async function POST(req: NextRequest) {
             dnaAudience   ? `你的主要客群是：${dnaAudience}。` : '',
             dnaContact    ? `如客人需要進一步聯繫，可提供：${dnaContact}。` : '',
             '',
-            '你的任務有兩個：',
-            '1. **服務客戶**：以親切、專業的口吻回答問題，引導消費。',
-            '2. **展示 AI 價值**：當客戶對你的回覆感到驚艷時，適時分享 AI 如何幫助這家店 24/7 服務客人。',
-            '3. **原則**：保持專業形象，隨時為客戶創造價值。',
+            '### 你的核心任務 (The Double-Hook)：',
+            '1. **溫暖服務**：以親切、專業且具備商業感（Emoji 點綴）的口吻回答問題。',
+            '2. **主動引導**：回答問題後，必須主動詢問顧客一個與服務相關的問題（例如：「想了解哪種款式？」或「預約明天下午三點有空嗎？」）。',
+            '3. **AI 價值轉場**：每 3-5 次對話中，適時提到：「雖然我不是人類，但我能 24 小時守在店裡回覆您，老闆很放心！」',
+            '4. **原則**：你是店家的門面，嚴禁敷衍。',
         ].filter(Boolean).join('\n');
 
         if (!lineSecret) {
@@ -101,6 +102,35 @@ export async function POST(req: NextRequest) {
             success: true,
             botId: data[0].id,
             mgmtToken: mgmtToken
+        });
+    } catch (error: any) {
+        console.error('API Error:', error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+}
+
+export async function GET(req: NextRequest) {
+    try {
+        const { searchParams } = new URL(req.url);
+        const lineUserId = searchParams.get('lineUserId');
+
+        if (!lineUserId) {
+            return NextResponse.json({ error: 'Missing lineUserId' }, { status: 400 });
+        }
+
+        const { data: bots, error } = await supabase
+            .from('bots')
+            .select('id, store_name, status, mgmt_token')
+            .eq('owner_line_id', lineUserId);
+
+        if (error) {
+            console.error('Supabase fetch error:', error);
+            return NextResponse.json({ error: error.message }, { status: 500 });
+        }
+
+        return NextResponse.json({
+            success: true,
+            bots: bots || []
         });
     } catch (error: any) {
         console.error('API Error:', error);

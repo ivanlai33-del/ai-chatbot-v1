@@ -6,7 +6,7 @@ import {
     Tag, Package, HelpCircle, GitBranch, Phone, BookOpen, Settings
 } from 'lucide-react';
 import { useState, useCallback } from 'react';
-import type { StoreConfig } from '@/app/dashboard/page';
+import type { StoreConfig } from '@/lib/chat-types';
 import BotSelector from './BotSelector';
 
 interface KnowledgeBasePanelProps {

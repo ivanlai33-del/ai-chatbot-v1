@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
     metadataBase: new URL('https://bot.ycideas.com'),
     title: {
-        default: "Line 官方 Ai 智能店長｜24H 自動化銷售與客服助手",
+        default: "Line 官方 Ai 智能店長｜LINE AI Assistant: 24/7 Automated Sales & Support",
         template: "%s | Ai 智能店長"
     },
     description: "專為個人與公司打造的 LINE 官方帳號專屬店長。提升 3 倍客服效率，支援商品導購、自動查庫存、即時物流追蹤，讓您的 LINE 帳號變成 24 小時不打烊的金牌銷售員。",
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
         type: "website",
         locale: "zh_TW",
         url: "https://bot.ycideas.com",
-        title: "Line 官方 Ai 智能店長｜24H 自動化銷售與客服助手",
+        title: "Line 官方 Ai 智能店長｜LINE AI Assistant: 24/7 Automated Sales & Support",
         description: "提升 3 倍客服效率！專為個人與公司打造的 LINE 官方專屬店長，支援商品導購、自動查庫存、即時物流追蹤。",
         siteName: "Ai 智能店長",
         images: [
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     },
     twitter: {
         card: "summary_large_image",
-        title: "Line 官方 Ai 智能店長｜24H 自動化銷售與客服助手",
+        title: "Line 官方 Ai 智能店長｜LINE AI Assistant: 24/7 Automated Sales & Support",
         description: "專為個人與公司打造的 LINE 官方帳號專屬店長。24 小時不打烊的金牌銷售員。",
         images: ["/og-image.jpeg"],
     },
@@ -56,7 +56,6 @@ export default function RootLayout({
     return (
         <html lang="zh-TW">
             <head>
-                <script src="https://www.paypal.com/sdk/js?client-id=Aa2CoGPu323kc3ROGqYyMqTBIpx2hfbAjN2G7M7HFQbzSESPM97x4uhCQJhQlExrkhcUoLcGjsv9BuUZ&vault=true&intent=subscription" data-sdk-integration-source="button-factory" async></script>
             </head>
             <body className={inter.className}>{children}</body>
         </html>

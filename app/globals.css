@@ -32,3 +32,43 @@
 .glass {
     @apply bg-white/70 backdrop-blur-md border-b border-zinc-200;
 }
+
+@keyframes shimmer {
+    0% { background-position: -200% 0, 0 0; }
+    100% { background-position: 200% 0, 0 0; }
+}
+
+.animate-shimmer {
+    /* Combined Gradient: Shimmer layer on top, Base Gradient layer below */
+    background-image: 
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.6) 50%,
+            rgba(255, 255, 255, 0) 100%
+        ),
+        linear-gradient(to right, #ffffff, #38BDF8, #818CF8);
+    
+    background-size: 200% 100%, 100% 100%;
+    background-repeat: no-repeat;
+    
+    -webkit-background-clip: text;
+    background-clip: text;
+    
+    animation: shimmer 3s infinite linear;
+}
+
+@keyframes glass-reflex {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(25deg); }
+    100% { transform: translateX(200%) translateY(200%) rotate(25deg); }
+}
+
+.animate-glass-reflex {
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.15) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    animation: glass-reflex 10s infinite ease-in-out;
+}

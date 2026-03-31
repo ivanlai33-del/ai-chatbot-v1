@@ -5,7 +5,7 @@ This guide describes how to programmatically provision AI Chatbots for your cust
 ## Authentication
 All API requests must be authenticated using your unique SaaS Partner API Key. Include this key in the `Authorization` header as a Bearer token.
 
-**Your API Key (StockRadar-main)**: `13cdff30-6ecc-410c-b2d9-99bdc77d77cf`
+**Your API Key (StockRadar-main)**: `<YOUR_PARTNER_API_KEY>`
 
 ---
 

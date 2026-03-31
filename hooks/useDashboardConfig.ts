@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { StoreConfig } from '@/app/dashboard/page';
+import { StoreConfig } from '@/lib/chat-types';
 
 const DEFAULT_CONFIG: StoreConfig = {
     brand_dna: { 

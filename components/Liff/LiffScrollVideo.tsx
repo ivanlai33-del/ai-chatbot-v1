@@ -104,10 +104,10 @@ export default function LiffScrollSequence({
   return (
     <div ref={containerRef} className="relative min-h-screen w-full bg-transparent">
       {/* 🎬 FIXED Canvas Background */}
-      <div className="fixed inset-0 w-full h-full z-[-1] overflow-hidden bg-[#0f172a]">
+      <div className="fixed inset-0 w-full h-full z-[-1] overflow-hidden bg-slate-50">
         <canvas
           ref={canvasRef}
-          className="w-full h-full object-cover opacity-60 mix-blend-screen"
+          className="w-full h-full object-cover opacity-100"
         />
         {/* Fallback loading indicator */}
         {!loaded && (

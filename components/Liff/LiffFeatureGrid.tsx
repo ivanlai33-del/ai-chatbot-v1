@@ -60,7 +60,7 @@ const FeatureCard = ({ feature, index }: { feature: any, index: number }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: cardRef,
-    offset: ["start 175px", "start -25px"]
+    offset: ["start 200px", "start 0px"]
   });
 
   const isLeft = index % 2 === 0;

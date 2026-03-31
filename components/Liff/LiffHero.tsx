@@ -9,10 +9,10 @@ interface LiffHeroProps {
 }
 
 const LiffHero = ({ logoUrl }: LiffHeroProps) => {
-  const targetRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
-    target: targetRef,
-    offset: ["start 175px", "start -225px"]
+    target: contentRef,
+    offset: ["start 200px", "start 0px"]
   });
 
   // Fly out to the sides as it approaches the top
@@ -21,8 +21,8 @@ const LiffHero = ({ logoUrl }: LiffHeroProps) => {
   const opacity = useTransform(scrollYProgress, [0, 0.8, 1], [1, 1, 0]);
 
   return (
-    <section ref={targetRef} className="text-center px-6 relative pt-52 pb-20 z-30">
-      <motion.div style={{ opacity }}>
+    <section className="text-center px-6 relative pt-52 pb-20 z-30">
+      <motion.div ref={contentRef} style={{ opacity }}>
         <motion.h2
           style={{ x: xLeft }}
           className="text-[29px] font-black text-slate-800 mb-[9px] tracking-tight mt-[525px]"

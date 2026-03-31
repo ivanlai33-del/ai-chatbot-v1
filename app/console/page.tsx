@@ -11,17 +11,17 @@ export default function ConsolePage() {
     const router = useRouter();
 
     useEffect(() => {
-        // Try to get from localStorage first (set by callback redirect)
-        const savedId = localStorage.getItem('line_user_id');
+        const savedId = localStorage.getItem('line_user_id') || (typeof document !== 'undefined' ? document.cookie.split('; ').find(r => r.startsWith('line_user_id='))?.split('=')[1] : null);
         const savedName = localStorage.getItem('line_user_name');
+        
+        const ADMIN_ID = "Ud8b8dd79162387a80b2b5a4aba20f604";
 
-        if (savedId) {
+        if (savedId === ADMIN_ID) {
             setLineId(savedId);
-            setLineName(savedName || '老闆');
+            setLineName(savedName || 'iVan 老闆');
             setLoading(false);
         } else {
-            // If no ID, redirect back to home or login
-            // For now, let's redirect to the home page chat
+            console.warn("Unauthorized access attempt to Console.");
             router.push('/');
         }
     }, [router]);

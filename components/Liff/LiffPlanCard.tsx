@@ -98,7 +98,7 @@ export default function LiffPlanCard({
         color === 'amber' ? 'from-orange-500 to-amber-600' : 
         'from-blue-500 to-indigo-600'
       }`}>
-        立即搶購
+        立即開通Ai智能店長
       </button>
     </motion.div>
   );

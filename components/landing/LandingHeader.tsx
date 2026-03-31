@@ -16,13 +16,20 @@ export default function LandingHeader({ isLoggedIn, onAction, onOpenChat }: Land
         <header className="fixed top-0 left-0 right-0 z-50 px-6 py-4">
             <div className="max-w-7xl mx-auto flex items-center justify-between">
                 {/* Logo */}
-                <div className="flex items-center gap-2 group cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                    <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.3)] group-hover:scale-110 transition-transform">
-                        <MessageSquare className="w-6 h-6 text-white" />
+                <div className="flex items-center gap-3 group cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+                    <img 
+                        src="/Lai%20Logo_3.svg" 
+                        alt="Lai Logo" 
+                        className="w-10 h-10 object-contain group-hover:scale-110 transition-transform drop-shadow-md"
+                    />
+                    <div className="flex flex-col justify-center">
+                        <span className="text-xl font-bold text-white tracking-tight leading-none mb-1">
+                            LINE <span className="text-emerald-400">AI</span> Assistant
+                        </span>
+                        <span className="text-[11px] text-slate-300 font-medium tracking-widest leading-none">
+                            您的專屬AI店長
+                        </span>
                     </div>
-                    <span className="text-xl font-bold text-white tracking-tight">
-                        LINE <span className="text-emerald-400">AI</span> Assistant
-                    </span>
                 </div>
 
                 {/* Nav & Action */}

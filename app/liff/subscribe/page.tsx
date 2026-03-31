@@ -33,7 +33,7 @@ export default function LiffSubscribePage() {
   return (
     <div ref={pageRef} className="bg-transparent selection:bg-emerald-500/30">
       <LiffScrollSequence 
-         frameFolder="/line%20liff" 
+         frameFolder="/line-liff" 
          frameCount={40} 
          prefix="ezgif-frame-" 
          extension="jpg"

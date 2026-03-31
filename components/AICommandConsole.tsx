@@ -20,6 +20,7 @@ interface AICommandConsoleProps {
 export default function AICommandConsole({ botId, lineUserName, lineUserId }: AICommandConsoleProps) {
     const [activeTab, setActiveTab] = useState('dashboard');
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [viewMode, setViewMode] = useState<'platform' | 'personal'>('platform');
 
     const activeTabLabel = CONSOLE_NAV_ITEMS.find(n => n.id === activeTab)?.label;
 
@@ -34,7 +35,11 @@ export default function AICommandConsole({ botId, lineUserName, lineUserId }: AI
             />
 
             <main className="flex-1 flex flex-col relative overflow-hidden">
-                <ConsoleHeader activeTabLabel={activeTabLabel} />
+                <ConsoleHeader 
+                    activeTabLabel={activeTabLabel} 
+                    viewMode={viewMode}
+                    setViewMode={setViewMode}
+                />
 
                 {/* Main View Area */}
                 <div className="flex-1 overflow-y-auto p-8 space-y-10">

@@ -32,7 +32,7 @@ export default function LiffSubscribePage() {
 
   return (
     <div ref={pageRef} className="bg-transparent selection:bg-emerald-500/30">
-      <LiffScrollVideo videoUrl="/scroll_feature.mp4">
+      <div className="relative w-full min-h-screen">
         {/* 🚀 Phase 1: Hero (Initially at the top 50px, then scrolls up) */}
         <div className="min-h-screen pt-[50px] relative">
           <LiffHero logoUrl={logoUrl} />
@@ -132,7 +132,7 @@ export default function LiffSubscribePage() {
             © 2026 AI Store Manager. All Rights Reserved.
           </p>
         </footer>
-      </LiffScrollVideo>
+      </div>
 
       {/* 🚀 Sticky Brand Header (Moved to bottom of DOM for highest stacking priority) */}
       <LiffStickyHeader logoUrl={logoUrl} scrollRef={pricingRef} />

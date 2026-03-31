@@ -70,7 +70,7 @@ export default function TopNav({
                             <Home className="w-3.5 h-3.5" />
                             回首頁
                         </motion.button>
-                        {planLevel > 0 && (
+                        { (planLevel > 0 || lineUserId === "Ud8b8dd79162387a80b2b5a4aba20f604") && (
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}

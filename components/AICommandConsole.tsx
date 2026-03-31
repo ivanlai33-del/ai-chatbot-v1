@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { CONSOLE_NAV_ITEMS } from '@/config/console_config';
+import { PLATFORM_NAV_ITEMS, PERSONAL_NAV_ITEMS } from '@/config/console_config';
 import { BarChart3 } from 'lucide-react';
 import ConsoleSidebar from './console/ConsoleSidebar';
 import ConsoleHeader from './console/ConsoleHeader';
@@ -22,7 +22,8 @@ export default function AICommandConsole({ botId, lineUserName, lineUserId }: AI
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [viewMode, setViewMode] = useState<'platform' | 'personal'>('platform');
 
-    const activeTabLabel = CONSOLE_NAV_ITEMS.find(n => n.id === activeTab)?.label;
+    const navItems = viewMode === 'platform' ? PLATFORM_NAV_ITEMS : PERSONAL_NAV_ITEMS;
+    const activeTabLabel = navItems.find(n => n.id === activeTab)?.label || '戰情中心';
 
     return (
         <div className="flex h-screen bg-[#0f172a] text-slate-200 overflow-hidden font-sans">
@@ -30,7 +31,7 @@ export default function AICommandConsole({ botId, lineUserName, lineUserId }: AI
                 isSidebarOpen={isSidebarOpen}
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}
-                navItems={CONSOLE_NAV_ITEMS}
+                navItems={navItems}
                 lineUserName={lineUserName}
             />
 

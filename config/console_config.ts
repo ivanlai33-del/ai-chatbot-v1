@@ -6,16 +6,27 @@ import {
     BarChart3, 
     Settings,
     Users,
-    CheckCircle2
+    CheckCircle2,
+    CreditCard,
+    Zap,
+    TrendingUp,
+    PieChart
 } from 'lucide-react';
 
-export const CONSOLE_NAV_ITEMS = [
-    { id: 'dashboard', label: '戰情儀表板', icon: LayoutDashboard },
-    { id: 'chat', label: '即時對話流', icon: MessageSquare },
+export const PLATFORM_NAV_ITEMS = [
+    { id: 'dashboard', label: '營運動察', icon: LayoutDashboard },
+    { id: 'users', label: '用戶管理', icon: Users },
+    { id: 'billing', label: '金流報表', icon: CreditCard },
+    { id: 'api_usage', label: 'API 監控', icon: Zap },
+    { id: 'saas_strategy', label: '全站戰略', icon: TrendingUp },
+];
+
+export const PERSONAL_NAV_ITEMS = [
+    { id: 'dashboard', label: '店務概況', icon: LayoutDashboard },
+    { id: 'chat', label: '即時對話', icon: MessageSquare },
     { id: 'brain', label: '店長智庫', icon: Brain },
     { id: 'crm', label: '客戶與預約', icon: Calendar },
-    { id: 'analytics', label: '數據報表', icon: BarChart3 },
-    { id: 'settings', label: '系統設定', icon: Settings },
+    { id: 'analytics', label: '數據分佈', icon: PieChart },
 ];
 
 export const CONSOLE_STATS = [

@@ -1,16 +1,27 @@
 "use client";
 
-import React, { useRef, useEffect } from 'react';
-import { useScroll, useTransform, motion, useSpring } from 'framer-motion';
+import React, { useRef, useEffect, useState } from 'react';
+import { useScroll, useSpring } from 'framer-motion';
 
-interface LiffScrollVideoProps {
-  videoUrl: string;
+interface LiffScrollSequenceProps {
+  frameFolder: string;
+  frameCount: number;
+  prefix: string;
+  extension: string;
   children?: React.ReactNode;
 }
 
-export default function LiffScrollVideo({ videoUrl, children }: LiffScrollVideoProps) {
+export default function LiffScrollSequence({ 
+  frameFolder, 
+  frameCount, 
+  prefix,
+  extension,
+  children 
+}: LiffScrollSequenceProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [images, setImages] = useState<HTMLImageElement[]>([]);
+  const [loaded, setLoaded] = useState(false);
 
   // Track scroll progress
   const { scrollYProgress } = useScroll({
@@ -18,57 +29,92 @@ export default function LiffScrollVideo({ videoUrl, children }: LiffScrollVideoP
     offset: ["start start", "end end"]
   });
 
-  // Balanced spring for better scrubbing feel
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 200,
-    damping: 40,
+    stiffness: 150,
+    damping: 30,
     restDelta: 0.001
   });
 
-  // Performance-focused video sync with lighter threshold for Mobile/Webview
+  // Preload Images
   useEffect(() => {
+    let loadedCount = 0;
+    const imgArray: HTMLImageElement[] = [];
+    
+    for (let i = 1; i <= frameCount; i++) {
+        const img = new Image();
+        const paddedIndex = i.toString().padStart(3, '0');
+        img.src = `${frameFolder}/${prefix}${paddedIndex}.${extension}`;
+        img.onload = () => {
+            loadedCount++;
+            if (loadedCount === frameCount) {
+                setLoaded(true);
+            }
+        };
+        imgArray.push(img);
+    }
+    setImages(imgArray);
+  }, [frameFolder, frameCount, prefix, extension]);
+
+  // Sync scroll to canvas frame
+  useEffect(() => {
+    if (!loaded || !canvasRef.current || images.length === 0) return;
+
     let frameId: number;
-    let lastUpdateAt = 0;
+    const canvas = canvasRef.current;
     
-    const syncVideo = (timestamp: number) => {
-      // Limit updates to ~30fps for video seeking to save CPU/Battery
-      if (timestamp - lastUpdateAt < 32) {
-        frameId = requestAnimationFrame(syncVideo);
-        return;
-      }
-      
-      if (videoRef.current && videoRef.current.readyState >= 2) {
-        const duration = videoRef.current.duration;
-        if (duration) {
-          // Map 0-0.7 scroll to video duration
-          const targetTime = Math.min(smoothProgress.get() / 0.7, 1) * duration;
-          
-          // Use a slightly larger threshold (0.05s) for mobile friendliness
-          if (Math.abs(videoRef.current.currentTime - targetTime) > 0.05) {
-            videoRef.current.currentTime = targetTime;
-            lastUpdateAt = timestamp;
-          }
-        }
-      }
-      frameId = requestAnimationFrame(syncVideo);
+    // Resize canvas to match display size exactly once (or on resize)
+    const resizeCanvas = () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
     };
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const render = () => {
+        const maxFrame = frameCount - 1;
+        const p = Math.min(Math.max(smoothProgress.get() / 0.8, 0), 1); // Map to 80% scroll
+        const targetFrame = Math.round(p * maxFrame);
+        
+        const img = images[targetFrame];
+        if (img && img.width > 0) {
+            const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
+            const w = img.width * scale;
+            const h = img.height * scale;
+            const x = (canvas.width - w) / 2;
+            const y = (canvas.height - h) / 2;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, x, y, w, h);
+        }
+        
+        frameId = requestAnimationFrame(render);
+    };
+
+    frameId = requestAnimationFrame(render);
     
-    frameId = requestAnimationFrame(syncVideo);
-    return () => cancelAnimationFrame(frameId);
-  }, [smoothProgress]);
+    return () => {
+        cancelAnimationFrame(frameId);
+        window.removeEventListener('resize', resizeCanvas);
+    };
+  }, [smoothProgress, loaded, images, frameCount]);
 
   return (
     <div ref={containerRef} className="relative min-h-screen w-full bg-transparent">
-      {/* 🎬 FIXED Video Background */}
-      <div className="fixed inset-0 w-full h-full z-[-1] overflow-hidden bg-transparent">
-        <video
-          ref={videoRef}
-          src={videoUrl}
-          muted
-          playsInline
-          preload="auto"
-          className="w-full h-full object-cover opacity-100"
+      {/* 🎬 FIXED Canvas Background */}
+      <div className="fixed inset-0 w-full h-full z-[-1] overflow-hidden bg-[#0f172a]">
+        <canvas
+          ref={canvasRef}
+          className="w-full h-full object-cover opacity-60 mix-blend-screen"
         />
+        {/* Fallback loading indicator */}
+        {!loaded && (
+           <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-8 h-8 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
+           </div>
+        )}
       </div>
 
       {/* 📝 Scrolling Content Layer */}

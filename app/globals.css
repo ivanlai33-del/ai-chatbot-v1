@@ -14,10 +14,23 @@
 @layer base {
     * {
         @apply border-border;
+        /* Custom Dark Scrollbar */
+        &::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        &::-webkit-scrollbar-track {
+            @apply bg-slate-900/50;
+        }
+        &::-webkit-scrollbar-thumb {
+            @apply bg-slate-700/50 rounded-full hover:bg-indigo-500/50 transition-colors;
+        }
     }
 
     body {
         @apply bg-background text-foreground antialiased;
+        scrollbar-width: thin;
+        scrollbar-color: #334155 #0f172a;
     }
 }
 

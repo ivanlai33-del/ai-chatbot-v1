@@ -1,11 +1,13 @@
 'use client';
 
 import ChatInterface from '@/components/ChatInterface';
+import VisitorTracker from '@/components/VisitorTracker';
 import { Rocket } from 'lucide-react';
 
 export default function ChatPage() {
     return (
         <main className="min-h-screen relative">
+            <VisitorTracker />
             <ChatInterface />
             
             {/* SaaS Partnership - Coming Soon / Inquiry Only */}

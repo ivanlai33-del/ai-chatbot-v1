@@ -15,16 +15,17 @@ import {
 
 export const PLATFORM_NAV_ITEMS = [
     { id: 'dashboard', label: '營運動察', icon: LayoutDashboard },
-    { id: 'users', label: '用戶管理', icon: Users },
+    { id: 'saas_leads', label: 'SaaS 開通與合作名單', icon: Users },
+    { id: 'owner_feedback', label: '用戶回饋收集', icon: MessageSquare },
     { id: 'billing', label: '金流報表', icon: CreditCard },
     { id: 'api_usage', label: 'API 監控', icon: Zap },
 ];
 
 export const PERSONAL_NAV_ITEMS = [
-    { id: 'dashboard', label: '店務概況', icon: LayoutDashboard },
-    { id: 'chat', label: '即時對話', icon: MessageSquare },
-    { id: 'leads', label: '成功名單', icon: CheckCircle2 },
-    { id: 'analytics', label: '數據分佈', icon: PieChart },
+    { id: 'dashboard', label: '店務總覽', icon: LayoutDashboard },
+    { id: 'chat_stream', label: '即時聊天總覽', icon: MessageSquare },
+    { id: 'collaboration', label: '合作方案與名單收集', icon: Users },
+    { id: 'leads', label: '預約問答收集', icon: CheckCircle2 },
 ];
 
 export const PLATFORM_STATS = [

@@ -66,7 +66,21 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
                     systemPromptOverride: storeSystemPrompt
                 });
 
-                // 6. Reply to LINE
+                // 6. Save to Chat Logs for real-time analytics
+                const isLead = /09\d{2}[-\s]?\d{3}[-\s]?\d{3}|(預約|報名|想買|電話)/i.test(userMessage + aiResult.message);
+                
+                await supabase.from('chat_logs').insert({
+                    config_id: configId,
+                    user_id: config.user_id,
+                    line_user_id: userId,
+                    user_message: userMessage,
+                    ai_response: aiResult.message,
+                    is_lead: isLead,
+                    metadata: aiResult.metadata,
+                    created_at: new Date().toISOString()
+                });
+
+                // 7. Reply to LINE
                 await client.replyMessage({
                     replyToken: event.replyToken,
                     messages: [{ type: 'text', text: aiResult.message }]

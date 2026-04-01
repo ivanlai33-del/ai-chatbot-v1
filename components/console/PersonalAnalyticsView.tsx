@@ -73,34 +73,48 @@ const AIBlindspotManager = () => (
     </div>
 );
 
-// --- 📁 4. Lead CRM Table (Master Table) ---
-const LeadCRMTable = () => (
+// --- 📂 4. Appointment & Key Q&A Tracker (Master Table) ---
+const AppointmentTracker = ({ keywords = ['預約', '價錢', '電話', '地址', '09'] }) => (
     <div className="bg-slate-900/40 rounded-3xl border border-slate-700/50 overflow-hidden">
         <div className="p-6 border-b border-slate-700/50 flex items-center justify-between">
-            <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" /> 成功領資名單 (Leads CRM)
-            </h4>
-            <button className="px-4 py-1.5 bg-emerald-500/20 text-emerald-400 rounded-xl text-[11px] font-black hover:bg-emerald-500 hover:text-white transition-all shadow-lg shadow-emerald-500/10">匯出至 Excel</button>
+            <div className="space-y-1">
+                <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" /> 預約與重點問答收集
+                </h4>
+                <p className="text-[10px] text-slate-500">系統已自動根據關鍵字：{keywords.join(', ')} 進行對話截取</p>
+            </div>
+            <div className="flex items-center gap-3">
+                <button className="px-4 py-1.5 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-xl text-[11px] font-black hover:bg-indigo-500 hover:text-white transition-all">+ 設定更多關鍵字</button>
+                <button className="px-4 py-1.5 bg-emerald-500/20 text-emerald-400 rounded-xl text-[11px] font-black hover:bg-emerald-500 hover:text-white transition-all shadow-lg shadow-emerald-500/10">匯出重點報表</button>
+            </div>
         </div>
         <div className="overflow-x-auto">
             <table className="w-full text-left text-[11px]">
                 <thead>
                     <tr className="bg-slate-900/20 border-b border-slate-700/50">
-                        <th className="px-6 py-4 font-black text-slate-500 uppercase tracking-widest">顧客名稱</th>
+                        <th className="px-6 py-4 font-black text-slate-500 uppercase tracking-widest">顧客</th>
+                        <th className="px-6 py-4 font-black text-slate-500 uppercase tracking-widest">命中關鍵字</th>
+                        <th className="px-6 py-4 font-black text-slate-500 uppercase tracking-widest">關鍵問答紀錄 (AI 摘要)</th>
+                        <th className="px-6 py-4 font-black text-slate-500 uppercase tracking-widest">聯絡資訊</th>
                         <th className="px-6 py-4 font-black text-slate-500 uppercase tracking-widest">店鋪</th>
-                        <th className="px-6 py-4 font-black text-slate-500 uppercase tracking-widest">意圖</th>
-                        <th className="px-6 py-4 font-black text-slate-500 uppercase tracking-widest">聯絡方式</th>
-                        <th className="px-6 py-4 font-black text-slate-500 uppercase tracking-widest">熱度分評</th>
-                        <th className="px-6 py-4 font-black text-slate-500 uppercase tracking-widest">時間</th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-700/20">
                     {LEAD_CRM_DATA.map(item => (
                         <tr key={item.id} className="hover:bg-slate-800/30 transition-all group">
                             <td className="px-6 py-4 font-black text-slate-200">{item.name}</td>
-                            <td className="px-6 py-4 text-slate-400">{item.store}</td>
                             <td className="px-6 py-4">
-                                <span className="bg-indigo-500/10 text-indigo-400 px-2 py-0.5 rounded-full font-bold">{item.intent}</span>
+                                <div className="flex flex-wrap gap-1">
+                                    {['預約', '價錢'].map(k => (
+                                        <span key={k} className="bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded-full font-black text-[9px] uppercase">{k}</span>
+                                    ))}
+                                </div>
+                            </td>
+                            <td className="px-6 py-4">
+                                <div className="max-w-xs space-y-1">
+                                    <p className="text-slate-400 line-clamp-1 italic">「請問明天的美甲還有空位嗎？價錢怎麼算？」</p>
+                                    <p className="text-indigo-300 font-bold">AI: 已回覆價格表並引導留電話預約...</p>
+                                </div>
                             </td>
                             <td className="px-6 py-4">
                                 <div className="flex items-center gap-2 text-slate-300">
@@ -108,8 +122,7 @@ const LeadCRMTable = () => (
                                     <span className={item.contact === '未留資料' ? 'text-slate-600 italic' : ''}>{item.contact}</span>
                                 </div>
                             </td>
-                            <td className="px-6 py-4 font-black uppercase text-amber-500">{item.score}</td>
-                            <td className="px-6 py-4 text-slate-500">{item.time}</td>
+                            <td className="px-6 py-4 text-slate-500">{item.store}</td>
                         </tr>
                     ))}
                 </tbody>
@@ -121,14 +134,14 @@ const LeadCRMTable = () => (
 export default function PersonalAnalyticsView() {
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            {/* Top Row: AI Performance & Insight */}
+            {/* Top Row: Focus Center */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <AIBlindspotManager />
                 <ServicePieChart />
             </div>
 
-            {/* Bottom Row: Full CRM Data */}
-            <LeadCRMTable />
+            {/* Main Action: Key Q&A Collection */}
+            <AppointmentTracker />
         </div>
     );
 }

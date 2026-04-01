@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Message, ChatPlan } from '@/lib/chat-types';
-import { OWNER_INSIGHTS } from '@/lib/chat-constants';
+import { OWNER_INSIGHTS, SOFT_GREETINGS } from '@/lib/chat-constants';
 
 export function useChatInterface(initialType: string | null = null) {
     const [messages, setMessages] = useState<Message[]>([]);
@@ -49,13 +49,14 @@ export function useChatInterface(initialType: string | null = null) {
                     context: {
                         lineUserId,
                         lineUserName,
+                        botId
                     }
                 }),
             });
             if (!res.ok) {
                 const errorData = await res.json();
                 console.error('Chat API Error:', errorData);
-                addAiMessage("抱歉，我現在有點頭暈（伺服器錯誤），要求失敗，可以請您晚點再試試嗎？");
+                addAiMessage(`抱歉${lineUserName ? `${lineUserName}老闆` : '，我現在'}有點頭暈（伺服器錯誤），要求失敗，可以請您晚點再試試嗎？`);
                 return;
             }
             const data = await res.json();
@@ -93,8 +94,9 @@ export function useChatInterface(initialType: string | null = null) {
                 const bot = data.bots[0];
                 setBotId(bot.id);
                 setTimeout(() => {
+                    const softGreeting = SOFT_GREETINGS[Math.floor(Math.random() * SOFT_GREETINGS.length)];
                     addAiMessage(
-                        `老闆歡迎回來！✨ 偵測到您已開通過「${bot.store_name}」的 AI 店長服務。您想直接進入管理後台進行設定嗎？`,
+                        `${lineUserName ? `${lineUserName} 老闆` : '老闆'}您好！✨ ${softGreeting}`,
                         'member_greeting'
                     );
                 }, 1500);
@@ -157,7 +159,7 @@ export function useChatInterface(initialType: string | null = null) {
                         const loginSuccessMsg: Message = { 
                             id: crypto.randomUUID(),
                             role: 'user', 
-                            content: `我已經完成 LINE 身份綁定，我是 ${line_name}。`
+                            content: `對了，我是 ${line_name}，很高興認識你！`
                         };
                         setMessages(prev => [...prev, loginSuccessMsg]);
                         triggerAiResponse([...messagesRef.current, loginSuccessMsg]);
@@ -180,14 +182,25 @@ export function useChatInterface(initialType: string | null = null) {
     // Initial Greeting
     useEffect(() => {
         if (messages.length === 0) {
+            // Already an owner? Skip the sales pitch and give a warm welcome
+            if (lineUserId && botId) {
+                const softGreeting = SOFT_GREETINGS[Math.floor(Math.random() * SOFT_GREETINGS.length)];
+                addAiMessage(`${lineUserName ? `${lineUserName} 老闆` : '老闆'}您好！✨ ${softGreeting}`);
+                return;
+            }
+
             if (initialType === 'pricing') {
-                addAiMessage("老闆您好！我是您的 AI 客服助理。關於服務方案與預算，以下是我們為您準備的詳細對照：", "pricing");
+                addAiMessage(`${lineUserName ? `${lineUserName} 老闆您好` : '老闆您好'}！我是您的 AI 客服助理。關於服務方案與預算，以下是我們為您準備的詳細對照：`, "pricing");
+            } else if (lineUserName) {
+                // Personal greeting for logged-in users who haven't activated yet
+                const softGreeting = SOFT_GREETINGS[Math.floor(Math.random() * SOFT_GREETINGS.length)];
+                addAiMessage(`${lineUserName} 老闆，${softGreeting}`);
             } else {
                 const randomMsg = OWNER_INSIGHTS[Math.floor(Math.random() * OWNER_INSIGHTS.length)];
                 addAiMessage(randomMsg);
             }
         }
-    }, [initialType]);
+    }, [initialType, lineUserName, botId]);
 
     return {
         messages, setMessages,

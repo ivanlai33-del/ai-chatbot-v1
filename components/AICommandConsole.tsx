@@ -17,7 +17,12 @@ import { WIDGET_REGISTRY, ConsoleWidget } from '@/lib/console/widgetRegistry';
 import ConsoleHeader from './console/ConsoleHeader';
 import ConsoleAIAssistant from './console/ConsoleAIAssistant';
 
-export default function AICommandConsole() {
+interface AICommandConsoleProps {
+    lineUserId?: string;
+    lineUserName?: string;
+}
+
+export default function AICommandConsole({ lineUserId, lineUserName }: AICommandConsoleProps) {
     const [activeTab, setActiveTab] = useState('dashboard');
     const [viewMode, setViewMode] = useState<'platform' | 'personal'>('platform');
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);

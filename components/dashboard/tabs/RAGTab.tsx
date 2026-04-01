@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Lock, Database, FileText, Globe, CheckCircle2 } from 'lucide-react';
 

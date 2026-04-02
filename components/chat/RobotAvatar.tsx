@@ -129,19 +129,19 @@ export const RobotAvatar: React.FC<RobotAvatarProps> = ({ isTyping, isSaaS = fal
                     animate={
                         isTyping 
                         ? { 
-                            scale: [1, 1.05, 0.98, 1.02, 1],
-                            rotate: [0, -2, 2, -1, 1, 0],
-                            y: [0, -5, 0, -3, 0]
+                            scale: [1, 1.02, 0.98, 1.01, 1],
+                            rotate: [0, -1, 1, -0.5, 0.5, 0],
+                            y: [0, -3, 0, -2, 0]
                         }
                         : { 
-                            scale: [1, 1.1, 1], 
-                            rotate: [0, 5, -5, 0] 
+                            scale: [1, 1.08, 1], 
+                            rotate: [0, 3, -3, 0] 
                         }
                     }
                     transition={
                         isTyping 
-                        ? { duration: 0.4, repeat: Infinity, ease: "linear" }
-                        : { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                        ? { duration: 2.0, repeat: Infinity, ease: "easeInOut" }
+                        : { duration: 5, repeat: Infinity, ease: "easeInOut" }
                     }
                     className="w-[230px] h-[230px] drop-shadow-2xl relative"
                 >

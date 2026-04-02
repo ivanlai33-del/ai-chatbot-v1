@@ -85,11 +85,10 @@ export default function ChatInterface({ isMaster = false, isSaaS = false, initia
             {(m.type === 'hub_preview' || m.type === 'dojo_preview') && (
                 <HubPreviewWidget 
                     onEnterHub={() => {
-                        if (mgmtToken) {
-                             setIsAdminView(true);
+                        if (lineUserId) {
+                             setIsAdminView(true); // 直接開啟管理後台
                         } else {
-                             // 如果沒登入，引導登入
-                             initiateLineLogin();
+                             initiateLineLogin();  // 沒登入才登入
                         }
                     }}
                 />

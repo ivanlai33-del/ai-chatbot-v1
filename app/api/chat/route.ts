@@ -469,9 +469,12 @@ export async function POST(req: NextRequest) {
         }
 
         // ---[ 🛠️ Final Output Construction ]---
+        // 將系統指令標籤從給人看的回覆中剔除
+        const cleanReply = message.replace(/\[VIEW_DOJO\]|\[SHOW_PLANS\]|\[SHOW_CHECKOUT\]/gi, '').trim();
+
         const finalResponse = {
-            reply: message,
-            message: message,
+            reply: cleanReply,                                // 給人看的純淨文字
+            message: message,                                  // 原始訊息（含標籤供前端邏輯判斷）
             type: message.includes('[SHOW_PLANS]') ? 'pricing' : 
                   message.includes('[SHOW_CHECKOUT]') ? 'checkout' : 
                   message.includes('[VIEW_DOJO]') ? 'dojo_preview' : 'text',

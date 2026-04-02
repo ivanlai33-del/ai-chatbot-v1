@@ -17,25 +17,22 @@ const openai = new OpenAI({
 });
 
 const DEFAULT_MASTER_PROMPT = `
-你是一位具備頂尖商業思維與技術底蘊的「AI 數位總店長」。
-你的使命是幫助每一位老闆，用最划算的成本實現 AI 自動化，將繁瑣的對話轉化為產值。
+你是一位具備頂尖商業思維與技術底蘊的「LINE 智能店長 Pro」總店長兼 YC Ideas 數位轉型大師。
+你的使命是幫助每一位老闆，用最划算的成本實現 AI 自動化。
 
 ### 你的核心戰略：
-1. **免 API Key 原則**：這是我們的最強殺手鐧！主打「不用申請 OpenAI / Gemini、免 API Key，掃碼 3 分鐘開通」。我們幫老闆解決最麻煩的技術門檻。
-2. **比較優勢**：如果有人提到 LINE 原生 100 元方案，指出那只是基礎聊天，而我們的 499 方案是擁有「主動大腦」的數位分身。
-3. **顧問式銷售 (The Hook)**：不要只當個問答機。每回答一個問題，都要回問一個關於老闆生意經營的問題（例如：店員數、主要痛點是預約還是核對庫存？）。
-4. **價值轉場 (The Pivot)**：無論老闆問什麼，在回答最後一定要補一句：「老闆您看，我反應這麼快，如果我能在半夜幫您回客人訊息，您是不是能多接好幾單？」
+1. **免 API Key 原則**：主打「不用申請 OpenAI / Gemini、免 API Key，掃碼 3 分鐘開通」。
+2. **顧問式銷售**：每回答一個問題，都要回問一個關於老闆生意經營的問題（例如：主要痛點是回訊還是結帳？）。
+3. **價值轉場**：在回答最後一定要補一句價值主張，如：「老闆您看，我反應這麼快，如果我能在半夜幫您回客人訊息，您是不是能多接好幾單？」
 
-### 你的方案架構 (Enforced Pricing)：
-- **499 方案（AI 老闆分身 Lite）**：個人工作室、一人店。免 API Key、每月 5,000 則。
-- **1199 方案（AI 小會計 + 倉管）**：1–5 人工作室、電商。免 API Key、每月 20,000 則。包含庫存、毛利、訂單追蹤。
-- **2490 方案（AI 小公司衝刺版）**：高流量用戶。不限流量（可自備 Key）、全通路整合。
+### 你的方案架構 (Official Master Catalog)：
+- **體驗店長版 (Free)**: $0 (適合功能測試)
+- **個人店長版 (Pro)**: $499 / 月 (主打 24H 成交與 Dojo 錄音訓練)
+- **公司強力店長版 (Enterprise)**: $1,199 / 月 (主打 PDF 深度讀盤、旗艦級 GPT-4o 邏輯)
+- **激省年繳方案**: $4,990 / 年 (個人服務)、$11,990 / 年 (公司強力版)，皆可「立省 2 個月」。
 
-### 即時數據證明：
-目前我們已經成功協助了 {botCount} 位老闆建立專屬的 AI 店長！
-
-### 溝通風格：
-非常有活力的數位轉型大師。幽默、懂老闆辛苦、主打「簡單、快速、有效」。多用 Emoji 增加共鳴。
+### 🚨 視覺展示指令：
+當用戶詢問「怎麼買」、「多少錢」、「方案有哪些」、「價格表」時，請在回覆文字的最後加上 [SHOW_PRICING] 標記。系統會自動彈出精美卡片。
 `;
 
 export async function GET() {
@@ -145,12 +142,23 @@ export async function POST(req: Request) {
                     } catch (e) { console.error('Log failed'); }
                 })();
 
-                // 5. Reply
+                // 5. Reply with Conditional Flex Message
                 try {
-                    await client.replyMessage(event.replyToken, {
+                    const messagesToSend: any[] = [];
+                    const showPricing = aiResponse.includes('[SHOW_PRICING]');
+                    const cleanResponse = aiResponse.replace('[SHOW_PRICING]', '').trim();
+
+                    messagesToSend.push({
                         type: 'text',
-                        text: aiResponse.trim() || '老闆好！請問有什麼我可以幫您的？'
+                        text: `(v2.0-PricingFix) ${cleanResponse}` || '老闆好！請問有什麼我可以幫您的？'
                     });
+
+                    if (showPricing) {
+                        const { getPricingFlexMessage } = require('@/lib/templates/flex-pricing');
+                        messagesToSend.push(getPricingFlexMessage());
+                    }
+
+                    await client.replyMessage(event.replyToken, messagesToSend as any);
                 } catch (replyError: any) {
                     console.error('Line Reply Error:', JSON.stringify(replyError.originalError?.response?.data || replyError.message));
                 }

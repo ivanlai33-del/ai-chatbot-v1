@@ -11,6 +11,8 @@ import LiffFeatureGrid from '@/components/Liff/LiffFeatureGrid';
 import LiffScrollSequence from '@/components/Liff/LiffScrollVideo';
 import LiffStickyHeader from '@/components/Liff/LiffStickyHeader';
 
+import { PLAN_PAYMENT_LINKS } from '@/lib/chat-constants';
+
 export default function LiffSubscribePage() {
   const { profile, isLoading, activeBotsCount = 5, trialMessagesUsed = 10 } = useLiff();
   const [showDowngradeAlert, setShowDowngradeAlert] = useState(false);
@@ -123,7 +125,14 @@ export default function LiffSubscribePage() {
                         setShowDowngradeAlert(true);
                         return;
                       }
-                      alert(`即將為您開通：${plan.name}\n金額：NT$ ${plan.price}`);
+                      const linkObj = PLAN_PAYMENT_LINKS[plan.name as keyof typeof PLAN_PAYMENT_LINKS];
+                      const finalLink = linkObj ? (billingCycle === 'monthly' ? linkObj.monthly : linkObj.yearly) : null;
+                      
+                      if (finalLink) {
+                        window.location.href = finalLink;
+                      } else {
+                        alert(`即將為您開通：${plan.name}\n金額：NT$ ${plan.price}`);
+                      }
                     }}
                   />
                 </motion.div>

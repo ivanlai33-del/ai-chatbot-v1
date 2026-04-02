@@ -1,81 +1,98 @@
-import React from 'react';
 import { 
     LayoutDashboard, 
-    Users, 
-    Receipt, 
+    BarChart3, 
     MessageSquare, 
-    Map, 
-    ShieldCheck, 
-    BarChart3,
-    Activity,
-    Settings,
-    TrendingUp
+    Users, 
+    BrainCircuit, 
+    LineChart, 
+    Target, 
+    HeartHandshake,
+    Receipt
 } from 'lucide-react';
+import dynamic from 'next/dynamic';
 
-// Dynamic imports for widgets to ensure isolation and performance
-import ConsoleAnalysisPanel from '@/components/console/ConsoleAnalysisPanel';
-import SaaSSalesLeadsView from '@/components/console/SaaSSalesLeadsView';
-import OwnerFeedbackView from '@/components/console/OwnerFeedbackView';
-import BillingDashboardView from '@/components/console/BillingDashboardView';
-import MarketIntelligenceView from '@/components/console/MarketIntelligenceView';
+// Dynamic imports for better performance
+const ConsoleAnalyticsView = dynamic(() => import('@/components/console/ConsoleAnalyticsView'), { ssr: false });
+const SaaSSalesLeadsView = dynamic(() => import('@/components/console/SaaSSalesLeadsView'), { ssr: false });
+const ChatStreamView = dynamic(() => import('@/components/console/ChatStreamView'), { ssr: false });
+const ConsoleStrategicAdvisor = dynamic(() => import('@/components/console/ConsoleStrategicAdvisor'), { ssr: false });
+const MarketIntelligenceView = dynamic(() => import('@/components/console/MarketIntelligenceView'), { ssr: false });
+const BusinessCollaborationView = dynamic(() => import('@/components/console/BusinessCollaborationView'), { ssr: false });
+const OwnerFeedbackView = dynamic(() => import('@/components/console/OwnerFeedbackView'), { ssr: false });
+const BillingInvoicesView = dynamic(() => import('@/components/console/BillingInvoicesView'), { ssr: false });
 
 export interface ConsoleWidget {
     id: string;
     label: string;
     icon: any;
-    component: React.ComponentType<{ onDataUpdate?: (data: any) => void }>;
-    category: 'growth' | 'ops' | 'finance' | 'hq';
+    component: any;
     status: 'stable' | 'beta' | 'new';
-    description?: string;
+    permission: 'admin' | 'owner';
 }
 
 export const WIDGET_REGISTRY: ConsoleWidget[] = [
     {
         id: 'dashboard',
-        label: '總動態流',
-        icon: Activity,
-        component: ConsoleAnalysisPanel,
-        category: 'hq',
+        label: '營運指揮中心',
+        icon: LayoutDashboard,
+        component: ConsoleAnalyticsView,
         status: 'stable',
-        description: '全平台實時監控與決策日誌'
+        permission: 'admin'
     },
     {
         id: 'leads',
-        label: '潛在客戶',
-        icon: Users,
+        label: 'SaaS 業務開發',
+        icon: Target,
         component: SaaSSalesLeadsView,
-        category: 'growth',
         status: 'stable',
-        description: 'B2B 線索追蹤與自動評級'
-    },
-    {
-        id: 'feedback',
-        label: '客戶反饋',
-        icon: MessageSquare,
-        component: OwnerFeedbackView,
-        category: 'ops',
-        status: 'stable',
-        description: 'AI 自動診斷與問題處理流'
+        permission: 'admin'
     },
     {
         id: 'billing',
-        label: '財務營運',
+        label: '財務與發票',
         icon: Receipt,
-        component: BillingDashboardView,
-        category: 'finance',
+        component: BillingInvoicesView,
+        status: 'new',
+        permission: 'admin'
+    },
+    {
+        id: 'chatStream',
+        label: '即時對話串流',
+        icon: MessageSquare,
+        component: ChatStreamView,
+        status: 'beta',
+        permission: 'admin'
+    },
+    {
+        id: 'strategist',
+        label: 'AI 戰略導師',
+        icon: BrainCircuit,
+        component: ConsoleStrategicAdvisor,
         status: 'stable',
-        description: '營收轉化與訂閱狀態監測'
+        permission: 'admin'
     },
     {
         id: 'market',
-        label: '市場情報',
-        icon: Map,
+        label: '市場競爭情報',
+        icon: LineChart,
         component: MarketIntelligenceView,
-        category: 'growth',
-        status: 'new',
-        description: '全台區域熱區與數位沙漠分佈'
+        status: 'beta',
+        permission: 'admin'
+    },
+    {
+        id: 'partnerships',
+        label: '商務協作中心',
+        icon: HeartHandshake,
+        component: BusinessCollaborationView,
+        status: 'beta',
+        permission: 'admin'
+    },
+    {
+        id: 'feedback',
+        label: '店長意見回饋',
+        icon: Users,
+        component: OwnerFeedbackView,
+        status: 'stable',
+        permission: 'admin'
     }
 ];
-
-// Helper to get widget by ID
-export const getWidget = (id: string) => WIDGET_REGISTRY.find(w => w.id === id);

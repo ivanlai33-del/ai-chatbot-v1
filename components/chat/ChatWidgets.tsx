@@ -16,24 +16,24 @@ interface PricingWidgetProps {
 export const PricingWidget: React.FC<PricingWidgetProps> = ({ billingCycle, onToggleBilling, onSelectPlan }) => {
     const plans = [
         {
-            name: '個人店長版 (Lite)',
-            price: billingCycle === 'monthly' ? '499' : '5500',
-            originalPrice: billingCycle === 'monthly' ? '599' : '7188',
+            name: '個人店長版',
+            price: billingCycle === 'monthly' ? '499' : '4990',
+            originalPrice: billingCycle === 'monthly' ? '999' : '9990',
             period: billingCycle === 'monthly' ? '/月' : '/年',
-            tag: billingCycle === 'monthly' ? '前500名優惠' : '省將近 700 元!',
+            tag: billingCycle === 'monthly' ? '前500名優惠' : '現省 1,000 元!',
             tagColor: 'text-red-500 bg-red-50',
             features: ['每月 5,000 則對話', '免 OpenAI API Key', '🤖 智慧文字客服', '🎯 產品/服務精準介紹', '🕒 24小時自動回訊', '🧬 品牌 DNA 個性設定'],
         },
         {
             name: '公司強力店長版',
             price: billingCycle === 'monthly' ? '1199' : '11000',
-            originalPrice: billingCycle === 'monthly' ? '1599' : '19188',
+            originalPrice: billingCycle === 'monthly' ? '1999' : '19188',
             period: billingCycle === 'monthly' ? '/月' : '/年',
             tag: billingCycle === 'monthly' ? '強力推薦' : '現省 3,388 元!',
             tagColor: 'text-amber-500 bg-amber-50',
             features: [
                 '每月 20,000 則對話',
-                '含 Lite 所有功能',
+                '含個人店長版所有功能',
                 '📢 主動廣播/精準開發',
                 '📅 預約自動導流系統',
                 '📁 PDF/網頁 深度學習 RAG',
@@ -182,5 +182,41 @@ export const SuccessWidget: React.FC<{ botId: string, mgmtToken: string, isAdmin
                 進入店長智庫 · 管理中心 ➔
             </button>
         )}
+    </motion.div>
+);
+
+export const HubPreviewWidget: React.FC<{ onEnterHub: () => void }> = ({ onEnterHub }) => (
+    <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="ml-14 relative group max-w-[85%]"
+    >
+        <div className="absolute -inset-1 bg-gradient-to-r from-emerald-400 via-cyan-400 to-indigo-500 rounded-[36px] blur-xl opacity-20 group-hover:opacity-40 transition-opacity" />
+        <div className="relative bg-white/90 backdrop-blur-md p-8 rounded-[32px] border border-emerald-100 shadow-2xl space-y-6">
+            <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-200">
+                    <Sparkles className="w-7 h-7 text-white" />
+                </div>
+                <div>
+                    <h3 className="text-[20px] font-black text-slate-800 leading-tight">AI 店長靈魂已建構完成</h3>
+                    <p className="text-[13px] text-slate-500 font-bold mt-1">品牌 DNA、行業知識、接待計畫已就緒</p>
+                </div>
+            </div>
+
+            <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100 space-y-3">
+                <p className="text-[13px] text-slate-600 font-bold leading-relaxed">
+                    ✨ 我已經為您預填好了專屬的品牌介紹與店長人設。<br/>
+                    🚀 點擊下方按鈕進入 **「店長智庫」**，您可以馬上預覽成果，並微調我對客人的回話口吻！
+                </p>
+            </div>
+
+            <button
+                onClick={onEnterHub}
+                className="w-full py-5 bg-gradient-to-r from-[#06C755] to-emerald-600 hover:from-emerald-600 hover:to-teal-600 text-white rounded-2xl font-black text-[19px] shadow-xl shadow-emerald-100 transition-all active:scale-95 flex items-center justify-center gap-3"
+            >
+                進入店長智庫預覽成果 ➔
+            </button>
+            <p className="text-[10px] text-center text-slate-400 font-bold tracking-widest uppercase">無需付費 · 立即預覽 AI 人設</p>
+        </div>
     </motion.div>
 );

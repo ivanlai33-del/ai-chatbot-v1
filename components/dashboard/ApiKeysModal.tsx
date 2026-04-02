@@ -12,7 +12,8 @@ interface ApiKeysModalProps {
 }
 
 export default function ApiKeysModal({ isOpen, onClose, botId, botName }: ApiKeysModalProps) {
-    const [keys, setKeys] = useState({ channel_secret: '', channel_access_token: '' });
+    const [keys, setKeys] = useState({ channel_secret: '', channel_access_token: '', bot_basic_id: '' });
+    const [isSynced, setIsSynced] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [showCopyMsg, setShowCopyMsg] = useState<string | null>(null);
@@ -32,6 +33,9 @@ export default function ApiKeysModal({ isOpen, onClose, botId, botName }: ApiKey
             const data = await res.json();
             if (data.error) throw new Error(data.error);
             setKeys(data);
+            if (data.channel_secret || data.channel_access_token) {
+                setIsSynced(true);
+            }
         } catch (err: any) {
             setError(err.message);
         } finally {
@@ -116,47 +120,66 @@ export default function ApiKeysModal({ isOpen, onClose, botId, botName }: ApiKey
                                 <p className="text-[12px] font-bold text-slate-400">讀取中...</p>
                             </div>
                         ) : (
-                            <div className="space-y-5">
-                                <div>
-                                    <div className="flex items-center justify-between mb-2 px-1">
-                                        <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Channel Secret</label>
-                                        <button 
-                                            onClick={() => copyToClipboard(keys.channel_secret, 'secret')}
-                                            className="text-[11px] font-bold text-emerald-600 flex items-center gap-1 hover:underline"
-                                        >
-                                            {showCopyMsg === 'secret' ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                                            {showCopyMsg === 'secret' ? '已復制' : '點此復制'}
-                                        </button>
+                            <>
+                                {isSynced && (
+                                    <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center gap-3 mb-5">
+                                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                        <div className="text-[12px] font-black text-emerald-700">已自動從書籤同步最新資料</div>
                                     </div>
-                                    <input
-                                        type="password"
-                                        value={keys.channel_secret}
-                                        onChange={e => setKeys(prev => ({ ...prev, channel_secret: e.target.value }))}
-                                        placeholder="LINE Developers 取得的引導字串"
-                                        className="w-full px-4 py-3.5 rounded-2xl border border-slate-200 bg-slate-50 text-[13px] font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-400 transition-all font-mono"
-                                    />
-                                </div>
+                                )}
 
-                                <div>
-                                    <div className="flex items-center justify-between mb-2 px-1">
-                                        <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Channel Access Token</label>
-                                        <button 
-                                            onClick={() => copyToClipboard(keys.channel_access_token, 'token')}
-                                            className="text-[11px] font-bold text-emerald-600 flex items-center gap-1 hover:underline"
-                                        >
-                                            {showCopyMsg === 'token' ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                                            {showCopyMsg === 'token' ? '已復制' : '點此復制'}
-                                        </button>
+                                <div className="space-y-5">
+                                    <div>
+                                        <label className="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Bot Basic ID</label>
+                                        <input
+                                            type="text"
+                                            value={keys.bot_basic_id}
+                                            onChange={e => setKeys(prev => ({ ...prev, bot_basic_id: e.target.value }))}
+                                            placeholder="@..."
+                                            className="w-full px-4 py-3.5 rounded-2xl border border-slate-200 bg-slate-50 text-[13px] font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-400 transition-all"
+                                        />
                                     </div>
-                                    <textarea
-                                        value={keys.channel_access_token}
-                                        onChange={e => setKeys(prev => ({ ...prev, channel_access_token: e.target.value }))}
-                                        placeholder="長度約 170+ 字元的權杖"
-                                        rows={4}
-                                        className="w-full px-4 py-3.5 rounded-2xl border border-slate-200 bg-slate-50 text-[13px] font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-400 transition-all font-mono resize-none leading-relaxed"
-                                    />
+                                    <div>
+                                        <div className="flex items-center justify-between mb-2 px-1">
+                                            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Channel Secret</label>
+                                            <button 
+                                                onClick={() => copyToClipboard(keys.channel_secret, 'secret')}
+                                                className="text-[11px] font-bold text-emerald-600 flex items-center gap-1 hover:underline"
+                                            >
+                                                {showCopyMsg === 'secret' ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                                                {showCopyMsg === 'secret' ? '已復制' : '點此復制'}
+                                            </button>
+                                        </div>
+                                        <input
+                                            type="password"
+                                            value={keys.channel_secret}
+                                            onChange={e => setKeys(prev => ({ ...prev, channel_secret: e.target.value }))}
+                                            placeholder="LINE Developers 取得的引導字串"
+                                            className="w-full px-4 py-3.5 rounded-2xl border border-slate-200 bg-slate-50 text-[13px] font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-400 transition-all font-mono"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <div className="flex items-center justify-between mb-2 px-1">
+                                            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Channel Access Token</label>
+                                            <button 
+                                                onClick={() => copyToClipboard(keys.channel_access_token, 'token')}
+                                                className="text-[11px] font-bold text-emerald-600 flex items-center gap-1 hover:underline"
+                                            >
+                                                {showCopyMsg === 'token' ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                                                {showCopyMsg === 'token' ? '已復制' : '點此復制'}
+                                            </button>
+                                        </div>
+                                        <textarea
+                                            value={keys.channel_access_token}
+                                            onChange={e => setKeys(prev => ({ ...prev, channel_access_token: e.target.value }))}
+                                            placeholder="長度約 170+ 字元的權杖"
+                                            rows={4}
+                                            className="w-full px-4 py-3.5 rounded-2xl border border-slate-200 bg-slate-50 text-[13px] font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-400 transition-all font-mono resize-none leading-relaxed"
+                                        />
+                                    </div>
                                 </div>
-                            </div>
+                            </>
                         )}
                     </div>
 

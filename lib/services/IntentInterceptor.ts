@@ -12,15 +12,18 @@ export class IntentInterceptor {
         // Character Normalization: Traditional/Simplified and Typo handling
         const normalized = text.toLowerCase().trim().replace(/台/g, '臺');
 
-        // 1. Stock Detection
+        // 1. Stock Detection (Stricter)
         const stockMatch = normalized.match(/\b(\d{4})\b/);
         const stockKeywords = ["股價", "分析", "股票", "行情", "代碼", "財報", "台積電", "鴻海", "聯發科", "長榮", "陽明", "萬海", "中鋼", "富邦金", "國泰金", "廣達", "緯創"];
         const hasStockKeyword = stockKeywords.some(k => normalized.includes(k.replace(/台/g, '臺')));
 
         if (stockMatch || hasStockKeyword) {
-            // Only trigger if we have a keyword OR if it's a very short message with a code
-            const isShortQuery = text.length < 15;
-            if (hasStockKeyword || (stockMatch && isShortQuery)) {
+            // Trigger ONLY if:
+            // - Has explicit stock keyword (e.g., "查 2330 股價")
+            // - OR it's a very short message with EXACTLY 4 digits (e.g., just "2330")
+            const isPureSymbol = text.trim().length === 4 && stockMatch;
+            
+            if (hasStockKeyword || isPureSymbol) {
                 const query = stockMatch ? stockMatch[1] : normalized.replace(/[請問幫我查看看的行情股價分析?？\s代碼股票]/g, '');
                 const stockData = await StockService.getTaiwanStockData(query);
                 return { intent: 'stock', data: stockData || { status: "ready_for_tool_call" } };

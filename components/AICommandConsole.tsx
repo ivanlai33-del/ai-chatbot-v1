@@ -17,6 +17,8 @@ import { WIDGET_REGISTRY, ConsoleWidget } from '@/lib/console/widgetRegistry';
 import ConsoleHeader from './console/ConsoleHeader';
 import ConsoleAIAssistant from './console/ConsoleAIAssistant';
 
+import { globalLogout } from '@/lib/auth-utils';
+
 interface AICommandConsoleProps {
     lineUserId?: string;
     lineUserName?: string;
@@ -27,6 +29,27 @@ export default function AICommandConsole({ lineUserId, lineUserName }: AICommand
     const [viewMode, setViewMode] = useState<'platform' | 'personal'>('platform');
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [widgetData, setWidgetData] = useState<any>(null); // 📊 Bridge for real data
+    const [planLevel, setPlanLevel] = useState(0);
+
+    // Sync Plan Level from Single Source of Truth
+    useEffect(() => {
+        const uid = lineUserId || localStorage.getItem('line_user_id');
+        if (uid) {
+            fetch(`/api/platform/user?lineUserId=${uid}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.user) {
+                        setPlanLevel(data.user.plan_level || 0);
+                    }
+                })
+                .catch(err => console.error("Sync Error:", err));
+        }
+    }, [lineUserId]);
+
+    const handleLogout = () => {
+        globalLogout();
+        window.location.href = '/';
+    };
 
     // Get Active Widget Data
     const activeWidget = WIDGET_REGISTRY.find(w => w.id === activeTab) || WIDGET_REGISTRY[0];
@@ -103,6 +126,9 @@ export default function AICommandConsole({ lineUserId, lineUserName }: AICommand
                     activeTabLabel={activeWidget.label} 
                     viewMode={viewMode} 
                     setViewMode={setViewMode} 
+                    lineUserName={lineUserName}
+                    planLevel={planLevel}
+                    onLogout={handleLogout}
                 />
 
                 <main className="flex-1 overflow-y-auto p-10 custom-scrollbar scroll-smooth">

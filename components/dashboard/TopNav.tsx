@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Home, Zap, Crown, User, LogOut, Copy, X, LayoutDashboard } from 'lucide-react';
+import { Home, Zap, Crown, User, LogOut, Copy, X, LayoutDashboard, ChevronDown, CreditCard, Sparkles } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
@@ -13,6 +13,7 @@ interface TopNavProps {
     subscriptionStatus: string;
     nextBillingDate: string;
     planLevel: number;
+    billingCycle?: 'monthly' | 'yearly';
     planConfig: any;
     onLogout: () => void;
 }
@@ -21,15 +22,24 @@ export default function TopNav({
     userName, 
     userPicture, 
     lineUserId,
-    subscriptionStatus,
-    nextBillingDate,
     planLevel, 
-    planConfig, 
+    billingCycle = 'monthly',
     onLogout 
-}: TopNavProps) {
+}: Omit<TopNavProps, 'subscriptionStatus' | 'nextBillingDate' | 'planConfig'>) {
     const [showProfile, setShowProfile] = useState(false);
-    const plan = planConfig[planLevel as 0 | 1 | 2];
-    const PlanIcon = plan.icon;
+    const [isMounted, setIsMounted] = useState(false);
+
+    React.useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
+    const getPlanLabel = (level: number) => {
+        if (level === 2) return { name: "公司強力店長版", color: "bg-amber-100 text-amber-700", badge: "bg-amber-500/10 border-amber-500/20" };
+        if (level === 1) return { name: "個人店長版", color: "bg-[#06C755]/10 text-[#06C755]", badge: "bg-[#06C755]/10 border-[#06C755]/20" };
+        return { name: "普通會員", color: "bg-emerald-50 text-emerald-600", badge: "bg-emerald-50 border-emerald-100" };
+    };
+
+    const currentPlan = getPlanLabel(planLevel);
 
     const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text);
@@ -44,148 +54,161 @@ export default function TopNav({
                         <Image src="/Lai Logo_4.svg" alt="Lai Logo" fill className="object-contain" />
                     </div>
                     <div>
-                        <span className="font-black text-[19.2px] tracking-tight text-slate-800">AI 店長後台</span>
+                        <span className="font-black text-[19.2px] tracking-tight text-slate-800">AI 店長智庫</span>
                         <span className="ml-2 text-[14.4px] text-slate-400">Member Dashboard</span>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1.5 mr-2">
-                        {planLevel === 0 && (
-                            <motion.button
-                                whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(245, 158, 11, 0.4)" }}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={() => window.location.href = '/#pricing'}
-                                className="mr-3 px-4 py-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[11px] font-black rounded-full shadow-lg shadow-orange-500/20 flex items-center gap-1.5 animate-pulse"
-                            >
-                                <Zap className="w-3 h-3 fill-current" />
-                                立即解鎖正式版
-                            </motion.button>
-                        )}
-                        <motion.button
-                            whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                            onClick={() => window.location.href = '/'}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-slate-500 hover:bg-slate-100 transition-all text-[13px] font-bold border border-transparent hover:border-slate-200"
-                        >
-                            <Home className="w-3.5 h-3.5" />
-                            回首頁
-                        </motion.button>
-                        { (planLevel > 0 || lineUserId === "Ud8b8dd79162387a80b2b5a4aba20f604") && (
-                            <motion.button
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={() => window.location.href = '/console'}
-                                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-all text-[13px] font-black border border-indigo-100 shadow-sm shadow-indigo-500/5 group"
-                            >
-                                <LayoutDashboard className="w-3.5 h-3.5 text-indigo-500 group-hover:rotate-12 transition-transform" />
-                                營運戰情室
-                            </motion.button>
-                        )}
-                    </div>
-                    <div className={cn(
-                        "flex items-center gap-1.5 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm border mr-2",
-                        plan.badge
-                    )}>
-                        {PlanIcon && <PlanIcon className={`w-3.5 h-3.5 ${plan.color}`} />}
-                        <span className={plan.color}>{plan.label}</span>
-                    </div>
-
-                    <div className="relative">
-                        <motion.button
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            onClick={() => setShowProfile(!showProfile)}
-                            className="flex items-center gap-2.5 pl-3 border-l border-slate-200 hover:bg-slate-50 px-2 py-1.5 rounded-xl transition-all"
-                        >
-                            {userPicture ? (
-                                <img src={userPicture} alt={userName} className="w-8 h-8 rounded-full border-2 border-emerald-400/60" />
-                            ) : (
-                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center">
-                                    <User className="w-4 h-4 text-white" />
-                                </div>
-                            )}
-                            <span className="text-sm text-slate-600 font-bold hidden sm:block">{userName} ▾</span>
-                        </motion.button>
-
-                        <AnimatePresence>
-                            {showProfile && (
-                                <>
-                                    <div className="fixed inset-0 z-40" onClick={() => setShowProfile(false)} />
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                        className="absolute right-0 mt-3 w-72 bg-white rounded-3xl shadow-2xl border border-slate-100 z-50 overflow-hidden"
+                    {isMounted && (
+                        <>
+                            <div className="flex items-center gap-1.5 mr-2">
+                                {planLevel === 0 && (
+                                    <motion.button
+                                        whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(245, 158, 11, 0.4)" }}
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={() => window.location.href = '/dashboard/billing'}
+                                        className="mr-3 px-4 py-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[11px] font-black rounded-full shadow-lg shadow-orange-500/20 flex items-center gap-1.5 animate-pulse"
                                     >
-                                        <div className="p-6 text-center bg-slate-50/50">
-                                            <div className="w-20 h-20 rounded-full border-4 border-white shadow-lg mx-auto mb-3 overflow-hidden relative group">
-                                                <img src={userPicture} alt={userName} className="w-full h-full object-cover" />
-                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                    <span className="text-[9px] text-white font-bold">CHANGE</span>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-center justify-center gap-1.5 mb-1">
-                                                <h4 className="text-lg font-black text-slate-800">{userName}</h4>
-                                                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="服務運行中" />
-                                            </div>
-                                            <p className="text-[10px] font-black uppercase text-emerald-500 tracking-widest mb-4 flex items-center justify-center gap-1">
-                                                {subscriptionStatus} • {plan.label}
-                                            </p>
-                                            
-                                            <div className="space-y-2">
-                                                <div className="p-3 bg-white rounded-2xl border border-slate-200 text-left">
-                                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Your Line User ID</p>
-                                                    <div className="flex items-center justify-between gap-2 overflow-hidden">
-                                                        <span className="text-[10px] font-mono text-slate-600 truncate">{lineUserId}</span>
-                                                        <button 
-                                                            onClick={() => copyToClipboard(lineUserId)}
-                                                            className="p-1.5 rounded-lg bg-slate-100 text-slate-500 hover:text-emerald-500 hover:bg-emerald-50 transition-all shrink-0"
-                                                            title="複製 ID"
-                                                        >
-                                                            <Copy className="w-3 h-3" />
-                                                        </button>
-                                                    </div>
-                                                </div>
+                                        <Zap className="w-3 h-3 fill-current" />
+                                        立即解鎖正式版
+                                    </motion.button>
+                                )}
+                                <motion.button
+                                    whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                                    onClick={() => window.location.href = '/'}
+                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-slate-500 hover:bg-slate-100 transition-all text-[13px] font-bold border border-transparent hover:border-slate-200"
+                                >
+                                    <Home className="w-3.5 h-3.5" />
+                                    回首頁
+                                </motion.button>
+                                { (planLevel > 0 || lineUserId === "Ud8b8dd79162387a80b2b5a4aba20f604") && (
+                                    <motion.button
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={() => window.location.href = '/console'}
+                                        className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-all text-[13px] font-black border border-indigo-100 shadow-sm shadow-indigo-500/5 group"
+                                    >
+                                        <LayoutDashboard className="w-3.5 h-3.5 text-indigo-500 group-hover:rotate-12 transition-transform" />
+                                        營運戰情室
+                                    </motion.button>
+                                )}
+                            </div>
+                            <div className={cn(
+                                "flex items-center gap-1.5 px-4 py-1.5 rounded-full text-[13px] font-black uppercase tracking-wider shadow-sm border mr-2",
+                                currentPlan.badge
+                            )}>
+                                <span className={currentPlan.color}>{currentPlan.name}</span>
+                            </div>
 
-                                                {planLevel > 0 && (
-                                                    <div className="p-3 bg-indigo-50/50 rounded-2xl border border-indigo-100 text-left">
-                                                        <div className="flex items-center justify-between">
-                                                            <div>
-                                                                <p className="text-[9px] font-black text-indigo-400 uppercase tracking-widest mb-0.5">Next Billing Date</p>
-                                                                <p className="text-sm font-black text-indigo-600 tracking-tighter">{nextBillingDate}</p>
+                            <div className="relative">
+                                <motion.button
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    onClick={() => setShowProfile(!showProfile)}
+                                    className="flex items-center gap-2.5 pl-3 border-l border-slate-200 hover:bg-slate-50 px-2 py-1.5 rounded-xl transition-all"
+                                >
+                                    {userPicture ? (
+                                        <img src={userPicture} alt={userName} className="w-8 h-8 rounded-full border-2 border-emerald-400/60" />
+                                    ) : (
+                                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center">
+                                            <User className="w-4 h-4 text-white" />
+                                        </div>
+                                    )}
+                                    <span className="text-sm text-slate-600 font-bold hidden sm:block">{userName} ▾</span>
+                                </motion.button>
+
+                                <AnimatePresence>
+                                    {showProfile && (
+                                        <>
+                                            <div className="fixed inset-0 z-40" onClick={() => setShowProfile(false)} />
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                className="absolute right-0 mt-3 w-72 bg-white rounded-[32px] shadow-2xl border border-slate-100 z-50 overflow-hidden"
+                                            >
+                                                <div className="p-6 bg-gradient-to-br from-slate-50 to-white border-b border-slate-100">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="w-14 h-14 rounded-2xl bg-white overflow-hidden border-2 border-white shadow-md">
+                                                            {userPicture ? (
+                                                                <img src={userPicture} className="w-full h-full object-cover" alt="User" />
+                                                            ) : (
+                                                                <User className="w-6 h-6 text-slate-400" />
+                                                            )}
+                                                        </div>
+                                                        <div className="flex-1 overflow-hidden">
+                                                            <p className="font-black text-slate-800 text-base leading-tight truncate">{userName}</p>
+                                                            <div className="flex items-center gap-1.5 mt-1 mb-2">
+                                                                <span className={cn("px-3 py-1 rounded-lg text-[13px] font-black uppercase tracking-widest leading-none", currentPlan.color)}>
+                                                                    {currentPlan.name}
+                                                                </span>
                                                             </div>
-                                                            <div className="px-2 py-1 bg-white rounded-lg border border-indigo-100 text-[9px] font-black text-indigo-500">
-                                                                AUTO-RENEW
-                                                            </div>
+                                                            <button 
+                                                                onClick={() => copyToClipboard(lineUserId)}
+                                                                className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-indigo-600 transition-all text-[10px] font-mono group max-w-full"
+                                                            >
+                                                                <span className="truncate">{lineUserId}</span>
+                                                                <Copy className="w-3 h-3 shrink-0" />
+                                                            </button>
                                                         </div>
                                                     </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                        
-                                        <div className="p-3 bg-slate-100/50 flex flex-col gap-1">
-                                            <button 
-                                                onClick={() => {
-                                                    setShowProfile(false);
-                                                    onLogout();
-                                                }}
-                                                className="w-full py-2.5 rounded-xl text-slate-500 hover:text-red-500 hover:bg-red-50 transition-all flex items-center justify-center gap-2 text-xs font-bold font-sans"
-                                            >
-                                                <LogOut className="w-3.5 h-3.5" /> 會員登出
-                                            </button>
-                                        </div>
-                                    </motion.div>
-                                </>
-                            )}
-                        </AnimatePresence>
-                    </div>
+                                                </div>
 
-                    <button
-                        onClick={onLogout}
-                        className="p-2 ml-1 rounded-xl hover:bg-slate-100 transition-all text-slate-400 hover:text-slate-600" title="登出"
-                    >
-                        <LogOut className="w-4 h-4" />
-                    </button>
+                                                <div className="p-3">
+                                                    {planLevel > 0 && billingCycle === 'monthly' && (
+                                                        <button 
+                                                            onClick={() => window.location.href = '/dashboard/billing'}
+                                                            className="w-full flex items-center justify-between px-5 py-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-700 mb-3 hover:bg-amber-100 transition-all group"
+                                                        >
+                                                            <div className="flex items-center gap-3">
+                                                                <Crown className="w-4 h-4 text-amber-500" />
+                                                                <span className="font-bold text-[13px]">升級年費 (省 2 個月)</span>
+                                                            </div>
+                                                            <ChevronDown className="w-4 h-4 -rotate-90 text-amber-400" />
+                                                        </button>
+                                                    )}
+
+                                                    {planLevel < 2 && (
+                                                        <button 
+                                                            onClick={() => window.location.href = '/dashboard/billing'}
+                                                            className="w-full flex items-center justify-between px-5 py-3.5 rounded-2xl bg-indigo-500 text-white shadow-xl shadow-indigo-500/20 mb-3 hover:brightness-110 transition-all group"
+                                                        >
+                                                            <div className="flex items-center gap-3">
+                                                                <Sparkles className="w-4 h-4 text-indigo-200" />
+                                                                <span className="font-black text-sm uppercase tracking-wider">{planLevel === 1 ? '補差價升級旗艦版' : '查看升級方案'}</span>
+                                                            </div>
+                                                            <ChevronDown className="w-4 h-4 -rotate-90 text-indigo-200" />
+                                                        </button>
+                                                    )}
+
+                                                    <button 
+                                                        onClick={() => window.location.href = '/dashboard/billing'}
+                                                        className="w-full flex items-center gap-3 px-5 py-3.5 rounded-2xl text-slate-600 hover:bg-slate-50 transition-all text-sm font-bold group mb-2 shadow-sm border border-zinc-100"
+                                                    >
+                                                        <CreditCard className="w-4 h-4 text-slate-400 group-hover:text-indigo-500" />
+                                                        帳單與訂閱管理
+                                                    </button>
+
+                                                    <div className="h-px bg-slate-50 my-2 mx-3" />
+
+                                                    <button 
+                                                        onClick={() => {
+                                                            setShowProfile(false);
+                                                            onLogout();
+                                                        }}
+                                                        className="w-full flex items-center gap-3 px-5 py-3.5 rounded-2xl text-rose-500 hover:bg-rose-50 transition-all text-sm font-black group"
+                                                    >
+                                                        <LogOut className="w-4 h-4" /> 登出 Line 帳號
+                                                    </button>
+                                                </div>
+                                            </motion.div>
+                                        </>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
         </header>

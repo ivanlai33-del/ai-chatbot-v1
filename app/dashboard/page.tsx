@@ -20,6 +20,8 @@ import { DASHBOARD_TABS, DashboardTabId } from '@/config/dashboard_config';
 
 import { StoreConfig } from '@/lib/chat-types';
 
+import { globalLogout } from '@/lib/auth-utils';
+
 export default function DashboardPage() {
     const [userName, setUserName] = useState('');
     const [userPicture, setUserPicture] = useState('');
@@ -32,19 +34,32 @@ export default function DashboardPage() {
     const { config, setConfig, isSaving, isDirty, saveSuccess, handleSave } = useDashboardConfig(selectedBotId);
 
     const selectedBot = bots.find(b => b.id === selectedBotId);
+    const [lineUserId, setLineUserId] = useState('');
 
     useEffect(() => {
         const getCookie = (name: string) => {
-            const match = document.cookie.split('; ').find(r => r.startsWith(name + '='));
+            const match = typeof document !== 'undefined' ? document.cookie.split('; ').find(r => r.startsWith(name + '=')) : null;
             return match ? decodeURIComponent(match.split('=')[1]) : '';
         };
-        setUserName(getCookie('line_user_name') || '會員');
-        setUserPicture(getCookie('line_user_picture') || '');
-        setPlanLevel(parseInt(getCookie('plan_level') || '0'));
+        const uid = getCookie('line_user_id') || localStorage.getItem('line_user_id') || '';
+        setLineUserId(uid);
+        setUserName(getCookie('line_user_name') || localStorage.getItem('line_user_name') || '會員');
+        setUserPicture(getCookie('line_user_picture') || localStorage.getItem('line_user_picture') || '');
+        
+        if (uid) {
+            fetch(`/api/platform/user?lineUserId=${uid}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.user) {
+                        setPlanLevel(data.user.plan_level || 0);
+                    }
+                })
+                .catch(err => console.error("Sync Error:", err));
+        }
     }, []);
 
     const logout = () => {
-        document.cookie = 'line_user_id=; max-age=0; path=/'; 
+        globalLogout();
         window.location.href = '/';
     };
 
@@ -52,9 +67,7 @@ export default function DashboardPage() {
         <DashboardLayout
             userName={userName}
             userPicture={userPicture}
-            lineUserId={typeof document !== 'undefined' ? (document.cookie.split('; ').find(r => r.startsWith('line_user_id='))?.split('=')[1] || '') : ''}
-            subscriptionStatus={planLevel > 0 ? "🟢 服務運行中" : "⚪️ 尚未開通"}
-            nextBillingDate={planLevel > 0 ? "2026/04/15" : "—"}
+            lineUserId={lineUserId}
             planLevel={planLevel}
             onLogout={logout}
             sidebar={

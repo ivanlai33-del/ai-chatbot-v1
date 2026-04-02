@@ -8,9 +8,11 @@ export default function ConsolePage() {
     const [lineId, setLineId] = useState<string | null>(null);
     const [lineName, setLineName] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
+    const [isMounted, setIsMounted] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
+        setIsMounted(true);
         const savedId = localStorage.getItem('line_user_id') || (typeof document !== 'undefined' ? document.cookie.split('; ').find(r => r.startsWith('line_user_id='))?.split('=')[1] : null);
         const savedName = localStorage.getItem('line_user_name');
         
@@ -26,7 +28,7 @@ export default function ConsolePage() {
         }
     }, [router]);
 
-    if (loading) {
+    if (!isMounted || loading) {
         return (
             <div className="flex items-center justify-center h-screen bg-[#0f172a]">
                 <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>

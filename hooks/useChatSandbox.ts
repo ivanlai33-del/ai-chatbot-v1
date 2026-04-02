@@ -15,8 +15,18 @@ interface UseChatSandboxOptions {
 export function useChatSandbox({ planLevel, config }: UseChatSandboxOptions) {
     const [chatInput, setChatInput] = useState('');
     const [chatCount, setChatCount] = useState(0);
+    
+    // Dynamic Initial Message based on Brand Name
+    const rawName = config?.brand_dna?.name || '您的 AI 專家';
+    const expertKeywords = ["分析師", "律師", "顧問", "管家", "護理", "教師", "專家", "醫生", "教練", "導航", "助手"];
+    const isExpert = expertKeywords.some(k => rawName.includes(k));
+    const title = isExpert ? "" : "助手";
+    
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
-        { role: 'ai', content: '您好！我是您的 AI 店長 🤖\n請先填寫左側的「AI 店長智庫」，我就能立刻學會您的品牌個性，然後在這裡為您示範！' }
+        { 
+            role: 'ai', 
+            content: `您好！我是您的「${rawName}」${title} 👋\n請在左側填寫「AI 智庫」，我會立刻學習您的專業知識，並在這裡為您示範！` 
+        }
     ]);
     const [isChatting, setIsChatting] = useState(false);
 

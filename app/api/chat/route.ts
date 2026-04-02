@@ -16,6 +16,7 @@ import { getRandomNagMessage } from '@/config/trial_nags';
 
 import { 
     OWNER_COACH_PROMPT, 
+    ONBOARDING_PROMPT,
     GLOBAL_UTILITY_PROMPT, 
     SECURITY_PROMPT, 
     SALES_PROMPT, 
@@ -122,13 +123,28 @@ export async function POST(req: NextRequest) {
         const effectiveUserId = userId || context?.lineUserId;
         const effectiveUserName = userName || context?.lineUserName;
 
-        // 🛡️ PLG Trial Interceptor
-        if (!isPaid && trialMessageCount >= 10 && !isMaster && !isSaaS && !isProvisioning) {
-            const nagMessage = getRandomNagMessage();
-            return NextResponse.json({
-                message: `${nagMessage}\n\n[👇 立即開通專屬方案]`,
-                metadata: { storeName, action: "SHOW_PLANS" }
-            });
+        // 🛡️ PLG Database-Backed Trial Interceptor (防白嫖機制：絕對不要信任前端傳來的 trialMessageCount)
+        if (!isPaid && !isMaster && !isSaaS && !isProvisioning && effectiveUserId) {
+            // 從後台真實撈取該用戶本月的免費對話量
+            const { count: realTrialCount, error: countError } = await supabase
+                .from('chat_logs')
+                .select('*', { count: 'exact', head: true })
+                .eq('line_user_id', effectiveUserId)
+                .gte('created_at', new Date(new Date().setDate(1)).toISOString()); // 當月1號起算
+
+            const currentCount = realTrialCount || 0;
+            
+            // 設定免費額度上限 (例如：50 句，這裡為了測試順暢先放寬到 50，原代碼為前端 10)
+            const TRIAL_LIMIT = 50;
+
+            if (currentCount >= TRIAL_LIMIT) {
+                console.warn(`[RateLimit] User ${effectiveUserId} exceeded trial quota (${currentCount}/${TRIAL_LIMIT}).`);
+                const nagMessage = getRandomNagMessage();
+                return NextResponse.json({
+                    message: `⚠️ 【系統安全攔截】\n\n老闆，您本月的「免費沙盒試用額度 (${TRIAL_LIMIT}句)」已經安全用盡了喔！\n這代表系統非常穩定，也是時候升級為正式版，讓 AI 直接幫您面對真實的客人了。\n\n[👇 立即開通無上限專屬方案]`,
+                    metadata: { storeName, action: "SHOW_PLANS" }
+                });
+            }
         }
 
         // Tools
@@ -145,13 +161,68 @@ export async function POST(req: NextRequest) {
         }
 
         // 🏗️ Build Dynamic System Prompt
+        let membershipContext = "";
+        let userPlanLevel = 0;
+        let userSelectedPlan = "Free";
+        let userPlanPeriod = "monthly";
+
+        // 🚀 Revenue Engine & Identity Awareness: Fetch Status
+        if (effectiveUserId) {
+            const { data: userData } = await supabase
+                .from('platform_users')
+                .select('plan_level')
+                .eq('line_user_id', effectiveUserId)
+                .single();
+            
+            userPlanLevel = userData?.plan_level || 0;
+
+            const { data: botData } = await supabase
+                .from('bots')
+                .select('selected_plan, plan_period, brand_dna')
+                .eq('line_user_id', effectiveUserId)
+                .limit(1)
+                .single();
+            
+            let identityContext = "";
+            if (botData) {
+                userSelectedPlan = botData.selected_plan || (userPlanLevel > 0 ? "Standard" : "Free");
+                userPlanPeriod = botData.plan_period || "monthly";
+
+                // 🧠 Identity Awareness: Inform AI what we already know to avoid redundant questions
+                const dna = botData.brand_dna || {};
+                const knownFields = [];
+                if (dna.industry) knownFields.push(`行業：${dna.industry}`);
+                if (dna.name) knownFields.push(`店名/公司名：${dna.name}`);
+                if (dna.tagline) knownFields.push(`標語：${dna.tagline}`);
+                if (dna.target_audience) knownFields.push(`目標客群：${dna.target_audience}`);
+                if (dna.services) knownFields.push(`主打服務/商品：${dna.services}`);
+                
+                if (knownFields.length > 0) {
+                    identityContext = `\n【🧠 已知品牌設定資訊 (對話中請勿重複詢問)】：\n- ${knownFields.join('\n- ')}\n`;
+                }
+            }
+
+            membershipContext = `\n【🎟 當前會員資質資訊】：
+- 目前方案：${userSelectedPlan} (${userPlanLevel === 0 ? '免費體驗版' : userPlanLevel === 1 ? '個人店長版' : '公司強力店長版'})
+- 扣費週期：${userPlanPeriod === 'monthly' ? '月繳' : '年繳'}
+- 是否已開通：${!!botData ? '是 (已綁定)' : '否 (尚未連動 LINE)'}
+- 【🚨 指引】：${
+    userPlanLevel === 0 ? "這是免費會員。引導進入智庫預覽並完成串接，隨後勸升 499 (個人店長版)。" :
+    userPlanLevel === 1 ? "這是 499 個人店長版老闆。稱讚其願景，適時提及 1199 公司強力版旗艦腦袋與 PDF 學習功能。" :
+    userPlanPeriod === 'monthly' ? "這是 1199 月繳老闆。在合適時機主推「年繳省更多」方案。" : "這是頂級尊榮客戶。詢問成功案例並請求轉介紹。"
+}${identityContext}\n`;
+        }
+
         let dynamicSystemPrompt = "";
         const isExistingOwner = !!effectiveUserId && !!context?.botId;
 
-        // Base Persona
         if (isExistingOwner) {
             dynamicSystemPrompt = OWNER_COACH_PROMPT;
+        } else if (effectiveUserId) {
+            // Logged in but no bot yet (Onboarding Scenario)
+            dynamicSystemPrompt = ONBOARDING_PROMPT;
         } else {
+            // Not logged in (Visitor/Sales Scenario)
             dynamicSystemPrompt = SALES_PROMPT;
         }
 
@@ -164,6 +235,8 @@ export async function POST(req: NextRequest) {
         if (campaigns?.length) {
             dynamicSystemPrompt += `\n\n【目前後台啟動之限時促銷指令】：\n${campaigns.map(c => c.promotion_script).join('\n')}\n`;
         }
+        
+        dynamicSystemPrompt += membershipContext;
 
         // Segment Specifics
         if (isMaster) {
@@ -201,11 +274,12 @@ export async function POST(req: NextRequest) {
 
         const fullSystemPrompt = [
             SECURITY_DEFENSE_HEADER,
+            context?.dynamicContext ? `【🚨 門市即時動態更新 (重要：請以此為準)】\n${context.dynamicContext}\n---` : "",
             finalPrompt,
             GLOBAL_UTILITY_PROMPT,
             SECURITY_PROMPT,
             SYSTEM_CONTEXT_PROMPT
-        ].join("\n\n");
+        ].filter(Boolean).join("\n\n");
 
         // Prepare Messages for OpenAI
         const mappedMessages = messages.map((m: any) => ({

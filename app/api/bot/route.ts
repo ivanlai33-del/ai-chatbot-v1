@@ -19,6 +19,45 @@ export async function POST(req: NextRequest) {
         const finalIndustry = businessIndustry || "通用服務業";
         const finalMission = businessMission || "回答顧客問題並提升滿意度";
 
+        // 🛡️ DEDUPLICATION LOGIC:
+        if (ownerLineId && finalStoreName) {
+            const { data: existingBots } = await supabase
+                .from('bots')
+                .select('id')
+                .eq('owner_line_id', ownerLineId)
+                .eq('store_name', finalStoreName);
+
+            if (existingBots && existingBots.length > 0) {
+                const botId = existingBots[0].id;
+                
+                const encryptedSecret = encrypt(lineSecret);
+                const encryptedToken = encrypt(lineToken);
+                const encryptedOpenaiKey = openaiKey ? encrypt(openaiKey) : "";
+
+                const { error: updateError } = await supabase
+                    .from('bots')
+                    .update({
+                        line_channel_secret: encryptedSecret,
+                        line_channel_access_token: encryptedToken,
+                        openai_api_key: encryptedOpenaiKey,
+                        selected_plan: selectedPlan?.name || 'Standard',
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', botId);
+
+                if (updateError) {
+                    console.error('Supabase Update Error:', updateError);
+                    return NextResponse.json({ error: updateError.message }, { status: 500 });
+                }
+
+                return NextResponse.json({
+                    success: true,
+                    botId: botId,
+                    message: 'Existing Store Updated'
+                });
+            }
+        }
+
         // Try to load Brand DNA collected during pre-sales chat
         let dna: Record<string, string> = {};
         if (sessionId) {
@@ -36,7 +75,6 @@ export async function POST(req: NextRequest) {
         const dnaAudience   = dna.target_audience  || '';
         const dnaContact    = dna.contact_info     || '';
 
-        // Compose personalised system_prompt from DNA
         const systemPrompt = [
             `你是【${dnaCompany}】的 AI 店長，全天候為客人服務。`,
             dnaIndustry   ? `你的行業是：${dnaIndustry}。` : '',
@@ -61,7 +99,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: '此方案需要提供 OpenAI API Key' }, { status: 400 });
         }
 
-        // Encrypt sensitive data (OpenAI Key is optional for managed plans)
+        // Encrypt sensitive data
         const encryptedSecret = encrypt(lineSecret);
         const encryptedToken = encrypt(lineToken);
         const encryptedOpenaiKey = openaiKey ? encrypt(openaiKey) : "";
@@ -95,7 +133,7 @@ export async function POST(req: NextRequest) {
                 .from('brand_dna')
                 .update({ bot_id: data[0].id })
                 .eq('session_id', sessionId)
-                .then(() => {}); // fire & forget
+                .then(() => {}); 
         }
 
         return NextResponse.json({
@@ -121,7 +159,8 @@ export async function GET(req: NextRequest) {
         const { data: bots, error } = await supabase
             .from('bots')
             .select('id, store_name, status, mgmt_token')
-            .eq('owner_line_id', lineUserId);
+            .eq('owner_line_id', lineUserId)
+            .order('created_at', { ascending: false }); 
 
         if (error) {
             console.error('Supabase fetch error:', error);
@@ -134,6 +173,37 @@ export async function GET(req: NextRequest) {
         });
     } catch (error: any) {
         console.error('API Error:', error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+}
+
+export async function DELETE(req: NextRequest) {
+    try {
+        const { searchParams } = new URL(req.url);
+        const botId = searchParams.get('botId');
+
+        if (!botId) {
+            return NextResponse.json({ error: 'Missing botId' }, { status: 400 });
+        }
+
+        // 1. Delete from line_channel_configs
+        const { error: lineErr } = await supabase
+            .from('line_channel_configs')
+            .delete()
+            .eq('id', botId);
+
+        // 2. Delete from bots (it might be in either or both depending on setup stage)
+        const { error: botErr } = await supabase
+            .from('bots')
+            .delete()
+            .eq('id', botId);
+
+        if (lineErr && botErr) {
+            return NextResponse.json({ error: 'Failed to delete store' }, { status: 500 });
+        }
+
+        return NextResponse.json({ success: true });
+    } catch (error: any) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }

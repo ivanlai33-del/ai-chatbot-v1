@@ -1,9 +1,10 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import {
+import { 
     Save, CheckCircle2, Star, ChevronRight, AlertTriangle,
-    Tag, Package, HelpCircle, GitBranch, Phone, BookOpen, Settings
+    Tag, Package, HelpCircle, GitBranch, Phone, BookOpen, Settings,
+    Trash2, X
 } from 'lucide-react';
 import { useState, useCallback } from 'react';
 import type { StoreConfig } from '@/lib/chat-types';
@@ -44,6 +45,8 @@ export default function KnowledgeBasePanel({
 }: KnowledgeBasePanelProps) {
     const [pendingTab, setPendingTab] = useState<string | null>(null);
     const [showUnsavedWarning, setShowUnsavedWarning] = useState(false);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const pct = config.completion_pct;
     const pctColor = pct >= 70 ? 'text-emerald-600' : pct >= 40 ? 'text-amber-500' : 'text-rose-500';
@@ -66,6 +69,25 @@ export default function KnowledgeBasePanel({
     const confirmDiscard = () => { if (pendingTab) setActiveTab(pendingTab); setPendingTab(null); setShowUnsavedWarning(false); };
     const confirmSaveFirst = async () => { await handleSave(); if (pendingTab) setActiveTab(pendingTab); setPendingTab(null); setShowUnsavedWarning(false); };
     const cancelSwitch = () => { setPendingTab(null); setShowUnsavedWarning(false); };
+
+    const handleDeleteStore = async () => {
+        if (!selectedBotId) return;
+        setIsDeleting(true);
+        try {
+            // Call the delete API (we will create this next)
+            const res = await fetch(`/api/bot?botId=${selectedBotId}`, { method: 'DELETE' });
+            const data = await res.json();
+            if (data.success) {
+                alert('店家已從智庫移除並釋放。');
+                window.location.reload(); // Hard refresh to reset the 5-slots state
+            }
+        } catch (e) {
+            console.error("Delete Error:", e);
+        } finally {
+            setIsDeleting(false);
+            setShowDeleteConfirm(false);
+        }
+    };
 
     return (
         <div className="flex-1 flex flex-col overflow-hidden min-w-0 rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.06)] border border-slate-200 bg-white relative">
@@ -110,13 +132,22 @@ export default function KnowledgeBasePanel({
                                             {storeName}
                                         </h2>
                                         {selectedBotId && !selectedBotId.startsWith('empty-') && (
-                                            <button 
-                                                onClick={onOpenSettings}
-                                                className="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-all shrink-0"
-                                                title="管理 API 金鑰"
-                                            >
-                                                <Settings className="w-4 h-4" />
-                                            </button>
+                                            <div className="flex items-center gap-1 shrink-0">
+                                                <button 
+                                                    onClick={onOpenSettings}
+                                                    className="p-1.5 rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-all"
+                                                    title="管理 API 金鑰"
+                                                >
+                                                    <Settings className="w-4 h-4" />
+                                                </button>
+                                                <button 
+                                                    onClick={() => setShowDeleteConfirm(true)}
+                                                    className="p-1.5 rounded-xl text-slate-300 hover:bg-rose-50 hover:text-rose-500 transition-all"
+                                                    title="從系統移除此店家"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </button>
+                                            </div>
                                         )}
                                     </div>
                                     <p className="text-[11px] text-slate-400 font-bold tracking-widest uppercase mt-0.5">AI 店長智庫</p>
@@ -192,20 +223,19 @@ export default function KnowledgeBasePanel({
                             <motion.button
                                 key={tab.id}
                                 onClick={() => handleTabClick(tab.id as any)}
-                                whileHover={!isActive ? { scale: 1.02 } : {}}
-                                whileTap={{ scale: 0.97 }}
-                                style={isActive ? { background: 'linear-gradient(145deg, #2d3a4a 0%, #1e2b38 100%)' } : {}}
-                                className={`flex flex-col items-center justify-center gap-2 py-3.5 px-2 rounded-2xl transition-all duration-150 border ${
+                                whileHover={!isActive ? { scale: 1.01 } : {}}
+                                whileTap={{ scale: 0.98 }}
+                                className={`flex flex-col items-center justify-center gap-1.5 py-4 px-2 rounded-2xl transition-all duration-300 border ${
                                     isActive
-                                        ? 'border-[#2d3a4a] shadow-lg shadow-slate-900/20'
-                                        : 'bg-white border-slate-200 hover:border-slate-400 hover:bg-slate-50'
+                                        ? 'bg-gradient-to-br from-emerald-500 to-cyan-600 border-transparent shadow-xl shadow-emerald-200/50'
+                                        : 'bg-white border-slate-100 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
                                 }`}
                             >
-                                <Icon className={`w-5 h-5 transition-all ${isActive ? 'text-white' : 'text-slate-400'}`} strokeWidth={1.5} />
-                                <span className={`text-[14.5px] font-black leading-tight text-center ${isActive ? 'text-white' : 'text-slate-700'}`}>
+                                <Icon className={`transition-all ${isActive ? 'text-white w-7.5 h-7.5' : 'text-slate-400 w-5.5 h-5.5'}`} strokeWidth={isActive ? 2.5 : 1.5} />
+                                <span className={`font-black leading-tight text-center transition-all ${isActive ? 'text-white text-[19px]' : 'text-slate-700 text-[14.5px]'}`}>
                                     {tab.label}
                                 </span>
-                                <span className={`text-[10.5px] font-medium text-center leading-tight hidden sm:block ${isActive ? 'text-white/60' : 'text-slate-400'}`}>
+                                <span className={`font-bold text-center leading-tight hidden sm:block transition-all ${isActive ? 'text-white/90 text-[13px]' : 'text-slate-400 text-[10.5px]'}`}>
                                     {meta.desc}
                                 </span>
                             </motion.button>
@@ -239,6 +269,45 @@ export default function KnowledgeBasePanel({
                     {children}
                 </div>
             )}
+            {/* ── Delete Confirmation Modal ── */}
+            <AnimatePresence>
+                {showDeleteConfirm && (
+                    <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                            onClick={() => !isDeleting && setShowDeleteConfirm(false)}
+                            className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
+                        />
+                        <motion.div initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 20 }}
+                            className="relative w-full max-w-sm bg-white rounded-[40px] shadow-2xl p-10 text-center overflow-hidden"
+                        >
+                            <div className="w-16 h-16 rounded-3xl bg-rose-50 text-rose-500 flex items-center justify-center mb-6 mx-auto">
+                                <AlertTriangle className="w-8 h-8" />
+                            </div>
+                            <h3 className="text-xl font-black text-slate-800 mb-3">確定要清空此店長嗎？</h3>
+                            <p className="text-[13px] text-slate-500 font-medium leading-relaxed mb-8">
+                                此操作將永久移除 **「{storeName}」** 的所有 LINE 串接設定與知識庫內容。
+                                <br/><span className="text-rose-500 font-black mt-2 inline-block">刪除後無法撤銷，格位將釋放為空缺。</span>
+                            </p>
+                            <div className="flex flex-col gap-3">
+                                <button 
+                                    onClick={handleDeleteStore}
+                                    disabled={isDeleting}
+                                    className="w-full py-4 bg-rose-500 text-white rounded-2xl font-black text-[13px] uppercase tracking-widest shadow-lg shadow-rose-500/20 hover:brightness-110 active:scale-95 transition-all disabled:opacity-50"
+                                >
+                                    {isDeleting ? '正在移除資料...' : '確認永久刪除'}
+                                </button>
+                                <button 
+                                    onClick={() => setShowDeleteConfirm(false)}
+                                    disabled={isDeleting}
+                                    className="w-full py-4 bg-slate-100 text-slate-500 rounded-2xl font-black text-[13px] uppercase tracking-widest hover:bg-slate-200 transition-all disabled:opacity-50"
+                                >
+                                    取消
+                                </button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

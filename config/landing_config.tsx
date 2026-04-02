@@ -3,11 +3,11 @@ import React from 'react';
 
 export const getPricingPlans = (billingCycle: 'monthly' | 'yearly') => [
     {
-        name: '個人店長版 (Lite)',
+        name: '個人店長版',
         price: billingCycle === 'monthly' ? '499' : '5500',
-        originalPrice: billingCycle === 'monthly' ? '599' : '7188',
+        originalPrice: billingCycle === 'monthly' ? '999' : '9990',
         period: billingCycle === 'monthly' ? '/月' : '/年',
-        description: '限時前 500 名：原價 $599 優惠中',
+        description: '限時前 500 名：原價 $999 優惠中',
         features: [
             '1 組 AI 店長正式上線服役',
             '每月 5,000 則智慧對話',
@@ -23,9 +23,9 @@ export const getPricingPlans = (billingCycle: 'monthly' | 'yearly') => [
     {
         name: '公司強力店長版',
         price: billingCycle === 'monthly' ? '1199' : '11000',
-        originalPrice: billingCycle === 'monthly' ? '1599' : '19188',
+        originalPrice: billingCycle === 'monthly' ? '1999' : '19188',
         period: billingCycle === 'monthly' ? '/月' : '/年',
-        description: '限時前 500 名：原價 $1599 優惠中',
+        description: '限時前 500 名：原價 $1999 優惠中',
         features: [
             '可串接 5 組官方帳號AI店長',
             '每月 35,000 則對話 (共享額度)',

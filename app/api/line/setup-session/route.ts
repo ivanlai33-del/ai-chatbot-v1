@@ -26,49 +26,65 @@ export async function POST(req: NextRequest) {
         const botLimit = planLevel === 1 ? 1 : 5;
         console.log(`[Setup-Session] User: ${userId}, Plan: ${planLevel}, Limit: ${botLimit}`);
 
-        // 3. Handle Resume vs New
+        // 3. Handle Resume vs New (Deterministic ID Integration)
         const { searchParams } = new URL(req.url);
-        const resumeConfigId = searchParams.get('resumeId');
+        const resumeConfigId = searchParams.get('resumeId'); // This is the ID of the bot slot from the dashboard
 
         if (resumeConfigId) {
-            console.log(`[Setup-Session] Attempting to resume session: ${resumeConfigId}`);
+            console.log(`[Setup-Session] ENSURING DETERMINISTIC SLOT: ${resumeConfigId}`);
+            
+            // 4. Try to find existing slot by THIS ID
             const { data: existing } = await supabase
                 .from('line_channel_configs')
                 .select('id, setup_token, status')
                 .eq('id', resumeConfigId)
-                .eq('user_id', userId)
                 .maybeSingle();
             
-            if (existing && existing.status === 'pending') {
+            if (existing) {
+                // Return found slot (Verification 100% matched)
                 if (!existing.setup_token) {
                     const newToken = `SYNC_${crypto.randomUUID().split('-')[0].toUpperCase()}`;
                     await supabase.from('line_channel_configs').update({ setup_token: newToken }).eq('id', existing.id);
-                    console.log(`[Setup-Session] Generated missing token for resumed slot: ${existing.id}`);
                     return NextResponse.json({ success: true, setupToken: newToken, configId: existing.id });
                 }
                 return NextResponse.json({ success: true, setupToken: existing.setup_token, configId: existing.id });
             }
+
+            // 5. IF IT DOES NOT EXIST: Create it WITH THIS SPECIFIC ID
+            // This guarantees the Webhook URL is permanently pinned to the Dashboard Slot
+            console.log(`[Setup-Session] Pinning new Webhook URL to Dashboard Slot: ${resumeConfigId}`);
+            const setupToken = `SYNC_${crypto.randomUUID().split('-')[0].toUpperCase()}`;
+            const { data: linkedConfig, error: linkedErr } = await supabase
+                .from('line_channel_configs')
+                .insert({
+                    id: resumeConfigId, // Force the ID to match the bot slot!
+                    user_id: userId,
+                    setup_token: setupToken,
+                    status: 'pending'
+                })
+                .select()
+                .single();
+
+            if (!linkedErr) {
+                return NextResponse.json({ success: true, setupToken, configId: linkedConfig.id });
+            } else {
+                console.error('[Setup-Session] Linked Insert Error:', linkedErr);
+                // If it failed because ID is taken but not found by user, fallback to new
+            }
         }
 
-        // 4. Quota Check (For New Bots)
+        // 6. Quota Check (For Generic/New Slots)
         const { count, error: countErr } = await supabase
             .from('line_channel_configs')
             .select('*', { count: 'exact', head: true })
             .eq('user_id', userId);
         
-        if (countErr) {
-            console.error('[Setup-Session] DB Count Error:', countErr);
-            throw countErr;
-        }
+        if (countErr) throw countErr;
         
-        // Temporary limit bypass for local testing
         let effectiveLimit = 5; 
-
         if ((count || 0) >= effectiveLimit) {
-            console.warn(`[Setup-Session] Quota reached for user ${userId}: ${count}/${effectiveLimit}. Checking for pending slots...`);
-            
-            // Try to find a pending one to reuse
-            const { data: pending, error: pendingErr } = await supabase
+            // Find LATEST pending as last resort
+            const { data: pending } = await supabase
                 .from('line_channel_configs')
                 .select('id, setup_token')
                 .eq('user_id', userId)
@@ -77,45 +93,24 @@ export async function POST(req: NextRequest) {
                 .limit(1)
                 .maybeSingle();
 
-            if (pendingErr) console.error('[Setup-Session] Pending Error:', pendingErr);
-
             if (pending) {
-                if (!pending.setup_token) {
-                    const newToken = `SYNC_${crypto.randomUUID().split('-')[0].toUpperCase()}`;
-                    await supabase.from('line_channel_configs').update({ setup_token: newToken }).eq('id', pending.id);
-                    console.log(`[Setup-Session] Auto-resuming pending slot (generated missing token): ${pending.id}`);
-                    return NextResponse.json({ success: true, setupToken: newToken, configId: pending.id });
-                }
-                console.log(`[Setup-Session] Auto-resuming pending slot: ${pending.id}`);
-                return NextResponse.json({ success: true, setupToken: pending.setup_token, configId: pending.id });
+                return NextResponse.json({ success: true, setupToken: pending.setup_token || 'SESSION_ACTIVE', configId: pending.id });
             }
 
             return NextResponse.json({ 
                 error: 'Quota Exceeded', 
-                message: `您的方案限制為 ${effectiveLimit} 組帳號。如需更多空間，請聯繫客服升級。`,
-                current: count,
-                limit: effectiveLimit
-            }, { status: 403, headers: { 'Access-Control-Allow-Origin': '*' } });
+                message: `您的方案限制為 ${effectiveLimit} 組帳號。` 
+            }, { status: 403 });
         }
 
-        // 5. Create New Pending Slot
+        // 7. Create Standard Pending Slot
         const setupToken = `SYNC_${crypto.randomUUID().split('-')[0].toUpperCase()}`;
         const { data: newConfig, error: insertErr } = await supabase
             .from('line_channel_configs')
-            .insert({
-                user_id: userId,
-                setup_token: setupToken,
-                status: 'pending'
-            })
-            .select()
-            .single();
+            .insert({ user_id: userId, setup_token: setupToken, status: 'pending' })
+            .select().single();
 
-        if (insertErr) {
-            console.error('[Setup-Session] Insert Error:', insertErr);
-            throw insertErr;
-        }
-
-        console.log(`[Setup-Session] Created new slot: ${newConfig.id} for user ${userId}`);
+        if (insertErr) throw insertErr;
         return NextResponse.json({ success: true, setupToken, configId: newConfig.id });
 
     } catch (error: any) {

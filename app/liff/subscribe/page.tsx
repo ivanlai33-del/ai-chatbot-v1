@@ -2,7 +2,7 @@
 
 import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, ArrowLeft, AlertTriangle } from 'lucide-react';
+import { Sparkles, ArrowLeft, AlertTriangle, ShieldCheck, Lock, Webhook, Fingerprint } from 'lucide-react';
 import { getPricingPlans } from '@/config/landing_config';
 import LiffPlanCard from '@/components/Liff/LiffPlanCard';
 import { useLiff } from '@/components/Liff/LiffProvider';
@@ -99,7 +99,7 @@ export default function LiffSubscribePage() {
             </div>
           </div>
 
-            <div className="space-y-6 max-w-lg mx-auto mb-[30px]">
+            <div className="space-y-6 max-w-lg mx-auto mb-[20px]">
               {plans.map((plan: any, idx) => (
                 <motion.div
                   key={plan.name}
@@ -129,6 +129,66 @@ export default function LiffSubscribePage() {
                 </motion.div>
               ))}
             </div>
+
+          {/* 🛡️ Enterprise Security Badge (內有惡犬資安鐵牌 - 深藍 SaaS 高質感) */}
+          <div className="mb-[30px] mx-auto max-w-lg">
+            <div className="bg-slate-900/80 bg-gradient-to-br from-slate-800/80 via-blue-900/80 to-slate-900/95 backdrop-blur-2xl rounded-3xl p-5 border border-white/15 shadow-[inset_0_1px_1px_rgba(255,255,255,0.25),0_12px_40px_rgba(15,23,42,0.4)] relative overflow-hidden">
+              {/* 背景裝飾光暈 */}
+              <div className="absolute top-0 right-0 w-40 h-40 bg-green-500/10 rounded-full blur-3xl -mr-10 -mt-10" />
+              
+              {/* 背景浮水大盾牌 (移至右下角並改為 35% 不透明螢光綠) */}
+              <div className="absolute -bottom-12 -right-10 opacity-[35%] pointer-events-none overflow-hidden">
+                <ShieldCheck className="w-64 h-64 text-green-400" />
+              </div>
+              
+              <div className="flex items-center gap-2.5 mb-6 relative z-10">
+                <ShieldCheck className="w-[28px] h-[28px] text-green-400 drop-shadow-[0_0_8px_rgba(74,222,128,0.6)]" />
+                <h3 className="text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-emerald-400 font-black text-[19px] tracking-widest drop-shadow-[0_0_8px_rgba(74,222,128,0.4)]">企業級四大資安防護</h3>
+              </div>
+              
+              <div className="space-y-3.5 relative z-10">
+                <div className="flex items-start gap-4 p-2 rounded-xl border border-transparent hover:border-white/5 hover:bg-white/5 transition-all">
+                  <div className="w-[36px] h-[36px] rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center shrink-0 shadow-[inset_0_1px_0_rgba(74,222,128,0.15)]">
+                    <Lock className="w-[20px] h-[20px] text-green-400 drop-shadow-[0_0_5px_rgba(74,222,128,0.5)]" />
+                  </div>
+                  <div className="mt-0.5">
+                    <p className="text-blue-50 text-[14px] font-bold leading-tight mb-1">加密無痕串接</p>
+                    <p className="text-slate-300 text-[12px] font-medium leading-snug">金鑰 0.1 秒極速銷毀，駭客無門</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-4 p-2 rounded-xl border border-transparent hover:border-white/5 hover:bg-white/5 transition-all">
+                  <div className="w-[36px] h-[36px] rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center shrink-0 shadow-[inset_0_1px_0_rgba(74,222,128,0.15)]">
+                    <AlertTriangle className="w-[20px] h-[20px] text-green-400 drop-shadow-[0_0_5px_rgba(74,222,128,0.5)]" />
+                  </div>
+                  <div className="mt-0.5">
+                    <p className="text-blue-50 text-[14px] font-bold leading-tight mb-1">防刷爆擋流閘門</p>
+                    <p className="text-slate-300 text-[12px] font-medium leading-snug">金融級限流 (Rate Limiting) 死守預算</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-4 p-2 rounded-xl border border-transparent hover:border-white/5 hover:bg-white/5 transition-all">
+                  <div className="w-[36px] h-[36px] rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center shrink-0 shadow-[inset_0_1px_0_rgba(74,222,128,0.15)]">
+                    <Webhook className="w-[20px] h-[20px] text-green-400 drop-shadow-[0_0_5px_rgba(74,222,128,0.5)]" />
+                  </div>
+                  <div className="mt-0.5">
+                    <p className="text-blue-50 text-[14px] font-bold leading-tight mb-1">AI 防暴走護盾</p>
+                    <p className="text-slate-300 text-[12px] font-medium leading-snug">嚴格商業道德黑名單，絕不惹麻煩</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4 p-2 rounded-xl border border-transparent hover:border-white/5 hover:bg-white/5 transition-all">
+                  <div className="w-[36px] h-[36px] rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center shrink-0 shadow-[inset_0_1px_0_rgba(74,222,128,0.15)]">
+                    <Fingerprint className="w-[20px] h-[20px] text-green-400 drop-shadow-[0_0_5px_rgba(74,222,128,0.5)]" />
+                  </div>
+                  <div className="mt-0.5">
+                    <p className="text-blue-50 text-[14px] font-bold leading-tight mb-1">官方指紋防偽系統</p>
+                    <p className="text-slate-300 text-[12px] font-medium leading-snug">底層 100% 封殺釣魚網頁與假造流量</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
 
         {/* 🎬 Final Footer Stop - 15px from plans, 5px from bottom */}

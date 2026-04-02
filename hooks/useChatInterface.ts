@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Message, ChatPlan } from '@/lib/chat-types';
 import { OWNER_INSIGHTS, SOFT_GREETINGS } from '@/lib/chat-constants';
+import { globalLogout } from '@/lib/auth-utils';
 
 export function useChatInterface(initialType: string | null = null) {
     const [messages, setMessages] = useState<Message[]>([]);
@@ -21,6 +22,7 @@ export function useChatInterface(initialType: string | null = null) {
     const [activeWebViewUrl, setActiveWebViewUrl] = useState<string | null>(null);
     const [randomBgPath, setRandomBgPath] = useState<string>('/images/bg-landing_1.jpg');
     const [randomBotPath, setRandomBotPath] = useState<string>('/bot_01.svg');
+    const [planLevel, setPlanLevel] = useState<number>(0); // 0: Free, 1: 499, 2: 1199
 
     const messagesRef = useRef<Message[]>([]);
     useEffect(() => {
@@ -37,6 +39,36 @@ export function useChatInterface(initialType: string | null = null) {
         };
         setMessages(prev => [...prev, newMessage]);
     }, []);
+
+    const refreshUserData = useCallback(async (userId: string) => {
+        try {
+            const res = await fetch(`/api/platform/user?lineUserId=${userId}`);
+            const data = await res.json();
+            if (data.success && data.user) {
+                setPlanLevel(data.user.plan_level || 0);
+            }
+        } catch (error) {
+            console.error('Failed to fetch user plan:', error);
+        }
+    }, []);
+
+    const handlePaymentSuccess = async (newLevel: number) => {
+        if (!lineUserId) return;
+        try {
+            const res = await fetch('/api/platform/user/upgrade', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ lineUserId, planLevel: newLevel })
+            });
+            const data = await res.json();
+            if (data.success) {
+                setPlanLevel(newLevel);
+                addAiMessage(`恭喜老闆！您的方案已成功升級為 **${newLevel === 1 ? 'Startup 創業版' : 'Company 旗艦版'}**。所有功能已動態開通！`, 'success');
+            }
+        } catch (error) {
+            console.error('Upgrade Failed:', error);
+        }
+    };
 
     const triggerAiResponse = async (currentMessages: Message[]) => {
         setIsTyping(true);
@@ -62,7 +94,13 @@ export function useChatInterface(initialType: string | null = null) {
             const data = await res.json();
             const reply = data.reply || data.message;
             if (reply) {
-                addAiMessage(reply, data.type || 'text', data.metadata);
+                let finalType = data.type || 'text';
+                if (data.metadata?.action === 'VIEW_HUB') {
+                    finalType = 'hub_preview';
+                } else if (data.metadata?.action === 'SHOW_PLANS') {
+                    finalType = 'pricing';
+                }
+                addAiMessage(reply, finalType, data.metadata);
             }
         } catch (error) {
             console.error('Failed to get AI response:', error);
@@ -127,6 +165,7 @@ export function useChatInterface(initialType: string | null = null) {
                 setLineUserName(savedName);
                 setLineUserPicture(savedPicture);
                 checkExistingBots(savedId);
+                refreshUserData(savedId);
             }
 
             // Random BG and Bot
@@ -154,6 +193,7 @@ export function useChatInterface(initialType: string | null = null) {
                 localStorage.setItem('line_user_name', line_name || '');
                 localStorage.setItem('line_user_picture', line_picture || '');
                 
+                refreshUserData(line_id);
                 checkExistingBots(line_id).then(isMember => {
                     if (!isMember) {
                         const loginSuccessMsg: Message = { 
@@ -202,6 +242,18 @@ export function useChatInterface(initialType: string | null = null) {
         }
     }, [initialType, lineUserName, botId]);
 
+    const handleLogout = () => {
+        globalLogout();
+        
+        setLineUserId(null);
+        setLineUserName(null);
+        setLineUserPicture(null);
+        setBotId(null);
+        setMgmtToken(null);
+        setMessages([]);
+        window.location.reload(); // Hard reset for clean state
+    };
+
     return {
         messages, setMessages,
         inputValue, setInputValue,
@@ -216,6 +268,7 @@ export function useChatInterface(initialType: string | null = null) {
         viewMode, setViewMode,
         activeWebViewUrl, setActiveWebViewUrl,
         randomBgPath, randomBotPath,
+        planLevel, handleLogout, handlePaymentSuccess,
         handleSend,
         initiateLineLogin,
         addAiMessage,

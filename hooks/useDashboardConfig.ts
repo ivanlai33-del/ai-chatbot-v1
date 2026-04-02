@@ -15,7 +15,7 @@ const DEFAULT_CONFIG: StoreConfig = {
         target_audience: '',
         welcome_message: '',
         closing_phrase: '',
-        forbidden_topics: '',
+        forbidden_topics: '賭博、詐騙、色情、暴力行為、非法毒品、政治爭議、宗教衝突、競品攻擊、種族歧視、虛假與誤導性資訊、個資洩漏',
         human_trigger_keywords: '',
     },
     offerings: [{ name: '', price: '', description: '', size: '', url: '', ai_context: '', category: '', duration: '', target_audience_item: '', customization_note: '', caution_note: '', booking_url: '' }],

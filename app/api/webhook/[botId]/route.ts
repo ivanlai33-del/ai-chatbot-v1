@@ -166,8 +166,19 @@ async function processEvents(botId: string, events: WebhookEvent[]) {
             if (isOwner) {
                 let trainingText = "";
 
+                const isPaidForDojo = (activeBot.selected_plan && !activeBot.selected_plan.includes('Free')) || activeBot.plan_level > 0;
+
                 if (event.type === 'message' && event.message.type === 'text') {
                     const text = event.message.text.trim();
+
+                    // Check for Dojo commands on Free plan
+                    if ((text.startsWith('@店長聽令') || text.startsWith('@更新知識') || text.startsWith('@修改人設')) && !isPaidForDojo) {
+                        await client.replyMessage((event as any).replyToken, { 
+                            type: 'text', 
+                            text: "🌟 老闆！偵測到您正在使用「AI 練功房」指令。\n\n目前這項功能是【個人店長版】以上的專屬工具。如果您想讓店長聽令於您的每一句話，請點擊後台升級即可解鎖。🚀" 
+                        });
+                        continue;
+                    }
 
                     // 1. 知識調閱指令 (Retrieval)
                     if (text === '@調閱知識') {
@@ -268,6 +279,13 @@ async function processEvents(botId: string, events: WebhookEvent[]) {
                         trainingText = text.replace(/^@店長聽令\s*|^@更新知識\s*/, '').trim();
                     }
                 } else if (event.type === 'message' && event.message.type === 'audio') {
+                    if (!isPaidForDojo) {
+                        await client.replyMessage((event as any).replyToken, { 
+                            type: 'text', 
+                            text: "👂 老闆！剛才收到了您的「語音指令」，這就是最新的 AI 練功房訓練技術。\n\n這項語音同步操作是【個人店長版】以上方案的專屬功能。如果您想讓店長聽得懂人話與指令，請點擊後台升級即可解鎖。🚀" 
+                        });
+                        continue;
+                    }
                     // For audio, we always assume it's a training command from the owner
                     try {
                         const stream = await client.getMessageContent(event.message.id);
@@ -308,10 +326,11 @@ async function processEvents(botId: string, events: WebhookEvent[]) {
                             messages: [
                                 {
                                     role: "system",
-                                    content: `你是一個知識分類員。請閱讀店長的話，判斷這是一條「常見問題(FAQ)」還是「商品資訊(Product)」。
+                                    content: `你是一個專業的店長助手分類員。請根據老闆剛才說的話，判斷這是一個長期知識還是一個「短期動態變動」。
 請輸出 JSON 格式：
-如果是 FAQ：{"type": "faq", "question": "客戶可能會問的問題", "answer": "回答內容"}
-如果是 產品：{"type": "product", "name": "商品名稱", "price": 價格數字(若無提則設為0), "cost": 成本數字(若無提則設為0)}
+1. 如果是 長期知識 (常見問題)：{"type": "faq", "question": "客戶可能會問的問題", "answer": "回答內容"}
+2. 如果是 長期知識 (商品上架)：{"type": "product", "name": "商品名稱", "price": 價格數字, "cost": 成本數字}
+3. 如果是 短期動態變動 (如：XXX賣完了、今天提早打烊、臨時促銷)：{"type": "dynamic", "update": "簡短精確的描述"}
 不要輸出多餘的字元。`
                                 },
                                 { role: "user", content: trainingText }
@@ -321,19 +340,34 @@ async function processEvents(botId: string, events: WebhookEvent[]) {
                         const result = JSON.parse(classificationResponse.choices[0].message.content || "{}");
                         let replyMsg = "";
 
+                        // Log to Dojo Logs for audit
+                        await supabase.from('dojo_logs').insert({
+                            bot_id: botId,
+                            content: trainingText,
+                            category: result.type,
+                            source: event.type === 'message' && event.message.type === 'audio' ? 'line_voice' : 'line_text'
+                        });
+
                         if (result.type === 'faq') {
                             await supabase.from('faq').insert([{ bot_id: botId, question: result.question, answer: result.answer }]);
-                            replyMsg = `老闆收到！我已經把這條知識記下來了：\nQ: ${result.question}\nA: ${result.answer}`;
+                            replyMsg = `老闆收到！這條知識已存入智庫：\nQ: ${result.question}\nA: ${result.answer}`;
                         } else if (result.type === 'product') {
-                            // Simple upsert logic
                             const { data: existingProduct } = await supabase.from('products').select('id').eq('bot_id', botId).eq('name', result.name).single();
                             if (existingProduct) {
                                 await supabase.from('products').update({ price: result.price, cost: result.cost }).eq('id', existingProduct.id);
-                                replyMsg = `老闆收到！商品「${result.name}」的價格已更新為 ${result.price} 元。`;
+                                replyMsg = `老闆收到！商品「${result.name}」的價格已更新。`;
                             } else {
                                 await supabase.from('products').insert([{ bot_id: botId, name: result.name, price: result.price, cost: result.cost }]);
-                                replyMsg = `老闆收到！新商品「${result.name}」已上架，價格為 ${result.price} 元。`;
+                                replyMsg = `老闆收到！新商品「${result.name}」已上架。`;
                             }
+                        } else if (result.type === 'dynamic') {
+                            // Update the Dynamic Context of the bot (Short-term memory)
+                            const currentDna = activeBot.brand_dna || {};
+                            await supabase.from('bots').update({ 
+                                dynamic_context: result.update,
+                                last_dojo_update: new Date().toISOString()
+                            }).eq('id', activeBot.id);
+                            replyMsg = `老闆收到！「${result.update}」這項動態我已經記在大腦的最前端了，接下來回覆客人都會注意這點！👌`;
                         } else {
                             replyMsg = `老闆抱歉，我不太確定這條指令要存在哪裡，能請您換個說法嗎？（聽到的內容：${trainingText}）`;
                         }

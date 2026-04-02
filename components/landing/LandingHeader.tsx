@@ -38,8 +38,8 @@ export default function LandingHeader({ isLoggedIn, onAction, onOpenChat }: Land
                         onClick={onOpenChat}
                         className="hidden md:flex items-center gap-2 text-slate-300 hover:text-white transition-colors text-sm font-medium"
                     >
-                        <Layout className="w-4 h-4" />
-                        功能預覽
+                        <MessageSquare className="w-4 h-4" />
+                        來和 AI 店長聊聊您的需求
                     </button>
                     
                     <button

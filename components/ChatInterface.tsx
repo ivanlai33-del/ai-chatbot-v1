@@ -5,7 +5,7 @@ import { useChatInterface } from '@/hooks/useChatInterface';
 import { ChatHeader } from './chat/ChatHeader';
 import { ChatInput } from './chat/ChatInput';
 import { RobotAvatar } from './chat/RobotAvatar';
-import { PricingWidget, CheckoutWidget, SuccessWidget } from './chat/ChatWidgets';
+import { PricingWidget, CheckoutWidget, SuccessWidget, HubPreviewWidget } from './chat/ChatWidgets';
 import { CHAT_CONFIG } from '@/config/chat_config';
 
 // Modular Components
@@ -39,8 +39,11 @@ export default function ChatInterface({ isMaster = false, isSaaS = false, initia
         setActiveWebViewUrl,
         randomBgPath,
         randomBotPath,
+        planLevel,
         handleSend,
         initiateLineLogin,
+        handleLogout,
+        handlePaymentSuccess,
         addAiMessage,
         placeholder
     } = useChatInterface(initialType);
@@ -62,7 +65,10 @@ export default function ChatInterface({ isMaster = false, isSaaS = false, initia
                 <CheckoutWidget 
                     selectedPlan={selectedPlan}
                     billingCycle={billingCycle}
-                    onPayment={() => addAiMessage("支付完成！您的 AI 店長已上線。", "success")}
+                    onPayment={() => {
+                        const level = selectedPlan.name.includes('Startup') ? 1 : 2;
+                        handlePaymentSuccess(level);
+                    }}
                     lineGreen="#06C755"
                 />
             )}
@@ -73,6 +79,18 @@ export default function ChatInterface({ isMaster = false, isSaaS = false, initia
                     mgmtToken={mgmtToken || 'demo'}
                     isAdminView={isAdminView}
                     onAdminLogin={() => setIsAdminView(true)}
+                />
+            )}
+
+            {m.type === 'hub_preview' && (
+                <HubPreviewWidget 
+                    onEnterHub={() => {
+                        if (lineUserId) {
+                             setIsAdminView(true);
+                        } else {
+                             initiateLineLogin();
+                        }
+                    }}
                 />
             )}
         </>
@@ -93,7 +111,10 @@ export default function ChatInterface({ isMaster = false, isSaaS = false, initia
                             lineUserId={lineUserId}
                             lineUserName={lineUserName}
                             lineUserPicture={lineUserPicture}
+                            planLevel={planLevel}
                             initiateLineLogin={initiateLineLogin}
+                            onLogout={handleLogout}
+                            onUpgrade={handlePaymentSuccess}
                             onReset={() => setMessages([])}
                         />
 

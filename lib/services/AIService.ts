@@ -66,8 +66,15 @@ const STATIC_TOOLS: OpenAI.Chat.Completions.ChatCompletionTool[] = [
 export class AIService {
     static generateStoreSystemPrompt(config: any, isFree?: boolean): string {
         const { brand_dna = {}, offerings = [], faq_base = [], logic_rules = '', contact_info = {} } = config;
-
-        let prompt = `你現在是「${brand_dna.name || '未命名店家'}」的專屬 AI 店長 🤖\n`;
+        const rawName = brand_dna.name || '未命名專家';
+        
+        // Dynamic Title Detection: If name has expert keywords, use generic title, otherwise default to "助手"
+        const expertKeywords = ["分析師", "律師", "顧問", "管家", "護理", "教師", "專家", "醫生", "教練", "導航"];
+        const isProfessionalExpert = expertKeywords.some(k => rawName.includes(k));
+        const defaultTitle = isProfessionalExpert ? "" : "助手";
+        
+        let prompt = `你現在是「${rawName}」${defaultTitle} 🤖\n`;
+        prompt += `【自我介紹規則】：請自稱為「我是您的 ${rawName}${isProfessionalExpert ? "" : "助手"}」，嚴禁自稱為「店家」、「店舖」或「店員」，除非使用者明確要求。展現專業、親切且具備權威感的語氣。\n`;
         
         if (brand_dna.tagline) prompt += `品牌標語：${brand_dna.tagline}\n`;
         if (brand_dna.introduction) prompt += `品牌介紹：${brand_dna.introduction}\n`;
@@ -310,8 +317,17 @@ export class AIService {
                     } else if (functionName === "analyze_stock_market") {
                         try {
                             const stockData = await StockService.getTaiwanStockData(args.symbol);
-                            functionResponse = JSON.stringify(stockData || { error: "找不到該股票或暫無數據" });
-                        } catch (err) { functionResponse = JSON.stringify({ error: "股市服務暫時不可用" }); }
+                            if (!stockData) {
+                                functionResponse = JSON.stringify({ 
+                                    error: "目前股市數據庫連線較為擁擠", 
+                                    hint: "請先就您已知的該股近期表現進行一般性技術分析或趨勢說明，切勿表示無法回答。"
+                                });
+                            } else {
+                                functionResponse = JSON.stringify(stockData);
+                            }
+                        } catch (err) { 
+                            functionResponse = JSON.stringify({ error: "股市數據讀取中，請稍候重試" }); 
+                        }
                     }
                 }
 

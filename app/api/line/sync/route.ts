@@ -18,6 +18,17 @@ export async function POST(req: NextRequest) {
         console.log('[Sync] Request Body Keys:', Object.keys(body));
         console.log('[Sync] Received setupToken:', `"${setupToken}"`);
 
+        // 🚨 GOLDEN GATE 1: Payload Size Validation (防資料庫癱瘓攻擊)
+        if (
+            (channelId && channelId.length > 50) || 
+            (channelSecret && channelSecret.length > 100) || 
+            (botBasicId && botBasicId.length > 50) || 
+            (channelAccessToken && channelAccessToken.length > 300)
+        ) {
+            console.warn('[Sync Error] Payload too large, potential DDoS/DB attack blocked.');
+            return addCorsHeaders(NextResponse.json({ error: '安全警示：傳入資料長度異常，請求已被防火牆拒絕。' }, { status: 400 }));
+        }
+
         const hasAnyData = !!channelId || !!channelSecret || !!channelAccessToken || !!botBasicId;
         if (!setupToken || !hasAnyData) {
             return addCorsHeaders(NextResponse.json({ error: '缺少權杖或同步資料' }, { status: 400 }));
@@ -35,16 +46,14 @@ export async function POST(req: NextRequest) {
         }
 
         if (!initialConfig) {
-            return addCorsHeaders(NextResponse.json({ error: '無效或已過期的同步權杖。請回到儀表板重新取得書籤！' }, { status: 401 }));
+            return addCorsHeaders(NextResponse.json({ error: '同步出錯：無效或已過期的同步權杖。請【先移除瀏覽器上的舊書籤】，再重新拖曳放上儀表板提供的【新書籤】。' }, { status: 401 }));
         }
         
         const userId = initialConfig.user_id;
         let configToUpdate = initialConfig;
 
         // 2. SMART MATCH: If channelId is provided, try to find a matching config for this user
-        // This allows one bookmarklet to be used for multiple bots!
         if (channelId && channelId !== 'HIDDEN') {
-            console.log('[Sync] Attempting to match channelId:', channelId);
             const { data: matchedConfig } = await supabase
                 .from('line_channel_configs')
                 .select('*')
@@ -53,13 +62,9 @@ export async function POST(req: NextRequest) {
                 .maybeSingle();
             
             if (matchedConfig) {
-                console.log('[Sync] Pattern matched! Targeted Bot ID:', matchedConfig.id);
                 configToUpdate = matchedConfig;
             } else {
-                // FALLBACK: If current slot is already taken by another bot, 
-                // look for an empty slot for this user to avoid overwriting.
                 if (initialConfig.channel_id && initialConfig.channel_id !== channelId) {
-                    console.log('[Sync] Primary slot taken. Searching for an empty slot for user:', userId);
                     const { data: emptySlot } = await supabase
                         .from('line_channel_configs')
                         .select('*')
@@ -70,14 +75,9 @@ export async function POST(req: NextRequest) {
                         .maybeSingle();
                     
                     if (emptySlot) {
-                        console.log('[Sync] Found empty slot for shared bookmarklet:', emptySlot.id);
                         configToUpdate = emptySlot;
-                    } else {
-                        console.log('[Sync] No empty slots found. Will update primary slot (Overwrite risk).');
-                    }
-                } else {
-                    console.log('[Sync] Using current setup slot (either empty or same ID).');
-                }
+                    } 
+                } 
             }
         }
 
@@ -110,6 +110,7 @@ export async function POST(req: NextRequest) {
 
         if (isFullyCaptured) {
             try {
+                // 🚨 GOLDEN GATE 2: Strict LINE API Verification (防假資料覆寫)
                 const client = new messagingApi.MessagingApiClient({
                     channelAccessToken: finalToken
                 });
@@ -123,13 +124,13 @@ export async function POST(req: NextRequest) {
                 }
 
                 updateData.status = 'active';
-                // Only clear setup_token if we are updating the record it was originally tied to
-                if (configToUpdate.id === initialConfig.id) {
-                    updateData.setup_token = null; 
-                }
+                
+                // 🚨 GOLDEN GATE 3: Token Burning (防重播攻擊，驗證通過立即銷毀權杖)
+                updateData.setup_token = null; 
             } catch (lineErr: any) {
-                console.warn('[Sync] LINE Verification Failed:', lineErr.message);
-                // Keep automated status if it was set
+                console.warn('[Sync Error] LINE Verification Failed. Blocking fake data write:', lineErr.message);
+                // 💥 DROP REQUEST: 不允許將假資料寫入資料庫
+                return addCorsHeaders(NextResponse.json({ error: 'LINE 金鑰驗證失敗。系統拒絕寫入無效資料。' }, { status: 403 }));
             }
         }
 

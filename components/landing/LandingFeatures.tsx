@@ -7,42 +7,42 @@ import { Brain, MessageCircle, BarChart3, ShieldCheck, Zap, Globe } from 'lucide
 const features = [
     {
         title: '智慧語意大腦',
-        desc: '搭載 GPT-4o 引擎，精準理解客戶意圖，不再出現罐核式死板回訊。',
+        desc: '搭載最新 GPT-4o 引擎，精準拆解客戶語法中的隱含意圖。無論諮詢多複雜，AI 都能以極其自然且富有溫度的人類語感回覆，徹底擺脫傳統機器人的僵硬感。',
         icon: Brain,
         color: 'text-white',
         bg: 'bg-purple-500 shadow-lg shadow-purple-500/30'
     },
     {
         title: 'RAG 深度學習',
-        desc: '直接餵食 PDF 或 網頁連結，AI 秒變專業店員，對答如流。',
+        desc: '支持一鍵匯入 PDF 文件、官網連結或 CRM 資料。系統會將龐雜的產品手冊自動轉化為結構化的 AI 記憶庫，讓店長在 10 秒內掌握所有細節，化身無所不知的銷售專家。',
         icon: Zap,
         color: 'text-white',
         bg: 'bg-emerald-500 shadow-lg shadow-emerald-500/30'
     },
     {
         title: '24/7 自動導購',
-        desc: '不遺漏任何午夜訂單，主動引導轉單，讓您的 LINE 變成超級業務。',
+        desc: '透過智慧引導腳本與個性化互動，在深夜時分也能精覽捕獲潛在訂單。系統會主動發起購物邀約並追蹤轉換進度，將您的 LINE 官方帳號轉型為一台 365 天永不待機的自動成交機器。',
         icon: MessageCircle,
         color: 'text-white',
         bg: 'bg-blue-500 shadow-lg shadow-blue-500/30'
     },
     {
         title: '數據分析洞察',
-        desc: '完整追蹤客戶偏好與轉化率，透過數據科學精準獲取回頭客。',
+        desc: '深入追蹤每一場對話後的轉換細節。透過 AI 對用戶標籤的自動分類，您可以清晰看見客戶群像與熱門諮詢痛點，用最科學的數據導向佈讀行銷策略，穩健推升品牌營收。',
         icon: BarChart3,
         color: 'text-white',
         bg: 'bg-amber-500 shadow-lg shadow-amber-500/30'
     },
     {
         title: '品牌 DNA 注入',
-        desc: '自定義 AI 的講話口吻、表情符號，完美契合品牌視覺與形象。',
+        desc: '從親切問候到專業回覆，皆可由您親自調教 AI 的語言風格與特殊表情符號。讓機器人的對談內容完美咬合您的品牌調性，與客戶建立起難以取代的品牌忠誠度與深度連結。',
         icon: Globe,
         color: 'text-white',
         bg: 'bg-pink-500 shadow-lg shadow-pink-500/30'
     },
     {
         title: '企業級安全性',
-        desc: '提供最高等級的資料加密，確保您的商業智庫與客戶資料滴水不漏。',
+        desc: '採用銀行等級的 SSL 傳輸加密與多重防火牆隔離機制，嚴密護衛您的專業知識庫與顧客敏感個資。我們承諾數據定期銷毀，讓您在數位轉型的路上毫無後顧之憂，穩步經營每一筆生意。',
         icon: ShieldCheck,
         color: 'text-white',
         bg: 'bg-cyan-500 shadow-lg shadow-cyan-500/30'

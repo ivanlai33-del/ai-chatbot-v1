@@ -15,6 +15,8 @@ interface RobotAvatarProps {
 export const RobotAvatar: React.FC<RobotAvatarProps> = ({ isTyping, isSaaS = false, onClick, botPath = '/bot_01.svg', className }) => {
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const [isMouseDown, setIsMouseDown] = useState(false);
+    const [clickCount, setClickCount] = useState(0);
+    const [isSpinning, setIsSpinning] = useState(false);
     const robotRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -36,8 +38,28 @@ export const RobotAvatar: React.FC<RobotAvatarProps> = ({ isTyping, isSaaS = fal
         };
     }, []);
 
+    // Click handler for Easter Egg
+    const handleInternalClick = () => {
+        const nextCount = clickCount + 1;
+        setClickCount(nextCount);
+        
+        if (nextCount >= 4) {
+            setIsSpinning(true);
+            setTimeout(() => {
+                setIsSpinning(false);
+                setClickCount(0);
+            }, 1000);
+        }
+
+        // Reset click count after 3 seconds of inactivity
+        const timer = setTimeout(() => setClickCount(0), 3000);
+        
+        if (onClick) onClick();
+    };
+
     const getDodgeOffset = () => {
-        if (!robotRef.current || isTyping || isSaaS) return { x: 0, y: 0, rotateOffset: 0 };
+        // Shaking logic when talking or dodge logic when idle
+        if (!robotRef.current || isTyping || isSaaS || isSpinning) return { x: 0, y: 0, rotateOffset: 0 };
         const rect = robotRef.current.getBoundingClientRect();
 
         const currentScreenX = rect.left + rect.width / 2;
@@ -92,32 +114,58 @@ export const RobotAvatar: React.FC<RobotAvatarProps> = ({ isTyping, isSaaS = fal
             ref={robotRef}
             aria-label="AI 店長機器人"
             onMouseDown={() => setIsMouseDown(true)}
-            onClick={onClick}
+            onClick={handleInternalClick}
             animate={{
                 x: dodgeX,
                 y: dodgeY,
-                rotate: rotateOffset,
+                rotate: isSpinning ? 360 : rotateOffset,
                 scale: isMouseDown ? 0.95 : 1
             }}
-            transition={{ type: "spring", stiffness: 120, damping: 15, mass: 0.8 }}
+            transition={isSpinning ? { duration: 0.8, ease: "backOut" } : { type: "spring", stiffness: 120, damping: 15, mass: 0.8 }}
             className={cn("z-30 cursor-grab active:cursor-grabbing group", className)}
         >
             <div className="relative">
                 <motion.div
-                    animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}
-                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                    animate={
+                        isTyping 
+                        ? { 
+                            scale: [1, 1.05, 0.98, 1.02, 1],
+                            rotate: [0, -2, 2, -1, 1, 0],
+                            y: [0, -5, 0, -3, 0]
+                        }
+                        : { 
+                            scale: [1, 1.1, 1], 
+                            rotate: [0, 5, -5, 0] 
+                        }
+                    }
+                    transition={
+                        isTyping 
+                        ? { duration: 0.4, repeat: Infinity, ease: "linear" }
+                        : { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                    }
                     className="w-[230px] h-[230px] drop-shadow-2xl relative"
                 >
                     <img 
                         src={botPath} 
-                        className="w-full h-full object-contain filter drop-shadow-[0_0_15px_rgba(6,199,85,0.4)]" 
+                        className={cn(
+                            "w-full h-full object-contain filter transition-all duration-300",
+                            isTyping ? "drop-shadow-[0_0_25px_rgba(6,199,85,0.8)]" : "drop-shadow-[0_0_15px_rgba(6,199,85,0.4)]"
+                        )} 
                         alt="Robot Avatar" 
                     />
                 </motion.div>
                 
-                {/* Speech Bubble when hovering */}
-                <div className="absolute -top-12 left-0 bg-white px-3 py-1.5 rounded-xl shadow-lg border border-zinc-100 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                    <p className="text-[10px] font-black text-zinc-600">抓不到我吧！😏</p>
+                {/* Speech Bubble */}
+                <div className={cn(
+                    "absolute -top-12 left-0 bg-white px-3 py-1.5 rounded-xl shadow-lg border border-zinc-100 transition-all duration-300 whitespace-nowrap pointer-events-none",
+                    (clickCount > 0 || isTyping) ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0"
+                )}>
+                    <p className="text-[10px] font-black text-zinc-600">
+                        {isSpinning ? "哎呀！頭好暈喔～💫" : 
+                         clickCount >= 3 ? "再點一下試試？🤭" :
+                         clickCount > 0 ? `點我 ${clickCount} 次了！` :
+                         isTyping ? "正在組織老闆的指令... 🤖" : "抓不到我吧！😏"}
+                    </p>
                     <div className="absolute -bottom-1 left-4 w-2 h-2 bg-white border-r border-b border-zinc-100 rotate-45" />
                 </div>
             </div>

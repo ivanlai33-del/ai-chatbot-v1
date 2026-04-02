@@ -78,8 +78,8 @@ export function useChatInterface(initialType: string | null = null) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     messages: currentMessages.map(m => ({ role: m.role, content: m.content })),
-                    isMaster: false,
-                    isSaaS: false,
+                    isMaster: !!mgmtToken, // 有 Token 代表是管理者/老闆
+                    isSaaS: !!botId,      // 有 BotId 代表已開通服務
                     isActivation: false,
                     isProvisioning: false,
                     userId: lineUserId,
@@ -103,6 +103,8 @@ export function useChatInterface(initialType: string | null = null) {
                 let finalType = data.type || 'text';
                 if (data.metadata?.action === 'VIEW_HUB') {
                     finalType = 'hub_preview';
+                } else if (data.metadata?.action === 'VIEW_DOJO') {
+                    finalType = 'dojo_preview'; // 新增針對智庫的跳轉類型
                 } else if (data.metadata?.action === 'SHOW_PLANS') {
                     finalType = 'pricing';
                 } else if (data.metadata?.action === 'SHOW_CHECKOUT') {

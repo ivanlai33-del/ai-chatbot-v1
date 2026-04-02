@@ -125,7 +125,8 @@ export async function POST(req: NextRequest) {
         const effectiveUserPicture = context?.lineUserPicture;
 
         // 🚀 SaaS Identity & Usage Tracker
-        let userPlanLevel = 0;
+        let userPlanLevel = isSaaS ? 1 : 0; // 如果 isSaaS 為 true，至少是 Pro 版
+        let isAdmin = isMaster || false;
         let currentMonthCount = 0;
         let userSelectedPlan = "Free";
         let userPlanPeriod = "monthly";
@@ -144,13 +145,14 @@ export async function POST(req: NextRequest) {
             // 2. Fetch Plan & Usage
             const { data: userData } = await supabase
                 .from('platform_users')
-                .select('plan_level, billing_cycle')
+                .select('plan_level, role')
                 .eq('line_user_id', effectiveUserId)
                 .single();
             
-            userPlanLevel = userData?.plan_level || 0;
-            userPlanPeriod = userData?.billing_cycle || 'monthly';
-
+            if (userData) {
+                userPlanLevel = userData.plan_level || userPlanLevel;
+                isAdmin = userData.role === 'admin' || isAdmin;
+            }
             const { data: usageData } = await supabase
                 .from('user_usage_stats')
                 .select('message_count')
@@ -465,6 +467,20 @@ export async function POST(req: NextRequest) {
                 token_usage: totalTokens
             });
         }
+
+        const messageContent = message;
+        const responseData = {
+            reply: messageContent,
+            message: messageContent,
+            type: messageContent.includes('[SHOW_PLANS]') ? 'pricing' : 
+                  messageContent.includes('[SHOW_CHECKOUT]') ? 'checkout' : 
+                  messageContent.includes('[VIEW_DOJO]') ? 'dojo_preview' : 'text',
+            metadata: {
+                action: messageContent.includes('[SHOW_PLANS]') ? 'SHOW_PLANS' : 
+                        messageContent.includes('[SHOW_CHECKOUT]') ? 'SHOW_CHECKOUT' :
+                        messageContent.includes('[VIEW_DOJO]') ? 'VIEW_DOJO' : undefined
+            }
+        };
 
         return NextResponse.json({ message, metadata });
     } catch (error: any) {

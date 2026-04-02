@@ -82,12 +82,13 @@ export default function ChatInterface({ isMaster = false, isSaaS = false, initia
                 />
             )}
 
-            {m.type === 'hub_preview' && (
+            {(m.type === 'hub_preview' || m.type === 'dojo_preview') && (
                 <HubPreviewWidget 
                     onEnterHub={() => {
-                        if (lineUserId) {
+                        if (mgmtToken) {
                              setIsAdminView(true);
                         } else {
+                             // 如果沒登入，引導登入
                              initiateLineLogin();
                         }
                     }}

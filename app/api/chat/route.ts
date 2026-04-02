@@ -316,10 +316,64 @@ export async function POST(req: NextRequest) {
         let responseMessage = response.choices[0].message;
         let fullResponse = responseMessage.content || "";
 
-        // Handle Tool Calls (Simplified for brevity, but maintaining core logic)
-        if (responseMessage.tool_calls) {
-            // ... [Tool execution logic remains same as original but cleaner] ...
-            // For now, I'll pass through to avoid bloated file if no tool is actually called yet
+        // Handle Tool Calls
+        if (responseMessage.tool_calls && responseMessage.tool_calls.length > 0) {
+            const toolMessages: any[] = [...combinedMessages, responseMessage];
+
+            for (const toolCall of responseMessage.tool_calls) {
+                const functionName = toolCall.function.name;
+                let args: any = {};
+                try { args = JSON.parse(toolCall.function.arguments); } catch {}
+                let functionResponse = '';
+
+                try {
+                    if (functionName === 'get_current_weather') {
+                        const weatherData = await WeatherService.getCountyForecast(args.location);
+                        functionResponse = JSON.stringify(weatherData);
+                    } else if (functionName === 'analyze_forex_rate') {
+                        const forexData = await ForexService.getLatestRate(args.from, args.to, args.amount || 1);
+                        functionResponse = JSON.stringify(forexData);
+                    } else if (functionName === 'analyze_stock_market') {
+                        const stockData = await StockService.getTaiwanStockData(args.symbol);
+                        functionResponse = JSON.stringify(stockData);
+                    } else {
+                        // Dynamic tools from registry
+                        const serviceTool = registry.find((st: any) => st.tool_name === functionName);
+                        if (serviceTool?.ai_external_services) {
+                            const svc = serviceTool.ai_external_services;
+                            const endpoint = svc.base_url + (serviceTool.endpoint_path || '');
+                            const headers: any = { 'Content-Type': 'application/json' };
+                            if (svc.api_key_env) headers['Authorization'] = `Bearer ${process.env[svc.api_key_env]}`;
+                            const apiRes = await fetch(endpoint, {
+                                method: serviceTool.http_method || 'GET',
+                                headers,
+                                ...(serviceTool.http_method === 'POST' ? { body: JSON.stringify(args) } : {})
+                            });
+                            functionResponse = await apiRes.text();
+                        } else {
+                            functionResponse = JSON.stringify({ error: `Unknown tool: ${functionName}` });
+                        }
+                    }
+                } catch (toolErr: any) {
+                    console.error(`[Tool Error] ${functionName}:`, toolErr.message);
+                    functionResponse = JSON.stringify({ error: toolErr.message });
+                }
+
+                toolMessages.push({
+                    tool_call_id: toolCall.id,
+                    role: 'tool',
+                    name: functionName,
+                    content: functionResponse,
+                });
+            }
+
+            // Second call with tool results
+            const secondResponse = await openai.chat.completions.create({
+                model: isMaster ? 'gpt-4o' : 'gpt-4o-mini',
+                messages: toolMessages,
+                temperature: 0.7,
+            });
+            fullResponse = secondResponse.choices[0].message.content || '';
         }
 
         // Metadata Extraction & Lead Capture

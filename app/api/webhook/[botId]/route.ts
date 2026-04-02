@@ -19,7 +19,6 @@ export async function POST(
 ) {
     const botId = params.botId;
 
-    // ⚡ INSTANT 200 — Parse body first, then fire-and-forget processing
     let body: any;
     try {
         body = await req.json();
@@ -30,11 +29,17 @@ export async function POST(
     const events: WebhookEvent[] = body.events || [];
     if (events.length === 0) return NextResponse.json({ status: 'ok' });
 
-    // Reply to LINE immediately — prevents LINE retry storms
-    // Processing continues in the background via the fire-and-forget below
-    processEvents(botId, events).catch((err) =>
-        console.error(`[Webhook] Background processing error for bot ${botId}:`, err)
-    );
+    // ⚡ CRITICAL FIX: Vercel Serverless kills background tasks after response.
+    // We MUST await processEvents so it completes within the function lifetime.
+    // A 4.5s timeout guards against LINE's strict 5s reply deadline.
+    try {
+        await Promise.race([
+            processEvents(botId, events),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Processing timeout')), 4500))
+        ]);
+    } catch (err: any) {
+        console.error(`[Webhook] Processing error for bot ${botId}:`, err.message);
+    }
 
     return NextResponse.json({ status: 'ok' });
 }

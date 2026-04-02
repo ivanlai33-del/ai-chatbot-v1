@@ -386,6 +386,19 @@ export async function POST(req: NextRequest) {
                 const parsed = JSON.parse(jsonMatch[1]);
                 metadata = { ...metadata, ...parsed };
                 message = fullResponse.slice(0, jsonMatch.index).trim();
+
+                // 🛡️ Fallback: if AI only returned JSON with no text, generate a message
+                if (!message) {
+                    if (parsed.action === 'SHOW_PLANS') {
+                        message = '老闆，以下是我們的方案對照表，請選擇最適合您的方案：';
+                    } else if (parsed.action === 'SHOW_CHECKOUT') {
+                        message = `您選擇了 **${parsed.selectedPlan?.name || '方案'}**。請確認後繼續付款：`;
+                    } else if (parsed.action === 'SHOW_SETUP') {
+                        message = '太好了！接下來讓我帶您完成 LINE 串接設定 🚀';
+                    } else {
+                        message = parsed.suggestedPlaceholder || '收到！我這邊有最新資訊給您。';
+                    }
+                }
                 
                 // LEAD CAPTURE LOGIC
                 if (parsed.action === 'COLLECT_DATA' || parsed.action === 'COLLECT_CONTACT') {

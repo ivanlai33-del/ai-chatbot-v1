@@ -47,9 +47,19 @@ const DEFAULT_MASTER_PROMPT = `
 你是一位具備頂尖商業思維與技術底蘊的「LINE 智能店長 Pro」總店長。
 你的使命是幫助老闆，用最划算的成本實現 AI 自動化。
 
-### 你的方案架構：
-- **個人店長版 (Pro)**: $499 / 月 (或 $4,990 / 年)
-- **公司強力店長版 (Enterprise)**: $1,199 / 月 (或 $11,990 / 年)
+### 📦 官方方案（只有以下兩個，嚴禁捏造或提及其他方案）：
+1. **個人店長版 (Pro)**：月繳 $499 / 年繳 $4,990
+   - 適合個人工作室與小型店家
+   - 24H 自動對話接客、智庫 (Dojo) 錄音訓練
+
+2. **公司強力店長版 (Enterprise)**：月繳 $1,199 / 年繳 $11,990
+   - 適合追求極致商業轉化
+   - GPT-4o 旗艦大腦、PDF 深度學習
+
+### 🚫 絕對禁止：
+- 禁止提及任何不在上述清單內的方案或金額（如 2490、2499、3000 等）
+- 禁止自行捏造「第三方案」或「衝刺版」
+- 禁止使用「三個方案」、「多個方案」等說法，我們只有兩個付費方案
 
 ### 🚨 視覺展示指令：
 當用戶詢問「怎麼買」、「多少錢」、「方案」、「價格」時，回覆文字最後必須加上 [SHOW_PRICING] 標記。
@@ -86,15 +96,34 @@ export async function POST(req: Request) {
                 const showPricing = aiResponse.includes('[SHOW_PRICING]');
                 const cleanResponse = aiResponse.replace('[SHOW_PRICING]', '').trim();
 
-                messagesToSend.push({ type: 'text', text: cleanResponse || '老闆好！請問有什麼我可以幫您的？' });
-                if (showPricing) { messagesToSend.push(getPricingFlexMessage()); }
+                // 🛡️ Ensure text is NEVER empty (LINE won't send empty text)
+                const finalMsgText = cleanResponse || (showPricing ? '老闆，為您介紹我們的專業店長方案：' : '老闆好！請問有什麼我可以幫您的？');
+                messagesToSend.push({ type: 'text', text: finalMsgText });
+                
+                if (showPricing) { 
+                    try {
+                        const pricingCard = getPricingFlexMessage();
+                        messagesToSend.push(pricingCard); 
+                    } catch (cardErr) {
+                        console.error('Flex Card Build Error:', cardErr);
+                        messagesToSend.push({ type: 'text', text: '（方案卡片載入中，請點擊此處查看：https://bot.ycideas.com/pricing）' });
+                    }
+                }
 
-                await client.replyMessage(event.replyToken, messagesToSend as any);
+                try {
+                    await client.replyMessage(event.replyToken, messagesToSend as any);
+                } catch (lineErr: any) {
+                    console.error('LINE Reply API Error:', lineErr.data || lineErr);
+                    // Fallback to simpler reply if first one fails
+                    if (messagesToSend.length > 1) {
+                        await client.replyMessage(event.replyToken, [{ type: 'text', text: finalMsgText }] as any);
+                    }
+                }
             }
         }
         return NextResponse.json({ status: 'ok' });
     } catch (error: any) {
-        console.error('Master Webhook Error:', error);
-        return NextResponse.json({ status: 'error' });
+        console.error('Master Webhook Global Error:', error);
+        return NextResponse.json({ status: 'ok' }); // Always return OK to LINE to prevent retries
     }
 }

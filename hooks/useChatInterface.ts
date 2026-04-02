@@ -78,6 +78,12 @@ export function useChatInterface(initialType: string | null = null) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     messages: currentMessages.map(m => ({ role: m.role, content: m.content })),
+                    isMaster: false,
+                    isSaaS: false,
+                    isActivation: false,
+                    isProvisioning: false,
+                    userId: lineUserId,
+                    userName: lineUserName,
                     context: {
                         lineUserId,
                         lineUserName,
@@ -88,19 +94,21 @@ export function useChatInterface(initialType: string | null = null) {
             if (!res.ok) {
                 const errorData = await res.json();
                 console.error('Chat API Error:', errorData);
-                addAiMessage(`抱歉${lineUserName ? `${lineUserName}老闆` : '，我現在'}有點頭暈（伺服器錯誤），要求失敗，可以請您晚點再試試嗎？`);
+                addAiMessage(`抱歉${lineUserName ? `${lineUserName}老闆` : '，我現在'}有點頭暈（伺服器錯誤），要求失敗，可以請您戀點再試試嗎？`);
                 return;
             }
             const data = await res.json();
-            const reply = data.reply || data.message;
-            if (reply) {
+            const reply = data.reply !== undefined ? data.reply : data.message;
+            if (reply !== undefined && reply !== null) {
                 let finalType = data.type || 'text';
                 if (data.metadata?.action === 'VIEW_HUB') {
                     finalType = 'hub_preview';
                 } else if (data.metadata?.action === 'SHOW_PLANS') {
                     finalType = 'pricing';
+                } else if (data.metadata?.action === 'SHOW_CHECKOUT') {
+                    finalType = 'checkout';
                 }
-                addAiMessage(reply, finalType, data.metadata);
+                addAiMessage(reply || '收到！請看下方最新資訊。', finalType, data.metadata);
             }
         } catch (error) {
             console.error('Failed to get AI response:', error);

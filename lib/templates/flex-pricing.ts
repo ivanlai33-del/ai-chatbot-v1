@@ -69,19 +69,24 @@ function createPricingCard(config: any) {
             layout: "vertical",
             contents: [
                 ...(badge ? [{
-                    type: "text",
-                    text: badge,
-                    color: "#ffffff",
-                    size: "xs",
-                    weight: "bold",
+                    type: "box",
+                    layout: "vertical",
                     backgroundColor: "#ff0000",
+                    cornerRadius: "md",
                     paddingStart: "8px",
                     paddingEnd: "8px",
                     paddingTop: "2px",
                     paddingBottom: "2px",
-                    cornerRadius: "md",
-                    align: "center",
-                    margin: "none"
+                    contents: [
+                        {
+                            type: "text",
+                            text: badge,
+                            color: "#ffffff",
+                            size: "xs",
+                            weight: "bold",
+                            align: "center"
+                        }
+                    ]
                 }] : []),
                 {
                     type: "text",

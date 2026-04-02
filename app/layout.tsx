@@ -7,11 +7,11 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
     metadataBase: new URL('https://bot.ycideas.com'),
     title: {
-        default: "LINE 官方帳號 AI 店長｜比請工讀生便宜 10 倍！您的 LINE OA 24/7 自動回覆與轉型神器",
-        template: "%s | LINE 官方帳號 AI 店長"
+        default: "LINE 智能店長 Pro | 專為【官方帳號】設計的 24H 自動銷售助手",
+        template: "%s | LINE 智能店長 Pro"
     },
-    description: "專為 LINE 官方帳號 (OA) 老闆打造。免寫程式、免 API Key，三分鐘將 AI 注入您的 LINE 商店。24 小時幫您自動回覆、介紹產品、收集預約。首 500 位早鳥永久優惠中，數位轉型最省成本的選擇！",
-    keywords: ["LINE 官方帳號", "LINE OA 經營", "LINE 客服機器人", "LINE 自動回覆", "AI 店長", "個人店長版", "LINE 官方帳號 API", "免 API Key", "數位轉型", "LINE 購物機器人"],
+    description: "全台灣唯一無需程式背景，一分鐘開通 AI 智能店長。專為 LINE 官方帳號打造，具備 24H 自動化銷售、客服與智庫學習能力。讓您的 LINE OA 具備自動成交能力！",
+    keywords: ['LINE AI 機器人', 'LINE 官方帳號自動化', 'AI 店長', 'LINE 客服機器人', '智能銷售助手'],
     authors: [{ name: "Ai 智能店長團隊" }],
     openGraph: {
         type: "website",

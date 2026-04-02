@@ -27,7 +27,7 @@ export const getPricingPlans = (billingCycle: 'monthly' | 'yearly') => [
         period: billingCycle === 'monthly' ? '/月' : '/年',
         description: '限時前 500 名：原價 $1999 優惠中',
         features: [
-            '可串接 5 組官方帳號AI店長',
+            '可串接 5 組【LINE 官方帳號】AI 店長',
             '每月 35,000 則對話 (共享額度)',
             '各 AI 店長專屬獨立智庫',
             '📁 支援 PDF、DOC 文件學習',
@@ -43,8 +43,8 @@ export const getPricingPlans = (billingCycle: 'monthly' | 'yearly') => [
 export const landingJsonLd = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    "name": "Line 官方 Ai 智能店長",
-    "description": "專為個人與公司打造的 LINE 官方帳號專屬店長。提升 3 倍客服效率，支援商品導購、自動查庫存、即時物流追蹤，讓您的 LINE 帳號變成 24 小時不打烊的金牌銷售員。",
+    "name": "LINE 智能店長 Pro",
+    "description": "專為店長與企業打造的 LINE 【官方帳號】專用 AI 智能店長。提升 3 倍客服效率，支援商品導讀、智慧回訓、24H 自動成交，讓您的 LINE 帳號變成 24 小時不打烊的金牌銷售員。",
     "applicationCategory": "BusinessApplication",
     "operatingSystem": "Web",
     "offers": {

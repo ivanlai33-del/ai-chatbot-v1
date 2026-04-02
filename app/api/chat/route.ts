@@ -122,36 +122,68 @@ export async function POST(req: NextRequest) {
 
         const effectiveUserId = userId || context?.lineUserId;
         const effectiveUserName = userName || context?.lineUserName;
+        const effectiveUserPicture = context?.lineUserPicture;
 
-        // 🛡️ PLG Database-Backed Trial Interceptor (防白嫖機制：絕對不要信任前端傳來的 trialMessageCount)
-        if (!isPaid && !isMaster && !isSaaS && !isProvisioning && effectiveUserId) {
-            // 從後台真實撈取該用戶本月的免費對話量
-            const { count: realTrialCount, error: countError } = await supabase
-                .from('chat_logs')
-                .select('*', { count: 'exact', head: true })
+        // 🚀 SaaS Identity & Usage Tracker
+        let userPlanLevel = 0;
+        let currentMonthCount = 0;
+        let userSelectedPlan = "Free";
+        let userPlanPeriod = "monthly";
+        const currentMonth = new Date().toISOString().slice(0, 7); // "2026-04"
+
+        if (effectiveUserId) {
+            // 1. Ensure User Identity (Upsert)
+            if (effectiveUserName) {
+                await supabase.rpc('upsert_platform_user', {
+                    p_line_id: effectiveUserId,
+                    p_name: effectiveUserName,
+                    p_picture: effectiveUserPicture
+                });
+            }
+
+            // 2. Fetch Plan & Usage
+            const { data: userData } = await supabase
+                .from('platform_users')
+                .select('plan_level, billing_cycle')
                 .eq('line_user_id', effectiveUserId)
-                .gte('created_at', new Date(new Date().setDate(1)).toISOString()); // 當月1號起算
-
-            const currentCount = realTrialCount || 0;
+                .single();
             
-            // 設定免費額度上限 (例如：50 句，這裡為了測試順暢先放寬到 50，原代碼為前端 10)
-            const TRIAL_LIMIT = 50;
+            userPlanLevel = userData?.plan_level || 0;
+            userPlanPeriod = userData?.billing_cycle || 'monthly';
 
-            if (currentCount >= TRIAL_LIMIT) {
-                console.warn(`[RateLimit] User ${effectiveUserId} exceeded trial quota (${currentCount}/${TRIAL_LIMIT}).`);
-                const nagMessage = getRandomNagMessage();
+            const { data: usageData } = await supabase
+                .from('user_usage_stats')
+                .select('message_count')
+                .eq('line_user_id', effectiveUserId)
+                .eq('month', currentMonth)
+                .single();
+            
+            currentMonthCount = usageData?.message_count || 0;
+
+            // 3. 🛡️ SaaS Paywall Logic
+            // Free Tier: 10 Messages Limit
+            // Lite (499) / Pro (1199): High/Unlimited
+            const PLAN_LIMITS: Record<number, number> = {
+                0: 20,    // Free (為演示順暢給 20 句)
+                1: 1000,  // Lite (499)
+                2: 999999 // Pro (1199)
+            };
+
+            const limit = PLAN_LIMITS[userPlanLevel] || 10;
+
+            if (currentMonthCount >= limit && !isMaster && !isSaaS && !isProvisioning) {
+                console.warn(`[Paywall] User ${effectiveUserId} hit limit ${currentMonthCount}/${limit}.`);
                 return NextResponse.json({
-                    message: `⚠️ 【系統安全攔截】\n\n老闆，您本月的「免費沙盒試用額度 (${TRIAL_LIMIT}句)」已經安全用盡了喔！\n這代表系統非常穩定，也是時候升級為正式版，讓 AI 直接幫您面對真實的客人了。\n\n[👇 立即開通無上限專屬方案]`,
+                    message: `⚠️ 【${userPlanLevel === 0 ? '免費試用' : '方案'}額度用盡】\n\n老闆，您本月的「${userPlanLevel === 0 ? '免費' : '方案'}對話額度 (${limit}句)」已經安全用盡囉！\n\n這是一個好消息，代表您的生意非常興隆！為了確保服務不中斷並解鎖更多 AI 強大功能，請立即點擊下方按鈕選購正式方案。\n\n[👇 立即升級開通正式版]`,
                     metadata: { storeName, action: "SHOW_PLANS" }
                 });
             }
         }
 
-        // Tools
+        // 🛠️ Restore Tool Registration & Security
         const { tools: dynamicTools, registry } = await getDynamicTools();
         const ALL_TOOLS = [...STATIC_TOOLS, ...dynamicTools];
 
-        // 🛡️ Security Checks
         const lastUserMsg = messages[messages.length - 1];
         if (lastUserMsg && isMeaningless(lastUserMsg.content)) {
             return NextResponse.json({
@@ -160,56 +192,37 @@ export async function POST(req: NextRequest) {
             });
         }
 
-        // 🏗️ Build Dynamic System Prompt
+        // 🏗️ Build Dynamic System Prompt with Identity Context
         let membershipContext = "";
-        let userPlanLevel = 0;
-        let userSelectedPlan = "Free";
-        let userPlanPeriod = "monthly";
-
-        // 🚀 Revenue Engine & Identity Awareness: Fetch Status
         if (effectiveUserId) {
-            const { data: userData } = await supabase
-                .from('platform_users')
-                .select('plan_level')
-                .eq('line_user_id', effectiveUserId)
-                .single();
-            
-            userPlanLevel = userData?.plan_level || 0;
-
             const { data: botData } = await supabase
                 .from('bots')
-                .select('selected_plan, plan_period, brand_dna')
+                .select('brand_dna')
                 .eq('line_user_id', effectiveUserId)
                 .limit(1)
                 .single();
             
             let identityContext = "";
-            if (botData) {
-                userSelectedPlan = botData.selected_plan || (userPlanLevel > 0 ? "Standard" : "Free");
-                userPlanPeriod = botData.plan_period || "monthly";
-
-                // 🧠 Identity Awareness: Inform AI what we already know to avoid redundant questions
+            if (botData?.brand_dna) {
                 const dna = botData.brand_dna || {};
                 const knownFields = [];
                 if (dna.industry) knownFields.push(`行業：${dna.industry}`);
                 if (dna.name) knownFields.push(`店名/公司名：${dna.name}`);
-                if (dna.tagline) knownFields.push(`標語：${dna.tagline}`);
-                if (dna.target_audience) knownFields.push(`目標客群：${dna.target_audience}`);
                 if (dna.services) knownFields.push(`主打服務/商品：${dna.services}`);
                 
                 if (knownFields.length > 0) {
-                    identityContext = `\n【🧠 已知品牌設定資訊 (對話中請勿重複詢問)】：\n- ${knownFields.join('\n- ')}\n`;
+                    identityContext = `\n【🧠 已知品牌設定資訊】：\n- ${knownFields.join('\n- ')}\n`;
                 }
             }
 
-            membershipContext = `\n【🎟 當前會員資質資訊】：
-- 目前方案：${userSelectedPlan} (${userPlanLevel === 0 ? '免費體驗版' : userPlanLevel === 1 ? '個人店長版' : '公司強力店長版'})
-- 扣費週期：${userPlanPeriod === 'monthly' ? '月繳' : '年繳'}
-- 是否已開通：${!!botData ? '是 (已綁定)' : '否 (尚未連動 LINE)'}
+            userSelectedPlan = userPlanLevel === 0 ? "Free" : userPlanLevel === 1 ? "Lite (499)" : "Pro (1199)";
+            membershipContext = `\n【🎟 會員資質管理】：
+- 當前方案：${userSelectedPlan}
+- 本月累計對話：${currentMonthCount} 句
 - 【🚨 指引】：${
-    userPlanLevel === 0 ? "這是免費會員。引導進入智庫預覽並完成串接，隨後勸升 499 (個人店長版)。" :
-    userPlanLevel === 1 ? "這是 499 個人店長版老闆。稱讚其願景，適時提及 1199 公司強力版旗艦腦袋與 PDF 學習功能。" :
-    userPlanPeriod === 'monthly' ? "這是 1199 月繳老闆。在合適時機主推「年繳省更多」方案。" : "這是頂級尊榮客戶。詢問成功案例並請求轉介紹。"
+    userPlanLevel === 0 ? "這是一位免費試用老闆。你的首要任務是展現 AI 的價值，並在對話收尾時自然地引導他升級 499 方案。" :
+    userPlanLevel === 1 ? "這是 499 方案老闆。請給予更專業的商業建議，並暗示 1199 方案具備更強大的智庫學習能力。" :
+    "這是 1199 尊榮老闆。請以最高規格的智慧秘書身份對應，專注於策略執行與報表分析。"
 }${identityContext}\n`;
         }
 
@@ -362,6 +375,28 @@ export async function POST(req: NextRequest) {
             } catch (e) {
                 console.error("Metadata Parse Error:", e);
             }
+        }
+
+        // 🚀 Usage Increment Logic (After Successful Response)
+        if (effectiveUserId && !isMaster) {
+            const usage = response.usage;
+            const totalTokens = usage?.total_tokens || 0;
+
+            // Increment message count and tokens for the current month
+            await supabase.rpc('increment_user_usage', {
+                p_user_id: effectiveUserId,
+                p_month: currentMonth,
+                p_tokens: totalTokens
+            });
+
+            // Also keep a raw log in chat_logs for history
+            await supabase.from('chat_logs').insert({
+                line_user_id: effectiveUserId,
+                role: 'ai',
+                content: message,
+                metadata: metadata,
+                token_usage: totalTokens
+            });
         }
 
         return NextResponse.json({ message, metadata });

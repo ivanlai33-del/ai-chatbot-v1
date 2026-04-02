@@ -86,9 +86,11 @@ export default function ChatInterface({ isMaster = false, isSaaS = false, initia
                 <HubPreviewWidget 
                     onEnterHub={() => {
                         if (lineUserId) {
-                             setIsAdminView(true); // 直接開啟管理後台
+                             // 與 Header 的個人頭像卡片邏輯對齊：直接跳轉到後台管理系統
+                             window.location.href = '/dashboard';
                         } else {
-                             initiateLineLogin();  // 沒登入才登入
+                             // 若完全未登入，才引導 LINE 登入
+                             initiateLineLogin();
                         }
                     }}
                 />

@@ -4,6 +4,7 @@ import OpenAI from 'openai';
 import { supabase } from '@/lib/supabase';
 import { SECURITY_DEFENSE_HEADER, maskSensitiveOutput } from '@/lib/security';
 import { calculateCost, logTokenUsage } from '@/lib/token-guard';
+import { getPricingFlexMessage } from '@/lib/templates/flex-pricing';
 
 export const dynamic = 'force-dynamic';
 
@@ -150,11 +151,10 @@ export async function POST(req: Request) {
 
                     messagesToSend.push({
                         type: 'text',
-                        text: `(v2.0-PricingFix) ${cleanResponse}` || '老闆好！請問有什麼我可以幫您的？'
+                        text: cleanResponse || '老闆好！請問有什麼我可以幫您的？'
                     });
 
                     if (showPricing) {
-                        const { getPricingFlexMessage } = require('@/lib/templates/flex-pricing');
                         messagesToSend.push(getPricingFlexMessage());
                     }
 

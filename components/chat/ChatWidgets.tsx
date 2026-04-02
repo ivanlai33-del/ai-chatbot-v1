@@ -27,9 +27,9 @@ export const PricingWidget: React.FC<PricingWidgetProps> = ({ billingCycle, onTo
         {
             name: '公司強力店長版',
             price: billingCycle === 'monthly' ? '1199' : '11000',
-            originalPrice: billingCycle === 'monthly' ? '1999' : '19188',
+            originalPrice: null,
             period: billingCycle === 'monthly' ? '/月' : '/年',
-            tag: billingCycle === 'monthly' ? '強力推薦' : '現省 3,388 元!',
+            tag: billingCycle === 'monthly' ? '強力推薦' : '現省 2,988 元!',
             tagColor: 'text-amber-500 bg-amber-50',
             features: [
                 '每月 20,000 則對話',

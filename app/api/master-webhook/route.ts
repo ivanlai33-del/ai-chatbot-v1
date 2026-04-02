@@ -17,9 +17,11 @@ const openai = new OpenAI({
 });
 
 // ---[ INLINED Pricing Carousel for Stability ]---
+// ---[ INLINED Pricing Carousel for Stability ]---
 const getPricingFlexMessage = () => {
     const createCard = (c: any) => ({
-        type: "bubble", size: "medium",
+        type: "bubble",
+        size: "mega", // 修正：從 "medium" 改為官方支援的 "mega"
         header: { type: "box", layout: "vertical", contents: [
             ...(c.badge ? [{ type: "box", layout: "vertical", backgroundColor: "#ff0000", cornerRadius: "md", paddingStart: "8px", paddingEnd: "8px", paddingTop: "2px", paddingBottom: "2px", contents: [{ type: "text", text: c.badge, color: "#ffffff", size: "xs", weight: "bold", align: "center" }] }] : []),
             { type: "text", text: c.title, weight: "bold", size: "xl", color: c.color, margin: "md" },
@@ -35,12 +37,16 @@ const getPricingFlexMessage = () => {
         ]},
         footer: { type: "box", layout: "vertical", contents: [{ type: "button", action: { type: "uri", label: "立即開通", uri: c.url }, style: "primary", color: c.color }] }
     });
-    return { type: "flex", altText: "🎉 【LINE 智能店長 Pro】官方方案價格表", contents: { type: "carousel", contents: [
-        createCard({ title: "個人店長 Pro", subtitle: "月繳 (啟動版)", price: "499", period: "/ 月", color: "#4A90E2", features: ["24H 自然對話接客", "智庫 (Dojo) 錄音訓練"], url: "https://bot.ycideas.com/checkout?plan=lite&cycle=monthly" }),
-        createCard({ title: "公司強力店長版", subtitle: "月繳 (旗艦級)", price: "1,199", period: "/ 月", color: "#7B61FF", features: ["GPT-4o 旗艦大腦", "PDF / 文件深度學習"], url: "https://bot.ycideas.com/checkout?plan=premium&cycle=monthly" }),
-        createCard({ title: "個人店長 Pro", subtitle: "年繳 (激省 17%)", price: "4,990", period: "/ 年", color: "#F5A623", badge: "🔥 熱推款", features: ["24H 自然對話接客", "現省 2 個月費用"], url: "https://bot.ycideas.com/checkout?plan=lite&cycle=yearly" }),
-        createCard({ title: "公司強力店長版", subtitle: "年繳 (最划算)", price: "11,990", period: "/ 年", color: "#D0021B", badge: "💎 最首選", features: ["GPT-4o 旗艦大腦", "全功能完整解放"], url: "https://bot.ycideas.com/checkout?plan=premium&cycle=yearly" })
-    ]}};
+    return { 
+        type: "flex", 
+        altText: "🎉 【YC Ideas】AI 智能店長方案價格表", 
+        contents: { type: "carousel", contents: [
+            createCard({ title: "個人店長 Pro", subtitle: "月繳 (啟動版)", price: "499", period: "/ 月", color: "#4A90E2", features: ["24H 自然對話接客", "智庫 (Dojo) 錄音訓練"], url: "https://bot.ycideas.com/checkout?plan=lite&cycle=monthly" }),
+            createCard({ title: "公司強力店長版", subtitle: "月繳 (旗艦級)", price: "1,199", period: "/ 月", color: "#7B61FF", features: ["GPT-4o 旗艦大腦", "PDF / 文件深度學習"], url: "https://bot.ycideas.com/checkout?plan=premium&cycle=monthly" }),
+            createCard({ title: "個人店長 Pro", subtitle: "年繳 (激省 17%)", price: "4,990", period: "/ 年", color: "#F5A623", badge: "🔥 熱推款", features: ["24H 自然對話接客", "現省 2 個月費用"], url: "https://bot.ycideas.com/checkout?plan=lite&cycle=yearly" }),
+            createCard({ title: "公司強力店長版", subtitle: "年繳 (最划算)", price: "11,990", period: "/ 年", color: "#D0021B", badge: "💎 最首選", features: ["GPT-4o 旗艦大腦", "全功能完整解放"], url: "https://bot.ycideas.com/checkout?plan=premium&cycle=yearly" })
+        ]}
+    };
 };
 
 const DEFAULT_MASTER_PROMPT = `
@@ -93,8 +99,8 @@ export async function POST(req: Request) {
                 aiResponse = maskSensitiveOutput(aiResponse);
 
                 const messagesToSend: any[] = [];
-                const showPricing = aiResponse.includes('[SHOW_PRICING]');
-                const cleanResponse = aiResponse.replace('[SHOW_PRICING]', '').trim();
+                const showPricing = /\[SHOW_PRICING\]/i.test(aiResponse); // 修正：改為不分大小寫正則偵測
+                const cleanResponse = aiResponse.replace(/\[SHOW_PRICING\]/gi, '').trim();
 
                 // 🛡️ Ensure text is NEVER empty (LINE won't send empty text)
                 const finalMsgText = cleanResponse || (showPricing ? '老闆，為您介紹我們的專業店長方案：' : '老闆好！請問有什麼我可以幫您的？');
@@ -106,7 +112,7 @@ export async function POST(req: Request) {
                         messagesToSend.push(pricingCard); 
                     } catch (cardErr) {
                         console.error('Flex Card Build Error:', cardErr);
-                        messagesToSend.push({ type: 'text', text: '（方案卡片載入中，請點擊此處查看：https://bot.ycideas.com/pricing）' });
+                        messagesToSend.push({ type: 'text', text: '（方案卡片目前維護中，建議前往官網查看最新方案：https://bot.ycideas.com/pricing）' });
                     }
                 }
 
@@ -116,7 +122,9 @@ export async function POST(req: Request) {
                     console.error('LINE Reply API Error:', lineErr.data || lineErr);
                     // Fallback to simpler reply if first one fails
                     if (messagesToSend.length > 1) {
-                        await client.replyMessage(event.replyToken, [{ type: 'text', text: finalMsgText }] as any);
+                        try {
+                            await client.replyMessage(event.replyToken, [{ type: 'text', text: finalMsgText + "\n\n(方案圖文訊息暫時無法顯示，請稍後再試)" }] as any);
+                        } catch (e) {}
                     }
                 }
             }
@@ -124,6 +132,6 @@ export async function POST(req: Request) {
         return NextResponse.json({ status: 'ok' });
     } catch (error: any) {
         console.error('Master Webhook Global Error:', error);
-        return NextResponse.json({ status: 'ok' }); // Always return OK to LINE to prevent retries
+        return NextResponse.json({ status: 'ok' });
     }
 }

@@ -468,21 +468,21 @@ export async function POST(req: NextRequest) {
             });
         }
 
-        const messageContent = message;
-        const responseData = {
-            reply: messageContent,
-            message: messageContent,
-            type: messageContent.includes('[SHOW_PLANS]') ? 'pricing' : 
-                  messageContent.includes('[SHOW_CHECKOUT]') ? 'checkout' : 
-                  messageContent.includes('[VIEW_DOJO]') ? 'dojo_preview' : 'text',
+        // ---[ 🛠️ Final Output Construction ]---
+        const finalResponse = {
+            reply: message,
+            message: message,
+            type: message.includes('[SHOW_PLANS]') ? 'pricing' : 
+                  message.includes('[SHOW_CHECKOUT]') ? 'checkout' : 
+                  message.includes('[VIEW_DOJO]') ? 'dojo_preview' : 'text',
             metadata: {
-                action: messageContent.includes('[SHOW_PLANS]') ? 'SHOW_PLANS' : 
-                        messageContent.includes('[SHOW_CHECKOUT]') ? 'SHOW_CHECKOUT' :
-                        messageContent.includes('[VIEW_DOJO]') ? 'VIEW_DOJO' : undefined
+                action: message.includes('[SHOW_PLANS]') ? 'SHOW_PLANS' : 
+                        message.includes('[SHOW_CHECKOUT]') ? 'SHOW_CHECKOUT' :
+                        message.includes('[VIEW_DOJO]') ? 'VIEW_DOJO' : undefined
             }
         };
 
-        return NextResponse.json({ message, metadata });
+        return NextResponse.json(finalResponse);
     } catch (error: any) {
         console.error('Chat API Error:', error);
         return NextResponse.json({ error: error.message }, { status: 500 });

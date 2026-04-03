@@ -199,19 +199,19 @@ async function handleCustomerChat(
     logger: BotLogger
 ): Promise<void> {
 
-    // 並行取得歷史對話（不阻塞主流程）
-    const historyPromise = supabase
-        .from('chat_logs')
-        .select('role, content')
-        .eq('bot_id', bot.id)
-        .eq('user_id', lineUserId)
-        .order('created_at', { ascending: false })
-        .limit(8); // 略縮減以加速
+    // 🚀 極速並行化：同時查詢歷史紀錄與攔截意圖 (天氣/股票/匯率)
+    const [historyResult, intercepted] = await Promise.all([
+        supabase
+            .from('chat_logs')
+            .select('role, content')
+            .eq('bot_id', bot.id)
+            .eq('user_id', lineUserId)
+            .order('created_at', { ascending: false })
+            .limit(8),
+        IntentInterceptor.intercept(userMessage)
+    ]);
 
-    // Intent Interceptor（天氣、股票、匯率預處理）
-    const intercepted = await IntentInterceptor.intercept(userMessage);
-
-    const { data: history } = await historyPromise;
+    const history = historyResult.data;
 
     const messages: any[] = [
         {

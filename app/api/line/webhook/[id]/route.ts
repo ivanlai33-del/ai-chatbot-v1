@@ -69,7 +69,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         const events: WebhookEvent[] = body.events || [];
         if (events.length === 0) return NextResponse.json({ status: 'ok' });
 
-        // 🛡️ 2. FreemiumGuard — 三道防護閘門（終身額度 + 每日速率 + 長度截斷）
+        // 🛡️ 2. FreemiumGuard — 三道防護閘門
         const guardResult = await FreemiumGuard.check(config.user_id);
 
         if (!guardResult.allowed) {
@@ -79,7 +79,14 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
                 const client = new messagingApi.MessagingApiClient({ channelAccessToken: config.channel_access_token });
                 await client.replyMessage({
                     replyToken: event.replyToken,
-                    messages: [{ type: 'text', text: FreemiumGuard.getBlockMessage(guardResult.reason, guardResult.lifetimeUsed) }]
+                    messages: [{
+                        type: 'text',
+                        text: FreemiumGuard.getBlockMessage(
+                            guardResult.reason,
+                            guardResult.tier,
+                            guardResult.limit
+                        )
+                    }]
                 });
             }
             return NextResponse.json({ status: 'ok' });

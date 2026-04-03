@@ -295,11 +295,11 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
     },
     features: [
       '連鎖專業所有功能',
-      '✅ 15,000 則 / 月 基本額度',
-      '✅ 超量彈性加購',
-      '✅ 專人導入＋腳本優化',
-      '✅ 檔期前腳本調整',
-      '✅ 月度 VIP 分析報表',
+      '✅ 15,000 則 / 月基本額度',
+      '✅ 超量彈性加購（每 1,000 則 NT$150）',
+      '✅ 完整後台自助設定與智庫建置',
+      '✅ 技術問題優先遠端快速支援',
+      '✅ 月度對話成效分析報表',
     ],
     overage: {
       per1000Messages: 150,
@@ -335,14 +335,15 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
     },
     features: [
       '旗艦 Lite 所有功能',
-      '✅ 30,000 則 / 月 基本額度',
+      '✅ 30,000 則 / 月基本額度',
       '✅ 最多 6 間店同時串接',
-      '✅ 超量彈性加購（可專案談）',
-      '✅ 專屬顧問定期回訪',
+      '✅ 超量彈性加購（每 1,000 則 NT$200，可議）',
+      '✅ 技術問題最優先遠端快速支援',
+      '✅ 每季設定健診與效能確認',
     ],
     overage: {
       per1000Messages: 200,
-      description: '超過月額度：每 1,000 則加收 NT$200（可專案議價）',
+      description: '超過月額度：每 1,000 則加收 NT$200（可議）',
     },
     payment: {
       ecpayMonthlyLink: 'https://p.ecpay.com.tw/PLACEHOLDER_7990M',

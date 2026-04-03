@@ -143,7 +143,7 @@ export default function PricingModal({
                             </div>
 
                             {/* ── 旗艦方案 ── */}
-                            <p className="text-xs font-black uppercase tracking-widest text-white/30 mb-4">旗艦方案（含專人導入）</p>
+                            <p className="text-xs font-black uppercase tracking-widest text-white/30 mb-4">旗艦高流量方案（優先技術支援）</p>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                                 {flagshipPlans.map(plan => (
                                     <PlanCard key={plan.id} plan={plan} billingCycle={billingCycle} onAction={onAction} flagship />
@@ -196,7 +196,7 @@ function PlanCard({ plan, billingCycle, onAction, flagship = false }: {
             )}
             {flagship && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-orange-500 text-white text-[9px] font-black rounded-full uppercase tracking-widest shadow-lg whitespace-nowrap">
-                    🔥 含專人導入
+                    🔥 高流量優先支援
                 </div>
             )}
 

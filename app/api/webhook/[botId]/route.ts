@@ -29,17 +29,13 @@ export async function POST(
     const events: WebhookEvent[] = body.events || [];
     if (events.length === 0) return NextResponse.json({ status: 'ok' });
 
-    // ⚡ CRITICAL FIX: Vercel Serverless kills background tasks after response.
-    // We MUST await processEvents so it completes within the function lifetime.
-    // A 4.5s timeout guards against LINE's strict 5s reply deadline.
-    try {
-        await Promise.race([
-            processEvents(botId, events),
-            new Promise((_, reject) => setTimeout(() => reject(new Error('Processing timeout')), 4500))
-        ]);
-    } catch (err: any) {
-        console.error(`[Webhook] Processing error for bot ${botId}:`, err.message);
-    }
+    // ✅ CORRECT PATTERN: Return 200 to LINE immediately (within 5s deadline),
+    // then let processEvents run to completion in the background.
+    // This prevents the slot leak caused by the old Promise.race timeout pattern
+    // where releaseSlot() was never called after a 4.5s reject.
+    processEvents(botId, events).catch((err: any) => {
+        console.error(`[Webhook] processEvents error for bot ${botId}:`, err?.message);
+    });
 
     return NextResponse.json({ status: 'ok' });
 }

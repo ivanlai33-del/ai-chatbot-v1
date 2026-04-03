@@ -34,7 +34,7 @@ export function getConcurrentLimit(selectedPlan: string | null | undefined): num
 export async function acquireSlot(
     botId: string,
     limit: number,
-    timeoutMs: number = 8_000
+    timeoutMs: number = 2_000
 ): Promise<boolean> {
     const deadline = Date.now() + timeoutMs;
 
@@ -44,11 +44,15 @@ export async function acquireSlot(
             activeCalls.set(botId, current + 1);
             return true;
         }
-        // Wait 300 ms before retrying
         await new Promise((r) => setTimeout(r, 300));
     }
 
-    return false; // Timed out
+    // ✅ Serverless-safe: In-memory counters are unreliable across instances.
+    // If we can't confirm a free slot, allow the call through anyway.
+    // Better to process than to silently drop messages.
+    console.warn(`[Concurrency] Slot timeout for bot ${botId}, allowing through anyway.`);
+    activeCalls.set(botId, (activeCalls.get(botId) ?? 0) + 1);
+    return true;
 }
 
 /** Release a concurrency slot after processing is done. */

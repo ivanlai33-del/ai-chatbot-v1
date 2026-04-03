@@ -390,19 +390,6 @@ export async function POST(req: NextRequest) {
                 metadata = { ...metadata, ...parsed };
                 message = fullResponse.slice(0, jsonMatch.index).trim();
 
-                // 🛡️ Fallback: if AI only returned JSON with no text, generate a message
-                if (!message) {
-                    if (parsed.action === 'SHOW_PLANS') {
-                        message = '老闆，以下是我們的方案對照表，請選擇最適合您的方案：';
-                    } else if (parsed.action === 'SHOW_CHECKOUT') {
-                        message = `您選擇了 **${parsed.selectedPlan?.name || '方案'}**。請確認後繼續付款：`;
-                    } else if (parsed.action === 'SHOW_SETUP') {
-                        message = '太好了！接下來讓我帶您完成 LINE 串接設定 🚀';
-                    } else {
-                        message = parsed.suggestedPlaceholder || '收到！我這邊有最新資訊給您。';
-                    }
-                }
-                
                 // LEAD CAPTURE LOGIC
                 if (parsed.action === 'COLLECT_DATA' || parsed.action === 'COLLECT_CONTACT') {
                     await supabase.from('saas_leads').upsert({
@@ -419,18 +406,15 @@ export async function POST(req: NextRequest) {
 
                 if (parsed.action === 'SUBMIT_FEEDBACK') {
                     const feedbackContent = parsed.summary || "無內容";
-                    
-                    // 🤖 AI Triage & Smart Suggestion
                     const triage = await openai.chat.completions.create({
                         model: 'gpt-4o-mini',
                         messages: [
-                            { role: 'system', content: '你是一位資深客服經理。分析收到的客戶反饋，提供：1. 分類 (Bug, Feature, Support, Billing), 2. 優先級 (1-5, 5最高), 3. 給管理員的建議回覆。輸出為 JSON：{"cat": String, "pri": Number, "reply": String}' },
+                            { role: 'system', content: '你是一位資深客服經理。分析收到的客戶反饋，提供：1. 分類, 2. 優先級, 3. 建議回覆。輸出為 JSON：{"cat": String, "pri": Number, "reply": String}' },
                             { role: 'user', content: feedbackContent }
                         ],
                         response_format: { type: 'json_object' }
                     });
                     const tData = JSON.parse(triage.choices[0].message.content || '{}');
-
                     await supabase.from('owner_feedback').insert({
                         line_user_id: effectiveUserId,
                         line_user_name: effectiveUserName,
@@ -445,6 +429,12 @@ export async function POST(req: NextRequest) {
             } catch (e) {
                 console.error("Metadata Parse Error:", e);
             }
+        }
+
+        // 🛡️ 強制自動觸發：如果文字中包含 [SHOW_PRICING]，自動將 action 設為 SHOW_PLANS
+        if (fullResponse.includes('[SHOW_PRICING]')) {
+            metadata.action = 'SHOW_PLANS';
+            message = message.replace(/\[SHOW_PRICING\]/g, '').trim();
         }
 
         // 🚀 Usage Increment Logic (After Successful Response)

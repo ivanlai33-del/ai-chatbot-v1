@@ -45,7 +45,7 @@ const PLANS: PlanConfig[] = [
         name: "個人店長版",
         price: {
             monthly: 499,
-            yearly: 4990,
+            yearly: 5489,
             originalMonthly: 999,
             originalYearly: 9990
         },
@@ -59,7 +59,7 @@ const PLANS: PlanConfig[] = [
         name: "公司強力店長版",
         price: {
             monthly: 1199,
-            yearly: 11990,
+            yearly: 13189,
             originalMonthly: 1999,
             originalYearly: 19188
         },
@@ -319,12 +319,12 @@ export default function UnifiedBillingView() {
                                     selectedBillingCycle === 'yearly' ? "bg-white text-indigo-600 shadow-sm" : "text-slate-400 hover:text-slate-600"
                                 )}
                             >
-                                年費方案
+                                年費更划算
                                 <span className={cn(
                                     "px-1.5 py-0.5 rounded text-[8px] font-black",
                                     selectedBillingCycle === 'yearly' ? "bg-indigo-500 text-white" : "bg-slate-200 text-slate-500"
                                 )}>
-                                    省 17%
+                                    贈送一個月
                                 </span>
                             </button>
                         </div>

@@ -4,7 +4,7 @@ import React from 'react';
 export const getPricingPlans = (billingCycle: 'monthly' | 'yearly') => [
     {
         name: '個人店長版',
-        price: billingCycle === 'monthly' ? '499' : '4990',
+        price: billingCycle === 'monthly' ? '499' : '5489',
         originalPrice: billingCycle === 'monthly' ? '999' : '9990',
         period: billingCycle === 'monthly' ? '/月' : '/年',
         description: '限時前 500 名：原價 $999 優惠中',
@@ -22,7 +22,7 @@ export const getPricingPlans = (billingCycle: 'monthly' | 'yearly') => [
     },
     {
         name: '公司強力店長版',
-        price: billingCycle === 'monthly' ? '1199' : '11000',
+        price: billingCycle === 'monthly' ? '1199' : '13189',
         originalPrice: billingCycle === 'monthly' ? '1999' : '19188',
         period: billingCycle === 'monthly' ? '/月' : '/年',
         description: '限時前 500 名：原價 $1999 優惠中',

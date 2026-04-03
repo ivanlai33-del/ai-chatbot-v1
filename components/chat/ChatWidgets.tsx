@@ -20,10 +20,10 @@ export const PricingWidget: React.FC<PricingWidgetProps> = ({ billingCycle, onTo
     const plans = [
         {
             name: '個人店長版',
-            price: billingCycle === 'monthly' ? '499' : '4990',
+            price: billingCycle === 'monthly' ? '499' : '5489',
             originalPrice: billingCycle === 'monthly' ? '999' : '9990',
             period: billingCycle === 'monthly' ? '/月' : '/年',
-            tag: billingCycle === 'monthly' ? '限時 5 折優惠' : '現省 1,000 元!',
+            tag: billingCycle === 'monthly' ? '限時 5 折優惠' : '買 11 個月，送 1 個月！',
             tagColor: 'text-emerald-500 bg-emerald-50',
             features: [
                 '1 組 AI 店長正式上線服役',
@@ -38,16 +38,16 @@ export const PricingWidget: React.FC<PricingWidgetProps> = ({ billingCycle, onTo
         },
         {
             name: '公司強力店長版',
-            price: billingCycle === 'monthly' ? '1199' : '11000',
+            price: billingCycle === 'monthly' ? '1199' : '13189',
             originalPrice: billingCycle === 'monthly' ? '1999' : '19188',
             period: billingCycle === 'monthly' ? '/月' : '/年',
-            tag: billingCycle === 'monthly' ? '強力推薦' : '現省 2,988 元!',
+            tag: billingCycle === 'monthly' ? '強力推薦' : '現省 $5,000 以上！',
             tagColor: 'text-amber-500 bg-amber-50',
             popular: true,
             features: [
                 '可串接 5 組 【LINE 官方帳號】 AI 店長',
                 '每月 35,000 則對話 (共享額度)',
-                '各 AI 店長專屬獨立智庫',
+                '各 AI 店長專專屬獨立智庫',
                 '📁 支援 PDF、DOC 文件學習',
                 '📜 每組店長限額 5 份知識文件',
                 '🚀 GPT-4o 旗艦級 AI 大腦'

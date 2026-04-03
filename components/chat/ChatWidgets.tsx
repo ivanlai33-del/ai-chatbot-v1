@@ -20,44 +20,48 @@ export const PricingWidget: React.FC<PricingWidgetProps> = ({ billingCycle, onTo
             price: billingCycle === 'monthly' ? '499' : '4990',
             originalPrice: billingCycle === 'monthly' ? '999' : '9990',
             period: billingCycle === 'monthly' ? '/月' : '/年',
-            tag: billingCycle === 'monthly' ? '前500名優惠' : '現省 1,000 元!',
-            tagColor: 'text-red-500 bg-red-50',
-            features: ['每月 5,000 則對話', '免 OpenAI API Key', '🤖 智慧文字客服', '🎯 產品/服務精準介紹', '🕒 24小時自動回訊', '🧬 品牌 DNA 個性設定'],
+            tag: billingCycle === 'monthly' ? '限時 5 折優惠' : '現省 1,000 元!',
+            tagColor: 'text-emerald-500 bg-emerald-50',
+            features: [
+                '1 組 AI 店長正式上線服役',
+                '每月 5,000 則智慧對話',
+                '免 OpenAI API Key',
+                '🤖 智慧文字客服',
+                '🎯 產品/服務精準介紹',
+                '🕒 24小時自動回訊',
+                '🧬 品牌 DNA 個性設定'
+            ],
+            payUrl: billingCycle === 'monthly' ? 'https://p.ecpay.com.tw/A06FE6B' : 'https://p.ecpay.com.tw/723E398'
         },
         {
             name: '公司強力店長版',
             price: billingCycle === 'monthly' ? '1199' : '11000',
-            originalPrice: null,
+            originalPrice: billingCycle === 'monthly' ? '1999' : '19188',
             period: billingCycle === 'monthly' ? '/月' : '/年',
             tag: billingCycle === 'monthly' ? '強力推薦' : '現省 2,988 元!',
             tagColor: 'text-amber-500 bg-amber-50',
-            features: [
-                '每月 20,000 則對話',
-                '含個人店長版所有功能',
-                '📢 主動廣播/精準開發',
-                '📅 預約自動導流系統',
-                '📁 PDF/網頁 深度學習 RAG',
-                '📊 AI 商業洞察週報',
-                'GPT-4o 旗艦級大腦',
-            ],
             popular: true,
-        },
-        {
-            name: '中小企業店長群規劃方案',
-            price: '專人估價',
-            desc: '多帳號部署 / 不限流量 / 多通路整合行銷',
-            isRequirement: true
+            features: [
+                '可串接 5 組 【LINE 官方帳號】 AI 店長',
+                '每月 35,000 則對話 (共享額度)',
+                '各 AI 店長專屬獨立智庫',
+                '📁 支援 PDF、DOC 文件學習',
+                '📜 每組店長限額 5 份知識文件',
+                '🚀 GPT-4o 旗艦級 AI 大腦'
+            ],
+            payUrl: billingCycle === 'monthly' ? 'https://p.ecpay.com.tw/FFD88CA' : 'https://p.ecpay.com.tw/C1E8916'
         }
     ];
 
     return (
-        <div className="ml-14 max-w-[85%] space-y-4">
-            <div className="flex p-1 bg-zinc-100/80 backdrop-blur-sm rounded-xl w-fit mx-auto shadow-inner">
+        <div className="ml-14 max-w-[85%] space-y-6">
+            {/* 🗓️ Billing Cycle Switch */}
+            <div className="flex p-1 bg-zinc-100/80 backdrop-blur-sm rounded-2xl w-fit mx-auto shadow-inner border border-white">
                 <button
                     onClick={() => onToggleBilling('monthly')}
                     className={cn(
-                        "px-6 py-2 rounded-lg text-sm font-black transition-all",
-                        billingCycle === 'monthly' ? "bg-[#06C755] text-white shadow-md" : "text-zinc-400 hover:text-zinc-600"
+                        "px-8 py-2.5 rounded-[14px] text-sm font-black transition-all",
+                        billingCycle === 'monthly' ? "bg-white text-zinc-800 shadow-md" : "text-zinc-400 hover:text-zinc-600"
                     )}
                 >
                     月費制
@@ -65,62 +69,74 @@ export const PricingWidget: React.FC<PricingWidgetProps> = ({ billingCycle, onTo
                 <button
                     onClick={() => onToggleBilling('yearly')}
                     className={cn(
-                        "px-6 py-2 rounded-lg text-sm font-black transition-all relative overflow-hidden",
+                        "px-8 py-2.5 rounded-[14px] text-sm font-black transition-all relative overflow-hidden",
                         billingCycle === 'yearly' ? "bg-[#06C755] text-white shadow-md" : "text-zinc-400 hover:text-zinc-600"
                     )}
                 >
                     年費更划算
                     {billingCycle !== 'yearly' && (
-                        <motion.span 
-                            initial={{ scale: 0.8, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            className="absolute -top-1 -right-1 flex h-2 w-2"
-                        >
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-                        </motion.span>
+                        <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500" />
                     )}
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 gap-4">
+            {/* 📋 Pricing Cards */}
+            <div className="space-y-6">
                 {plans.map((p) => (
-                    <button
+                    <div
                         key={p.name}
-                        onClick={() => onSelectPlan(p.name, `${p.price}${p.period || ''}`)}
                         className={cn(
-                            "p-5 rounded-2xl border-2 text-left transition-all active:scale-95 bg-white shadow-sm",
-                            "border-zinc-100 hover:border-[#06C755] hover:shadow-xl hover:shadow-[#06C755]/40 hover:scale-[1.02]"
+                            "relative overflow-hidden bg-white rounded-[32px] border-2 transition-all p-8 flex flex-col",
+                            p.popular ? "border-amber-400 shadow-2xl shadow-amber-100/50" : "border-zinc-100 shadow-xl"
                         )}
                     >
-                        <div className="flex justify-between items-center mb-1.5">
-                            <div className="flex flex-col">
-                                <div className="flex items-center gap-2">
-                                    <span className="font-extrabold text-[18px] text-zinc-800">{p.name}</span>
-                                    {p.popular && (
-                                        <span className="px-2 py-0.5 bg-amber-500 text-white text-[10px] font-black rounded-full uppercase tracking-tighter shadow-sm">熱門推薦</span>
-                                    )}
+                        {p.popular && (
+                            <div className="absolute top-0 right-0">
+                                <div className="bg-gradient-to-l from-amber-500 to-amber-600 px-4 py-1.5 rounded-bl-2xl font-black text-[11px] text-white flex items-center gap-1.5 shadow-sm">
+                                    <Sparkles className="w-3.5 h-3.5" />
+                                    建議方案
                                 </div>
-                                {p.tag && <span className={cn("text-[13px] font-bold px-1.5 py-0.5 mt-1 rounded-md w-fit", p.tagColor)}>{p.tag}</span>}
-                            </div>
-                            <div className="flex flex-col items-end justify-center">
-                                {p.originalPrice && <span className="text-[11px] text-zinc-400 line-through font-medium -mb-1">原價 {p.originalPrice}</span>}
-                                <div className="flex items-baseline gap-0.5">
-                                    <span className="font-black text-[28px]" style={{ color: p.popular ? '#F59E0B' : LINE_GREEN }}>{p.price}</span>
-                                    {p.period && <span className="text-sm font-bold text-zinc-400">{p.period}</span>}
-                                </div>
-                            </div>
-                        </div>
-                        {p.features && (
-                            <div className="flex flex-wrap gap-1.5 mt-2">
-                                {p.features.map((f, i) => (
-                                    <span key={i} className="px-2 py-0.5 bg-zinc-50 border border-zinc-100 rounded-md text-[12px] text-zinc-600 font-bold whitespace-nowrap">
-                                        {f}
-                                    </span>
-                                ))}
                             </div>
                         )}
-                    </button>
+
+                        <div className="mb-6">
+                            <h3 className="text-[20px] font-black text-slate-800">{p.name}</h3>
+                            <p className="text-slate-400 text-[13px] font-bold mt-1">限時前 500 名：原價 ${p.originalPrice} 優惠中</p>
+                        </div>
+
+                        <div className="flex items-baseline gap-1 mb-8">
+                            <span className="text-[24px] font-black" style={{ color: p.popular ? '#F59E0B' : '#06C755' }}>NT$</span>
+                            <span className="text-[48px] font-black leading-none tracking-tighter" style={{ color: p.popular ? '#F59E0B' : '#06C755' }}>
+                                {p.price}
+                            </span>
+                            <span className="text-zinc-400 font-bold ml-1">{p.period}</span>
+                            {p.originalPrice && <span className="text-zinc-300 line-through text-sm font-medium ml-2">${p.originalPrice}</span>}
+                        </div>
+
+                        <div className="space-y-4 mb-8 flex-1">
+                            {p.features.map((f, i) => (
+                                <div key={i} className="flex items-start gap-3">
+                                    <div className={cn("mt-1 flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center", p.popular ? "bg-amber-100 text-amber-600" : "bg-emerald-50 text-emerald-600")}>
+                                        <ChevronRight className="w-3 h-3 stroke-[3px]" />
+                                    </div>
+                                    <span className="text-[14px] text-slate-600 font-bold leading-tight">{f}</span>
+                                </div>
+                            ))}
+                        </div>
+
+                        <button
+                            onClick={() => window.location.href = p.payUrl}
+                            className={cn(
+                                "w-full py-5 rounded-2xl font-black text-[17px] shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2",
+                                p.popular 
+                                    ? "bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-amber-200" 
+                                    : "bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-emerald-200"
+                            )}
+                        >
+                            <CreditCard className="w-5 h-5" />
+                            立即開通 AI 智能店長
+                        </button>
+                    </div>
                 ))}
             </div>
         </div>

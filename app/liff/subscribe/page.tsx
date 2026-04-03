@@ -10,6 +10,7 @@ import LiffHero from '@/components/Liff/LiffHero';
 import LiffFeatureGrid from '@/components/Liff/LiffFeatureGrid';
 import LiffScrollSequence from '@/components/Liff/LiffScrollVideo';
 import LiffStickyHeader from '@/components/Liff/LiffStickyHeader';
+import LandingFooter from '@/components/landing/LandingFooter';
 
 import { PLAN_PAYMENT_LINKS } from '@/lib/chat-constants';
 
@@ -144,73 +145,50 @@ export default function LiffSubscribePage() {
               ))}
             </div>
 
-          {/* 🛡️ Enterprise Security Badge (內有惡犬資安鐵牌 - 深藍 SaaS 高質感) */}
-          <div className="mb-[30px] mx-auto max-w-lg">
-            <div className="bg-slate-900/80 bg-gradient-to-br from-slate-800/80 via-blue-900/80 to-slate-900/95 backdrop-blur-2xl rounded-3xl p-5 border border-white/15 shadow-[inset_0_1px_1px_rgba(255,255,255,0.25),0_12px_40px_rgba(15,23,42,0.4)] relative overflow-hidden">
-              {/* 背景裝飾光暈 */}
-              <div className="absolute top-0 right-0 w-40 h-40 bg-green-500/10 rounded-full blur-3xl -mr-10 -mt-10" />
+          {/* 🛡️ Enterprise Security Badge (Centered Emerald Version) */}
+          <div className="mb-[40px] mx-auto max-w-lg">
+            <div className="backdrop-blur-2xl rounded-[40px] p-8 bg-gradient-to-br from-[#058a40]/60 via-[#01142F]/80 to-[#1e3a8a]/40 border border-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.25),0_20px_50px_rgba(0,0,0,0.3)] relative overflow-hidden">
               
-              {/* 背景浮水大盾牌 (移至右下角並改為 35% 不透明螢光綠) */}
-              <div className="absolute -bottom-12 -right-10 opacity-[35%] pointer-events-none overflow-hidden">
-                <ShieldCheck className="w-64 h-64 text-green-400" />
+              {/* 背景浮水巨大金屬盾牌 (35% 透明度 - 翡翠綠) */}
+              <div className="absolute -bottom-16 -right-12 opacity-[35%] pointer-events-none transform rotate-12">
+                <ShieldCheck className="w-80 h-80 text-emerald-500" />
               </div>
               
-              <div className="flex items-center gap-2.5 mb-6 relative z-10">
-                <ShieldCheck className="w-[28px] h-[28px] text-green-400 drop-shadow-[0_0_8px_rgba(74,222,128,0.6)]" />
-                <h3 className="text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-emerald-400 font-black text-[19px] tracking-widest drop-shadow-[0_0_8px_rgba(74,222,128,0.4)]">企業級四大資安防護</h3>
+              <div className="flex flex-col items-center gap-3 mb-10 relative z-10 text-center">
+                <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+                    <ShieldCheck className="w-8 h-8 text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.6)]" />
+                </div>
+                <h3 className="text-transparent bg-clip-text bg-gradient-to-r from-green-300 via-emerald-400 to-teal-400 font-black text-2xl tracking-tighter drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)]">
+                  企業級四大資安防護
+                </h3>
               </div>
               
-              <div className="space-y-3.5 relative z-10">
-                <div className="flex items-start gap-4 p-2 rounded-xl border border-transparent hover:border-white/5 hover:bg-white/5 transition-all">
-                  <div className="w-[36px] h-[36px] rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center shrink-0 shadow-[inset_0_1px_0_rgba(74,222,128,0.15)]">
-                    <Lock className="w-[20px] h-[20px] text-green-400 drop-shadow-[0_0_5px_rgba(74,222,128,0.5)]" />
+              <div className="space-y-8 relative z-10">
+                {[
+                  { icon: Lock, title: "加密無痕串接", desc: "金鑰 0.1 秒極速銷毀，駭客無門" },
+                  { icon: AlertTriangle, title: "防刷爆擋流閘門", desc: "金融級限流 (Rate Limiting) 死守預算" },
+                  { icon: Webhook, title: "AI 防暴走護盾", desc: "嚴格商業道德黑名單，絕不惹麻煩" },
+                  { icon: Fingerprint, title: "官方指紋防偽系統", desc: "底層 100% 封殺釣魚網頁與假造流量" }
+                ].map((item, idx) => (
+                  <div key={idx} className="flex flex-col items-center text-center group cursor-default">
+                    <div className="flex items-center gap-3 mb-2">
+                       <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-500/20 transition-colors">
+                        <item.icon className="w-4 h-4 text-emerald-400" />
+                      </div>
+                      <h4 className="text-white font-bold text-[16px] tracking-tight">{item.title}</h4>
+                    </div>
+                    <p className="text-white/50 text-sm font-medium leading-relaxed max-w-[280px]">
+                      {item.desc}
+                    </p>
                   </div>
-                  <div className="mt-0.5">
-                    <p className="text-blue-50 text-[14px] font-bold leading-tight mb-1">加密無痕串接</p>
-                    <p className="text-slate-300 text-[12px] font-medium leading-snug">金鑰 0.1 秒極速銷毀，駭客無門</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-4 p-2 rounded-xl border border-transparent hover:border-white/5 hover:bg-white/5 transition-all">
-                  <div className="w-[36px] h-[36px] rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center shrink-0 shadow-[inset_0_1px_0_rgba(74,222,128,0.15)]">
-                    <AlertTriangle className="w-[20px] h-[20px] text-green-400 drop-shadow-[0_0_5px_rgba(74,222,128,0.5)]" />
-                  </div>
-                  <div className="mt-0.5">
-                    <p className="text-blue-50 text-[14px] font-bold leading-tight mb-1">防刷爆擋流閘門</p>
-                    <p className="text-slate-300 text-[12px] font-medium leading-snug">金融級限流 (Rate Limiting) 死守預算</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-4 p-2 rounded-xl border border-transparent hover:border-white/5 hover:bg-white/5 transition-all">
-                  <div className="w-[36px] h-[36px] rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center shrink-0 shadow-[inset_0_1px_0_rgba(74,222,128,0.15)]">
-                    <Webhook className="w-[20px] h-[20px] text-green-400 drop-shadow-[0_0_5px_rgba(74,222,128,0.5)]" />
-                  </div>
-                  <div className="mt-0.5">
-                    <p className="text-blue-50 text-[14px] font-bold leading-tight mb-1">AI 防暴走護盾</p>
-                    <p className="text-slate-300 text-[12px] font-medium leading-snug">嚴格商業道德黑名單，絕不惹麻煩</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4 p-2 rounded-xl border border-transparent hover:border-white/5 hover:bg-white/5 transition-all">
-                  <div className="w-[36px] h-[36px] rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center shrink-0 shadow-[inset_0_1px_0_rgba(74,222,128,0.15)]">
-                    <Fingerprint className="w-[20px] h-[20px] text-green-400 drop-shadow-[0_0_5px_rgba(74,222,128,0.5)]" />
-                  </div>
-                  <div className="mt-0.5">
-                    <p className="text-blue-50 text-[14px] font-bold leading-tight mb-1">官方指紋防偽系統</p>
-                    <p className="text-slate-300 text-[12px] font-medium leading-snug">底層 100% 封殺釣魚網頁與假造流量</p>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
         </section>
 
         {/* 🎬 Final Footer Stop - 15px from plans, 5px from bottom */}
-        <footer className="w-full pt-0 pb-[5px] text-center relative z-20">
-          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.4em]">
-            © 2026 AI Store Manager. All Rights Reserved.
-          </p>
-        </footer>
+        <LandingFooter isLight={true} variant="mobile" />
       </LiffScrollSequence>
 
       {/* 🚀 Sticky Brand Header (Moved to bottom of DOM for highest stacking priority) */}

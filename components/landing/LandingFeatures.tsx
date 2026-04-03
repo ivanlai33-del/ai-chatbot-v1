@@ -73,21 +73,38 @@ export default function LandingFeatures() {
                     </motion.p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-32">
                     {features.map((f, i) => (
                         <motion.div
                             key={i}
-                            initial={{ opacity: 0, y: 20 }}
+                            initial={{ opacity: 0, y: 150 }}
                             whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: i * 0.1 }}
-                            className="bg-white/60 backdrop-blur-xl p-8 rounded-[24px] border border-white/80 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),0_10px_30px_rgba(0,0,0,0.05)] hover:shadow-[inset_0_1px_1px_rgba(255,255,255,1),0_15px_40px_rgba(0,0,0,0.1)] hover:-translate-y-1 transition-all group"
+                            whileHover={{ y: -12, scale: 1.01, transition: { duration: 0.3 } }}
+                            viewport={{ once: true, margin: "-100px" }}
+                            transition={{ 
+                                delay: i * 0.1, 
+                                type: 'spring', 
+                                damping: 25, 
+                                stiffness: 40,
+                                mass: 1.2 
+                            }}
+                            className="bg-white/80 backdrop-blur-3xl p-10 rounded-[40px] border border-white/100 shadow-[inset_0_1px_1px_rgba(255,255,255,1),0_20px_40px_rgba(0,0,0,0.05)] hover:shadow-[inset_0_1px_1px_rgba(255,255,255,1),0_30px_60px_rgba(0,0,0,0.1)] transition-shadow group overflow-hidden relative"
                         >
-                            <div className={`${f.bg} w-16 h-16 rounded-[16px] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
+                            {/* 💎 玻璃邊緣高光 (Static Border Highlight) */}
+                            <div className="absolute inset-0 rounded-[40px] border border-white/40 pointer-events-none" />
+                            
+                            {/* ✨ 玻璃掃光動畫 (Hover Light Scan) */}
+                            <div className="absolute -inset-full bg-gradient-to-r from-transparent via-white/20 to-transparent rotate-45 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none" />
+                            
+                            <motion.div 
+                                whileHover={{ scale: 1.15, rotate: 5 }}
+                                className={`${f.bg} w-16 h-16 rounded-[22px] flex items-center justify-center mb-8 shadow-lg ring-4 ring-white/50`}
+                            >
                                 <f.icon className={`w-8 h-8 ${f.color}`} />
-                            </div>
-                            <h3 className="text-[24px] font-black text-slate-800 mb-4 tracking-tight">{f.title}</h3>
-                            <p className="text-slate-500 leading-relaxed font-medium">
+                            </motion.div>
+                            
+                            <h3 className="text-[26px] font-black text-slate-900 mb-5 tracking-tight group-hover:text-black transition-colors">{f.title}</h3>
+                            <p className="text-slate-600 leading-relaxed font-medium text-base group-hover:text-slate-700 transition-colors">
                                 {f.desc}
                             </p>
                         </motion.div>

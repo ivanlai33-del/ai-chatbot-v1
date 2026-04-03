@@ -63,8 +63,7 @@ export default function Home() {
                 onAction={handleAction}
             />
             
-            <LandingFooter />
+            <LandingFooter variant="desktop" />
         </main>
     );
 }
-

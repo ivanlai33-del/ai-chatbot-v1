@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, animate } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, animate, useScroll } from 'framer-motion';
 import { LogIn, CreditCard, Database, Bot } from 'lucide-react';
 import Image from 'next/image';
 
@@ -28,6 +28,10 @@ export default function HeroSection({
     const [bgImage, setBgImage] = useState<string>('');
     const [showContent, setShowContent] = useState(false);
     
+    // 🎭 滾動監測：隨著捲動，底稿變暗 (從 20% 變到 75% 黑)
+    const { scrollY } = useScroll();
+    const bgOverlayOpacity = useTransform(scrollY, [0, 800], [0.2, 0.75]);
+
     // Animation Progress (0 = Expanded, 1 = Fully Collapsed)
     const rawProgress = useMotionValue(0);
     const smoothProgress = useSpring(rawProgress, {
@@ -36,12 +40,22 @@ export default function HeroSection({
         restDelta: 0.001
     });
 
-    // Glass Mappings (0 to 1)
+    // Glass Mappings
     const glassY = useTransform(smoothProgress, [0, 1], ['0%', '-100%']);
-    
-    // Text Mappings (0.5 to 1) - Moves after glass is halfway up
     const textY = useTransform(smoothProgress, [0.5, 1], ['0%', '-100%']);
     const glassOpacity = useTransform(smoothProgress, [0.8, 1], [1, 0]);
+
+    // 🎭 置頂召喚邏輯：滾輪捲到最高處時，把標題呼叫下來
+    useEffect(() => {
+        const handleScrollToTop = () => {
+            if (window.scrollY < 10) {
+                rawProgress.set(0); // 強制展開
+                setShowContent(true);
+            }
+        };
+        window.addEventListener('scroll', handleScrollToTop, { passive: true });
+        return () => window.removeEventListener('scroll', handleScrollToTop);
+    }, [rawProgress]);
 
     // Handle Wheel Event
     useEffect(() => {
@@ -65,33 +79,24 @@ export default function HeroSection({
 
         const runLifecycle = async () => {
             if (!isMounted) return;
-
             setShowContent(false);
             rawProgress.set(1); 
-
             setBgImage(prev => {
                 const available = BACKGROUNDS.filter(b => b !== prev);
                 return available[Math.floor(Math.random() * available.length)];
             });
-
             await sleep(3000);
             if (!isMounted) return;
-
             await animate(rawProgress, 0, { duration: 0.8, ease: [0.16, 1, 0.3, 1] });
             if (!isMounted) return;
-
             setShowContent(true);
-
             await sleep(15000);
             if (!isMounted) return;
-
             setShowContent(false);
             await sleep(600);
             if (!isMounted) return;
-
             await animate(rawProgress, 1, { type: 'spring', stiffness: 100, damping: 20 });
             if (!isMounted) return;
-
             runLifecycle();
         };
 
@@ -103,10 +108,13 @@ export default function HeroSection({
     }, [rawProgress]);
 
     return (
-        <div className="relative z-10 min-h-screen flex flex-col">
+        <div className="relative z-10 min-h-screen flex flex-col overflow-hidden">
             {/* Background Image (Fixed Layer) */}
             <div className="fixed inset-0 z-0">
-                <div className="absolute inset-0 bg-slate-950/20 z-10" />
+                <motion.div 
+                    style={{ opacity: bgOverlayOpacity }}
+                    className="absolute inset-0 bg-slate-950 z-10 pointer-events-none"
+                />
                 <AnimatePresence mode='wait'>
                     <motion.div
                         key={bgImage}
@@ -139,9 +147,7 @@ export default function HeroSection({
                     transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
                     style={{ y: glassY, opacity: glassOpacity }}
                     className="absolute inset-0 z-0 backdrop-blur-3xl bg-gradient-to-br from-[#058a40]/60 via-[#01142F]/80 to-[#1e3a8a]/40 border-y border-white/30"
-                >
-                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent animate-glass-reflex pointer-events-none" />
-                </motion.div>
+                />
 
                 <motion.div 
                     initial={{ opacity: 0, y: 40 }}
@@ -201,16 +207,6 @@ export default function HeroSection({
                         <span>Conversion Boost</span>
                     </div>
                 </motion.div>
-            </div>
-
-            {/* Reveal Area (Spacer) */}
-            <div className="flex-1 relative" />
-
-            {/* Bottom Branding */}
-            <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-10 opacity-40">
-                <p className="text-white text-[10px] font-black tracking-[0.5em] uppercase text-center">
-                    AI Commander Enterprise
-                </p>
             </div>
         </div>
     );

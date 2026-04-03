@@ -182,9 +182,17 @@ export default function PricingModal({
                                         </div>
                                     ))}
                                 </div>
-                                <p className="text-white/30 text-xs font-bold">
-                                    需要大規模部署？請登入後與系統專員聯繫。
-                                </p>
+                                <div className="mt-8 pt-8 border-t border-white/10 w-full text-center space-y-4">
+                                    <p className="text-white/40 text-[10px] font-black uppercase tracking-[0.2em] leading-relaxed max-w-md mx-auto">
+                                        本平台交易由藍新金流提供 256-bit SSL 加密安全保護<br/>
+                                        服務由 <span className="text-white font-bold underline decoration-emerald-500/50">YC Ideas 奕暢創新工作室</span> 提供運作
+                                    </p>
+                                    <div className="flex justify-center gap-6 text-[10px] font-black text-white/30 uppercase tracking-widest">
+                                        <span>數位服務開通後恕不退款</span>
+                                        <span className="w-1 h-1 rounded-full bg-white/10" />
+                                        <span>客服信箱：info@ycideas.com</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </motion.div>

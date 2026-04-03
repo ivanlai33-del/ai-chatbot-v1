@@ -16,6 +16,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { WebhookEvent, messagingApi } from '@line/bot-sdk';
 import { supabase } from '@/lib/supabase';
 import { AIService } from '@/lib/services/AIService';
+import { FreemiumGuard } from '@/lib/services/FreemiumGuard';
 import OpenAI from 'openai';
 import * as crypto from 'crypto';
 
@@ -45,10 +46,12 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         const rawBody = await req.text();
         const signature = req.headers.get('x-line-signature') || '';
 
-        // ⚡ PARALLEL: Fetch DB config AND parse body simultaneously
-        const [{ data: config, error: configError }] = await Promise.all([
-            supabase.from('line_channel_configs').select('*').eq('id', configId).single()
-        ]);
+        // ⚡ 1. 取得 Bot 設定
+        const { data: config, error: configError } = await supabase
+            .from('line_channel_configs')
+            .select('*')
+            .eq('id', configId)
+            .single();
 
         if (configError || !config) {
             console.error('[TIER1:LineWebhook] Config not found:', configId);
@@ -65,6 +68,22 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         const body = JSON.parse(rawBody);
         const events: WebhookEvent[] = body.events || [];
         if (events.length === 0) return NextResponse.json({ status: 'ok' });
+
+        // 🛡️ 2. FreemiumGuard — 三道防護閘門（終身額度 + 每日速率 + 長度截斷）
+        const guardResult = await FreemiumGuard.check(config.user_id);
+
+        if (!guardResult.allowed) {
+            console.log(`[TIER1:LineWebhook][${configId}] 🛑 Blocked: ${guardResult.reason} (used: ${guardResult.lifetimeUsed})`);
+            const event = events[0] as any;
+            if (event?.replyToken) {
+                const client = new messagingApi.MessagingApiClient({ channelAccessToken: config.channel_access_token });
+                await client.replyMessage({
+                    replyToken: event.replyToken,
+                    messages: [{ type: 'text', text: FreemiumGuard.getBlockMessage(guardResult.reason, guardResult.lifetimeUsed) }]
+                });
+            }
+            return NextResponse.json({ status: 'ok' });
+        }
 
         console.log(`[TIER1:LineWebhook][${configId}] Processing ${events.length} event(s)`);
         await processEvents(configId, config, events);
@@ -111,17 +130,21 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
                 });
             }
 
+            // 🛡️ 第 3 道防護：訊息長度截斷（防止 Token 炸彈攻擊）
+            const safeMessage = FreemiumGuard.sanitizeInput(userMessage);
+
             // ⚡ DIRECT OpenAI call — skip AIService overhead:
-            //    - No Moderation API (+300ms saved)
-            //    - No stock_radar_members DB query (+100ms saved)
-            //    - No dynamic tools DB query (+200ms saved)
-            const aiResponse = await callOpenAIDirect(systemPrompt, userMessage);
+            const aiResponse = await callOpenAIDirect(systemPrompt, safeMessage);
 
             await client.replyMessage({
                 replyToken: event.replyToken,
                 messages: [{ type: 'text', text: aiResponse }]
             });
             console.log(`[TIER1:LineWebhook][${configId}] Reply sent.`);
+
+            // 🧾 計費記帳 (Usage Logic)
+            const UsageService = (await import('@/lib/services/UsageService')).UsageService;
+            UsageService.incrementUsage(config.user_id, 0); // 這裡不傳 tokens 是為了節省一次 token 計算
 
             // Save chat log (non-blocking)
             const isLead = /09\d{2}[-\s]?\d{3}[-\s]?\d{3}|(預約|報名|想買|電話)/i.test(userMessage + aiResponse);

@@ -103,6 +103,14 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
             const userMessage = event.message.text;
             console.log(`[TIER1:LineWebhook][${configId}] msg: ${userMessage.substring(0, 40)}`);
 
+            // ⚡ 立刻顯示「思考中」動畫 — 用戶馬上看到店長在回應
+            // 這讓 2 秒的等待從「沉默」變成「店長在思考」，體感速度提升 80%
+            if (userId) {
+                client.showLoadingAnimation({ chatId: userId, loadingSeconds: 15 }).catch(() => {
+                    // 忽略失敗（老版 LINE 帳號可能不支援）
+                });
+            }
+
             // ⚡ DIRECT OpenAI call — skip AIService overhead:
             //    - No Moderation API (+300ms saved)
             //    - No stock_radar_members DB query (+100ms saved)

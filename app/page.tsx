@@ -6,6 +6,7 @@ import HeroSection from '@/components/landing/HeroSection';
 import PricingModal from '@/components/landing/PricingModal';
 import LandingHeader from '@/components/landing/LandingHeader';
 import LandingFeatures from '@/components/landing/LandingFeatures';
+import LandingFooter from '@/components/landing/LandingFooter';
 import { getPricingPlans, landingJsonLd } from '@/config/landing_config';
 
 export default function Home() {
@@ -62,12 +63,7 @@ export default function Home() {
                 onAction={handleAction}
             />
             
-            {/* Footer-like section */}
-            <footer className="py-12 border-t border-white/5 text-center">
-                <p className="text-slate-500 text-sm">
-                    © 2026 LINE AI Assistant. All rights reserved.
-                </p>
-            </footer>
+            <LandingFooter />
         </main>
     );
 }

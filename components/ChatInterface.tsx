@@ -58,6 +58,8 @@ export default function ChatInterface({ isMaster = false, isSaaS = false, initia
                         setSelectedPlan({ name, price });
                         addAiMessage(`您選擇了 **${name}** (${price})。請問老闆怎麼稱呼？或是直接點擊下方 LINE 登入快速完成身分綁定：`, 'checkout');
                     }}
+                    lineUserId={lineUserId}
+                    initiateLineLogin={initiateLineLogin}
                 />
             )}
 

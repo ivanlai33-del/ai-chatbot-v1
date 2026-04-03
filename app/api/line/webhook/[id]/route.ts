@@ -118,16 +118,14 @@ async function processEvents(
 
                 console.log(`[TIER1:LineWebhook][${configId}] Reply sent successfully.`);
 
-                // Save to Chat Logs (async, non-blocking)
+                // Save to Chat Logs (async, non-blocking — does not affect reply)
                 const isLead = /09\d{2}[-\s]?\d{3}[-\s]?\d{3}|(預約|報名|想買|電話)/i.test(userMessage + aiResult.message);
                 supabase.from('chat_logs').insert({
                     config_id: configId,
                     user_id: config.user_id,
                     line_user_id: userId,
                     user_message: userMessage,
-                    ai_response: aiResult.message,
                     is_lead: isLead,
-                    metadata: aiResult.metadata,
                     created_at: new Date().toISOString()
                 }).then(({ error }) => {
                     if (error) console.error(`[TIER1:LineWebhook][${configId}] Chat log save failed:`, error.message);

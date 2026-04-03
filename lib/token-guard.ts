@@ -35,8 +35,11 @@ export async function logTokenUsage(supabase: any, botId: string | 'master', usa
         cost_usd: usage.cost_estimate
       }
     ]);
-    if (error) console.error('Token Logging Failed:', error.message);
+    // Silently ignore "table not found" — token_usage table may not be created yet
+    if (error && !error.message.includes('does not exist') && !error.message.includes('schema cache')) {
+      console.error('Token Logging Failed:', error.message);
+    }
   } catch (e) {
-    console.error('Token Guard Error:', e);
+    // Non-critical — never crash the bot over logging
   }
 }

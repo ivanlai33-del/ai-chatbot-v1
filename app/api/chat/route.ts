@@ -459,20 +459,27 @@ export async function POST(req: NextRequest) {
             });
         }
 
-        // ---[ 🛠️ Final Output Construction ]---
-        // 將系統指令標籤從給人看的回覆中剔除
-        const cleanReply = message.replace(/\[VIEW_DOJO\]|\[SHOW_PLANS\]|\[SHOW_CHECKOUT\]/gi, '').trim();
+        const showPricing = message.includes('[SHOW_PLANS]') || message.includes('[SHOW_PRICING]') || metadata.action === 'SHOW_PLANS';
+        const showCheckout = message.includes('[SHOW_CHECKOUT]');
+        const showDojo = message.includes('[VIEW_DOJO]') || metadata.action === 'VIEW_DOJO';
+        const showHub = metadata.action === 'VIEW_HUB';
+
+        // 清除所有系統標籤，確保對話視窗乾淨
+        const cleanReply = message.replace(/\[VIEW_DOJO\]|\[SHOW_PLANS\]|\[SHOW_CHECKOUT\]|\[SHOW_PRICING\]/gi, '').trim();
 
         const finalResponse = {
-            reply: cleanReply,                                // 給人看的純淨文字
-            message: message,                                  // 原始訊息（含標籤供前端邏輯判斷）
-            type: message.includes('[SHOW_PLANS]') ? 'pricing' : 
-                  message.includes('[SHOW_CHECKOUT]') ? 'checkout' : 
-                  message.includes('[VIEW_DOJO]') ? 'dojo_preview' : 'text',
+            reply: cleanReply,
+            message: message,
+            type: showPricing ? 'pricing' : 
+                  showCheckout ? 'checkout' : 
+                  showDojo ? 'dojo_preview' : 
+                  showHub ? 'hub_preview' : 'text',
             metadata: {
-                action: message.includes('[SHOW_PLANS]') ? 'SHOW_PLANS' : 
-                        message.includes('[SHOW_CHECKOUT]') ? 'SHOW_CHECKOUT' :
-                        message.includes('[VIEW_DOJO]') ? 'VIEW_DOJO' : undefined
+                ...metadata,
+                action: showPricing ? 'SHOW_PLANS' : 
+                        showCheckout ? 'SHOW_CHECKOUT' :
+                        showDojo ? 'VIEW_DOJO' :
+                        showHub ? 'VIEW_HUB' : metadata.action
             }
         };
 

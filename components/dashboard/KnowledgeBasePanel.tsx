@@ -79,7 +79,7 @@ export default function KnowledgeBasePanel({
             const data = await res.json();
             if (data.success) {
                 alert('店家已從智庫移除並釋放。');
-                window.location.reload(); // Hard refresh to reset the 5-slots state
+                window.location.reload(); // Hard refresh to reset the bot selector slots state
             }
         } catch (e) {
             console.error("Delete Error:", e);
@@ -185,8 +185,8 @@ export default function KnowledgeBasePanel({
                     </div>
                 </div>
 
-                {/* Bot Selector */}
-                <BotSelector bots={bots} selectedBotId={selectedBotId} setSelectedBotId={setSelectedBotId} />
+                {/* Bot Selector — 槽位數量依方案 tier 動態顯示 */}
+                <BotSelector bots={bots} selectedBotId={selectedBotId} setSelectedBotId={setSelectedBotId} tier={planLevel} />
 
                 {/* Pending warning */}
                 {bots.find(b => b.id === selectedBotId)?.status === 'pending' && (

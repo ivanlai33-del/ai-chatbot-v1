@@ -2,17 +2,21 @@
 
 import React from 'react';
 import { Plus, Bot } from 'lucide-react';
+import { getStoreLimit } from '@/lib/config/pricing';
 
 interface BotSelectorProps {
     bots: any[];
     selectedBotId: string | null;
     setSelectedBotId: (id: string | null) => void;
     onAddBot?: () => void;
+    /** 目前用戶的方案 tier（0=免費, 1=入門, 2=單店...6=旗艦Pro）預設 6（顯示最大欄位數）*/
+    tier?: number;
 }
 
-export default function BotSelector({ bots, selectedBotId, setSelectedBotId }: BotSelectorProps) {
-    // Exactly 5 slots for the PLG Strategy
-    const slots = Array.from({ length: 5 }, (_, i) => bots[i] || null);
+export default function BotSelector({ bots, selectedBotId, setSelectedBotId, tier = 6 }: BotSelectorProps) {
+    // 依方案 tier 動態決定槽位數（從 pricing.ts 讀取，不寫死）
+    const maxSlots = getStoreLimit(tier);
+    const slots = Array.from({ length: maxSlots }, (_, i) => bots[i] || null);
 
     return (
         <div className="flex flex-nowrap items-center gap-3 pt-2 w-full overflow-x-auto pb-2 no-scrollbar">

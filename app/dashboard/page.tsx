@@ -28,6 +28,7 @@ export default function DashboardPage() {
     const [planLevel, setPlanLevel] = useState(0);
     const [activeTab, setActiveTab ] = useState<DashboardTabId>('brand');
     const [showApiKeysModal, setShowApiKeysModal] = useState(false);
+    const [isLoadingAuth, setIsLoadingAuth] = useState(true);
 
     // Business Logic Hooks
     const { bots, selectedBotId, setSelectedBotId } = useBotList();
@@ -42,21 +43,41 @@ export default function DashboardPage() {
             return match ? decodeURIComponent(match.split('=')[1]) : '';
         };
         const uid = getCookie('line_user_id') || localStorage.getItem('line_user_id') || '';
+        
+        // 🛡️ 鋼鐵守衛：沒登入直接踢走
+        if (!uid) {
+            console.warn("Unauthorized access - Redirecting to home");
+            window.location.href = '/?require_login=true';
+            return;
+        }
+
         setLineUserId(uid);
+        setIsLoadingAuth(false);
         setUserName(getCookie('line_user_name') || localStorage.getItem('line_user_name') || '會員');
         setUserPicture(getCookie('line_user_picture') || localStorage.getItem('line_user_picture') || '');
         
-        if (uid) {
-            fetch(`/api/platform/user?lineUserId=${uid}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success && data.user) {
-                        setPlanLevel(data.user.plan_level || 0);
-                    }
-                })
-                .catch(err => console.error("Sync Error:", err));
-        }
+        // Fetch plan and other data
+        fetch(`/api/platform/user?lineUserId=${uid}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && data.user) {
+                    setPlanLevel(data.user.plan_level || 0);
+                }
+            })
+            .catch(err => console.error("Sync Error:", err));
     }, []);
+
+    // 🛑 在驗證完成前，不透露任何內容
+    if (isLoadingAuth) {
+        return (
+            <div className="h-screen w-screen flex items-center justify-center bg-slate-50">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
+                    <p className="text-sm font-black text-slate-400 uppercase tracking-widest">身分驗證中...</p>
+                </div>
+            </div>
+        );
+    }
 
     const logout = () => {
         globalLogout();

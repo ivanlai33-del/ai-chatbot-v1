@@ -7,7 +7,8 @@ import {
     LineChart, 
     Target, 
     HeartHandshake,
-    Receipt
+    Receipt,
+    ShieldX
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
@@ -20,6 +21,7 @@ const MarketIntelligenceView = dynamic(() => import('@/components/console/Market
 const BusinessCollaborationView = dynamic(() => import('@/components/console/BusinessCollaborationView'), { ssr: false });
 const OwnerFeedbackView = dynamic(() => import('@/components/console/OwnerFeedbackView'), { ssr: false });
 const BillingInvoicesView = dynamic(() => import('@/components/console/BillingInvoicesView'), { ssr: false });
+const BlacklistPanel = dynamic(() => import('@/components/console/BlacklistPanel'), { ssr: false });
 
 export interface ConsoleWidget {
     id: string;
@@ -52,6 +54,14 @@ export const WIDGET_REGISTRY: ConsoleWidget[] = [
         label: '財務與發票',
         icon: Receipt,
         component: BillingInvoicesView,
+        status: 'new',
+        permission: 'admin'
+    },
+    {
+        id: 'blacklist',
+        label: '🛡️ 黑名單管理',
+        icon: ShieldX,
+        component: BlacklistPanel,
         status: 'new',
         permission: 'admin'
     },

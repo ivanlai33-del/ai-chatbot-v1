@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import crypto from 'crypto';
+import { getStoreLimit } from '@/lib/config/pricing';
 
 export async function POST(req: NextRequest) {
     const authHeader = req.headers.get('Authorization');
@@ -21,10 +22,10 @@ export async function POST(req: NextRequest) {
             .eq('id', userId)
             .single();
         
-        const planLevel = userData?.plan_level || 0; // 0=Free, 1=Lite, 2=Company
-        // PLG Trial Strategy: Free Tier (0) gets 5 trial slots. Company (2+) gets 5 slots. Lite (1) gets 1 slot.
-        const botLimit = planLevel === 1 ? 1 : 5;
-        console.log(`[Setup-Session] User: ${userId}, Plan: ${planLevel}, Limit: ${botLimit}`);
+        const planLevel = userData?.plan_level || 0;
+        // 從 pricing.ts 積木讀取此方案的店數上限（不寫死）
+        const effectiveBotLimit = getStoreLimit(planLevel);
+        console.log(`[Setup-Session] User: ${userId}, Plan: ${planLevel}, Limit: ${effectiveBotLimit}`);
 
         // 3. Handle Resume vs New (Deterministic ID Integration)
         const { searchParams } = new URL(req.url);
@@ -81,7 +82,7 @@ export async function POST(req: NextRequest) {
         
         if (countErr) throw countErr;
         
-        let effectiveLimit = 5; 
+        let effectiveLimit = effectiveBotLimit;
         if ((count || 0) >= effectiveLimit) {
             // Find LATEST pending as last resort
             const { data: pending } = await supabase

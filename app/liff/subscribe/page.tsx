@@ -110,31 +110,36 @@ export default function LiffSubscribePage() {
                   viewport={{ once: true, margin: "-100px" }}
                   transition={{ delay: idx * 0.1 }}
                 >
-                  <LiffPlanCard
-                    name={plan.name}
-                    price={plan.price}
-                    originalPrice={plan.originalPrice}
-                    period={plan.period}
-                    description={plan.description}
-                    features={plan.features}
-                    icon={plan.icon}
-                    color={plan.color}
-                    popular={plan.popular}
-                    onSelect={() => {
-                      if (plan.name.includes('個人') && activeBotsCount > 1) {
-                        setShowDowngradeAlert(true);
-                        return;
-                      }
-                      const linkObj = PLAN_PAYMENT_LINKS[plan.name as keyof typeof PLAN_PAYMENT_LINKS];
-                      const finalLink = linkObj ? (billingCycle === 'monthly' ? linkObj.monthly : linkObj.yearly) : null;
-                      
-                      if (finalLink) {
-                        window.location.href = finalLink;
-                      } else {
-                        alert(`即將為您開通：${plan.name}\n金額：NT$ ${plan.price}`);
-                      }
-                    }}
-                  />
+                    <LiffPlanCard
+                        name={plan.name}
+                        price={plan.price}
+                        originalPrice={plan.originalPrice}
+                        period={plan.period}
+                        description={plan.description}
+                        features={plan.features}
+                        icon={plan.icon}
+                        color={plan.color}
+                        popular={plan.popular}
+                        onSelect={() => {
+                          // 🔐 身份守衛：確認 LIFF 已取得 Profile 才允許進入付費
+                          if (!profile?.userId) {
+                            alert('請先完成 LINE 登入驗證，系統才能記錄您的訂閱身份。\n\n請關閉後重新從 LINE 打開此頁面。');
+                            return;
+                          }
+                          if (plan.name.includes('個人') && activeBotsCount > 1) {
+                            setShowDowngradeAlert(true);
+                            return;
+                          }
+                          const linkObj = PLAN_PAYMENT_LINKS[plan.name as keyof typeof PLAN_PAYMENT_LINKS];
+                          const finalLink = linkObj ? (billingCycle === 'monthly' ? linkObj.monthly : linkObj.yearly) : null;
+                          
+                          if (finalLink) {
+                            window.location.href = finalLink;
+                          } else {
+                            alert(`即將為您開通：${plan.name}\n金額：NT$ ${plan.price}`);
+                          }
+                        }}
+                      />
                 </motion.div>
               ))}
             </div>

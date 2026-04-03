@@ -7,11 +7,12 @@ export const getPricingPlans = (billingCycle: 'monthly' | 'yearly') => [
         price: billingCycle === 'monthly' ? '499' : '5489',
         originalPrice: billingCycle === 'monthly' ? '999' : '9990',
         period: billingCycle === 'monthly' ? '/月' : '/年',
-        description: '限時前 500 名：原價 $999 優惠中',
+        description: '專為老闆打造的 24 小時數位分身',
         features: [
             '1 組 AI 店長正式上線服役',
             '每月 5,000 則智慧對話',
             '免 OpenAI API Key',
+            '🛡️ 防護安全盾：內建四大資安守護',
             '🤖 智慧文字客服',
             '🎯 產品/服務精準介紹',
             '🕒 24小時自動回訊',
@@ -25,11 +26,12 @@ export const getPricingPlans = (billingCycle: 'monthly' | 'yearly') => [
         price: billingCycle === 'monthly' ? '1199' : '13189',
         originalPrice: billingCycle === 'monthly' ? '1999' : '19188',
         period: billingCycle === 'monthly' ? '/月' : '/年',
-        description: '限時前 500 名：原價 $1999 優惠中',
+        description: '跨店多角管理，生意爆量也能遊刃有餘',
         features: [
             '可串接 5 組【LINE 官方帳號】AI 店長',
             '每月 35,000 則對話 (共享額度)',
-            '各 AI 店長專屬獨立智庫',
+            '🧠 店長智庫專屬打造',
+            '🛡️ 防護安全盾：內建四大資安守護',
             '📁 支援 PDF、DOC 文件學習',
             '📜 每組店長限額 5 份知識文件',
             'GPT-4o 旗艦級 AI 大腦'

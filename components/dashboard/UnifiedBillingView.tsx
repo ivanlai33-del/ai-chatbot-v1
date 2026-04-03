@@ -49,7 +49,7 @@ const PLANS: PlanConfig[] = [
             originalMonthly: 999,
             originalYearly: 9990
         },
-        features: ["基礎 AI 回覆", "Line ID 自動擷取", "基礎數據儀表板", "24/7 客服自動化"],
+        features: ["專為老闆打造的 24 小時數位分身", "1 組 AI 店長正式上線服役", "防護安全盾：內建四大資安守護", "24/7 客服自動化", "品牌 DNA 個性設定"],
         color: "text-[#06C755]",
         bgColor: "bg-emerald-50",
         shadowColor: "shadow-emerald-500/10"
@@ -63,7 +63,7 @@ const PLANS: PlanConfig[] = [
             originalMonthly: 1999,
             originalYearly: 19188
         },
-        features: ["RAG 專屬知識庫完全解鎖", "進階營運戰情室", "無限數據儲存", "優先技術支援", "自定義 AI 人格"],
+        features: ["跨店多角管理，生意爆量遊刃有餘", "可串接 5 組 LINE 帳號店長", "店長智庫專屬打造", "防護安全盾：企業級資安", "GPT-4o 旗艦級大腦"],
         color: "text-amber-600",
         bgColor: "bg-amber-50",
         shadowColor: "shadow-amber-500/20"

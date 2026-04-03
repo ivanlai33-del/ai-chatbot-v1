@@ -26,13 +26,15 @@ export const PricingWidget: React.FC<PricingWidgetProps> = ({ billingCycle, onTo
             tag: billingCycle === 'monthly' ? '限時 5 折優惠' : '買 11 個月，送 1 個月！',
             tagColor: 'text-emerald-500 bg-emerald-50',
             features: [
+                '🚀 專為老闆打造的 24 小時數位分身',
                 '1 組 AI 店長正式上線服役',
                 '每月 5,000 則智慧對話',
                 '免 OpenAI API Key',
                 '🤖 智慧文字客服',
                 '🎯 產品/服務精準介紹',
                 '🕒 24小時自動回訊',
-                '🧬 品牌 DNA 個性設定'
+                '🧬 品牌 DNA 個性設定',
+                '🛡️ 防護安全盾：內建四大資安守護'
             ],
             payUrl: billingCycle === 'monthly' ? 'https://p.ecpay.com.tw/A06FE6B' : 'https://p.ecpay.com.tw/723E398'
         },
@@ -45,12 +47,14 @@ export const PricingWidget: React.FC<PricingWidgetProps> = ({ billingCycle, onTo
             tagColor: 'text-amber-500 bg-amber-50',
             popular: true,
             features: [
+                '👑 跨店多角管理，生意爆量也遊刃有餘',
                 '可串接 5 組 【LINE 官方帳號】 AI 店長',
                 '每月 35,000 則對話 (共享額度)',
-                '各 AI 店長專專屬獨立智庫',
+                '🧠 店長智庫專屬打造',
                 '📁 支援 PDF、DOC 文件學習',
                 '📜 每組店長限額 5 份知識文件',
-                '🚀 GPT-4o 旗艦級 AI 大腦'
+                'GPT-4o 旗艦級 AI 大腦',
+                '🛡️ 防護安全盾：內建四大資安守護'
             ],
             payUrl: billingCycle === 'monthly' ? 'https://p.ecpay.com.tw/FFD88CA' : 'https://p.ecpay.com.tw/C1E8916'
         }

@@ -307,6 +307,25 @@ ${bot.dynamic_context ? `\n【店長今日動態公告】：${bot.dynamic_contex
         { bot_id: bot.id, user_id: lineUserId, role: 'ai', content: aiResponse }
     ]).then(({ error }) => { if (error) logger.error('Chat log insert failed', error); });
 
+    // 💎 強力版(1199)：自動擷取預約意圖
+    const is1199Plan = (bot.selected_plan || '').includes('1199') || (bot.selected_plan || '').includes('強力');
+    if (is1199Plan) {
+        const reservationKeywords = ['預約', '訂位', '我要訂', '我想訂', '幫我訂', '我要預訂', '可以預訂'];
+        const hasReservationIntent = reservationKeywords.some(kw => userMessage.includes(kw));
+        if (hasReservationIntent) {
+            const dateMatch = userMessage.match(/([\u4e00-\u9fa5]+[\d\/\-]*[日期天期週月小時午前午後]+[\u4e00-\u9fa5\d\:半]*)|(\d{1,2}[\/\-]\d{1,2})/)?.[0] || null;
+            const serviceMatch = userMessage.match(/[預訂我要訂幫我訂想訂]+([\u4e00-\u9fa5]{2,10})/)?.[1] || null;
+            supabase.from('reservations').insert({
+                bot_id: bot.id,
+                line_user_id: lineUserId,
+                requested_date: dateMatch,
+                service_type: serviceMatch,
+                note: userMessage,
+                status: 'pending'
+            }).then(({ error }) => { if (error) logger.error('Reservation insert failed', error); });
+        }
+    }
+
     await safeReply(lineClient, replyToken, aiResponse || '收到您的訊息！', logger);
 }
 

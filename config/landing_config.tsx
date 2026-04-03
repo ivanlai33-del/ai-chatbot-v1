@@ -4,7 +4,7 @@ import React from 'react';
 export const getPricingPlans = (billingCycle: 'monthly' | 'yearly') => [
     {
         name: '個人店長版',
-        price: billingCycle === 'monthly' ? '499' : '5500',
+        price: billingCycle === 'monthly' ? '499' : '4990',
         originalPrice: billingCycle === 'monthly' ? '999' : '9990',
         period: billingCycle === 'monthly' ? '/月' : '/年',
         description: '限時前 500 名：原價 $999 優惠中',

@@ -135,11 +135,11 @@ export default function PricingModal({
                                             key={plan.name}
                                             className={cn(
                                                 "relative p-8 rounded-[32px] border-2 transition-all flex flex-col gap-6 bg-white/5 backdrop-blur-sm",
-                                                plan.popular ? "border-emerald-500/50 shadow-[0_0_40px_rgba(16,185,129,0.15)] bg-emerald-500/5" : "border-white/10"
+                                                plan.popular ? "border-amber-500/60 shadow-[0_0_40px_rgba(245,158,11,0.15)] bg-amber-500/5" : "border-white/10"
                                             )}
                                         >
                                             {plan.popular && (
-                                                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-emerald-500 text-white text-[10px] font-black rounded-full uppercase tracking-widest shadow-lg">
+                                                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-amber-500 text-white text-[10px] font-black rounded-full uppercase tracking-widest shadow-lg">
                                                     強力熱門推薦
                                                 </div>
                                             )}
@@ -150,7 +150,10 @@ export default function PricingModal({
                                                 <div className="text-right">
                                                     <span className="text-white/30 line-through text-xs block">原價 {plan.originalPrice}</span>
                                                     <div className="flex items-baseline gap-1">
-                                                        <span className="text-3xl font-black text-white">$ {plan.price}</span>
+                                                        <span className={cn(
+                                                            "text-3xl font-black",
+                                                            plan.popular ? "text-amber-400" : "text-emerald-400"
+                                                        )}>$ {plan.price}</span>
                                                         <span className="text-white/40 text-sm font-bold">{plan.period}</span>
                                                     </div>
                                                 </div>
@@ -169,8 +172,8 @@ export default function PricingModal({
                                                 className={cn(
                                                     "w-full py-4 rounded-2xl font-black transition-all flex items-center justify-center gap-2 group",
                                                     plan.popular 
-                                                        ? "bg-[#06C755] text-white hover:bg-[#05b34c] shadow-[0_10px_20px_rgba(6,199,85,0.2)]" 
-                                                        : "bg-white/5 text-white hover:bg-white/10 border border-white/10"
+                                                        ? "bg-gradient-to-r from-amber-500 to-amber-600 text-white hover:from-amber-600 hover:to-amber-700 shadow-[0_10px_20px_rgba(245,158,11,0.25)]" 
+                                                        : "bg-[#06C755] text-white hover:bg-[#05b34c] shadow-[0_10px_20px_rgba(6,199,85,0.2)]"
                                                 )}
                                             >
                                                 請用 Line 登入

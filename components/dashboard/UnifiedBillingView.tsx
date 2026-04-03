@@ -61,7 +61,7 @@ const PLANS: PlanConfig[] = [
             monthly: 1199,
             yearly: 11990,
             originalMonthly: 1999,
-            originalYearly: 19990
+            originalYearly: 19188
         },
         features: ["RAG 專屬知識庫完全解鎖", "進階營運戰情室", "無限數據儲存", "優先技術支援", "自定義 AI 人格"],
         color: "text-amber-600",

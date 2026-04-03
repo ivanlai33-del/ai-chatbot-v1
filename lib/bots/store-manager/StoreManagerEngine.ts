@@ -46,6 +46,7 @@ export async function processStoreEvents(
     events: WebhookEvent[]
 ): Promise<void> {
     const logger = new BotLogger(TIER, botId);
+    logger.info(`Processing ${events.length} event(s)`);
 
     // 1. 取得 Bot 設定
     const { data: bot, error: botError } = await globalSupabase
@@ -55,30 +56,52 @@ export async function processStoreEvents(
         .single();
 
     if (botError || !bot) {
-        logger.error('Bot not found', botError);
+        logger.error('Bot not found in DB', botError);
         return;
     }
+    logger.info(`Bot found: ${bot.store_name}, status=${bot.status}`);
 
     if (bot.status !== 'active') {
         logger.warn(`Bot is ${bot.status}, dropping events`);
         return;
     }
 
-    // 2. 建立客戶端
+    // 2. 解密憑證（加診斷 log）
+    const accessToken = decrypt(bot.line_channel_access_token);
+    const channelSecret = decrypt(bot.line_channel_secret);
+
+    if (!accessToken) {
+        logger.error('DECRYPT FAILED: line_channel_access_token is empty after decrypt. Check ENCRYPTION_KEY env var.');
+        return;
+    }
+    if (!channelSecret) {
+        logger.error('DECRYPT FAILED: line_channel_secret is empty after decrypt. Check ENCRYPTION_KEY env var.');
+        return;
+    }
+    logger.info(`Credentials decrypted OK (token starts: ${accessToken.substring(0, 8)}...)`);
+
     const lineConfig = {
-        channelAccessToken: decrypt(bot.line_channel_access_token),
-        channelSecret: decrypt(bot.line_channel_secret),
+        channelAccessToken: accessToken,
+        channelSecret: channelSecret,
     };
     const decryptedUserKey = bot.openai_api_key ? decrypt(bot.openai_api_key) : '';
     const openaiApiKey = decryptedUserKey || process.env.MASTER_OPENAI_KEY || process.env.OPENAI_API_KEY;
 
+    if (!openaiApiKey) {
+        logger.error('No OpenAI API key available (bot key empty and no MASTER_OPENAI_KEY env var)');
+        return;
+    }
+
+    // 3. 建立客戶端
     const lineClient = new Client(lineConfig);
     const openai = new OpenAI({ apiKey: openaiApiKey });
+    logger.info(`Clients created, processing ${events.length} event(s)...`);
 
-    // 3. 逐一處理事件
+    // 4. 逐一處理事件
     for (const event of events) {
         await handleSingleEvent(event, bot, lineClient, openai, globalSupabase, logger);
     }
+    logger.info('All events processed.');
 }
 
 // ─── 單一事件處理器 ───────────────────────────────────────────

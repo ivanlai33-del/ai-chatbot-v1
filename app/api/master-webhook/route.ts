@@ -45,7 +45,7 @@ const getPricingFlexMessage = () => {
             createCard({ title: "成長多店", subtitle: "最多 3 店 / 月 5000 則", price: "1,299", period: "/ 月", color: "#4A90E2", features: ["多店統一管理", "各店獨立智庫"], url: "https://bot.ycideas.com" }),
             createCard({ title: "連鎖專業", subtitle: "最多 6 店 / 月 10000 則", price: "2,490", period: "/ 月", color: "#7B61FF", features: ["月度分析報表", "優先客服支援"], url: "https://bot.ycideas.com" }),
             createCard({ title: "旗艦 Lite", subtitle: "最多 3 店 / 15,000 則", price: "4,990", period: "起", color: "#F5A623", badge: "🔥 企業首選", badgeColor: "#F5A623", features: ["超量彈性計費", "最優先技術支援"], url: "https://bot.ycideas.com" }),
-            createCard({ title: "旗艦 Pro", subtitle: "最多 6 店 / 30,000 則", price: "7,990", period: "起", color: "#333333", badge: "💎 旗艦之選", badgeColor: "#333333", features: ["核心源碼級支援", "專屬伺服器部署"], url: "https://bot.ycideas.com" })
+            createCard({ title: "旗艦 Pro", subtitle: "最多 6 店 / 30,000 則", price: "7,990", period: "起", color: "#FF5E00", badge: "💎 旗艦之選", badgeColor: "#FF5E00", features: ["核心源碼級支援", "專屬伺服器部署"], url: "https://bot.ycideas.com" })
         ]}
     };
 };

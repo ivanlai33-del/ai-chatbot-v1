@@ -106,7 +106,7 @@ export default function PricingModal({
                         </div>
 
                         {/* 右側內容 */}
-                        <div className="flex-1 p-6 md:p-10 overflow-y-auto">
+                        <div className="flex-1 p-6 md:p-10 overflow-y-auto scrollbar-dark">
                             {/* 月付/年付切換 */}
                             <div className="flex justify-center mb-8">
                                 <div className="flex p-1.5 bg-white/5 rounded-2xl border border-white/10">

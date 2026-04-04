@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { User, RotateCcw, LogOut, ChevronDown, CreditCard, Sparkles, Rocket, Zap, Crown, LayoutDashboard, Store, Copy } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import { PRICING_PLANS, getPlanByTier } from '@/lib/config/pricing';
 
 interface ChatHeaderProps {
     lineUserId: string | null;
@@ -37,8 +38,9 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
     }, []);
 
     const getPlanLabel = (level: number) => {
-        if (level === 2) return { name: "公司強力店長版", color: "bg-amber-100 text-amber-700" };
-        if (level === 1) return { name: "個人店長版 Lite", color: "bg-indigo-100 text-indigo-700" };
+        const plan = getPlanByTier(level);
+        if (level >= 5) return { name: plan?.name, color: "bg-amber-100 text-amber-700" };
+        if (level >= 1) return { name: plan?.name, color: "bg-indigo-100 text-indigo-700" };
         return { name: "普通會員", color: "bg-emerald-50 text-emerald-600" };
     };
 
@@ -146,7 +148,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                                                                     >
                                                                         <div className="flex items-center gap-3">
                                                                             <Crown className="w-4 h-4 text-amber-500" />
-                                                                            <span className="font-bold text-[13px]">升級年費 (省 2 個月)</span>
+                                                                            <span className="font-bold text-[13px]">升級年費 (送 1 個月)</span>
                                                                         </div>
                                                                         <ChevronDown className="w-4 h-4 -rotate-90 text-amber-400" />
                                                                     </button>
@@ -201,35 +203,36 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                                                             </div>
                                                             
                                                             <div className="space-y-3">
-                                                                {planLevel === 0 && (
+                                                                {planLevel < 2 && (
+                                                                    <button 
+                                                                        onClick={() => { onUpgrade(2); setIsMenuOpen(false); }}
+                                                                        className="w-full p-4 rounded-2xl border-2 border-amber-100 hover:border-amber-500 hover:bg-amber-50/30 transition-all text-left flex items-start gap-4 group"
+                                                                    >
+                                                                        <div className="p-2 rounded-xl bg-amber-100 text-amber-600 group-hover:bg-amber-500 group-hover:text-white transition-all">
+                                                                            <Sparkles className="w-5 h-5" />
+                                                                        </div>
+                                                                        <div>
+                                                                            <p className="font-black text-zinc-800 text-sm">{PRICING_PLANS.solo.name}</p>
+                                                                            <p className="text-[10px] text-zinc-400 mt-0.5">${PRICING_PLANS.solo.pricing.monthly} / 月 ・ {PRICING_PLANS.solo.tagline}</p>
+                                                                            <div className="mt-2 text-[11px] font-black text-amber-600 uppercase tracking-widest">{planLevel === 1 ? '補差價升級 →' : '立刻訂閱 →'}</div>
+                                                                        </div>
+                                                                    </button>
+                                                                )}
+                                                                {planLevel < 1 && (
                                                                     <button 
                                                                         onClick={() => { onUpgrade(1); setIsMenuOpen(false); }}
-                                                                        className="w-full p-4 rounded-2xl border-2 border-indigo-100 hover:border-indigo-500 hover:bg-indigo-50/30 transition-all text-left flex items-start gap-4 group"
+                                                                        className="w-full p-4 rounded-2xl border-2 border-indigo-100 hover:border-indigo-500 hover:bg-indigo-50/30 transition-all text-left flex items-start gap-4 group mt-3"
                                                                     >
                                                                         <div className="p-2 rounded-xl bg-indigo-100 text-indigo-600 group-hover:bg-indigo-500 group-hover:text-white transition-all">
                                                                             <Zap className="w-5 h-5" />
                                                                         </div>
                                                                         <div>
-                                                                            <p className="font-black text-zinc-800 text-sm">個人店長版 Lite</p>
-                                                                            <p className="text-[10px] text-zinc-400 mt-0.5">$499 / 月 ・ 啟動 AI 行銷</p>
+                                                                            <p className="font-black text-zinc-800 text-sm">{PRICING_PLANS.starter.name}</p>
+                                                                            <p className="text-[10px] text-zinc-400 mt-0.5">${PRICING_PLANS.starter.pricing.monthly} / 月 ・ {PRICING_PLANS.starter.tagline}</p>
                                                                             <div className="mt-2 text-[11px] font-black text-indigo-600">立刻訂閱 →</div>
                                                                         </div>
                                                                     </button>
                                                                 )}
-
-                                                                <button 
-                                                                    onClick={() => { onUpgrade(2); setIsMenuOpen(false); }}
-                                                                    className="w-full p-4 rounded-2xl border-2 border-amber-100 hover:border-amber-500 hover:bg-amber-50/30 transition-all text-left flex items-start gap-4 group"
-                                                                >
-                                                                    <div className="p-2 rounded-xl bg-amber-100 text-amber-600 group-hover:bg-amber-500 group-hover:text-white transition-all">
-                                                                        <Sparkles className="w-5 h-5" />
-                                                                    </div>
-                                                                    <div>
-                                                                        <p className="font-black text-zinc-800 text-sm">公司強力店長版</p>
-                                                                        <p className="text-[10px] text-zinc-400 mt-0.5">$1199 / 月 ・ RAG 知識庫完全解鎖</p>
-                                                                        <div className="mt-2 text-[11px] font-black text-amber-600 uppercase tracking-widest">{planLevel === 1 ? '補差價升級 →' : '立刻訂閱 →'}</div>
-                                                                    </div>
-                                                                </button>
                                                             </div>
                                                             
                                                             <p className="text-[10px] text-center text-zinc-400 mt-6 leading-relaxed">

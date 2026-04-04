@@ -28,7 +28,7 @@ export default function LiffSubscribePage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen gap-4">
         <div className="w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
-        <p className="text-sm font-black text-slate-500 uppercase tracking-widest">Loading AI Master...</p>
+        <p className="text-base font-black text-slate-500 uppercase tracking-widest">Loading AI Master...</p>
       </div>
     );
   }
@@ -47,7 +47,7 @@ export default function LiffSubscribePage() {
           
           {/* Scroll Indicator */}
           <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-center opacity-40">
-            <p className="text-[8px] font-black text-slate-500 uppercase tracking-[0.3em] mb-2">Scroll to Explore</p>
+            <p className="text-xs font-black text-slate-500 uppercase tracking-[0.3em] mb-2">Scroll to Explore</p>
             <div className="w-[1px] h-12 bg-gradient-to-b from-emerald-500 to-transparent mx-auto" />
           </div>
         </div>
@@ -63,17 +63,17 @@ export default function LiffSubscribePage() {
           <div className="flex justify-center mb-6">
              <div className="bg-amber-500/10 border border-amber-500/20 px-4 py-2 rounded-full flex items-center gap-2">
                  <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-                 <p className="text-xs font-bold text-amber-600">
+                 <p className="text-sm font-bold text-amber-600">
                     對話試用進度: {trialMessagesUsed}/10 - 店長已休眠，請開通專屬方案
                  </p>
              </div>
           </div>
 
           <div className="text-center mb-[24px]">
-            <h2 className="text-4xl font-black text-slate-900 mb-4 tracking-tighter">
+            <h2 className="text-[42px] font-black text-slate-900 mb-4 tracking-tighter">
               立即開通您的專屬方案
             </h2>
-            <p className="text-slate-600 font-bold mb-8 text-sm">
+            <p className="text-slate-600 font-bold mb-8 text-base">
               首 500 名早鳥永久優惠進行中
               <br />
               目前僅剩少數席次！
@@ -84,7 +84,7 @@ export default function LiffSubscribePage() {
               <div className="bg-slate-100/80 border border-slate-200 p-1 rounded-2xl backdrop-blur-md flex shadow-sm">
                 <button
                   onClick={() => setBillingCycle('monthly')}
-                  className={`px-6 py-2.5 rounded-xl text-sm font-black transition-all ${
+                  className={`px-6 py-2.5 rounded-xl text-base font-black transition-all ${
                     billingCycle === 'monthly' ? "bg-emerald-500 text-white shadow-lg" : "text-slate-600"
                   }`}
                 >
@@ -92,7 +92,7 @@ export default function LiffSubscribePage() {
                 </button>
                 <button
                   onClick={() => setBillingCycle('yearly')}
-                  className={`px-6 py-2.5 rounded-xl text-sm font-black transition-all flex items-center gap-2 ${
+                  className={`px-6 py-2.5 rounded-xl text-base font-black transition-all flex items-center gap-2 ${
                     billingCycle === 'yearly' ? "bg-emerald-500 text-white shadow-lg" : "text-slate-600"
                   }`}
                 >
@@ -158,7 +158,7 @@ export default function LiffSubscribePage() {
                 <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.2)]">
                     <ShieldCheck className="w-8 h-8 text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.6)]" />
                 </div>
-                <h3 className="text-transparent bg-clip-text bg-gradient-to-r from-green-300 via-emerald-400 to-teal-400 font-black text-2xl tracking-tighter drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)]">
+                <h3 className="text-transparent bg-clip-text bg-gradient-to-r from-green-300 via-emerald-400 to-teal-400 font-black text-3xl tracking-tighter drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)]">
                   企業級四大資安防護
                 </h3>
               </div>
@@ -175,9 +175,9 @@ export default function LiffSubscribePage() {
                        <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-500/20 transition-colors">
                         <item.icon className="w-4 h-4 text-emerald-400" />
                       </div>
-                      <h4 className="text-white font-bold text-[16px] tracking-tight">{item.title}</h4>
+                      <h4 className="text-white font-bold text-lg tracking-tight">{item.title}</h4>
                     </div>
-                    <p className="text-white/50 text-sm font-medium leading-relaxed max-w-[280px]">
+                    <p className="text-white/50 text-base font-medium leading-relaxed max-w-[280px]">
                       {item.desc}
                     </p>
                   </div>
@@ -206,8 +206,8 @@ export default function LiffSubscribePage() {
               <AlertTriangle className="w-8 h-8" />
             </div>
             <h3 className="text-xl font-black text-slate-900 mb-2">無法解鎖此特惠方案</h3>
-            <p className="text-slate-600 text-sm font-bold leading-relaxed mb-6">
-              您目前共啟用了 <span className="text-emerald-500 text-lg mx-1">{activeBotsCount}</span> 位 AI 店長。<br/><br/>
+            <p className="text-slate-600 text-base font-bold leading-relaxed mb-6">
+              您目前共啟用了 <span className="text-emerald-500 text-xl mx-1">{activeBotsCount}</span> 位 AI 店長。<br/><br/>
               個人版僅提供 1 位店長額度。<br/>若要購買此方案，請先至管理後台刪除多餘的店長。
             </p>
             <div className="flex gap-3">

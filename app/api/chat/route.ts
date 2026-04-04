@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { supabase } from '@/lib/supabase';
+import { getPlanByTier, getMonthlyQuota } from '@/lib/config/pricing';
 import {
     SECURITY_DEFENSE_HEADER,
     filterMaliciousInput,
@@ -163,21 +164,14 @@ export async function POST(req: NextRequest) {
             
             currentMonthCount = usageData?.message_count || 0;
 
-            // 3. 🛡️ SaaS Paywall Logic
-            // Free Tier: 10 Messages Limit
-            // Lite (499) / Pro (1199): High/Unlimited
-            const PLAN_LIMITS: Record<number, number> = {
-                0: 20,    // Free (為演示順暢給 20 句)
-                1: 1000,  // Lite (499)
-                2: 999999 // Pro (1199)
-            };
-
-            const limit = PLAN_LIMITS[userPlanLevel] || 10;
+            // 3. 🛡️ SaaS Paywall Logic (Website Demo Chat)
+            const limit = getMonthlyQuota(userPlanLevel) || 10;
 
             if (currentMonthCount >= limit && !isMaster && !isSaaS && !isProvisioning) {
+                const plan = getPlanByTier(userPlanLevel);
                 console.warn(`[Paywall] User ${effectiveUserId} hit limit ${currentMonthCount}/${limit}.`);
                 return NextResponse.json({
-                    message: `⚠️ 【${userPlanLevel === 0 ? '免費試用' : '方案'}額度用盡】\n\n老闆，您本月的「${userPlanLevel === 0 ? '免費' : '方案'}對話額度 (${limit}句)」已經安全用盡囉！\n\n這是一個好消息，代表您的生意非常興隆！為了確保服務不中斷並解鎖更多 AI 強大功能，請立即點擊下方按鈕選購正式方案。\n\n[👇 立即升級開通正式版]`,
+                    message: `⚠️ 【${userPlanLevel === 0 ? '免費試用' : '方案'}額度用盡】\n\n老闆，您本月的「${plan?.name || '方案'}對話額度 (${limit}句)」已經安全用盡囉！\n\n這是一個好消息，代表您的生意非常興隆！為了確保服務不中斷並解鎖更多 AI 強大功能，請立即點擊下方按鈕選購正式方案。\n\n[👇 立即升級開通正式版]`,
                     metadata: { storeName, action: "SHOW_PLANS" }
                 });
             }
@@ -218,15 +212,25 @@ export async function POST(req: NextRequest) {
                 }
             }
 
-            userSelectedPlan = userPlanLevel === 0 ? "Free" : userPlanLevel === 1 ? "Lite (499)" : "Pro (1199)";
+            const currentPlan = getPlanByTier(userPlanLevel);
+            userSelectedPlan = currentPlan?.name || "Free";
+            
+            // 下一段落：根據 Tier 提供給 AI 的具體對話動作指引
+            let tierInstruction = "";
+            if (userPlanLevel === 0) {
+                tierInstruction = "這是一位免費試用老闆。你的首要任務是展現 AI 的價值，並在對話收尾時自然地引導他升級『入門嚐鮮』或『單店主力』方案。";
+            } else if (userPlanLevel <= 2) { // 入門 / 單店
+                tierInstruction = `這是 ${userSelectedPlan} 老闆。請給予更專業的商業建議，並暗示『成長多店』方案具備管理多個店家的能力。`;
+            } else if (userPlanLevel <= 4) { // 成長 / 連鎖
+                tierInstruction = `這是 ${userSelectedPlan} 連鎖店老闆。請展現大局觀，專注於品牌連貫性與多店數據營運的幫助。`;
+            } else { // 旗艦
+                tierInstruction = `這是 ${userSelectedPlan} 尊榮旗艦老闆。請以最高規格的智慧秘書與商業參謀身份對應，專注於策略執行與超高流量的穩定性。`;
+            }
+
             membershipContext = `\n【🎟 會員資質管理】：
-- 當前方案：${userSelectedPlan}
+- 當前方案：${userSelectedPlan} (Tier ${userPlanLevel})
 - 本月累計對話：${currentMonthCount} 句
-- 【🚨 指引】：${
-    userPlanLevel === 0 ? "這是一位免費試用老闆。你的首要任務是展現 AI 的價值，並在對話收尾時自然地引導他升級 499 方案。" :
-    userPlanLevel === 1 ? "這是 499 方案老闆。請給予更專業的商業建議，並暗示 1199 方案具備更強大的智庫學習能力。" :
-    "這是 1199 尊榮老闆。請以最高規格的智慧秘書身份對應，專注於策略執行與報表分析。"
-}${identityContext}\n`;
+- 【🚨 指引】：${tierInstruction}${identityContext}\n`;
         }
 
         let dynamicSystemPrompt = "";

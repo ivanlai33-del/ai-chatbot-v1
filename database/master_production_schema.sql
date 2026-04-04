@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS user_usage_stats (
 CREATE TABLE IF NOT EXISTS payment_logs (
     id                   UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     line_user_id         TEXT NOT NULL REFERENCES platform_users(line_user_id) ON DELETE CASCADE,
-    merchant_trade_no    TEXT,                          -- 綠界/藍新交易編號
+    merchant_trade_no    TEXT,                          -- 藍新金流交易編號
     amount               NUMERIC,
     status               TEXT DEFAULT 'pending',        -- pending | paid
     created_at           TIMESTAMPTZ DEFAULT NOW()

@@ -1,8 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Bell, ShieldCheck, Store, ChevronDown, MessageSquare, UserPlus, AlertCircle, Loader2, LogOut, CreditCard, Crown, Copy } from 'lucide-react';
+import { Bell, ShieldCheck, Store, ChevronDown, MessageSquare, UserPlus, AlertCircle, Loader2, LogOut, CreditCard, Crown, Copy, LayoutDashboard } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+
+import { getPlanByTier } from '@/lib/config/pricing';
 
 interface ConsoleHeaderProps {
     activeTabLabel?: string;
@@ -28,13 +30,21 @@ export default function ConsoleHeader({
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [loading, setLoading] = useState(true);
 
-    const getPlanLabel = (level: number) => {
-        if (level === 2) return { name: "公司強力店長版", color: "bg-amber-100 text-amber-700" };
-        if (level === 1) return { name: "個人店長版 Lite", color: "bg-indigo-100 text-indigo-700" };
-        return { name: "普通會員", color: "bg-emerald-50 text-emerald-600" };
+    const getPlanLabel = (level: number, cycle: 'monthly' | 'yearly' = 'monthly') => {
+        const plan = getPlanByTier(level);
+        if (!plan) return { name: "普通會員", color: "bg-slate-800 text-slate-400" };
+
+        const suffix = level > 0 ? (cycle === 'yearly' ? '/y' : '/m') : '';
+        const displayName = `${plan.name}${suffix}`;
+
+        if (level >= 5) return { name: displayName, color: "bg-amber-100/10 text-amber-500 border border-amber-500/20" };
+        if (level >= 3) return { name: displayName, color: "bg-indigo-100/10 text-indigo-400 border border-indigo-500/20" };
+        if (level >= 1) return { name: displayName, color: "bg-emerald-100/10 text-emerald-400 border border-emerald-500/20" };
+        
+        return { name: "普通會員", color: "bg-slate-800 text-slate-500" };
     };
 
-    const currentPlan = getPlanLabel(planLevel);
+    const currentPlan = getPlanLabel(planLevel, billingCycle);
 
     const copyToClipboard = (text: string) => {
         if (text) {
@@ -219,7 +229,7 @@ export default function ConsoleHeader({
                                                 >
                                                     <div className="flex items-center gap-3">
                                                         <Crown className="w-4 h-4 text-amber-500" />
-                                                        <span className="font-bold text-[12px]">升級年費 (省 2 個月)</span>
+                                                        <span className="font-bold text-[12px]">升級年費 (省 1 個月)</span>
                                                     </div>
                                                     <ChevronDown className="w-4 h-4 -rotate-90 text-amber-500/60" />
                                                 </button>
@@ -237,10 +247,10 @@ export default function ConsoleHeader({
 
                                             <button 
                                                 onClick={() => window.location.href = '/dashboard'}
-                                                className="w-full flex items-center gap-3 px-5 py-3 rounded-2xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all text-sm font-bold group mb-1"
+                                                className="w-full flex items-center gap-3 px-5 py-3.5 rounded-2xl text-slate-300 hover:bg-slate-800 transition-all text-sm font-bold group mb-1 border border-slate-800 hover:border-slate-700"
                                             >
-                                                <Store className="w-4 h-4 text-slate-500 group-hover:text-indigo-400" />
-                                                進入店長後台
+                                                <LayoutDashboard className="w-4 h-4 text-slate-500 group-hover:text-indigo-400" />
+                                                進入店長智庫
                                             </button>
 
                                             <button 

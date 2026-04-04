@@ -21,7 +21,7 @@ interface PricingPlan {
     storeCount?: number;
     monthlyQuota?: number;
     isStartingPrice?: boolean;
-    ecpayLink?: string;
+    newebpayLink?: string;
 }
 
 interface PricingModalProps {
@@ -83,10 +83,13 @@ export default function PricingModal({
                                 <div className="w-14 h-14 relative">
                                     <Image src="/Lai Logo_4.svg" alt="Logo" fill className="object-contain" />
                                 </div>
-                                <h2 className="text-2xl font-black text-white leading-tight">
+                                <div className="w-72 h-72 relative -ml-12 -mb-8 animate-float hover-bobble transition-all cursor-pointer">
+                                    <Image src="/bot_06.svg" alt="Bot" fill className="object-contain" />
+                                </div>
+                                <h2 className="text-3xl font-black text-white leading-tight">
                                     選一個適合<br />您的方案
                                 </h2>
-                                <p className="text-white/70 font-medium text-sm">
+                                <p className="text-white/70 font-medium text-lg">
                                     先看您有幾間店，再看每月客人詢問量，就能找到最對的那格。
                                 </p>
                             </div>
@@ -96,7 +99,7 @@ export default function PricingModal({
                                         <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center shadow-sm shrink-0">
                                             <Check className="w-3 h-3 text-[#06C755]" />
                                         </div>
-                                        <span className="text-xs font-bold">{t}</span>
+                                        <span className="text-lg font-bold">{t}</span>
                                     </div>
                                 ))}
                             </div>
@@ -110,7 +113,7 @@ export default function PricingModal({
                                     <button
                                         onClick={() => setBillingCycle('monthly')}
                                         className={cn(
-                                            'px-6 py-2.5 rounded-xl text-sm font-black transition-all',
+                                            'px-6 py-2.5 rounded-xl text-lg font-black transition-all',
                                             billingCycle === 'monthly' ? 'bg-white text-slate-900 shadow-lg' : 'text-white/50 hover:text-white/70'
                                         )}
                                     >
@@ -119,7 +122,7 @@ export default function PricingModal({
                                     <button
                                         onClick={() => setBillingCycle('yearly')}
                                         className={cn(
-                                            'px-6 py-2.5 rounded-xl text-sm font-black transition-all relative',
+                                            'px-6 py-2.5 rounded-xl text-lg font-black transition-all relative',
                                             billingCycle === 'yearly' ? 'bg-emerald-500 text-white shadow-lg' : 'text-white/50 hover:text-white/70'
                                         )}
                                     >
@@ -135,7 +138,7 @@ export default function PricingModal({
                             </div>
 
                             {/* ── 一般方案 2×2 ── */}
-                            <p className="text-xs font-black uppercase tracking-widest text-white/30 mb-4">一般方案</p>
+                            <p className="text-base font-black uppercase tracking-widest text-white/30 mb-4">一般方案</p>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                                 {generalPlans.map(plan => (
                                     <PlanCard key={plan.id} plan={plan} billingCycle={billingCycle} onAction={onAction} />
@@ -143,7 +146,7 @@ export default function PricingModal({
                             </div>
 
                             {/* ── 旗艦方案 ── */}
-                            <p className="text-xs font-black uppercase tracking-widest text-white/30 mb-4">旗艦高流量方案（優先技術支援）</p>
+                            <p className="text-base font-black uppercase tracking-widest text-white/30 mb-4">旗艦高流量方案（優先技術支援）</p>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                                 {flagshipPlans.map(plan => (
                                     <PlanCard key={plan.id} plan={plan} billingCycle={billingCycle} onAction={onAction} flagship />
@@ -151,12 +154,12 @@ export default function PricingModal({
                             </div>
 
                             {/* 底部說明 */}
-                            <div className="pt-6 border-t border-white/10 text-center space-y-3">
-                                <p className="text-white/30 text-[10px] font-black uppercase tracking-widest">
+                             <div className="pt-6 border-t border-white/10 text-center space-y-3">
+                                <p className="text-white/30 text-xs font-black uppercase tracking-widest">
                                     本平台交易由藍新金流提供 256-bit SSL 加密安全保護<br />
                                     服務由 <span className="text-white font-bold">YC Ideas 奕暢創新工作室</span> 提供運作
                                 </p>
-                                <div className="flex justify-center gap-6 text-[10px] font-black text-white/30 uppercase tracking-widest">
+                                <div className="flex justify-center gap-6 text-sm font-black text-white/30 uppercase tracking-widest">
                                     <span>數位服務開通後恕不退款</span>
                                     <span className="w-1 h-1 rounded-full bg-white/10" />
                                     <span>客服：info@ycideas.com</span>
@@ -190,12 +193,12 @@ function PlanCard({ plan, billingCycle, onAction, flagship = false }: {
         )}>
             {/* 推薦徽章 */}
             {plan.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-emerald-500 text-white text-[9px] font-black rounded-full uppercase tracking-widest shadow-lg whitespace-nowrap">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-emerald-500 text-white text-[13px] font-black rounded-full uppercase tracking-widest shadow-lg whitespace-nowrap">
                     ⭐ 最受歡迎
                 </div>
             )}
             {flagship && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-orange-500 text-white text-[9px] font-black rounded-full uppercase tracking-widest shadow-lg whitespace-nowrap">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-orange-500 text-white text-[13px] font-black rounded-full uppercase tracking-widest shadow-lg whitespace-nowrap">
                     🔥 高流量優先支援
                 </div>
             )}
@@ -203,40 +206,40 @@ function PlanCard({ plan, billingCycle, onAction, flagship = false }: {
             {/* 標題 + 價格 */}
             <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-2">
-                    <div className="p-2 rounded-xl bg-white/5 border border-white/10">{plan.icon}</div>
+                <div className="p-1.5 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0 min-w-[40px] min-h-[40px]">{plan.icon}</div>
                     <div>
-                        <h3 className="text-sm font-black text-white">{plan.name}</h3>
-                        <p className="text-[10px] text-white/40 font-medium mt-0.5">{plan.description}</p>
+                        <h3 className="text-xl font-black text-white">{plan.name}</h3>
+                        <p className="text-sm text-white/40 font-medium mt-0.5">{plan.description}</p>
                     </div>
                 </div>
                 <div className="text-right shrink-0">
-                    <span className="text-white/30 line-through text-[10px] block">原價 {plan.originalPrice}</span>
+                    <span className="text-white/30 line-through text-sm block">原價 {plan.originalPrice}</span>
                     <div className="flex items-baseline gap-0.5 justify-end">
-                        <span className="text-white/50 text-[10px] font-bold">NT$</span>
+                        <span className="text-white/50 text-sm font-bold">NT$</span>
                         <span className={cn(
-                            'text-2xl font-black',
+                            'text-4xl font-black',
                             isAmber ? 'text-orange-400' : 'text-emerald-400'
                         )}>
                             {Number(plan.price).toLocaleString()}
                         </span>
-                        <span className="text-white/40 text-[11px] font-bold">{plan.period}</span>
-                        {plan.isStartingPrice && <span className="text-white/30 text-[9px] font-black ml-0.5">起</span>}
+                        <span className="text-white/40 text-[15px] font-bold">{plan.period}</span>
+                        {plan.isStartingPrice && <span className="text-white/30 text-[13px] font-black ml-0.5">起</span>}
                     </div>
                     {billingCycle === 'yearly' && (
-                        <span className="text-emerald-400 text-[9px] font-black">送 1 個月</span>
+                        <span className="text-emerald-400 text-[13px] font-black">送 1 個月</span>
                     )}
                 </div>
             </div>
 
             {/* 規格標籤 */}
-            <div className="flex flex-wrap gap-2">
+             <div className="flex flex-wrap gap-2">
                 {plan.storeCount && plan.storeCount > 0 && (
-                    <span className="px-2 py-0.5 bg-white/5 border border-white/10 rounded-full text-[10px] font-black text-white/60">
+                    <span className="px-2 py-0.5 bg-white/5 border border-white/10 rounded-full text-sm font-black text-white/60">
                         🏪 最多 {plan.storeCount === -1 ? '無限' : plan.storeCount} 店
                     </span>
                 )}
                 {plan.monthlyQuota && plan.monthlyQuota > 0 && (
-                    <span className="px-2 py-0.5 bg-white/5 border border-white/10 rounded-full text-[10px] font-black text-white/60">
+                    <span className="px-2 py-0.5 bg-white/5 border border-white/10 rounded-full text-sm font-black text-white/60">
                         💬 {plan.monthlyQuota === -1 ? '無限' : plan.monthlyQuota.toLocaleString()} 則/月
                     </span>
                 )}
@@ -252,16 +255,16 @@ function PlanCard({ plan, billingCycle, onAction, flagship = false }: {
                             'w-4 h-4 mt-0.5 shrink-0',
                             isAmber ? 'text-orange-400' : 'text-emerald-400'
                         )} />
-                        <span className="text-[11px] text-white/75 font-bold leading-tight">{feature}</span>
+                         <span className="text-[15px] text-white/75 font-bold leading-tight">{feature}</span>
                     </li>
                 ))}
             </ul>
 
             {/* CTA 按鈕 */}
-            <button
+             <button
                 onClick={onAction}
                 className={cn(
-                    'w-full py-3 rounded-2xl font-black text-sm transition-all flex items-center justify-center gap-2 group',
+                    'w-full py-3 rounded-2xl font-black text-lg transition-all flex items-center justify-center gap-2 group',
                     isAmber
                         ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white hover:from-orange-600 hover:to-amber-600 shadow-[0_8px_20px_rgba(249,115,22,0.25)]'
                         : 'bg-[#06C755] text-white hover:bg-[#05b34c] shadow-[0_8px_20px_rgba(6,199,85,0.2)]'

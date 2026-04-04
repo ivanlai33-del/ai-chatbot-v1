@@ -157,13 +157,13 @@ export default function HeroSection({
                     className="relative z-10 flex flex-col items-center gap-10 px-6 pt-24 pb-20 max-w-5xl mx-auto w-full"
                 >
                     <div className="flex flex-col items-center gap-6 text-center">
-                        <div className="px-5 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-200 text-[10px] font-black uppercase tracking-[0.4em] mb-2 backdrop-blur-md shadow-[0_0_20px_rgba(56,189,248,0.2)]">
+                        <div className="px-5 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-200 text-xs font-black uppercase tracking-[0.4em] mb-2 backdrop-blur-md shadow-[0_0_20px_rgba(56,189,248,0.2)]">
                             24/7 Automated Sales & Support
                         </div>
-                        <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-none drop-shadow-[0_20px_50px_rgba(0,0,0,0.7)] animate-shimmer text-transparent bg-clip-text bg-gradient-to-b from-white to-blue-200">
+                         <h1 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-none drop-shadow-[0_20px_50px_rgba(0,0,0,0.7)] animate-shimmer text-transparent bg-clip-text bg-gradient-to-b from-white to-blue-200">
                             AI 智能店長
                         </h1>
-                        <p className="max-w-2xl text-lg md:text-xl text-blue-50/90 font-medium leading-relaxed drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]">
+                         <p className="max-w-2xl text-xl md:text-2xl text-blue-50/90 font-medium leading-relaxed drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]">
                             整合全球最強大的 AI 技術，為您的 LINE 官方帳號注入全天候銷售動力。<br className="hidden md:block" />
                             讓每一則訊息都成為成交的機會。
                         </p>
@@ -172,26 +172,26 @@ export default function HeroSection({
                     <div className="flex flex-col sm:flex-row gap-5 w-full max-w-lg">
                         {isLoggedIn ? (
                             <>
-                                <button onClick={onAction}
-                                    className="flex-1 flex items-center justify-center gap-3 bg-[#06C755] hover:bg-[#05b34c] text-white py-4 px-8 rounded-2xl font-black text-lg transition-all hover:scale-105 active:scale-95 shadow-[0_20px_50px_rgba(6,199,85,0.4)]"
+                                 <button onClick={onAction}
+                                    className="flex-1 flex items-center justify-center gap-3 bg-[#06C755] hover:bg-[#05b34c] text-white py-4 px-8 rounded-2xl font-black text-xl transition-all hover:scale-105 active:scale-95 shadow-[0_20px_50px_rgba(6,199,85,0.4)]"
                                 >
                                     <Database className="w-5 h-5" /> 進入 AI 店長後台
                                 </button>
-                                <button onClick={onOpenChat}
-                                    className="flex-1 flex items-center justify-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 text-white py-4 px-8 rounded-2xl font-black text-lg transition-all hover:bg-white/20 active:scale-95"
+                                 <button onClick={onOpenChat}
+                                    className="flex-1 flex items-center justify-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 text-white py-4 px-8 rounded-2xl font-black text-xl transition-all hover:bg-white/20 active:scale-95"
                                 >
                                     <Bot className="w-5 h-5" /> 開啟對話預覽
                                 </button>
                             </>
                         ) : (
                             <>
-                                <button onClick={onShowPricing}
-                                    className="flex-1 flex items-center justify-center gap-3 bg-white text-slate-900 py-4 px-8 rounded-2xl font-black text-lg transition-all hover:bg-emerald-50 active:scale-95 shadow-[0_20px_50px_rgba(255,255,255,0.1)]"
+                                 <button onClick={onShowPricing}
+                                    className="flex-1 flex items-center justify-center gap-3 bg-white text-slate-900 py-4 px-8 rounded-2xl font-black text-xl transition-all hover:bg-emerald-50 active:scale-95 shadow-[0_20px_50px_rgba(255,255,255,0.1)]"
                                 >
                                     <CreditCard className="w-5 h-5 text-emerald-600" /> 了解方案金額
                                 </button>
-                                <button onClick={onAction}
-                                    className="flex-1 flex items-center justify-center gap-3 bg-[#06C755] hover:bg-[#05b34c] text-white py-4 px-8 rounded-2xl font-black text-lg transition-all hover:scale-105 active:scale-95 shadow-[0_20px_50px_rgba(6,199,85,0.5)]"
+                                 <button onClick={onAction}
+                                    className="flex-1 flex items-center justify-center gap-3 bg-[#06C755] hover:bg-[#05b34c] text-white py-4 px-8 rounded-2xl font-black text-xl transition-all hover:scale-105 active:scale-95 shadow-[0_20px_50px_rgba(6,199,85,0.5)]"
                                 >
                                     <LogIn className="w-5 h-5" /> 請用 Line 登入
                                 </button>
@@ -199,7 +199,7 @@ export default function HeroSection({
                         )}
                     </div>
 
-                    <div className="hidden md:flex items-center gap-8 text-blue-100/40 text-[9px] font-black uppercase tracking-[0.5em]">
+                     <div className="hidden md:flex items-center gap-8 text-blue-100/40 text-[11px] font-black uppercase tracking-[0.5em]">
                         <span>Scale Faster</span>
                         <div className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
                         <span>Support Automated</span>

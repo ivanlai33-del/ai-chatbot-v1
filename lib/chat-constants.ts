@@ -106,12 +106,12 @@ export const INDUSTRY_TEMPLATES = [
 
 export const PLAN_PAYMENT_LINKS = {
     '個人店長版': {
-        monthly: 'https://p.ecpay.com.tw/A06FE6B',
-        yearly: 'https://p.ecpay.com.tw/723E398'
+        monthly: 'https://p.newebpay.com.tw/A06FE6B',
+        yearly: 'https://p.newebpay.com.tw/723E398'
     },
     '公司強力店長版': {
-        monthly: 'https://p.ecpay.com.tw/FFD88CA',
-        yearly: 'https://p.ecpay.com.tw/C1E8916'
+        monthly: 'https://p.newebpay.com.tw/FFD88CA',
+        yearly: 'https://p.newebpay.com.tw/C1E8916'
     }
 };
 

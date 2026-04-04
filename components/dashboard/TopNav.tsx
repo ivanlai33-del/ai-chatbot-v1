@@ -6,6 +6,8 @@ import { Home, Zap, Crown, User, LogOut, Copy, X, LayoutDashboard, ChevronDown, 
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
+import { getPlanByTier } from '@/lib/config/pricing';
+
 interface TopNavProps {
     userName: string;
     userPicture: string;
@@ -33,13 +35,34 @@ export default function TopNav({
         setIsMounted(true);
     }, []);
 
-    const getPlanLabel = (level: number) => {
-        if (level === 2) return { name: "公司強力店長版", color: "bg-amber-100 text-amber-700", badge: "bg-amber-500/10 border-amber-500/20" };
-        if (level === 1) return { name: "個人店長版", color: "bg-[#06C755]/10 text-[#06C755]", badge: "bg-[#06C755]/10 border-[#06C755]/20" };
-        return { name: "普通會員", color: "bg-emerald-50 text-emerald-600", badge: "bg-emerald-50 border-emerald-100" };
+    const getPlanLabel = (level: number, cycle: 'monthly' | 'yearly' = 'monthly') => {
+        const plan = getPlanByTier(level);
+        if (!plan) return { name: "普通會員", color: "bg-slate-100 text-slate-600", badge: "bg-slate-50 border-zinc-200" };
+
+        const suffix = level > 0 ? (cycle === 'yearly' ? '/y' : '/m') : '';
+        const displayName = `${plan.name}${suffix}`;
+
+        // Dynamic colors based on tier
+        if (level >= 5) return { 
+            name: displayName, 
+            color: "bg-amber-100 text-amber-700 font-black", 
+            badge: "bg-gradient-to-r from-amber-500/10 to-orange-500/10 border-amber-500/20 shadow-sm" 
+        };
+        if (level >= 3) return { 
+            name: displayName, 
+            color: "bg-indigo-100 text-indigo-700 font-bold", 
+            badge: "bg-indigo-50 border-indigo-100" 
+        };
+        if (level >= 1) return { 
+            name: displayName, 
+            color: "bg-emerald-100 text-emerald-700 font-bold", 
+            badge: "bg-emerald-50 border-emerald-100" 
+        };
+        
+        return { name: "普通會員", color: "bg-slate-100 text-slate-500", badge: "bg-slate-50 border-slate-100" };
     };
 
-    const currentPlan = getPlanLabel(planLevel);
+    const currentPlan = getPlanLabel(planLevel, billingCycle);
 
     const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text);
@@ -163,7 +186,7 @@ export default function TopNav({
                                                         >
                                                             <div className="flex items-center gap-3">
                                                                 <Crown className="w-4 h-4 text-amber-500" />
-                                                                <span className="font-bold text-[13px]">升級年費 (省 2 個月)</span>
+                                                                <span className="font-bold text-[13px]">升級年費 (省 1 個月)</span>
                                                             </div>
                                                             <ChevronDown className="w-4 h-4 -rotate-90 text-amber-400" />
                                                         </button>
@@ -181,6 +204,14 @@ export default function TopNav({
                                                             <ChevronDown className="w-4 h-4 -rotate-90 text-indigo-200" />
                                                         </button>
                                                     )}
+
+                                                    <button 
+                                                        onClick={() => window.location.href = '/dashboard'}
+                                                        className="w-full flex items-center gap-3 px-5 py-3.5 rounded-2xl text-slate-600 hover:bg-slate-50 transition-all text-sm font-bold group mb-2 shadow-sm border border-zinc-100"
+                                                    >
+                                                        <LayoutDashboard className="w-4 h-4 text-slate-400 group-hover:text-indigo-500" />
+                                                        進入店長智庫
+                                                    </button>
 
                                                     <button 
                                                         onClick={() => window.location.href = '/dashboard/billing'}

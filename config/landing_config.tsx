@@ -6,13 +6,13 @@ import { PRICING_PLANS, PLAN_IDS_ORDERED, PlanId } from '@/lib/config/pricing';
 // 這是唯一需要維護的轉換層，所有數字從 pricing.ts 自動讀取
 
 const PLAN_ICONS: Record<PlanId, React.ReactNode> = {
-    free:          <Sprout className="w-6 h-6 text-slate-400" />,
-    starter:       <Sprout className="w-6 h-6 text-emerald-400" />,
-    solo:          <Zap className="w-6 h-6 text-emerald-500" />,
-    growth:        <Link2 className="w-6 h-6 text-blue-400" />,
-    chain:         <Network className="w-6 h-6 text-purple-400" />,
-    flagship_lite: <Flame className="w-6 h-6 text-orange-400" />,
-    flagship_pro:  <Rocket className="w-6 h-6 text-red-400" />,
+    free:          <span className="text-2xl">🎁</span>,
+    starter:       <span className="text-2xl">🌱</span>,
+    solo:          <span className="text-2xl">🏪</span>,
+    growth:        <span className="text-2xl">🔗</span>,
+    chain:         <span className="text-2xl">👑</span>,
+    flagship_lite: <span className="text-2xl">🔥</span>,
+    flagship_pro:  <span className="text-2xl">🚀</span>,
 };
 
 export const getPricingPlans = (billingCycle: 'monthly' | 'yearly') => {
@@ -40,7 +40,7 @@ export const getPricingPlans = (billingCycle: 'monthly' | 'yearly') => {
 
         return {
             id,
-            name: `${plan.emoji} ${plan.name}`,
+            name: plan.name,
             price,
             originalPrice,
             period,
@@ -54,9 +54,9 @@ export const getPricingPlans = (billingCycle: 'monthly' | 'yearly') => {
             storeCount: plan.limits.stores,
             monthlyQuota: plan.limits.monthlyQuota,
             isStartingPrice: plan.pricing.isStartingPrice,
-            ecpayLink: isYearly
-                ? plan.payment.ecpayAnnualLink
-                : plan.payment.ecpayMonthlyLink,
+            newebpayLink: isYearly
+                ? plan.payment.newebpayAnnualLink
+                : plan.payment.newebpayMonthlyLink,
         };
     });
 };

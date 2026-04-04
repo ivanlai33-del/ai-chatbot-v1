@@ -30,6 +30,7 @@ export default function AICommandConsole({ lineUserId, lineUserName }: AICommand
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [widgetData, setWidgetData] = useState<any>(null); // 📊 Bridge for real data
     const [planLevel, setPlanLevel] = useState(0);
+    const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
 
     // Sync Plan Level from Single Source of Truth
     useEffect(() => {
@@ -40,6 +41,7 @@ export default function AICommandConsole({ lineUserId, lineUserName }: AICommand
                 .then(data => {
                     if (data.success && data.user) {
                         setPlanLevel(data.user.plan_level || 0);
+                        setBillingCycle(data.user.billing_cycle || 'monthly');
                     }
                 })
                 .catch(err => console.error("Sync Error:", err));
@@ -128,6 +130,7 @@ export default function AICommandConsole({ lineUserId, lineUserName }: AICommand
                     setViewMode={setViewMode} 
                     lineUserName={lineUserName}
                     planLevel={planLevel}
+                    billingCycle={billingCycle}
                     onLogout={handleLogout}
                 />
 

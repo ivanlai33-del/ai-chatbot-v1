@@ -9,9 +9,19 @@ export async function POST(req: NextRequest) {
 
         // Validation: Only require OpenAI Key for non-managed plans
         const planName = selectedPlan?.name || "";
-        const isManagedPlan = planName.includes('499') ||
+        const isManagedPlan = 
+            planName.includes('199') ||
+            planName.includes('499') ||
+            planName.includes('1299') ||
+            planName.includes('2490') ||
+            planName.includes('4990') ||
+            planName.includes('7990') ||
+            planName.includes('入門') ||
+            planName.includes('單店') ||
+            planName.includes('成長多店') ||
+            planName.includes('連鎖專業') ||
+            planName.includes('旗艦') ||
             planName.includes('1199') ||
-            planName.includes('Lite') ||
             planName.includes('強力') ||
             planName.includes('會計');
 

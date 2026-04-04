@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Mail, ShieldCheck, CreditCard, LifeBuoy, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { PRICING_PLANS } from '@/lib/config/pricing';
 
 interface LegalModalProps {
     isOpen: boolean;
@@ -99,13 +100,13 @@ export default function LandingFooter({ isLight = false, variant = 'auto' }: Lan
             icon: Mail,
             title: '客服聯絡資訊',
             content: (
-                <div className={`space-y-3 text-[13px] ${textSecondary}`}>
+                <div className={`space-y-3 text-[15px] ${textSecondary}`}>
                     <p className="font-medium">官方客服信箱：<span className={`${textPrimary} font-black underline decoration-emerald-500/20`}>info@ycideas.com</span></p>
                     <div className="space-y-1">
-                        <p className="text-[10px] opacity-50 uppercase font-black tracking-widest mb-1.5">LINE 專屬通道</p>
+                         <p className="text-xs opacity-50 uppercase font-black tracking-widest mb-1.5">LINE 專屬通道</p>
                         <p className="flex items-center gap-2">🤖 AI 客服：<span className="text-emerald-400 font-bold tracking-tight">@967iypui</span></p>
                         <p className="flex items-center gap-2">👤 真人專員：<span className="text-blue-400 font-bold">ivanlai33</span></p>
-                        <p className="text-[10px] opacity-40 mt-1 italic italic">服務、合作、開發、洽詢</p>
+                        <p className="text-xs opacity-40 mt-1 italic italic">服務、合作、開發、洽詢</p>
                     </div>
                 </div>
             )
@@ -115,11 +116,28 @@ export default function LandingFooter({ isLight = false, variant = 'auto' }: Lan
             icon: CreditCard,
             title: '付費方案說明',
             content: (
-                <div className={`space-y-2 text-[13px] ${textSecondary} leading-relaxed`}>
-                    <p>本平台採「訂閱制 (SaaS)」收費模式</p>
-                    <p>個人店長版：<span className={textPrimary}>$499 / 月 (或 $5,489 / 年)</span></p>
-                    <p>強力店長版：<span className={textPrimary}>$1,199 / 月 (或 $13,189 / 年)</span></p>
-                    <p className="text-emerald-400/80 font-medium">年費方案包含「買 11 個月贈 1 個月」優惠</p>
+                <div className={`space-y-2 text-[15px] ${textSecondary} leading-relaxed`}>
+                    <p className="mb-2">本平台採「訂閱制 (SaaS)」收費模式</p>
+                    <div className="space-y-1.5 grayscale-[0.3] opacity-90">
+                        {[
+                            PRICING_PLANS.starter, 
+                            PRICING_PLANS.solo, 
+                            PRICING_PLANS.growth, 
+                            PRICING_PLANS.chain, 
+                            PRICING_PLANS.flagship_lite, 
+                            PRICING_PLANS.flagship_pro
+                        ].map((p) => (
+                            <p key={p.id} className="flex justify-between items-center gap-4">
+                                <span className="font-bold shrink-0">{p.name}：</span>
+                                <span className={`${textPrimary} font-black text-right`}>
+                                    ${p.pricing.monthly.toLocaleString()}{p.pricing.isStartingPrice ? ' 起' : ''} / 月
+                                </span>
+                            </p>
+                        ))}
+                    </div>
+                    <p className="text-emerald-400 font-black mt-3 text-xs uppercase tracking-widest border-t border-white/5 pt-2">
+                        💡 年費方案包含「買 11 個月送 1 個月」優惠
+                    </p>
                 </div>
             )
         },
@@ -128,10 +146,10 @@ export default function LandingFooter({ isLight = false, variant = 'auto' }: Lan
             icon: ShieldCheck,
             title: '退款與終止政策',
             content: (
-                <div className={`space-y-4 text-[13px] ${textSecondary} leading-relaxed`}>
+                <div className={`space-y-4 text-[15px] ${textSecondary} leading-relaxed`}>
                     <p>數位服務開通後，除不可抗力因素外，恕不提供退款。</p>
                     <p>用戶可隨時於後台取消次月續訂，服務將持續至該帳單週期結束。</p>
-                    <p className="text-[11px] opacity-70">若有異常扣款，請於 7 日內聯繫客服處理。</p>
+                     <p className="text-[13px] opacity-70">若有異常扣款，請於 7 日內聯繫客服處理。</p>
                 </div>
             )
         },
@@ -140,10 +158,10 @@ export default function LandingFooter({ isLight = false, variant = 'auto' }: Lan
             icon: LifeBuoy,
             title: '營運單位',
             content: (
-                <div className={`space-y-2 text-[13px] ${textSecondary}`}>
+                <div className={`space-y-2 text-[15px] ${textSecondary}`}>
                     <p className="opacity-60">© 2026 您的專屬AI智能店長</p>
-                    <p className={`${textPrimary} font-black text-base tracking-tight`}>YC Ideas 奕暢創新工作室</p>
-                    <p className="text-[10px] uppercase font-black tracking-widest border-l border-white/20 pl-2">AI 數位服務開發 運作</p>
+                     <p className={`${textPrimary} font-black text-lg tracking-tight`}>YC Ideas 奕暢創新工作室</p>
+                    <p className="text-xs uppercase font-black tracking-widest border-l border-white/20 pl-2">AI 數位服務開發 運作</p>
                 </div>
             )
         }
@@ -160,7 +178,7 @@ export default function LandingFooter({ isLight = false, variant = 'auto' }: Lan
                             <div className={`w-9 h-9 rounded-xl ${brandBg} flex items-center justify-center border ${isLight ? 'border-emerald-500/20' : 'border-white/10'}`}>
                                 <section.icon className={`w-4.5 h-4.5 ${brandColor}`} />
                             </div>
-                            <h3 className={`${textPrimary} font-black text-[16px] tracking-[0.1em]`}>{section.title}</h3>
+                             <h3 className={`${textPrimary} font-black text-lg tracking-[0.1em]`}>{section.title}</h3>
                         </div>
                         <div className="pl-0">
                             {section.content}
@@ -171,10 +189,10 @@ export default function LandingFooter({ isLight = false, variant = 'auto' }: Lan
 
             <div className={`mt-16 pt-10 ${isDesktopLayout ? '' : `border-t ${borderColor}`} border-white/5`}>
                 <div className="max-w-7xl mx-auto flex flex-col items-center justify-center gap-6">
-                    <p className={`text-[11px] font-black ${isLight ? 'text-slate-400' : 'text-slate-400'} uppercase tracking-[0.3em] text-center leading-relaxed opacity-60`}>
+                     <p className={`text-xs font-black ${isLight ? 'text-slate-400' : 'text-slate-400'} uppercase tracking-[0.3em] text-center leading-relaxed opacity-60`}>
                         本網站交易資料由 藍新金流 NEWEBPAY 提供 256-BIT SSL 加密安全保護
                     </p>
-                    <div className={`flex flex-row justify-center gap-10 text-[13px] font-black ${isLight ? 'text-slate-500' : 'text-slate-500/80'}`}>
+                     <div className={`flex flex-row justify-center gap-10 text-[15px] font-black ${isLight ? 'text-slate-500' : 'text-slate-500/80'}`}>
                         <button onClick={() => openLegal('tos')} className="hover:text-emerald-400 underline underline-offset-4 decoration-white/10 transition-all">服務條款</button>
                         <button onClick={() => openLegal('privacy')} className="hover:text-emerald-400 underline underline-offset-4 decoration-white/10 transition-all">隱私權政策</button>
                         <button onClick={() => openLegal('disclaimer')} className="hover:text-emerald-400 underline underline-offset-4 decoration-white/10 transition-all">免責聲明</button>

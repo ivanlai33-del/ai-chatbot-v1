@@ -26,6 +26,7 @@ export default function DashboardPage() {
     const [userName, setUserName] = useState('');
     const [userPicture, setUserPicture] = useState('');
     const [planLevel, setPlanLevel] = useState(0);
+    const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
     const [activeTab, setActiveTab ] = useState<DashboardTabId>('brand');
     const [showApiKeysModal, setShowApiKeysModal] = useState(false);
     const [isLoadingAuth, setIsLoadingAuth] = useState(true);
@@ -62,6 +63,7 @@ export default function DashboardPage() {
             .then(data => {
                 if (data.success && data.user) {
                     setPlanLevel(data.user.plan_level || 0);
+                    setBillingCycle(data.user.billing_cycle || 'monthly');
                 }
             })
             .catch(err => console.error("Sync Error:", err));
@@ -90,6 +92,7 @@ export default function DashboardPage() {
             userPicture={userPicture}
             lineUserId={lineUserId}
             planLevel={planLevel}
+            billingCycle={billingCycle}
             onLogout={logout}
             sidebar={
                 <AISandboxChat 

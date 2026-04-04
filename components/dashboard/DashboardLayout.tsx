@@ -9,6 +9,7 @@ interface DashboardLayoutProps {
     userPicture: string;
     lineUserId: string;
     planLevel: number;
+    billingCycle?: 'monthly' | 'yearly';
     onLogout: () => void;
     children: React.ReactNode;
     sidebar?: React.ReactNode;
@@ -19,6 +20,7 @@ export default function DashboardLayout({
     userPicture,
     lineUserId,
     planLevel,
+    billingCycle,
     onLogout,
     children,
     sidebar
@@ -30,6 +32,7 @@ export default function DashboardLayout({
                 userPicture={userPicture}
                 lineUserId={lineUserId}
                 planLevel={planLevel}
+                billingCycle={billingCycle}
                 onLogout={onLogout}
             />
 

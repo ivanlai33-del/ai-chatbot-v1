@@ -15,7 +15,7 @@
  *   - 守門員 (FreemiumGuard.ts)
  *   - Webhook 額度檢查 (line/webhook/[id])
  *   - 後台方案顯示 (Console)
- *   - 金流連結 (ECPay)
+ *   - 金流連結 (NewebPay)
  *
  * 年付邏輯：月費 × 11（送 1 個月）
  * 原價邏輯：優惠價 ÷ 0.8（8折優惠，原價當錨點）
@@ -58,13 +58,12 @@ export interface PricingPlan {
 
   features: string[];        // 功能列表
   notIncluded?: string[];    // 不包含（顯示 ✗）
+  badge?: string;            // 徽章文字（如「最受歡迎」「最划算」）
 
   payment: {
-    ecpayMonthlyLink: string;  // ECPay 月付連結
-    ecpayAnnualLink: string;   // ECPay 年付連結
+    newebpayMonthlyLink: string;  // 藍新月費開通連結
+    newebpayAnnualLink: string;   // 藍新年費開通連結
   };
-
-  badge?: string;            // 徽章文字（如「最受歡迎」「最划算」）
 
   overage?: {
     per1000Messages: number; // 超量每 1,000 則加收（NT$）
@@ -109,8 +108,8 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       '報表分析',
     ],
     payment: {
-      ecpayMonthlyLink: '',
-      ecpayAnnualLink: '',
+      newebpayMonthlyLink: '#',
+      newebpayAnnualLink: '#',
     },
   },
 
@@ -126,7 +125,7 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
     pricing: {
       monthly: 199,
       originalMonthly: 249,
-      annual: 2190,          // 199 × 11
+      annual: 2189,          // 199 × 11
       annualSaving: 199,     // 省 1 個月
       isStartingPrice: false,
     },
@@ -150,8 +149,8 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       '分析報表',
     ],
     payment: {
-      ecpayMonthlyLink: 'https://p.ecpay.com.tw/PLACEHOLDER_199M',
-      ecpayAnnualLink: 'https://p.ecpay.com.tw/PLACEHOLDER_199Y',
+      newebpayMonthlyLink: 'https://p.newebpay.com.tw/A06FE6B', // Placeholder for now
+      newebpayAnnualLink: 'https://p.newebpay.com.tw/723E398',  // Placeholder for now
     },
   },
 
@@ -168,7 +167,7 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
     pricing: {
       monthly: 499,
       originalMonthly: 629,
-      annual: 5490,          // 499 × 11
+      annual: 5489,          // 499 × 11
       annualSaving: 499,
       isStartingPrice: false,
     },
@@ -192,8 +191,8 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       '分析報表',
     ],
     payment: {
-      ecpayMonthlyLink: 'https://p.ecpay.com.tw/A06FE6B',
-      ecpayAnnualLink: 'https://p.ecpay.com.tw/723E398',
+      newebpayMonthlyLink: 'https://p.newebpay.com.tw/A06FE6B',
+      newebpayAnnualLink: 'https://p.newebpay.com.tw/723E398',
     },
   },
 
@@ -209,7 +208,7 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
     pricing: {
       monthly: 1299,
       originalMonthly: 1649,
-      annual: 14290,         // 1299 × 11
+      annual: 14289,         // 1299 × 11
       annualSaving: 1299,
       isStartingPrice: false,
     },
@@ -232,8 +231,8 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       '優先客服',
     ],
     payment: {
-      ecpayMonthlyLink: 'https://p.ecpay.com.tw/PLACEHOLDER_1299M',
-      ecpayAnnualLink: 'https://p.ecpay.com.tw/PLACEHOLDER_1299Y',
+      newebpayMonthlyLink: 'https://p.newebpay.com.tw/PLACEHOLDER_1299M',
+      newebpayAnnualLink: 'https://p.newebpay.com.tw/PLACEHOLDER_1299Y',
     },
   },
 
@@ -266,8 +265,8 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       '✅ 優先客服支援',
     ],
     payment: {
-      ecpayMonthlyLink: 'https://p.ecpay.com.tw/FFD88CA',
-      ecpayAnnualLink: 'https://p.ecpay.com.tw/C1E8916',
+      newebpayMonthlyLink: 'https://p.newebpay.com.tw/FFD88CA',
+      newebpayAnnualLink: 'https://p.newebpay.com.tw/C1E8916',
     },
   },
 
@@ -306,8 +305,8 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       description: '超過月額度：每 1,000 則加收 NT$150',
     },
     payment: {
-      ecpayMonthlyLink: 'https://p.ecpay.com.tw/PLACEHOLDER_4990M',
-      ecpayAnnualLink: 'https://p.ecpay.com.tw/PLACEHOLDER_4990Y',
+      newebpayMonthlyLink: 'https://p.newebpay.com.tw/PLACEHOLDER_4990M',
+      newebpayAnnualLink: 'https://p.newebpay.com.tw/PLACEHOLDER_4990Y',
     },
   },
 
@@ -346,8 +345,8 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       description: '超過月額度：每 1,000 則加收 NT$200（可議）',
     },
     payment: {
-      ecpayMonthlyLink: 'https://p.ecpay.com.tw/PLACEHOLDER_7990M',
-      ecpayAnnualLink: 'https://p.ecpay.com.tw/PLACEHOLDER_7990Y',
+      newebpayMonthlyLink: 'https://p.newebpay.com.tw/PLACEHOLDER_7990M',
+      newebpayAnnualLink: 'https://p.newebpay.com.tw/PLACEHOLDER_7990Y',
     },
   },
 

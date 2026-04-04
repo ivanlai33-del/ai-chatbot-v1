@@ -48,7 +48,7 @@ export const getPricingPlans = (billingCycle: 'monthly' | 'yearly') => {
             annualTag,
             features: plan.features,
             icon: PLAN_ICONS[id],
-            color: id === 'flagship_lite' || id === 'flagship_pro' ? 'amber' : 'emerald',
+            color: plan.color,
             popular: id === 'solo',           // 單店主力標為推薦
             badge: plan.badge,
             storeCount: plan.limits.stores,

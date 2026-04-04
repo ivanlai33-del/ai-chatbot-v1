@@ -180,26 +180,24 @@ function PlanCard({ plan, billingCycle, onAction, flagship = false }: {
     onAction: () => void;
     flagship?: boolean;
 }) {
-    const isAmber = plan.color === 'amber' || flagship;
-
     return (
-        <div className={cn(
-            'relative p-6 rounded-[24px] border-2 flex flex-col gap-4 bg-white/5 backdrop-blur-sm transition-all',
-            plan.popular
-                ? 'border-emerald-500/60 shadow-[0_0_30px_rgba(16,185,129,0.12)]'
-                : isAmber
-                    ? 'border-orange-500/40 shadow-[0_0_20px_rgba(249,115,22,0.08)] bg-orange-500/5'
-                    : 'border-white/10 hover:border-white/20'
-        )}>
-            {/* 推薦徽章 */}
-            {plan.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-emerald-500 text-white text-[13px] font-black rounded-full uppercase tracking-widest shadow-lg whitespace-nowrap">
-                    ⭐ 最受歡迎
-                </div>
+        <div 
+            className={cn(
+                'relative p-6 rounded-[24px] border-2 flex flex-col gap-4 bg-white/5 backdrop-blur-sm transition-all',
+                plan.popular ? 'z-10 scale-[1.02]' : ''
             )}
-            {flagship && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-orange-500 text-white text-[13px] font-black rounded-full uppercase tracking-widest shadow-lg whitespace-nowrap">
-                    🔥 高流量優先支援
+            style={{ 
+                borderColor: `${plan.color}40`,
+                boxShadow: plan.popular ? `0 0 40px ${plan.color}15` : `0 0 20px ${plan.color}08`
+            }}
+        >
+            {/* 推薦徽章 */}
+            {plan.badge && (
+                <div 
+                    className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 text-white text-[13px] font-black rounded-full uppercase tracking-widest shadow-lg whitespace-nowrap"
+                    style={{ backgroundColor: plan.color }}
+                >
+                    {plan.badge}
                 </div>
             )}
 
@@ -216,10 +214,7 @@ function PlanCard({ plan, billingCycle, onAction, flagship = false }: {
                     <span className="text-white/30 line-through text-sm block">原價 {plan.originalPrice}</span>
                     <div className="flex items-baseline gap-0.5 justify-end">
                         <span className="text-white/50 text-sm font-bold">NT$</span>
-                        <span className={cn(
-                            'text-4xl font-black',
-                            isAmber ? 'text-orange-400' : 'text-emerald-400'
-                        )}>
+                        <span className="text-4xl font-black" style={{ color: plan.color }}>
                             {Number(plan.price).toLocaleString()}
                         </span>
                         <span className="text-white/40 text-[15px] font-bold">{plan.period}</span>
@@ -251,10 +246,7 @@ function PlanCard({ plan, billingCycle, onAction, flagship = false }: {
             <ul className="space-y-2 flex-1">
                 {plan.features.slice(0, 6).map((feature, i) => (
                     <li key={i} className="flex items-start gap-2">
-                        <Check className={cn(
-                            'w-4 h-4 mt-0.5 shrink-0',
-                            isAmber ? 'text-orange-400' : 'text-emerald-400'
-                        )} />
+                        <Check className="w-4 h-4 mt-0.5 shrink-0" style={{ color: plan.color }} />
                          <span className="text-[15px] text-white/75 font-bold leading-tight">{feature}</span>
                     </li>
                 ))}
@@ -263,12 +255,11 @@ function PlanCard({ plan, billingCycle, onAction, flagship = false }: {
             {/* CTA 按鈕 */}
              <button
                 onClick={onAction}
-                className={cn(
-                    'w-full py-3 rounded-2xl font-black text-lg transition-all flex items-center justify-center gap-2 group',
-                    isAmber
-                        ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white hover:from-orange-600 hover:to-amber-600 shadow-[0_8px_20px_rgba(249,115,22,0.25)]'
-                        : 'bg-[#06C755] text-white hover:bg-[#05b34c] shadow-[0_8px_20px_rgba(6,199,85,0.2)]'
-                )}
+                className="w-full py-3 rounded-2xl font-black text-lg transition-all flex items-center justify-center gap-2 group text-white"
+                style={{ 
+                    backgroundColor: plan.color,
+                    boxShadow: `0 8px 20px ${plan.color}30`
+                }}
             >
                 請用 LINE 登入
                 <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

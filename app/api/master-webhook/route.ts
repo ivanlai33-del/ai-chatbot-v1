@@ -42,10 +42,10 @@ const getPricingFlexMessage = () => {
         contents: { type: "carousel", contents: [
             createCard({ title: "入門嚐鮮", subtitle: "1店 / 月 500 則", price: "199", period: "/ 月", color: "#06C755", features: ["24H 自動回話", "品牌 DNA 設定"], url: "https://bot.ycideas.com" }),
             createCard({ title: "單店主力", subtitle: "1店 / 月 2000 則", price: "499", period: "/ 月", color: "#06C755", badge: "⭐ 最熱銷", badgeColor: "#06C755", features: ["潛在客戶自動標記", "預約意圖自動記錄"], url: "https://bot.ycideas.com" }),
-            createCard({ title: "成長多店", subtitle: "3店 / 月 5000 則", price: "1,299", period: "/ 月", color: "#4A90E2", features: ["多店統一管理", "各店獨立智庫"], url: "https://bot.ycideas.com" }),
-            createCard({ title: "連鎖專業", subtitle: "6店 / 月 10000 則", price: "2,490", period: "/ 月", color: "#7B61FF", features: ["月度分析報表", "優先客服支援"], url: "https://bot.ycideas.com" }),
-            createCard({ title: "旗艦方案", subtitle: "爆量 / 含專案導入", price: "4,990", period: "起", color: "#F5A623", badge: "🔥 企業首選", badgeColor: "#F5A623", features: ["超量彈性計費", "最優先技術支援"], url: "https://bot.ycideas.com" }),
-            createCard({ title: "品牌旗艦", subtitle: "獨家模型 / 10間店+", price: "9,990", period: "起", color: "#333333", badge: "💎 旗艦之選", badgeColor: "#333333", features: ["核心源碼級支援", "專屬伺服器部署"], url: "https://bot.ycideas.com" })
+            createCard({ title: "成長多店", subtitle: "最多 3 店 / 月 5000 則", price: "1,299", period: "/ 月", color: "#4A90E2", features: ["多店統一管理", "各店獨立智庫"], url: "https://bot.ycideas.com" }),
+            createCard({ title: "連鎖專業", subtitle: "最多 6 店 / 月 10000 則", price: "2,490", period: "/ 月", color: "#7B61FF", features: ["月度分析報表", "優先客服支援"], url: "https://bot.ycideas.com" }),
+            createCard({ title: "旗艦 Lite", subtitle: "最多 3 店 / 15,000 則", price: "4,990", period: "起", color: "#F5A623", badge: "🔥 企業首選", badgeColor: "#F5A623", features: ["超量彈性計費", "最優先技術支援"], url: "https://bot.ycideas.com" }),
+            createCard({ title: "旗艦 Pro", subtitle: "最多 6 店 / 30,000 則", price: "7,990", period: "起", color: "#333333", badge: "💎 旗艦之選", badgeColor: "#333333", features: ["核心源碼級支援", "專屬伺服器部署"], url: "https://bot.ycideas.com" })
         ]}
     };
 };
@@ -58,8 +58,8 @@ const DEFAULT_MASTER_PROMPT = `
 
 #### 1. 核心定價 (6 大方案):
 - 一間店：🌱 入門版 $199 / 🏪 主力版 $499 (熱銷)
-- 多間店：🔗 成長多店 $1,299 / 👑 連鎖專業 $2,490
-- 高流量：🔥 旗艦版 $4,990 起 (含優先支援)
+- 多間店：🔗 成長多店 $1,299 (最多3店) / 👑 連鎖專業 $2,490 (最多6店)
+- 旗艦系列：🔥 旗艦 Lite $4,990 (最多3店) / 🚀 旗艦 Pro $7,990 (最多6店)
 * 年繳優惠：一次訂一年直接「送 1 個月」(月費 × 11)，是最划算的選擇。
 
 #### 2. 產品價值

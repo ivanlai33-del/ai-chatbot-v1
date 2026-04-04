@@ -346,7 +346,7 @@ export default function UnifiedBillingView() {
                                     {selectedBillingCycle === 'yearly' && (
                                         <div className="mt-2 inline-flex items-center gap-1.5">
                                              <span className="text-sm font-black text-emerald-500 bg-emerald-50 px-2 py-1 rounded-lg">
-                                                年繳現省 ${((plan.pricing.originalMonthly * 12) - plan.pricing.annual).toLocaleString()}
+                                                年繳現省 ${plan.pricing.annualSaving.toLocaleString()}
                                             </span>
                                         </div>
                                     )}

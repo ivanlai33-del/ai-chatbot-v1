@@ -98,7 +98,7 @@ export async function processStoreEvents(
     // 🤖 AI Client Selection: 優先使用 Google Gemini Free Tier for OA
     const googleAI = process.env.GOOGLE_API_KEY ? new OpenAI({
         apiKey: process.env.GOOGLE_API_KEY,
-        baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/"
+        baseURL: "https://generativelanguage.googleapis.com/v1beta/openai"
     }) : null;
 
     const openai = new OpenAI({ apiKey: openaiApiKey });

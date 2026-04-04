@@ -38,7 +38,7 @@ const openai = new OpenAI({
 // 🚀 Google Gemini (OpenAI-compatible) Initialization
 const googleAI = process.env.GOOGLE_API_KEY ? new OpenAI({
     apiKey: process.env.GOOGLE_API_KEY,
-    baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/"
+    baseURL: "https://generativelanguage.googleapis.com/v1beta/openai"
 }) : null;
 
 function logToFile(data: any) {

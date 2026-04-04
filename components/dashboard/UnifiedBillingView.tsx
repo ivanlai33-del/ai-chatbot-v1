@@ -186,81 +186,68 @@ export default function UnifiedBillingView() {
                 )}>
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 relative z-10">
                         <div className="flex items-center gap-6">
-                            <div className={cn(
-                                "w-20 h-20 rounded-3xl flex items-center justify-center shadow-2xl transition-all duration-500",
-                                planLevel >= 5 ? "bg-amber-500 shadow-amber-500/40" :
-                                planLevel > 0 ? "bg-[#06C755] shadow-green-500/40" :
-                                "bg-slate-800 shadow-slate-500/20"
-                            )}>
+                            <div 
+                                className="w-20 h-20 rounded-[2rem] flex items-center justify-center bg-white shadow-xl transition-all duration-500 border-4"
+                                style={{ borderColor: currentPlan?.color || '#f1f5f9' }}
+                            >
                                  <div className="text-4xl transform group-hover:scale-110 transition-transform">{currentPlan?.emoji || "🎁"}</div>
                             </div>
                             <div>
-                                 <h3 className="text-[40px] font-black text-slate-800 tracking-tight">
+                                 <h3 className="text-[34px] font-black text-slate-800 tracking-tight leading-none mb-2">
                                     {currentPlan?.name || "尚未開通正式方案"}
                                 </h3>
-                                <div className="flex items-center gap-2.5 mt-2">
+                                <div className="flex items-center gap-2.5">
                                     {planLevel > 0 ? (
                                         <div className="flex items-center gap-2">
                                             {cancelAtPeriodEnd ? (
-                                                 <span className="flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-600 rounded-full text-xs font-black uppercase tracking-widest border border-amber-100">
-                                                    <Clock className="w-3 h-3" />
-                                                    Pending Cancellation ・ 即將結束自續
+                                                 <span className="flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-600 rounded-lg text-[10px] font-black uppercase tracking-widest border border-amber-100">
+                                                    Pending Cancellation
                                                 </span>
                                             ) : (
-                                                 <span className={cn(
-                                                     "flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest border",
-                                                     planLevel >= 5 ? "bg-amber-50 text-amber-600 border-amber-100" : "bg-emerald-50 text-emerald-600 border-emerald-100"
-                                                 )}>
-                                                    <CheckCircle2 className="w-3 h-3" />
-                                                    Active ・ 訂閱執行中
+                                                 <span className="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-[10px] font-black uppercase tracking-widest border border-emerald-100">
+                                                    Active 訂閱執行中
                                                 </span>
                                             )}
-                                             <span className={cn(
-                                                "px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest border",
-                                                dbBillingCycle === 'yearly' ? "bg-indigo-50 text-indigo-600 border-indigo-100" : "bg-slate-50 text-slate-500 border-slate-100"
-                                            )}>
+                                             <span className="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-[10px] font-black uppercase tracking-widest border border-indigo-100">
                                                 {dbBillingCycle === 'yearly' ? '年費方案' : '月費方案'}
                                             </span>
                                         </div>
                                     ) : (
-                                         <span className="flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-sm font-black uppercase tracking-widest border border-slate-200">
-                                            <Clock className="w-3 h-3" />
-                                            Free Version ・ 免費體驗中
+                                         <span className="flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-500 rounded-lg text-[10px] font-black uppercase tracking-widest border border-slate-200">
+                                            Trial 體驗模式
                                         </span>
                                     )}
                                 </div>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-6">
-                            <div className="text-right">
-                                 <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-1">{cancelAtPeriodEnd ? "服務結束日" : "次期扣款日"}</p>
-                                <p className="text-3xl font-bold text-slate-800">{planLevel > 0 ? "2026 / 04 / 28" : "---"}</p>
-                                {planLevel > 0 && !cancelAtPeriodEnd && (
-                                    <div className="mt-3 text-right">
-                                        <button 
-                                            onClick={() => setIsCancelModalOpen(true)}
-                                            className="text-[10px] font-black text-slate-300 hover:text-rose-400 transition-all uppercase tracking-widest border-b border-transparent hover:border-rose-400 "
-                                        >
-                                            停止自動續約設定
-                                        </button>
-                                        <div className="flex items-center justify-end gap-1.5 mt-1 opacity-40">
-                                            <Info className="w-2.5 h-2.5" />
-                                             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">註：停止後本期費用不予退還，服務將維持至本期結標日結束。</p>
-                                        </div>
-                                    </div>
-                                )}
+                        <div className="flex flex-col md:flex-row gap-6 md:gap-12">
+                            <div className="space-y-2">
+                                <div className="flex justify-between md:block">
+                                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-0.5">開始時間</p>
+                                    <p className="text-sm font-bold text-slate-500 tracking-tight">{planLevel > 0 ? '2026/03/28' : '---'}</p>
+                                </div>
+                                <div className="flex justify-between md:block">
+                                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-0.5">預定結束</p>
+                                    <p className="text-sm font-bold text-slate-500 tracking-tight">{planLevel > 0 ? (dbBillingCycle === 'yearly' ? '2027/03/28' : '2026/04/28') : '---'}</p>
+                                </div>
                             </div>
-                            <div className="h-10 w-px bg-slate-200" />
+                            <div className="h-px md:h-12 w-full md:w-px bg-slate-100" />
                             <div className="text-right">
-                                <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-1">支付金額</p>
-                                <p className={cn(
-                                    "text-4xl font-black",
-                                    planLevel >= 5 ? "text-amber-500" : (planLevel > 0 ? "text-[#06C755]" : "text-slate-400")
-                                )}>
-                                    ${planLevel > 0 ? (dbBillingCycle === 'yearly' ? currentPlan?.pricing.annual.toLocaleString() : currentPlan?.pricing.monthly.toLocaleString()) : "0"}
-                                    <span className="text-xs font-bold text-slate-400 ml-1">/ {dbBillingCycle === 'yearly' ? 'yr' : 'mo'}</span>
+                                 <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">
+                                    {cancelAtPeriodEnd ? "服務效期至" : "次期扣款日"}
                                 </p>
+                                <p className="text-3xl font-black text-slate-800 tracking-tighter">
+                                    {planLevel > 0 ? (dbBillingCycle === 'yearly' ? '2027 / 03 / 28' : '2026 / 04 / 28') : '---'}
+                                </p>
+                                {planLevel > 0 && !cancelAtPeriodEnd && (
+                                    <button 
+                                        onClick={() => setIsCancelModalOpen(true)}
+                                        className="mt-2 text-[9px] font-black text-slate-300 hover:text-rose-400 transition-all uppercase tracking-widest border-b border-slate-200 hover:border-rose-400"
+                                    >
+                                        停止自動續約設定
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>

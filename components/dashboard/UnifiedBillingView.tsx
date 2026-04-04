@@ -20,7 +20,10 @@ import {
     Save,
     AlertTriangle,
     X,
-    Info
+    Info,
+    AlertCircle,
+    Store,
+    MessageCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { 
@@ -177,19 +180,19 @@ export default function UnifiedBillingView() {
                 <h2 className="text-sm font-black text-slate-400 uppercase tracking-[0.3em] mb-4 ml-2">目前的收費狀態</h2>
                 <div className={cn(
                     "relative overflow-hidden rounded-[40px] p-8 transition-all border-2",
-                    planLevel === 2 ? "bg-gradient-to-br from-amber-500/5 to-white border-amber-200" :
-                    planLevel === 1 ? "bg-gradient-to-br from-[#06C755]/5 to-white border-emerald-200" :
+                    planLevel >= 5 ? "bg-gradient-to-br from-amber-500/5 to-white border-amber-200" :
+                    planLevel > 0 ? "bg-gradient-to-br from-[#06C755]/5 to-white border-emerald-200" :
                     "bg-gradient-to-br from-slate-100 to-white border-slate-200"
                 )}>
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 relative z-10">
                         <div className="flex items-center gap-6">
                             <div className={cn(
-                                "w-20 h-20 rounded-3xl flex items-center justify-center shadow-2xl",
-                                planLevel === 2 ? "bg-amber-500 shadow-amber-500/40" :
-                                planLevel === 1 ? "bg-[#06C755] shadow-green-500/40" :
+                                "w-20 h-20 rounded-3xl flex items-center justify-center shadow-2xl transition-all duration-500",
+                                planLevel >= 5 ? "bg-amber-500 shadow-amber-500/40" :
+                                planLevel > 0 ? "bg-[#06C755] shadow-green-500/40" :
                                 "bg-slate-800 shadow-slate-500/20"
                             )}>
-                                 <div className="text-4xl">{currentPlan?.emoji || "🎁"}</div>
+                                 <div className="text-4xl transform group-hover:scale-110 transition-transform">{currentPlan?.emoji || "🎁"}</div>
                             </div>
                             <div>
                                  <h3 className="text-[40px] font-black text-slate-800 tracking-tight">
@@ -204,7 +207,10 @@ export default function UnifiedBillingView() {
                                                     Pending Cancellation ・ 即將結束自續
                                                 </span>
                                             ) : (
-                                                 <span className="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-xs font-black uppercase tracking-widest border border-emerald-100">
+                                                 <span className={cn(
+                                                     "flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest border",
+                                                     planLevel >= 5 ? "bg-amber-50 text-amber-600 border-amber-100" : "bg-emerald-50 text-emerald-600 border-emerald-100"
+                                                 )}>
                                                     <CheckCircle2 className="w-3 h-3" />
                                                     Active ・ 訂閱執行中
                                                 </span>
@@ -250,9 +256,9 @@ export default function UnifiedBillingView() {
                                 <p className="text-sm font-black text-slate-400 uppercase tracking-widest mb-1">支付金額</p>
                                 <p className={cn(
                                     "text-4xl font-black",
-                                    planLevel > 0 ? "text-indigo-600" : "text-slate-400"
+                                    planLevel >= 5 ? "text-amber-500" : (planLevel > 0 ? "text-[#06C755]" : "text-slate-400")
                                 )}>
-                                    ${planLevel > 0 ? (selectedBillingCycle === 'yearly' ? currentPlan?.pricing.annual.toLocaleString() : currentPlan?.pricing.monthly.toLocaleString()) : "0"}
+                                    ${planLevel > 0 ? (dbBillingCycle === 'yearly' ? currentPlan?.pricing.annual.toLocaleString() : currentPlan?.pricing.monthly.toLocaleString()) : "0"}
                                     <span className="text-xs font-bold text-slate-400 ml-1">/ {dbBillingCycle === 'yearly' ? 'yr' : 'mo'}</span>
                                 </p>
                             </div>
@@ -581,6 +587,148 @@ export default function UnifiedBillingView() {
                     </div>
                 )}
             </AnimatePresence>
+
+            {/* 🛡️ Policy & Support Footer */}
+            <footer className="mt-20 pt-16 border-t border-slate-200">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 pb-16">
+                    {/* 1. 客服聯絡資訊 */}
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-3 text-slate-800">
+                            <div className="w-10 h-10 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 shadow-sm border border-indigo-100/50">
+                                <Mail className="w-5 h-5" />
+                            </div>
+                            <h3 className="font-black text-sm uppercase tracking-[0.2em] text-slate-500">客服聯絡資訊</h3>
+                        </div>
+                        <div className="space-y-4 pl-1">
+                            <div>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">官方客服信箱</p>
+                                <p className="text-slate-800 font-bold text-base">info@ycideas.com</p>
+                            </div>
+                            <div className="pt-2">
+                                <div className="flex items-center gap-2 mb-3">
+                                    <div className="w-4 h-4 rounded-full bg-[#06C755] flex items-center justify-center text-[8px] text-white">
+                                        <MessageCircle className="w-2.5 h-2.5 fill-current" />
+                                    </div>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">LINE 專屬通道</p>
+                                </div>
+                                <div className="space-y-3">
+                                    <div className="flex items-center gap-3 bg-white p-3 rounded-2xl border border-slate-100 shadow-sm group hover:border-emerald-200 transition-all">
+                                        <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center overflow-hidden border border-slate-100">
+                                            <img src="/Lai Logo_3.svg" alt="Lai Logo" className="w-8 h-8 object-contain" />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] font-black text-slate-400">你的AI客服</span>
+                                            <span className="text-emerald-600 font-black text-sm">@967iypui</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-3 bg-white p-3 rounded-2xl border border-slate-100 shadow-sm group hover:border-indigo-200 transition-all">
+                                        <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-lg grayscale group-hover:grayscale-0 transition-all">👤</div>
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] font-black text-slate-400">真人專員</span>
+                                            <span className="text-indigo-600 font-black text-sm">ivanlai33</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p className="text-[10px] font-bold text-slate-400 italic pt-2">服務、合作、採訪、洽詢</p>
+                        </div>
+                    </div>
+
+                    {/* 2. 付費方案說明 */}
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-3 text-slate-800">
+                            <div className="w-10 h-10 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 shadow-sm border border-emerald-100/50">
+                                <CreditCard className="w-5 h-5" />
+                            </div>
+                            <h3 className="font-black text-sm uppercase tracking-[0.2em] text-slate-500">付費方案說明</h3>
+                        </div>
+                        <div className="space-y-5 pl-1">
+                            <div className="space-y-2">
+                                <p className="text-sm font-bold text-slate-600 leading-relaxed">
+                                    本平台採<span className="text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded-md mx-1">訂閱制 (SaaS)</span>收費模式
+                                </p>
+                            </div>
+                            <div className="space-y-3 bg-slate-50/50 p-5 rounded-3xl border border-slate-100">
+                                {[
+                                    { label: '入門嚐鮮', price: '$199 / 月' },
+                                    { label: '單店主力', price: '$499 / 月' },
+                                    { label: '成長多店', price: '$1,299 / 月' },
+                                    { label: '連鎖專業', price: '$2,490 / 月' },
+                                    { label: '旗艦 Lite', price: '$4,990 起 / 月' },
+                                    { label: '旗艦 Pro', price: '$7,990 起 / 月' },
+                                ].map((p) => (
+                                    <div key={p.label} className="flex justify-between items-center text-xs font-bold">
+                                        <span className="text-slate-500 tracking-wider text-[11px]">{p.label} ：</span>
+                                        <span className="text-slate-800 font-black">{p.price}</span>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="flex items-center gap-2 text-emerald-600 font-black text-[10px] bg-emerald-50 px-3 py-2 rounded-xl border border-emerald-100/50 uppercase tracking-widest leading-none">
+                                <Sparkles className="w-3 h-3" />
+                                年費方案包含「買 11 個月送 1 個月」優惠
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* 3. 退款與終止政策 */}
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-3 text-slate-800">
+                            <div className="w-10 h-10 rounded-2xl bg-rose-50 flex items-center justify-center text-rose-600 shadow-sm border border-rose-100/50">
+                                <ShieldCheck className="w-5 h-5" />
+                            </div>
+                            <h3 className="font-black text-sm uppercase tracking-[0.2em] text-slate-500">退款與終止政策</h3>
+                        </div>
+                        <div className="space-y-5 pl-1">
+                            <p className="text-sm font-bold text-slate-600 leading-relaxed">
+                                數位服務開通後，除不可抗力因素外，<span className="text-rose-500">恕不提供退款</span>。
+                            </p>
+                            <p className="text-sm font-bold text-slate-500 leading-relaxed">
+                                用戶可隨時於後台取消次月續訂，服務將持續至該帳單週期結束。
+                            </p>
+                            <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                                <AlertCircle className="w-4 h-4 text-slate-300" />
+                                <span className="text-[11px] font-bold text-slate-400">若有異常扣款，請於 7 日內聯繫客服。</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* 4. 營運單位 */}
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-3 text-slate-800">
+                            <div className="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-600 shadow-sm border border-slate-200/50">
+                                <Store className="w-5 h-5" />
+                            </div>
+                            <h3 className="font-black text-sm uppercase tracking-[0.2em] text-slate-500">營運單位</h3>
+                        </div>
+                        <div className="space-y-6 pl-1">
+                            <div className="space-y-2">
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">© 2026 您的專屬AI智能店長</p>
+                                <div className="pt-2">
+                                    <h4 className="text-slate-800 font-black text-xl tracking-tight leading-none">YC Ideas</h4>
+                                    <p className="text-slate-400 font-bold text-[10px] mt-1 italic">奕暢創新工作室</p>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] mt-3">AI 數位服務開發 運作</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Bottom Legal bar */}
+                <div className="mt-8 py-10 border-t border-slate-100 flex flex-col items-center gap-6">
+                    <div className="flex items-center gap-3 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                        <span className="opacity-50">本網站交易資料由</span>
+                        <span className="px-2 py-0.5 bg-slate-100 rounded text-slate-600">藍新金流 NEWEBPAY</span>
+                        <span className="opacity-50">提供 256-BIT SSL 加密安全保護</span>
+                    </div>
+                    <div className="flex items-center gap-10">
+                        {['服務條款', '隱私權政策', '免責聲明'].map((item) => (
+                            <button key={item} className="text-xs font-bold text-slate-400 hover:text-indigo-600 hover:scale-105 transition-all uppercase tracking-widest">
+                                {item}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            </footer>
         </div>
     );
 }

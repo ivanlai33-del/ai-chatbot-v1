@@ -18,7 +18,7 @@ interface PricingWidgetProps {
 
 export const PricingWidget: React.FC<PricingWidgetProps> = ({ billingCycle, onToggleBilling, onSelectPlan, lineUserId, initiateLineLogin }) => {
     const isLoggedIn = !!lineUserId;
-    const SHOW_PLAN_IDS: PlanId[] = ['starter', 'solo', 'growth', 'chain'];
+    const SHOW_PLAN_IDS: PlanId[] = ['starter', 'solo', 'growth', 'chain', 'flagship_lite', 'flagship_pro'];
     
     const plans = SHOW_PLAN_IDS.map(id => {
         const p = PRICING_PLANS[id];
@@ -29,11 +29,10 @@ export const PricingWidget: React.FC<PricingWidgetProps> = ({ billingCycle, onTo
             originalPrice: isYearly ? (p.pricing.originalMonthly * 12).toLocaleString() : p.pricing.originalMonthly.toLocaleString(),
             period: isYearly ? '/年' : '/月',
             tag: isYearly ? '送 1 個月！' : p.badge,
-            tagColor: p.tier >= 4 ? 'text-amber-500 bg-amber-50' : 'text-emerald-500 bg-emerald-50',
-            popular: p.tier === 2,
+            popular: id === 'solo',
             features: p.features.slice(0, 6),
             payUrl: isYearly ? p.payment.newebpayAnnualLink : p.payment.newebpayMonthlyLink,
-            color: p.tier >= 4 ? '#F59E0B' : '#06C755'
+            color: p.color
         };
     });
 
@@ -54,7 +53,7 @@ export const PricingWidget: React.FC<PricingWidgetProps> = ({ billingCycle, onTo
                     onClick={() => onToggleBilling('yearly')}
                     className={cn(
                         "px-8 py-2.5 rounded-[14px] text-base font-black transition-all relative overflow-hidden",
-                        billingCycle === 'yearly' ? "bg-[#06C755] text-white shadow-md" : "text-zinc-400 hover:text-zinc-600"
+                        billingCycle === 'yearly' ? "bg-[#06C755] text-white shadow-md active:scale-95" : "text-zinc-400 hover:text-zinc-600"
                     )}
                 >
                     年費更划算
@@ -70,38 +69,46 @@ export const PricingWidget: React.FC<PricingWidgetProps> = ({ billingCycle, onTo
                     <div
                         key={p.name}
                         className={cn(
-                            "relative overflow-hidden bg-white rounded-[32px] border-2 transition-all p-8 flex flex-col",
-                            p.popular ? "border-amber-400 shadow-2xl shadow-amber-100/50" : "border-zinc-100 shadow-xl"
+                            "relative overflow-hidden bg-white rounded-[32px] border-2 transition-all p-8 flex flex-col hover:shadow-2xl hover:-translate-y-1 transform duration-300",
+                            p.popular ? "shadow-2xl shadow-zinc-200" : "border-zinc-100 shadow-xl"
                         )}
+                        style={{ borderColor: p.popular ? p.color : undefined }}
                     >
-                        {p.popular && (
+                        {p.tag && (
                             <div className="absolute top-0 right-0">
-                                <div className="bg-gradient-to-l from-amber-500 to-amber-600 px-4 py-1.5 rounded-bl-2xl font-black text-[13px] text-white flex items-center gap-1.5 shadow-sm">
-                                    <Sparkles className="w-3.5 h-3.5" />
-                                    建議方案
+                                <div 
+                                    className="px-4 py-1.5 rounded-bl-2xl font-black text-[13px] text-white flex items-center gap-1.5 shadow-sm"
+                                    style={{ backgroundColor: p.color }}
+                                >
+                                    {p.popular && <Sparkles className="w-3.5 h-3.5" />}
+                                    {p.tag}
                                 </div>
                             </div>
                         )}
 
                         <div className="mb-6">
                             <h3 className="text-2xl font-black text-slate-800 tracking-tight">{p.name}</h3>
-                            <p className="text-slate-400 text-[15px] font-bold mt-1">限時前 500 名：原價 ${p.originalPrice} 優惠中</p>
+                            <p className="text-slate-400 text-[15px] font-bold mt-1">
+                                {p.name.includes('旗艦') ? '高流量企業級架構' : `限時前 500 名：原價 $${p.originalPrice} 優惠中`}
+                            </p>
                         </div>
 
                         <div className="flex items-baseline gap-1 mb-8">
-                            <span className={cn("text-2xl font-black", p.popular ? "text-amber-500" : "text-emerald-500")}>NT$</span>
-                            <span className={cn("text-[46px] font-black leading-none tracking-tighter", p.popular ? "text-amber-500" : "text-emerald-500")}>
+                            <span className="text-2xl font-black" style={{ color: p.color }}>NT$</span>
+                            <span className="text-[46px] font-black leading-none tracking-tighter" style={{ color: p.color }}>
                                 {p.price}
                             </span>
                             <span className="text-zinc-400 font-bold ml-1">{p.period}</span>
-                            {p.originalPrice && <span className="text-zinc-300 line-through text-base font-medium ml-2">${p.originalPrice}</span>}
                         </div>
 
                         <div className="space-y-4 mb-8 flex-1">
                             {p.features.map((f, i) => (
                                 <div key={i} className="flex items-start gap-3">
-                                    <div className={cn("mt-1 flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center", p.popular ? "bg-amber-100 text-amber-600" : "bg-emerald-50 text-emerald-600")}>
-                                        <ChevronRight className="w-3 h-3 stroke-[3px]" />
+                                    <div 
+                                        className="mt-1 flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center p-0.5"
+                                        style={{ backgroundColor: `${p.color}15`, color: p.color }}
+                                    >
+                                        <ChevronRight className="w-3 h-3 stroke-[4px]" />
                                     </div>
                                     <span className="text-[15px] text-slate-600 font-bold leading-tight">{f}</span>
                                 </div>
@@ -110,24 +117,19 @@ export const PricingWidget: React.FC<PricingWidgetProps> = ({ billingCycle, onTo
 
                         {/* 🔐 登入狀態決定按鈕行為 */}
                         {!isLoggedIn ? (
-                            // 未登入：先去 LINE 登入成為免費會員
                              <button
                                 onClick={() => initiateLineLogin?.()}
-                                className="w-full py-5 rounded-2xl font-black text-[20px] shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 bg-[#06C755] text-white shadow-green-200"
+                                className="w-full py-5 rounded-2xl font-black text-[20px] shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 text-white"
+                                style={{ backgroundColor: p.color, boxShadow: `0 8px 20px ${p.color}30` }}
                             >
                                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.105.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
-                                LINE 登入 · 先成為免費會員
+                                LINE 登入 · 解鎖特惠
                             </button>
                         ) : (
-                            // 已登入：直接付費開通
                              <button
                                 onClick={() => window.location.href = p.payUrl}
-                                className={cn(
-                                    "w-full py-5 rounded-2xl font-black text-[20px] shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2",
-                                    p.popular 
-                                        ? "bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-amber-200" 
-                                        : "bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-emerald-200"
-                                )}
+                                className="w-full py-5 rounded-2xl font-black text-[20px] shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 text-white"
+                                style={{ backgroundColor: p.color, boxShadow: `0 8px 20px ${p.color}30` }}
                             >
                                 <CreditCard className="w-5 h-5" />
                                 立即開通 AI 智能店長

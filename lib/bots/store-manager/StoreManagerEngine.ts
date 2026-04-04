@@ -215,6 +215,7 @@ async function handleSingleEvent(
             activeBot,
             event.replyToken,
             lineClient,
+            openai,
             chatClient,
             chatModel,
             supabase,
@@ -230,6 +231,7 @@ async function handleCustomerChat(
     bot: BotConfig,
     replyToken: string,
     lineClient: Client,
+    openai: OpenAI,
     chatClient: OpenAI,
     chatModel: string,
     supabase: SupabaseClient,
@@ -283,12 +285,27 @@ ${bot.dynamic_context ? `\n【店長今日動態公告】：${bot.dynamic_contex
     let aiResponse = '';
     try {
         const tools = getStoreManagerTools();
-        const response = await chatClient.chat.completions.create({
-            model: chatModel,
-            messages,
-            tools,
-            tool_choice: 'auto',
-        });
+        let response;
+        try {
+            // 🚀 Try Gemini First
+            response = await chatClient.chat.completions.create({
+                model: chatModel,
+                messages,
+                tools,
+                tool_choice: 'auto',
+            });
+        } catch (geminiErr: any) {
+            console.error('[Gemini Fallback] Google API failed, falling back to OpenAI:', geminiErr?.message);
+            // 🛡️ Rescue with OpenAI
+            response = await openai.chat.completions.create({
+                model: 'gpt-4o-mini',
+                messages,
+                tools,
+                tool_choice: 'auto',
+            });
+            // 重置後續變數以便 log 使用正确的 model 名稱
+            chatModel = 'gpt-4o-mini';
+        }
 
         let responseMessage = response.choices[0].message;
 
@@ -302,7 +319,7 @@ ${bot.dynamic_context ? `\n【店長今日動態公告】：${bot.dynamic_contex
                 toolMessages.push({ tool_call_id: toolCall.id, role: 'tool', name: fn, content: result });
             }
 
-            const secondResponse = await chatClient.chat.completions.create({
+            const secondResponse = await (chatModel === 'gpt-4o-mini' ? openai : chatClient).chat.completions.create({
                 model: chatModel,
                 messages: toolMessages,
             });

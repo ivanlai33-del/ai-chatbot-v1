@@ -319,16 +319,30 @@ export async function POST(req: NextRequest) {
         ];
 
         // 🤖 Model Selection (優先使用 Google Free Tier)
-        const chatClient = (googleAI && !isMaster) ? googleAI : openai;
-        const chatModel = (googleAI && !isMaster) ? 'gemini-1.5-flash' : (isMaster ? 'gpt-4o' : 'gpt-4o-mini');
+        let chatClient = (googleAI && !isMaster) ? googleAI : openai;
+        let chatModel = (googleAI && !isMaster) ? 'gemini-1.5-flash' : (isMaster ? 'gpt-4o' : 'gpt-4o-mini');
 
-        // API Call
-        const response = await chatClient.chat.completions.create({
-            model: chatModel,
-            messages: combinedMessages as any,
-            tools: ALL_TOOLS.length > 0 ? ALL_TOOLS : undefined,
-            temperature: 0.7,
-        });
+        let response;
+        try {
+            // 🚀 Try Gemini First
+            response = await chatClient.chat.completions.create({
+                model: chatModel,
+                messages: combinedMessages as any,
+                tools: ALL_TOOLS.length > 0 ? ALL_TOOLS : undefined,
+                temperature: 0.7,
+            });
+        } catch (geminiErr) {
+            console.error('[Gemini Fallback] Gemini API failed, falling back to OpenAI:', geminiErr);
+            // 🛡️ Fallback to OpenAI
+            chatClient = openai;
+            chatModel = isMaster ? 'gpt-4o' : 'gpt-4o-mini';
+            response = await chatClient.chat.completions.create({
+                model: chatModel,
+                messages: combinedMessages as any,
+                tools: ALL_TOOLS.length > 0 ? ALL_TOOLS : undefined,
+                temperature: 0.7,
+            });
+        }
 
         let responseMessage = response.choices[0].message;
         let fullResponse = responseMessage.content || "";

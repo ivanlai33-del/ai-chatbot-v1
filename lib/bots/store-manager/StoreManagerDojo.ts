@@ -25,12 +25,14 @@ export class StoreManagerDojo {
     private client: Client;
     private bot: BotConfig;
     private logger: BotLogger;
+    private chatModel: string;
 
-    constructor(openai: OpenAI, supabase: SupabaseClient, client: Client, bot: BotConfig) {
+    constructor(openai: OpenAI, supabase: SupabaseClient, client: Client, bot: BotConfig, chatModel: string = 'gpt-4o-mini') {
         this.openai = openai;
         this.supabase = supabase;
         this.client = client;
         this.bot = bot;
+        this.chatModel = chatModel;
         this.logger = new BotLogger(TIER, bot.id);
     }
 
@@ -180,7 +182,7 @@ export class StoreManagerDojo {
             const currentPrompt = botData?.system_prompt || '';
 
             const rewriteResponse = await this.openai.chat.completions.create({
-                model: 'gpt-4o',
+                model: this.chatModel === 'gemini-1.5-flash' ? 'gemini-1.5-flash' : 'gpt-4o', // 旗艦功能
                 messages: [
                     {
                         role: 'system',
@@ -215,7 +217,7 @@ export class StoreManagerDojo {
     ) {
         try {
             const classificationResponse = await this.openai.chat.completions.create({
-                model: 'gpt-4o-mini',
+                model: this.chatModel,
                 response_format: { type: 'json_object' },
                 messages: [
                     {

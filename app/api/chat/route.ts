@@ -35,6 +35,12 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
 
+// 🚀 Google Gemini (OpenAI-compatible) Initialization
+const googleAI = process.env.GOOGLE_API_KEY ? new OpenAI({
+    apiKey: process.env.GOOGLE_API_KEY,
+    baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/"
+}) : null;
+
 function logToFile(data: any) {
     console.log('[ChatAPI]', JSON.stringify(data));
 }
@@ -312,9 +318,13 @@ export async function POST(req: NextRequest) {
             ...mappedMessages
         ];
 
+        // 🤖 Model Selection (優先使用 Google Free Tier)
+        const chatClient = (googleAI && !isMaster) ? googleAI : openai;
+        const chatModel = (googleAI && !isMaster) ? 'gemini-1.5-flash' : (isMaster ? 'gpt-4o' : 'gpt-4o-mini');
+
         // API Call
-        const response = await openai.chat.completions.create({
-            model: isMaster ? 'gpt-4o' : 'gpt-4o-mini',
+        const response = await chatClient.chat.completions.create({
+            model: chatModel,
             messages: combinedMessages as any,
             tools: ALL_TOOLS.length > 0 ? ALL_TOOLS : undefined,
             temperature: 0.7,
@@ -375,8 +385,8 @@ export async function POST(req: NextRequest) {
             }
 
             // Second call with tool results
-            const secondResponse = await openai.chat.completions.create({
-                model: isMaster ? 'gpt-4o' : 'gpt-4o-mini',
+            const secondResponse = await chatClient.chat.completions.create({
+                model: chatModel,
                 messages: toolMessages,
                 temperature: 0.7,
             });
@@ -410,8 +420,8 @@ export async function POST(req: NextRequest) {
 
                 if (parsed.action === 'SUBMIT_FEEDBACK') {
                     const feedbackContent = parsed.summary || "無內容";
-                    const triage = await openai.chat.completions.create({
-                        model: 'gpt-4o-mini',
+                    const triage = await chatClient.chat.completions.create({
+                        model: 'gpt-4o-mini', // 內部小分流維持 mini 或同步
                         messages: [
                             { role: 'system', content: '你是一位資深客服經理。分析收到的客戶反饋，提供：1. 分類, 2. 優先級, 3. 建議回覆。輸出為 JSON：{"cat": String, "pri": Number, "reply": String}' },
                             { role: 'user', content: feedbackContent }

@@ -94,12 +94,22 @@ export async function processStoreEvents(
 
     // 3. 建立客戶端
     const lineClient = new Client(lineConfig);
+    
+    // 🤖 AI Client Selection: 優先使用 Google Gemini Free Tier for OA
+    const googleAI = process.env.GOOGLE_API_KEY ? new OpenAI({
+        apiKey: process.env.GOOGLE_API_KEY,
+        baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/"
+    }) : null;
+
     const openai = new OpenAI({ apiKey: openaiApiKey });
-    logger.info(`Clients created, processing ${events.length} event(s)...`);
+    const chatClient = googleAI || openai; // 用於一般對話的客戶端
+    const chatModel = googleAI ? 'gemini-1.5-flash' : 'gpt-4o-mini';
+
+    logger.info(`Clients created (Model: ${chatModel}), processing ${events.length} event(s)...`);
 
     // 4. 逐一處理事件
     for (const event of events) {
-        await handleSingleEvent(event, bot, lineClient, openai, globalSupabase, logger);
+        await handleSingleEvent(event, bot, lineClient, openai, chatClient, chatModel, globalSupabase, logger);
     }
     logger.info('All events processed.');
 }
@@ -110,6 +120,8 @@ async function handleSingleEvent(
     bot: BotConfig,
     lineClient: Client,
     openai: OpenAI,
+    chatClient: OpenAI,
+    chatModel: string,
     supabase: SupabaseClient,
     logger: BotLogger
 ): Promise<void> {
@@ -174,7 +186,7 @@ async function handleSingleEvent(
 
     // ─── D. 練功房（老闆專用）──────────────────────────────
     if (isOwner) {
-        const dojo = new StoreManagerDojo(openai, supabase, lineClient, activeBot);
+        const dojo = new StoreManagerDojo(chatClient, supabase, lineClient, activeBot, chatModel);
 
         if (event.type === 'message' && event.message.type === 'text') {
             const text = event.message.text.trim();
@@ -203,7 +215,8 @@ async function handleSingleEvent(
             activeBot,
             event.replyToken,
             lineClient,
-            openai,
+            chatClient,
+            chatModel,
             supabase,
             logger
         );
@@ -217,7 +230,8 @@ async function handleCustomerChat(
     bot: BotConfig,
     replyToken: string,
     lineClient: Client,
-    openai: OpenAI,
+    chatClient: OpenAI,
+    chatModel: string,
     supabase: SupabaseClient,
     logger: BotLogger
 ): Promise<void> {
@@ -269,8 +283,8 @@ ${bot.dynamic_context ? `\n【店長今日動態公告】：${bot.dynamic_contex
     let aiResponse = '';
     try {
         const tools = getStoreManagerTools();
-        const response = await openai.chat.completions.create({
-            model: 'gpt-4o-mini',
+        const response = await chatClient.chat.completions.create({
+            model: chatModel,
             messages,
             tools,
             tool_choice: 'auto',
@@ -288,17 +302,17 @@ ${bot.dynamic_context ? `\n【店長今日動態公告】：${bot.dynamic_contex
                 toolMessages.push({ tool_call_id: toolCall.id, role: 'tool', name: fn, content: result });
             }
 
-            const secondResponse = await openai.chat.completions.create({
-                model: 'gpt-4o-mini',
+            const secondResponse = await chatClient.chat.completions.create({
+                model: chatModel,
                 messages: toolMessages,
             });
             aiResponse = secondResponse.choices[0].message.content || '';
 
             const usage = secondResponse.usage;
             if (usage) {
-                const cost = calculateCost('gpt-4o-mini', usage.prompt_tokens, usage.completion_tokens);
+                const cost = calculateCost(chatModel, usage.prompt_tokens, usage.completion_tokens);
                 await logTokenUsage(supabase, bot.id, {
-                    model: 'gpt-4o-mini',
+                    model: chatModel,
                     prompt_tokens: usage.prompt_tokens,
                     completion_tokens: usage.completion_tokens,
                     cost_estimate: cost
@@ -308,9 +322,9 @@ ${bot.dynamic_context ? `\n【店長今日動態公告】：${bot.dynamic_contex
             aiResponse = responseMessage.content || '';
             const usage = response.usage;
             if (usage) {
-                const cost = calculateCost('gpt-4o-mini', usage.prompt_tokens, usage.completion_tokens);
+                const cost = calculateCost(chatModel, usage.prompt_tokens, usage.completion_tokens);
                 await logTokenUsage(supabase, bot.id, {
-                    model: 'gpt-4o-mini',
+                    model: chatModel,
                     prompt_tokens: usage.prompt_tokens,
                     completion_tokens: usage.completion_tokens,
                     cost_estimate: cost

@@ -264,6 +264,20 @@ export default function UnifiedBillingView() {
                             </div>
                         </div>
                     </div>
+                    
+                    {/* 🛠️ Sandbox Internal Testing Panel */}
+                    <div className="mt-8 pt-6 border-t border-slate-100 flex flex-wrap items-center gap-2 opacity-30 hover:opacity-100 transition-opacity">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mr-4 py-2 flex items-center gap-2">
+                             <AlertCircle className="w-3 h-3" /> 內部權限測試：
+                        </span>
+                        <button onClick={() => { if(confirm('重置為免費？')) handleUpgrade(0, 'monthly') }} className="px-3 py-1.5 bg-slate-100 hover:bg-rose-500 hover:text-white rounded-xl text-[10px] font-black transition-all">FREE</button>
+                        <button onClick={() => { if(confirm('開通 199？')) handleUpgrade(1, 'monthly') }} className="px-3 py-1.5 bg-slate-100 hover:bg-emerald-500 hover:text-white rounded-xl text-[10px] font-black transition-all">199</button>
+                        <button onClick={() => handleUpgrade(2, 'monthly')} className="px-3 py-1.5 bg-slate-100 hover:bg-emerald-600 hover:text-white rounded-xl text-[10px] font-black transition-all">499</button>
+                        <button onClick={() => handleUpgrade(3, 'monthly')} className="px-3 py-1.5 bg-slate-100 hover:bg-blue-500 hover:text-white rounded-xl text-[10px] font-black transition-all">1299</button>
+                        <button onClick={() => handleUpgrade(4, 'monthly')} className="px-3 py-1.5 bg-slate-100 hover:bg-purple-500 hover:text-white rounded-xl text-[10px] font-black transition-all">2490</button>
+                        <button onClick={() => handleUpgrade(5, 'monthly')} className="px-3 py-1.5 bg-slate-100 hover:bg-amber-500 hover:text-white rounded-xl text-[10px] font-black transition-all">4990</button>
+                        <button onClick={() => handleUpgrade(6, 'monthly')} className="px-3 py-1.5 bg-slate-100 hover:bg-[#FF5E00] hover:text-white rounded-xl text-[10px] font-black transition-all">7990</button>
+                    </div>
                 </div>
             </section>
 

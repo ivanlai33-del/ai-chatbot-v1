@@ -66,7 +66,11 @@ export default function UnifiedBillingView() {
                 .then(res => res.json())
                 .then(data => {
                     if (data.success && data.user) {
-                        setPlanLevel(data.user.plan_level || 0);
+                        // 嚴謹判斷：只有在真的為 undefined 或 null 時才設為 0，避免 0 被 || 誤判
+                        const fetchedLevel = (data.user.plan_level !== undefined && data.user.plan_level !== null) 
+                            ? Number(data.user.plan_level) 
+                            : 0;
+                        setPlanLevel(fetchedLevel);
                         const cycle = data.user.billing_cycle || 'monthly';
                         setDbBillingCycle(cycle);
                         setSelectedBillingCycle(cycle);
@@ -105,14 +109,18 @@ export default function UnifiedBillingView() {
             });
             const data = await res.json();
             if (data.success) {
+                const targetPlan = getPlanByTier(level);
                 setPlanLevel(level);
                 setDbBillingCycle(cycle);
                 setCancelAtPeriodEnd(false); // Reset cancellation on upgrade
-                alert(`已成功升級 ${cycle === 'yearly' ? '年費' : '月費'}方案！`);
+                alert(`已成功模擬切換為：${targetPlan?.name || '免費版'}`);
                 window.location.reload();
+            } else {
+                alert(`切換失敗: ${data.error}`);
             }
         } catch (e) {
             console.error("Upgrade error", e);
+            alert('系統錯誤，請稍後再試');
         }
     };
 

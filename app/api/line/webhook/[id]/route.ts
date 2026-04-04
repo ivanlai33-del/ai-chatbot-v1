@@ -127,6 +127,24 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
 
             const userId = event.source.userId;
             const userMessage = event.message.text;
+            
+            // 🛡️ 社交禮儀 (Social Protocol)：群組靜默過濾
+            const source = event.source;
+            const isGroup = source.type === 'group' || source.type === 'room';
+            
+            if (isGroup) {
+                // 召喚條件：被 @標記、訊息包含召喚詞、或是引用回覆
+                const isMentioned = (event.message as any).mention?.mentionees?.length > 0;
+                const isSummoned = /店長|助理|AI|Robot|Assistant/i.test(userMessage);
+                const isQuoteReply = !!(event.message as any).quotedMessageId;
+                
+                if (!isMentioned && !isSummoned && !isQuoteReply) {
+                    // 非召喚訊息，在群組保持靜默
+                    continue;
+                }
+                console.log(`[TIER1:LineWebhook][${configId}] Group summon detected (${isMentioned ? '@' : ''}${isSummoned ? 'keyword' : ''}${isQuoteReply ? 'quote' : ''})`);
+            }
+
             console.log(`[TIER1:LineWebhook][${configId}] msg: ${userMessage.substring(0, 40)}`);
 
             // ⚡ 立刻顯示「思考中」動畫 — 用戶馬上看到店長在回應

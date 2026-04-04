@@ -182,7 +182,7 @@ export class StoreManagerDojo {
             const currentPrompt = botData?.system_prompt || '';
 
             const rewriteResponse = await this.openai.chat.completions.create({
-                model: this.chatModel === 'gemini-1.5-flash' ? 'gemini-1.5-flash' : 'gpt-4o', // 旗艦功能
+                model: this.chatModel === 'gemini-2.5-flash' ? 'gemini-2.5-flash' : 'gpt-4o', // 旗艦功能
                 messages: [
                     {
                         role: 'system',

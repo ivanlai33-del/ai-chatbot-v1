@@ -103,7 +103,7 @@ export async function processStoreEvents(
 
     const openai = new OpenAI({ apiKey: openaiApiKey });
     const chatClient = googleAI || openai; // 用於一般對話的客戶端
-    const chatModel = googleAI ? 'gemini-1.5-flash' : 'gpt-4o-mini';
+    const chatModel = googleAI ? 'gemini-2.5-flash' : 'gpt-4o-mini';
 
     logger.info(`Clients created (Model: ${chatModel}), processing ${events.length} event(s)...`);
 

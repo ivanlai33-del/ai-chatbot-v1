@@ -38,7 +38,7 @@ const openai = new OpenAI({
 // 🚀 Google Gemini (OpenAI-compatible) Initialization
 const googleAI = process.env.GOOGLE_API_KEY ? new OpenAI({
     apiKey: process.env.GOOGLE_API_KEY,
-    baseURL: "https://generativelanguage.googleapis.com/v1beta/openai"
+    baseURL: "https://generativelanguage.googleapis.com/v1/openai"
 }) : null;
 
 function logToFile(data: any) {
@@ -320,7 +320,7 @@ export async function POST(req: NextRequest) {
 
         // 🤖 Model Selection (優先使用 Google Free Tier)
         let chatClient = (googleAI && !isMaster) ? googleAI : openai;
-        let chatModel = (googleAI && !isMaster) ? 'gemini-1.5-flash' : (isMaster ? 'gpt-4o' : 'gpt-4o-mini');
+        let chatModel = (googleAI && !isMaster) ? 'gemini-2.5-flash' : (isMaster ? 'gpt-4o' : 'gpt-4o-mini');
 
         let response;
         try {

@@ -140,8 +140,25 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
             // 🛡️ 第 3 道防護：訊息長度截斷（防止 Token 炸彈攻擊）
             const safeMessage = FreemiumGuard.sanitizeInput(userMessage);
 
+            // ⚡ 並行處理：撈取歷史紀錄、攔截意圖
+            const [historyResult] = await Promise.all([
+                supabase
+                    .from('chat_logs')
+                    .select('user_message, ai_response')
+                    .eq('config_id', configId)
+                    .eq('line_user_id', userId)
+                    .order('created_at', { ascending: false })
+                    .limit(5)
+            ]);
+
+            const history = historyResult.data || [];
+            const chatHistory = history.reverse().flatMap(h => [
+                { role: 'user', content: h.user_message },
+                { role: 'assistant', content: h.ai_response }
+            ]);
+
             // ⚡ DIRECT OpenAI call — skip AIService overhead:
-            const aiResponse = await callOpenAIDirect(systemPrompt, safeMessage);
+            const aiResponse = await callOpenAIDirect(systemPrompt, safeMessage, chatHistory);
 
             await client.replyMessage({
                 replyToken: event.replyToken,
@@ -176,12 +193,13 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
  * Skips: Moderation API, dynamic tools, member tier lookup.
  * Uses: gpt-4o-mini (fastest), max_tokens cap (prevent runaway responses).
  */
-async function callOpenAIDirect(systemPrompt: string, userMessage: string): Promise<string> {
+async function callOpenAIDirect(systemPrompt: string, userMessage: string, chatHistory: any[] = []): Promise<string> {
     try {
         const response = await openai.chat.completions.create({
             model: 'gpt-4o-mini',
             messages: [
                 { role: 'system', content: systemPrompt },
+                ...chatHistory,
                 { role: 'user', content: userMessage }
             ],
             temperature: 0.7,

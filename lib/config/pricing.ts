@@ -57,6 +57,7 @@ export interface PricingPlan {
   };
 
   features: string[];        // 功能列表
+  color: string;             // 代表色 (對齊 LINE 卡片)
   notIncluded?: string[];    // 不包含（顯示 ✗）
   badge?: string;            // 徽章文字（如「最受歡迎」「最划算」）
 
@@ -102,6 +103,7 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       '商品 / FAQ 教學（初階）',
       '對話紀錄查看',
     ],
+    color: '#94A3B8',
     notIncluded: [
       '潛在客戶自動標記',
       '多店管理',
@@ -142,6 +144,7 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       'FAQ 常見問題自動回答',
       '對話紀錄查看',
     ],
+    color: '#06C755',
     notIncluded: [
       '潛在客戶自動標記',
       '預約意圖自動記錄',
@@ -186,6 +189,7 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       '✅ 潛在客戶自動標記',
       '✅ 預約意圖自動記錄',
     ],
+    color: '#06C755',
     notIncluded: [
       '多店管理',
       '分析報表',
@@ -226,6 +230,7 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       '✅ 潛在客戶自動標記',
       '✅ 預約意圖自動記錄',
     ],
+    color: '#4A90E2',
     notIncluded: [
       '月度分析報表',
       '優先客服',
@@ -264,6 +269,7 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       '✅ 月度對話分析報表',
       '✅ 優先客服支援',
     ],
+    color: '#7B61FF',
     payment: {
       newebpayMonthlyLink: 'https://p.newebpay.com.tw/FFD88CA',
       newebpayAnnualLink: 'https://p.newebpay.com.tw/C1E8916',
@@ -300,6 +306,7 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       '✅ 技術問題優先遠端快速支援',
       '✅ 月度對話成效分析報表',
     ],
+    color: '#F5A623',
     overage: {
       per1000Messages: 150,
       description: '超過月額度：每 1,000 則加收 NT$150',
@@ -340,6 +347,7 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       '✅ 技術問題最優先遠端快速支援',
       '✅ 每季設定健診與效能確認',
     ],
+    color: '#FF5E00',
     overage: {
       per1000Messages: 200,
       description: '超過月額度：每 1,000 則加收 NT$200（可議）',

@@ -310,9 +310,10 @@ export default function UnifiedBillingView() {
                                 whileHover={isCurrentActive ? {} : { y: -5 }}
                                 className={cn(
                                     "group relative p-8 rounded-[40px] border-2 transition-all overflow-hidden bg-white h-full flex flex-col",
-                                    isCurrentActive ? "border-indigo-500 ring-4 ring-indigo-500/10 shadow-2xl" : (plan.tier >= 5 ? "border-amber-200 shadow-amber-500/10" : "border-emerald-200 shadow-emerald-500/10"),
+                                    isCurrentActive ? "border-indigo-500 ring-4 ring-indigo-500/10 shadow-2xl" : "shadow-sm hover:shadow-xl",
                                     isCurrentActive ? "cursor-default" : "cursor-pointer"
                                 )}
+                                style={!isCurrentActive ? { borderColor: `${plan.color}40` } : {}}
                                 onClick={() => !isCurrentActive && handleUpgrade(plan.tier, selectedBillingCycle)}
                             >
                                 {isCurrentActive && (
@@ -321,10 +322,10 @@ export default function UnifiedBillingView() {
                                     </div>
                                 )}
                                 <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    {!isCurrentActive && <ArrowUpCircle className={cn("w-8 h-8", plan.tier >= 5 ? "text-amber-500" : "text-[#06C755]")} />}
+                                    {!isCurrentActive && <ArrowUpCircle className="w-8 h-8" style={{ color: plan.color }} />}
                                 </div>
                                 <div className="flex items-center gap-2 mb-2">
-                                     <p className={cn("text-sm font-black uppercase tracking-widest", plan.tier >= 5 ? "text-amber-500" : "text-[#06C755]")}>
+                                     <p className="text-sm font-black uppercase tracking-widest" style={{ color: plan.color }}>
                                         {plan.badge || (plan.tier >= 5 ? "Enterprise" : "Standard")}
                                     </p>
                                 </div>
@@ -358,17 +359,20 @@ export default function UnifiedBillingView() {
                                 <ul className="space-y-4 mb-8 flex-1">
                                     {plan.features.slice(0, 5).map((f: string, i: number) => (
                                         <li key={i} className="flex items-start gap-3 text-base text-slate-500 font-bold leading-tight">
-                                            <div className={cn("w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5", plan.tier >= 5 ? "bg-amber-50" : "bg-emerald-50")}>
-                                                <CheckCircle2 className={cn("w-3 h-3", plan.tier >= 5 ? "text-amber-500" : "text-[#06C755]")} />
+                                            <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5" style={{ backgroundColor: `${plan.color}15` }}>
+                                                <CheckCircle2 className="w-3 h-3" style={{ color: plan.color }} />
                                             </div>
                                             {f}
                                         </li>
                                     ))}
                                 </ul>
-                                 <button className={cn(
-                                    "w-full py-4 rounded-2xl font-black text-lg uppercase tracking-[0.15em] transition-all flex items-center justify-center gap-2 shadow-lg",
-                                    isCurrentActive ? "bg-slate-100 text-slate-400 cursor-default" : (plan.tier >= 5 ? "bg-amber-500 text-white shadow-amber-500/30 hover:bg-amber-600" : "bg-[#06C755] text-white shadow-green-500/30 hover:bg-emerald-600")
-                                )}>
+                                 <button 
+                                    className={cn(
+                                        "w-full py-4 rounded-2xl font-black text-lg uppercase tracking-[0.15em] transition-all flex items-center justify-center gap-2 shadow-lg",
+                                        isCurrentActive ? "bg-slate-100 text-slate-400 cursor-default" : "text-white"
+                                    )}
+                                    style={!isCurrentActive ? { backgroundColor: plan.color, boxShadow: `0 10px 15px -3px ${plan.color}40` } : {}}
+                                >
                                     {isCurrentActive ? '目前使用中' : (plan.tier === planLevel ? '恢復自動續約' : (planLevel > 0 ? '變更方案' : '立即開通'))} <ChevronRight className="w-4 h-4" />
                                 </button>
                             </motion.div>

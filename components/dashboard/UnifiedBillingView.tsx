@@ -45,6 +45,7 @@ export default function UnifiedBillingView() {
     const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
     const [lineUserId, setLineUserId] = useState<string | null>(null);
     const [selectedBillingCycle, setSelectedBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+    const [expandedPlans, setExpandedPlans] = useState<Record<string, boolean>>({});
     
     // Invoice States
     const [invoiceType, setInvoiceType] = useState<'personal' | 'company'>('personal');
@@ -363,20 +364,68 @@ export default function UnifiedBillingView() {
                                         </div>
                                     )}
                                 </div>
-                                 <h3 className="text-3xl font-black text-slate-800 mb-6 flex items-center gap-3">
+                                <h3 className="text-3xl font-black text-slate-800 mb-2 flex items-center gap-3">
                                     <span className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center border border-slate-100 shrink-0">{plan.emoji}</span>
                                     {plan.name}
                                 </h3>
-                                <ul className="space-y-4 mb-8 flex-1">
-                                    {plan.features.slice(0, 5).map((f: string, i: number) => (
-                                        <li key={i} className="flex items-start gap-3 text-base text-slate-500 font-bold leading-tight">
-                                            <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5" style={{ backgroundColor: `${plan.color}15` }}>
-                                                <CheckCircle2 className="w-3 h-3" style={{ color: plan.color }} />
-                                            </div>
-                                            {f}
-                                        </li>
-                                    ))}
-                                </ul>
+                                
+                                <div className="mb-6 flex-1 text-sm font-bold text-slate-500">
+                                    {[199, 499, 1299, 2490].includes(plan.pricing.monthly) && plan.limits.monthlyQuota > 0 ? (
+                                        <div className="flex items-center gap-2 mb-2 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                                            <Zap className="w-4 h-4 text-amber-500" /> 
+                                            每月額度：<span className="text-slate-800 font-black">{plan.limits.monthlyQuota.toLocaleString()} 則</span>
+                                        </div>
+                                    ) : plan.limits.monthlyQuota > 0 && (
+                                        <div className="flex items-center gap-2 mb-2 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                                            <Zap className="w-4 h-4 text-amber-500" /> 
+                                            {plan.limits.dailyQuota === -1 ? '旗艦級大容量專線' : `每月額度：${plan.limits.monthlyQuota.toLocaleString()} 則`}
+                                        </div>
+                                    )}
+
+                                    <button 
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setExpandedPlans(prev => ({...prev, [plan.id]: !prev[plan.id]}));
+                                        }}
+                                        className="mt-3 flex items-center justify-between w-full p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors text-slate-600 font-bold"
+                                    >
+                                        <span>查看方案內容</span>
+                                        <ChevronRight className={cn("w-4 h-4 transition-transform", expandedPlans[plan.id] ? "rotate-90" : "rotate-0")} />
+                                    </button>
+
+                                    <AnimatePresence>
+                                        {expandedPlans[plan.id] && (
+                                            <motion.div 
+                                                initial={{ height: 0, opacity: 0 }}
+                                                animate={{ height: 'auto', opacity: 1 }}
+                                                exit={{ height: 0, opacity: 0 }}
+                                                className="overflow-hidden mt-4"
+                                            >
+                                                <ul className="space-y-4 pt-2">
+                                                    {plan.features.map((f: string, i: number) => {
+                                                        const cleanText = f.replace(/^✅\s*/, '');
+                                                        return (
+                                                            <li key={i} className="flex items-start gap-3 text-base text-slate-600 font-bold leading-tight">
+                                                                <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 bg-emerald-50">
+                                                                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                                                                </div>
+                                                                {cleanText}
+                                                            </li>
+                                                        );
+                                                    })}
+                                                    {plan.notIncluded && plan.notIncluded.map((f: string, i: number) => (
+                                                        <li key={`not-${i}`} className="flex items-start gap-3 text-base text-slate-400 font-medium leading-tight">
+                                                            <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 bg-slate-50">
+                                                                <X className="w-3 h-3 text-slate-300" />
+                                                            </div>
+                                                            <span className="line-through">{f}</span>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
                                  <button 
                                     className={cn(
                                         "w-full py-4 rounded-2xl font-black text-lg uppercase tracking-[0.15em] transition-all flex items-center justify-center gap-2 shadow-lg",

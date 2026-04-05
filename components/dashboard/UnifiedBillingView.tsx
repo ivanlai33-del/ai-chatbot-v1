@@ -46,6 +46,7 @@ export default function UnifiedBillingView() {
     const [lineUserId, setLineUserId] = useState<string | null>(null);
     const [selectedBillingCycle, setSelectedBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
     const [expandedPlans, setExpandedPlans] = useState<Record<string, boolean>>({});
+    const [isAllPlansExpanded, setIsAllPlansExpanded] = useState(false);
     
     // Invoice States
     const [invoiceType, setInvoiceType] = useState<'personal' | 'company'>('personal');
@@ -282,7 +283,17 @@ export default function UnifiedBillingView() {
             {/* 🚀 Upgrade Options Section */}
             <section>
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 ml-2">
-                      <h2 className="text-sm font-black text-slate-400 uppercase tracking-[0.3em]">所有的服務方案</h2>
+                    <div className="flex items-center gap-4">
+                        <h2 className="text-sm font-black text-slate-400 uppercase tracking-[0.3em]">所有的服務方案</h2>
+                        <button 
+                            onClick={() => setIsAllPlansExpanded(!isAllPlansExpanded)}
+                            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-lg text-[11px] font-black uppercase tracking-widest transition-all shadow-inner"
+                        >
+                            <span>{isAllPlansExpanded ? '隱藏所有方案' : '展開所有方案'}</span>
+                            <ChevronRight className={cn("w-3 h-3 transition-transform duration-300", isAllPlansExpanded ? "rotate-90" : "rotate-0")} />
+                        </button>
+                    </div>
+
                     <div className="flex items-center p-1 bg-slate-100 rounded-2xl w-fit shadow-inner">
                         <button 
                             onClick={() => setSelectedBillingCycle('monthly')}
@@ -311,7 +322,15 @@ export default function UnifiedBillingView() {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-12">
+                <AnimatePresence>
+                    {isAllPlansExpanded && (
+                        <motion.div 
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            className="overflow-hidden"
+                        >
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-12">
                     {allAvailablePlans.map((plan) => {
                         const isCurrentActive = plan.tier === planLevel && selectedBillingCycle === dbBillingCycle;
                         
@@ -438,7 +457,10 @@ export default function UnifiedBillingView() {
                             </motion.div>
                         );
                     })}
-                </div>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </section>
 
             {/* 📑 Invoice Settings Section */}

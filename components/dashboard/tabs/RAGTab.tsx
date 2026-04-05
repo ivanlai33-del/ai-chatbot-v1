@@ -17,28 +17,29 @@ export default function RAGTab({ planLevel, bots, selectedBotId }: RAGTabProps) 
                 <div className="w-20 h-20 rounded-3xl bg-slate-50 flex items-center justify-center mb-6 shadow-sm border border-slate-100">
                     <Lock className="w-8 h-8 text-slate-300" />
                 </div>
-                <h3 className="text-xl font-black text-slate-800 mb-2">PDF / 網頁深度學習 (RAG) 尚未開通</h3>
+                <h3 className="text-xl font-black text-slate-800 mb-2">PDF 深度學習 (RAG) 尚未開通</h3>
                 <p className="text-slate-500 max-w-sm mb-6 leading-relaxed">
-                    此功能目前僅限於 <span className="text-amber-600 font-bold">Company 旗艦版</span> 用戶使用，升級後可讓 AI 自動讀懂您的型錄、說明書與官網內容。
+                    此功能目前僅限於 <span className="text-emerald-600 font-bold">單店主力 ($499) 以上</span> 方案用戶使用，升級後可讓 AI 自動讀懂您的型錄與說明書。
                 </p>
 
                 {/* 功能預覽 */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-lg mb-8 text-left">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mb-8 text-left">
                     {[
                         { icon: FileText, title: '上傳 PDF 型錄', desc: '商品型錄、服務說明書、價格表' },
-                        { icon: Globe, title: '貼入網頁網址', desc: '官網、菜單、房型介紹頁' },
-                        { icon: Database, title: 'AI 自動學習', desc: '讀取完成，問什麼都能答' },
+                        { icon: Database, title: 'AI 自動學習', desc: '讀取完成，問什麼都能精準回答' },
                     ].map(f => (
-                        <div key={f.title} className="p-3 rounded-2xl bg-slate-50 border border-slate-100">
-                            <f.icon className="w-5 h-5 text-slate-400 mb-2" />
-                            <p className="text-[12px] font-black text-slate-600">{f.title}</p>
-                            <p className="text-[11px] text-slate-400 mt-0.5">{f.desc}</p>
+                        <div key={f.title} className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-start gap-3">
+                            <f.icon className="w-6 h-6 text-emerald-500 shrink-0" />
+                            <div>
+                                <p className="text-xs font-black text-slate-600">{f.title}</p>
+                                <p className="text-[11px] text-slate-400 mt-0.5 leading-tight">{f.desc}</p>
+                            </div>
                         </div>
                     ))}
                 </div>
 
                 <motion.button 
-                    onClick={() => window.location.href = '/#pricing'} 
+                    onClick={() => window.location.href = '/dashboard/upgrade'} 
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
                     className="px-8 py-3 rounded-2xl bg-slate-800 text-white font-black text-sm shadow-xl"
@@ -150,14 +151,6 @@ export default function RAGTab({ planLevel, bots, selectedBotId }: RAGTabProps) 
                         )}
                     </div>
 
-                    <div className="p-6 rounded-2xl bg-amber-50 border border-amber-100 text-left">
-                        <div className="flex items-center gap-2 text-amber-700 font-black text-xs mb-2">
-                            <Globe className="w-4 h-4" /> 爬取網頁內容 (開發中)
-                        </div>
-                        <p className="text-xs text-amber-600/70 font-medium leading-relaxed">
-                            未來將支援直接貼入官網網址，AI 將自動定期爬取並更新知識庫內容。
-                        </p>
-                    </div>
                 </div>
 
                 {/* 📜 Document List */}

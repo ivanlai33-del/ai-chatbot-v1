@@ -158,15 +158,17 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
             // 🛡️ 第 3 道防護：訊息長度截斷（防止 Token 炸彈攻擊）
             const safeMessage = FreemiumGuard.sanitizeInput(userMessage);
 
-            // ⚡ 並行處理：撈取歷史紀錄、攔截意圖
-            const [historyResult] = await Promise.all([
+            // ⚡ 並行處理：撈取歷史紀錄、攔截意圖 (天氣/股市/匯率)
+            const { IntentInterceptor } = await import('@/lib/services/IntentInterceptor');
+            const [historyResult, intercepted] = await Promise.all([
                 supabase
                     .from('chat_logs')
                     .select('user_message, ai_response')
                     .eq('config_id', configId)
                     .eq('line_user_id', userId)
                     .order('created_at', { ascending: false })
-                    .limit(5)
+                    .limit(5),
+                IntentInterceptor.intercept(safeMessage)
             ]);
 
             const history = historyResult.data || [];
@@ -175,8 +177,14 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
                 { role: 'assistant', content: h.ai_response }
             ]);
 
+            // ⚡ 注入即時意圖數據 (如果是對話以外的資訊)
+            let dynamicPrompt = systemPrompt;
+            if (intercepted.intent !== 'chat') {
+                dynamicPrompt += `\n\n[即時資訊預載] 使用者詢問 ${intercepted.intent}，最新數據如下：\n${JSON.stringify(intercepted.data, null, 2)}`;
+            }
+
             // ⚡ DIRECT OpenAI call — skip AIService overhead:
-            const aiResponse = await callOpenAIDirect(systemPrompt, safeMessage, chatHistory);
+            const aiResponse = await callOpenAIDirect(dynamicPrompt, safeMessage, chatHistory);
 
             await client.replyMessage({
                 replyToken: event.replyToken,

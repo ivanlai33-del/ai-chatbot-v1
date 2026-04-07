@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
         }
 
         // Bypass plan level for local testing so they can test the UI regardless of db state
-        const limit = 5;
+        const limit = 6;
 
         const { count: currentCount } = await supabase
             .from('line_channel_configs')

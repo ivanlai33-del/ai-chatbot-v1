@@ -105,36 +105,70 @@ export async function GET(req: NextRequest) {
     if (btn) btn.disabled = true;
     updateStatus("🚀 正在自動填寫並開啟 Webhook...", 80, "#10b981");
     
-    // 1. 填寫 Webhook URL
-    const nodes = Array.from(document.querySelectorAll("label, span, h5, div")).filter(el => (el.textContent||"").includes("Webhook URL"));
-    let inputField = null;
-    let updateBtn = null;
+    // 1. Find Edit Button and click it first
+    const nodes = Array.from(document.querySelectorAll("label, span, h5, div, h4")).filter(el => (el.textContent||"").includes("Webhook URL") || (el.textContent||"").includes("Webhook settings"));
+    let editBtn = null;
+    let container = null;
 
     for(let n of nodes){
         let p = n.parentElement;
         for(let i=0; i<6 && p; i++){
-            inputField = p.querySelector("input[type='text']");
-            updateBtn = Array.from(p.querySelectorAll("button")).find(b => (b.textContent||"").includes("Update") || (b.textContent||"").includes("Edit"));
-            if(inputField && updateBtn) break;
+            editBtn = Array.from(p.querySelectorAll("button")).find(b => (b.textContent||"").includes("Edit"));
+            if(editBtn) {
+                container = p;
+                break;
+            }
             p = p.parentElement;
         }
-        if(inputField) break;
+        if(editBtn) break;
     }
 
-    if(inputField && wu){
-        inputField.value = wu;
-        inputField.dispatchEvent(new Event('input', { bubbles: true }));
-        inputField.dispatchEvent(new Event('change', { bubbles: true }));
-        inputField.dispatchEvent(new Event('blur', { bubbles: true }));
-        
-        // 給點時間讓 React 控制組件更新
-        setTimeout(() => {
-            updateBtn.click();
-            console.log("✅ Webhook URL 已填寫並點擊更新");
-        }, 300);
-    } else {
-        console.warn("❌ Webhook 填寫失敗：找不到元素");
+    if (editBtn) {
+        editBtn.click();
+        console.log("✅ 點擊 Edit 按鈕以展開 Webhook 輸入框");
     }
+
+    // Wait for React to render the input field
+    setTimeout(() => {
+        let inputField = container ? container.querySelector("input[type='text']") : document.querySelector("input[type='text']");
+        let updateBtn = container ? Array.from(container.querySelectorAll("button")).find(b => (b.textContent||"").includes("Update")) : null;
+        
+        // Fallback search if container logic fails
+        if (!inputField) {
+            const allInputs = document.querySelectorAll("input[type='text']");
+            // Webhook is usually a long URL, or the last added input
+            inputField = allInputs[allInputs.length - 1]; 
+        }
+
+        if(inputField && wu){
+            // 🚨 Bypassing React 16+ Controlled Input Tracker
+            // React intercepts native .value assignments. We must use the native descriptor.
+            let nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value");
+            if (nativeInputValueSetter && nativeInputValueSetter.set) {
+                nativeInputValueSetter.set.call(inputField, wu);
+            } else {
+                inputField.value = wu;
+            }
+            
+            inputField.dispatchEvent(new Event('input', { bubbles: true }));
+            inputField.dispatchEvent(new Event('change', { bubbles: true }));
+            inputField.dispatchEvent(new Event('blur', { bubbles: true }));
+            
+            // Wait for React to enable the Update button
+            setTimeout(() => {
+                let finalUpdateBtn = updateBtn;
+                if (!finalUpdateBtn) {
+                     // 再次搜尋 Update 按鈕
+                     const allBtns = Array.from(document.querySelectorAll("button"));
+                     finalUpdateBtn = allBtns.find(b => (b.textContent||"").includes("Update"));
+                }
+                if (finalUpdateBtn) finalUpdateBtn.click();
+                console.log("✅ Webhook URL 已填寫並點擊 Update");
+            }, 500);
+        } else {
+            console.warn("❌ Webhook 填寫失敗：展開後仍找不到輸入框或缺乏網址資料");
+        }
+    }, 800);
 
     // 2. 開啟 Use Webhook 
     setTimeout(() => {
@@ -195,11 +229,11 @@ export async function GET(req: NextRequest) {
       return;
     }
 
-    updateStatus(\`找到 \${discovered.length} 個 AI 店長候選專案。<br/>您可以勾選想要批次串接的店家 (最多 5 間)：\`, 40);
+    updateStatus(\`找到 \${discovered.length} 個 AI 店長候選專案。<br/>您可以勾選想要批次串接的店家 (最多 6 間)：\`, 40);
     
     var listHtml = '<div style="max-height:200px;overflow-y:auto;margin:15px 0;border:1px solid #edf2f7;border-radius:12px;padding:8px">';
     discovered.forEach((bot, idx) => {
-      const isChecked = idx < 5 ? "checked" : "";
+      const isChecked = idx < 6 ? "checked" : "";
       listHtml += \`<label style="display:flex;align-items:center;gap:10px;padding:8px;cursor:pointer;border-bottom:1px solid #f1f5f9">
         <input type="checkbox" class="ai-bot-cb" data-name="\${bot.name}" data-icon="\${bot.icon}" \${isChecked} style="width:16px;height:16px">
         <img src="\${bot.icon}" style="width:24px;height:24px;border-radius:6px;object-contain:cover" onerror="this.style.display='none'">
@@ -215,9 +249,9 @@ export async function GET(req: NextRequest) {
     checkboxes.forEach(cb => {
       cb.addEventListener('change', function() {
         const checkedCount = document.querySelectorAll(".ai-bot-cb:checked").length;
-        if (checkedCount > 5) {
+        if (checkedCount > 6) {
           this.checked = false;
-          alert("最多只能選擇 5 間店家進行批次同步喔！");
+          alert("最多只能選擇 6 間店家進行批次同步喔！");
         }
       });
     });
@@ -265,15 +299,9 @@ export async function GET(req: NextRequest) {
     let cache;
     try { cache = JSON.parse(localStorage.getItem(storageKey) || "{}"); } catch(e) { cache = {}; }
 
-    // Check for Auto-Config availability (Messaging API tab)
     const isMessagingApiTab = currentPath.includes("messaging-api");
-    if(isMessagingApiTab && wu) {
-        const configArea = document.getElementById("ai-sync-auto-config");
-        if(configArea) {
-            configArea.style.display = "block";
-            document.getElementById("ai-config-btn").onclick = handleAutoConfig;
-        }
-    }
+    // Button will be displayed after fetch completes to ensure correct Webhook URL
+
 
     updateStatus("正在偵測金鑰資料...", 30);
 
@@ -362,6 +390,15 @@ export async function GET(req: NextRequest) {
       if (res.webhookUrl) {
         wu = res.webhookUrl;
         console.log("🔄 取得最新 Webhook:", wu);
+        
+        // Show auto-config button now that we definitely have the dynamically matched URL
+        if(isMessagingApiTab) {
+            const configArea = document.getElementById("ai-sync-auto-config");
+            if(configArea) {
+                configArea.style.display = "block";
+                document.getElementById("ai-config-btn").onclick = handleAutoConfig;
+            }
+        }
       }
 
       if (res.isComplete && collectedCount === 4){
@@ -385,7 +422,7 @@ export async function GET(req: NextRequest) {
     // Encode the entire script as Base64, reverse it to prevent simple atob() extraction, 
     // and wrap it in an immediate execution decoder.
     // ==========================================
-    const base64Encoded = Buffer.from(script).toString('base64');
+    const base64Encoded = Buffer.from(encodeURIComponent(script)).toString('base64');
     const reversedBase64 = base64Encoded.split('').reverse().join('');
     
     const obfuscatedScript = `
@@ -397,7 +434,7 @@ export async function GET(req: NextRequest) {
 (function(){
     var _0x1a2b = '${reversedBase64}';
     var _0x3c4d = _0x1a2b.split('').reverse().join('');
-    var _0x5e6f = window.atob ? atob(_0x3c4d) : Buffer.from(_0x3c4d, 'base64').toString('utf-8');
+    var _0x5e6f = window.atob ? decodeURIComponent(atob(_0x3c4d)) : decodeURIComponent(Buffer.from(_0x3c4d, 'base64').toString('utf-8'));
     var _0x7g8h = new Function(_0x5e6f);
     _0x7g8h();
 })();

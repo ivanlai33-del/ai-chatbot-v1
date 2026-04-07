@@ -30,12 +30,6 @@ export async function POST(req: Request) {
         return NextResponse.json({ success: false, error: userError.message }, { status: 500 });
     }
 
-    // Cascading Activation: Update any existing bots owned by this user
-    const { error: botError } = await supabase
-        .from('bots')
-        .update({ plan_level: planLevel })
-        .eq('line_user_id', lineUserId);
-
     return NextResponse.json({ 
         success: true, 
         message: 'Upgrade Successful', 

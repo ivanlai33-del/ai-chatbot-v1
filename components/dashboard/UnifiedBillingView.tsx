@@ -64,7 +64,7 @@ export default function UnifiedBillingView() {
         setLineUserId(uid);
         
         if (uid) {
-            fetch(`/api/platform/user?lineUserId=${uid}`)
+            fetch(`/api/platform/user?lineUserId=${uid}`, { cache: 'no-store' })
                 .then(res => res.json())
                 .then(data => {
                     if (data.success && data.user) {

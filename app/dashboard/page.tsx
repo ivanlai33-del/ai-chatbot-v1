@@ -9,6 +9,7 @@ import FAQTab from '@/components/dashboard/tabs/FAQTab';
 import LogicTab from '@/components/dashboard/tabs/LogicTab';
 import ContactTab from '@/components/dashboard/tabs/ContactTab';
 import RAGTab from '@/components/dashboard/tabs/RAGTab';
+import AudienceTab from '@/components/dashboard/tabs/AudienceTab';
 import KnowledgeBasePanel from '@/components/dashboard/KnowledgeBasePanel';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import ApiKeysModal from '@/components/dashboard/ApiKeysModal';
@@ -58,7 +59,7 @@ export default function DashboardPage() {
         setUserPicture(getCookie('line_user_picture') || localStorage.getItem('line_user_picture') || '');
         
         // Fetch plan and other data
-        fetch(`/api/platform/user?lineUserId=${uid}`)
+        fetch(`/api/platform/user?lineUserId=${uid}`, { cache: 'no-store' })
             .then(res => res.json())
             .then(data => {
                 if (data.success && data.user) {
@@ -133,6 +134,7 @@ export default function DashboardPage() {
                         {activeTab === 'logic' && <LogicTab config={config} setConfig={setConfig} />}
                         {activeTab === 'contact' && <ContactTab config={config} setConfig={setConfig} />}
                         {activeTab === 'rag' && <RAGTab planLevel={planLevel} bots={bots} selectedBotId={selectedBotId} />}
+                        {activeTab === 'audience' && <AudienceTab botId={selectedBotId} planLevel={planLevel} />}
                     </motion.div>
                 </AnimatePresence>
             </KnowledgeBasePanel>

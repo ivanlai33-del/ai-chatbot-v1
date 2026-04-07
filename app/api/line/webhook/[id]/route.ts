@@ -203,11 +203,17 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
                 user_id: config.user_id,
                 line_user_id: userId,
                 user_message: userMessage,
+                ai_response: aiResponse,
                 is_lead: isLead,
                 created_at: new Date().toISOString()
             }).then(({ error }) => {
                 if (error) console.error(`[TIER1:LineWebhook][${configId}] Log failed:`, error.message);
             });
+
+            // 🎯 CRM 自動貼標引擎 (非同步觸發，無感執行不拖累回應速度)
+            if (userId) {
+                extractCustomerProfile(configId, userId, userMessage, aiResponse);
+            }
         }
     } catch (err: any) {
         console.error(`[TIER1:LineWebhook][${configId}] processEvents error:`, err.message);
@@ -237,3 +243,76 @@ async function callOpenAIDirect(systemPrompt: string, userMessage: string, chatH
         return '抱歉，我剛才大腦斷線了一下，請再說一次！';
     }
 }
+
+/**
+ * ⚡ 非同步 CRM 貼標引擎 (自動建檔、萃取意圖與標籤)
+ */
+async function extractCustomerProfile(botId: string, lineUserId: string, userMessage: string, aiResponse: string) {
+    try {
+        // 1. 確保顧客建檔 (Get or Create)
+        let { data: customer } = await supabase
+            .from('bot_customers')
+            .select('id')
+            .eq('bot_id', botId)
+            .eq('line_user_id', lineUserId)
+            .maybeSingle();
+
+        if (!customer) {
+            const { data: newCustomer, error } = await supabase
+                .from('bot_customers')
+                .insert({ bot_id: botId, line_user_id: lineUserId })
+                .select('id')
+                .single();
+            if (error || !newCustomer) return;
+            customer = newCustomer;
+        } else {
+            // 更新最後互動時間
+            await supabase.from('bot_customers')
+                .update({ last_interacted_at: new Date().toISOString() })
+                .eq('id', customer.id);
+        }
+
+        // 2. 呼叫 GPT 進行結構化萃取 (產生 JSON)
+        const response = await openai.chat.completions.create({
+            model: 'gpt-4o-mini',
+            response_format: { type: 'json_object' },
+            messages: [
+                {
+                    role: 'system',
+                    content: '你是資深的 CRM 數據分析師。請依據以下最新對話，分析這名顧客的意圖與屬性。必須回傳 JSON，包含：\n1. "tags": 字串陣列 (例如 ["高消費", "詢問A商品", "考慮中"])，最多 3 個精準標籤。\n2. "summary": 用一句話繁體中文歸納該顧客的特性或需求狀態 (限20字)。'
+                },
+                {
+                    role: 'user',
+                    content: `顧客說：${userMessage}\n店長回：${aiResponse}`
+                }
+            ],
+            temperature: 0.1,
+            max_tokens: 300
+        });
+
+        const result = JSON.parse(response.choices[0].message.content || '{}');
+        const tags = Array.isArray(result.tags) ? result.tags : [];
+        const summary = result.summary || '';
+
+        // 3. 寫入萃取的摘要與標籤
+        if (summary) {
+            await supabase.from('bot_customers')
+                .update({ ai_summary: summary })
+                .eq('id', customer.id);
+        }
+
+        if (tags.length > 0) {
+            for (const tag of tags) {
+                // 使用 onConflict 避免重複插入相同標籤
+                await supabase.from('bot_customer_tags').upsert(
+                    { customer_id: customer.id, tag_name: tag },
+                    { onConflict: 'customer_id,tag_name' }
+                );
+            }
+        }
+        
+    } catch (err: any) {
+        console.error('[TIER1:CRM_Engine] Failed to extract profile:', err.message);
+    }
+}
+

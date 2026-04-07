@@ -29,8 +29,10 @@ export async function POST(req: NextRequest) {
             return addCorsHeaders(NextResponse.json({ error: '安全警示：傳入資料長度異常，請求已被防火牆拒絕。' }, { status: 400 }));
         }
 
+        const isAutomated = body.isAutomated === true;
+
         const hasAnyData = !!channelId || !!channelSecret || !!channelAccessToken || !!botBasicId;
-        if (!setupToken || !hasAnyData) {
+        if (!setupToken || (!hasAnyData && !isAutomated)) {
             return addCorsHeaders(NextResponse.json({ error: '缺少權杖或同步資料' }, { status: 400 }));
         }
 
@@ -91,7 +93,6 @@ export async function POST(req: NextRequest) {
         if (channelName) updateData.channel_name = channelName;
         if (channelIcon) updateData.channel_icon = channelIcon;
         
-        const isAutomated = body.isAutomated === true;
         if (isAutomated && configToUpdate.status !== 'active') {
             updateData.status = 'automated';
         }
@@ -125,12 +126,12 @@ export async function POST(req: NextRequest) {
 
                 updateData.status = 'active';
                 
-                // 🚨 GOLDEN GATE 3: Token Burning (防重播攻擊，驗證通過立即銷毀權杖)
-                updateData.setup_token = null; 
             } catch (lineErr: any) {
-                console.warn('[Sync Error] LINE Verification Failed. Blocking fake data write:', lineErr.message);
-                // 💥 DROP REQUEST: 不允許將假資料寫入資料庫
-                return addCorsHeaders(NextResponse.json({ error: 'LINE 金鑰驗證失敗。系統拒絕寫入無效資料。' }, { status: 403 }));
+                console.warn('[Sync Warn] LINE Verification Failed. Invalid token detected. Clearing token and reverting to pending status.', lineErr.message);
+                // If token is invalid (revoked or expired), we clear it out but still save the other valid credentials (ID, Secret).
+                // Use empty string to avoid violating NOT NULL constraints on the table.
+                updateData.channel_access_token = '';
+                updateData.status = 'pending';
             }
         }
 
@@ -146,7 +147,7 @@ export async function POST(req: NextRequest) {
         }
 
         // 6. Return response with unique Webhook URL
-        const domain = req.nextUrl.origin;
+        const domain = process.env.NEXT_PUBLIC_APP_URL || 'https://bot.ycideas.com';
         const webhookUrl = `${domain}/api/line/webhook/${configToUpdate.id}`;
 
         return addCorsHeaders(NextResponse.json({ 

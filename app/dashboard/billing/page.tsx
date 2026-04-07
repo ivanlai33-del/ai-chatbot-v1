@@ -43,7 +43,7 @@ export default function BillingPage() {
         });
         setIsLoadingAuth(false);
         
-        fetch(`/api/platform/user?lineUserId=${id}`)
+        fetch(`/api/platform/user?lineUserId=${id}`, { cache: 'no-store' })
             .then(res => res.json())
             .then(data => {
                 if (data.success && data.user) {

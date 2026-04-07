@@ -24,6 +24,18 @@ export type GuardResult =
 
 export class FreemiumGuard {
   /**
+   * 取得使用者的方案等級 (tier)
+   */
+  static async getUserTier(userId: string): Promise<number> {
+    const { data } = await supabase
+        .from('platform_users')
+        .select('plan_level')
+        .eq('id', userId)
+        .maybeSingle();
+    return data?.plan_level ?? 0;
+  }
+
+  /**
    * 主閘門：檢查用戶是否能繼續對話
    * 依 tier 自動套用對應方案的額度規則
    */

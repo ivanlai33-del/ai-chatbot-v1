@@ -26,7 +26,7 @@ export default function DashboardLayout({
     sidebar
 }: DashboardLayoutProps) {
     return (
-        <main className="min-h-screen text-slate-800 font-sans bg-[#F8FAFC]">
+        <main className="min-h-screen text-slate-800 font-sans bg-slate-600">
             <TopNav 
                 userName={userName}
                 userPicture={userPicture}
@@ -36,7 +36,7 @@ export default function DashboardLayout({
                 onLogout={onLogout}
             />
 
-            <div className="flex flex-col xl:flex-row gap-6 px-4 md:px-8 lg:px-[100px] pt-6 pb-12 max-w-[1600px] mx-auto">
+            <div className="flex flex-col xl:flex-row gap-6 px-[75px] pt-6 pb-12 max-w-[1800px] mx-auto">
                 {/* Main Content Area */}
                 <div className="flex-1 min-w-0">
                     {children}

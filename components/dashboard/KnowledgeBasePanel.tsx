@@ -35,6 +35,8 @@ const TAB_META: Record<string, { Icon: React.ElementType; desc: string }> = {
     logic:     { Icon: GitBranch, desc: '行為 · 引導策略' },
     contact:   { Icon: Phone,     desc: '地址 · 社群 · 平台' },
     rag:       { Icon: BookOpen,  desc: '文件 · 網頁學習' },
+    audience:  { Icon: Tag,       desc: '標籤 · 自動化分群' },
+    billing:   { Icon: Settings,  desc: '訂閱 · 額度查閱' },
 };
 
 export default function KnowledgeBasePanel({
@@ -107,9 +109,9 @@ export default function KnowledgeBasePanel({
                                     <p className="text-[13px] text-slate-500 leading-relaxed">有未儲存的變更，切換後將會遺失。</p>
                                 </div>
                             </div>
-                            <div className="flex flex-col gap-2">
-                                <button onClick={confirmSaveFirst} className="w-full py-3 rounded-2xl bg-slate-900 text-white font-black text-[13px] hover:bg-slate-700 transition-all">先儲存，再切換</button>
-                                <button onClick={confirmDiscard} className="w-full py-3 rounded-2xl border border-slate-200 text-slate-600 font-bold text-[13px] hover:bg-slate-50 transition-all">放棄修改，直接切換</button>
+                            <div className="flex flex-col gap-3">
+                                <button onClick={confirmSaveFirst} className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-600 text-white font-black text-[14px] shadow-lg shadow-emerald-500/20 hover:brightness-110 active:scale-95 transition-all">先儲存，再切換</button>
+                                <button onClick={confirmDiscard} className="w-full py-4 rounded-2xl border-2 border-slate-200 text-slate-600 font-bold text-[14px] hover:bg-slate-50 transition-all">放棄修改，直接切換</button>
                                 <button onClick={cancelSwitch} className="w-full py-2 text-slate-400 font-medium text-[12px] hover:text-slate-600 transition-all">取消</button>
                             </div>
                         </motion.div>
@@ -118,7 +120,7 @@ export default function KnowledgeBasePanel({
             </AnimatePresence>
 
             {/* ════════ HEADER ════════ */}
-            <div className="px-6 pt-5 pb-4 border-b border-slate-100">
+            <div className="px-[35px] py-[35px] border-b border-slate-100">
 
                 {/* Store name + save button row */}
                 <div className="flex items-start justify-between gap-4 mb-4">
@@ -165,13 +167,13 @@ export default function KnowledgeBasePanel({
                     <div className="relative shrink-0">
                         <motion.button onClick={handleSave} disabled={isSaving}
                             whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-                            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all disabled:opacity-50 ${
+                            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-[14px] transition-all disabled:opacity-50 ${
                                 isDirty
-                                    ? 'bg-slate-900 text-white shadow-md'
-                                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                    ? 'bg-gradient-to-r from-emerald-500 to-cyan-600 text-white shadow-lg shadow-emerald-500/20'
+                                    : 'bg-white border-2 border-slate-200 text-slate-600 hover:bg-slate-50'
                             }`}
                         >
-                            {isSaving ? <span className="animate-spin text-sm">◌</span> : <Save className="w-3.5 h-3.5" />}
+                            {isSaving ? <span className="animate-spin text-sm">◌</span> : <Save className="w-4 h-4" />}
                             {isSaving ? '儲存中...' : isDirty ? '儲存變更' : '儲存'}
                         </motion.button>
                         <AnimatePresence>
@@ -212,9 +214,9 @@ export default function KnowledgeBasePanel({
                 </div>
             </div>
 
-            {/* ════════ TAB NAV — 2×3 monochrome grid ════════ */}
-            <div className="px-6 pt-4 pb-0 border-b border-slate-100 bg-white">
-                <div className="grid grid-cols-3 gap-2 pb-4">
+            {/* ════════ TAB NAV — 2×4 monochrome grid ════════ */}
+            <div className="px-[35px] py-[35px] border-b border-slate-100 bg-white">
+                <div className="grid grid-cols-4 gap-3 pb-4">
                     {tabs.map(tab => {
                         const meta = TAB_META[tab.id] || { Icon: Tag, desc: '' };
                         const { Icon } = meta;
@@ -223,19 +225,19 @@ export default function KnowledgeBasePanel({
                             <motion.button
                                 key={tab.id}
                                 onClick={() => handleTabClick(tab.id as any)}
-                                whileHover={!isActive ? { scale: 1.01 } : {}}
+                                whileHover={!isActive ? { scale: 1.02 } : {}}
                                 whileTap={{ scale: 0.98 }}
-                                className={`flex flex-col items-center justify-center gap-1.5 py-4 px-2 rounded-2xl transition-all duration-300 border ${
+                                className={`flex flex-col items-center justify-center gap-2.5 p-[25px] rounded-2xl transition-all duration-300 border-2 ${
                                     isActive
                                         ? 'bg-gradient-to-br from-emerald-500 to-cyan-600 border-transparent shadow-xl shadow-emerald-200/50'
-                                        : 'bg-white border-slate-100 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
+                                        : 'bg-white border-slate-200 text-slate-700 shadow-sm hover:border-slate-300 hover:bg-slate-50'
                                 }`}
                             >
-                                <Icon className={`transition-all ${isActive ? 'text-white w-7.5 h-7.5' : 'text-slate-400 w-5.5 h-5.5'}`} strokeWidth={isActive ? 2.5 : 1.5} />
-                                <span className={`font-black leading-tight text-center transition-all ${isActive ? 'text-white text-[19px]' : 'text-slate-700 text-[14.5px]'}`}>
+                                <Icon className={`transition-all ${isActive ? 'text-white w-7.5 h-7.5' : 'text-slate-500 w-5.5 h-5.5'}`} strokeWidth={isActive ? 2.5 : 1.5} />
+                                <span className={`font-black leading-tight text-center transition-all ${isActive ? 'text-white text-[19px]' : 'text-slate-800 text-[14.5px]'}`}>
                                     {tab.label}
                                 </span>
-                                <span className={`font-bold text-center leading-tight hidden sm:block transition-all ${isActive ? 'text-white/90 text-[13px]' : 'text-slate-400 text-[10.5px]'}`}>
+                                <span className={`font-bold text-center leading-tight hidden lg:block transition-all ${isActive ? 'text-white/90 text-[13px]' : 'text-slate-500 text-[10.5px]'}`}>
                                     {meta.desc}
                                 </span>
                             </motion.button>
@@ -255,7 +257,7 @@ export default function KnowledgeBasePanel({
                         請將您的 LINE 官方帳號與系統串聯，分配給這位店長。
                     </p>
                     <button onClick={() => window.location.href = '/dashboard/connect?action=new'}
-                        className="bg-slate-900 hover:bg-slate-700 text-white px-7 py-3 rounded-xl font-black transition-all text-[13px]">
+                        className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:brightness-110 text-white px-8 py-4 rounded-2xl font-black transition-all text-[14px] shadow-lg shadow-emerald-500/20">
                         立即前往串接
                     </button>
                     <button onClick={() => window.location.href = '/dashboard/connect?action=new&mode=batch'}
@@ -265,7 +267,7 @@ export default function KnowledgeBasePanel({
                     </button>
                 </div>
             ) : (
-                <div className="flex-1 overflow-y-auto px-6 py-6 custom-scrollbar">
+                <div className="flex-1 overflow-y-auto px-[35px] py-[35px] custom-scrollbar">
                     {children}
                 </div>
             )}

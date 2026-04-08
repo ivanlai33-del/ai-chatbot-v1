@@ -13,26 +13,26 @@ function Field({ label, placeholder, value, onChange, hint, isLocked, onToggleLo
 }) {
     return (
         <div className="relative group/field">
-            <div className="flex items-center justify-between mb-1.5 px-1">
-                <label className="block text-[11px] font-bold text-slate-500 tracking-wide uppercase">{label}</label>
+            <div className="flex items-center justify-between mb-2 px-1">
+                <label className="block text-[12px] font-black text-slate-800 tracking-wider uppercase">{label}</label>
                 <div className="flex items-center gap-2 opacity-0 group-hover/field:opacity-100 transition-opacity">
                     {onGenerate && (
                         <button 
                             onClick={onGenerate}
                             disabled={isGenerating || isLocked}
-                            className="p-1 text-slate-400 hover:text-emerald-500 disabled:opacity-30 transition-colors"
+                            className="p-1 text-slate-500 hover:text-emerald-500 disabled:opacity-30 transition-colors"
                             title="AI 重新生成此項"
                         >
-                            {isGenerating ? <Loader2 className="w-3 h-3 animate-spin" /> : <Wand2 className="w-3 h-3" />}
+                            {isGenerating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Wand2 className="w-3.5 h-3.5" />}
                         </button>
                     )}
                     {onToggleLock && (
                         <button 
                             onClick={onToggleLock}
-                            className={`p-1 transition-colors ${isLocked ? 'text-amber-500 shadow-sm' : 'text-slate-300 hover:text-slate-500'}`}
+                            className={`p-1 transition-colors ${isLocked ? 'text-amber-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                             title={isLocked ? '已鎖定，不參與一鍵生成' : '點擊鎖定此項內容'}
                         >
-                            {isLocked ? <Lock className="w-3 h-3" /> : <Unlock className="w-3 h-3" />}
+                            {isLocked ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
                         </button>
                     )}
                 </div>
@@ -42,13 +42,13 @@ function Field({ label, placeholder, value, onChange, hint, isLocked, onToggleLo
                 value={value}
                 onChange={e => onChange(e.target.value)}
                 placeholder={placeholder}
-                className={`w-full px-3.5 py-2.5 rounded-xl border bg-white text-[13px] text-slate-800 placeholder:text-slate-300 focus:outline-none focus:ring-2 transition-all hover:border-slate-300 ${
+                className={`w-full p-[35px] rounded-xl border-2 bg-white text-[15px] text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-4 transition-all hover:border-slate-400 ${
                     isLocked 
-                        ? 'border-amber-100 bg-amber-50/10 focus:border-amber-200 focus:ring-amber-50' 
-                        : 'border-slate-200 focus:border-slate-400 focus:ring-slate-100'
+                        ? 'border-amber-400 bg-amber-50/40 focus:border-amber-500 focus:ring-amber-50' 
+                        : 'border-slate-200 focus:border-slate-900 focus:ring-slate-100'
                 }`}
             />
-            {hint && <p className="text-[10px] text-slate-400 mt-1 pl-1">{hint}</p>}
+            {hint && <p className="text-[11px] text-slate-600 mt-1.5 pl-1 font-extrabold italic">{hint}</p>}
         </div>
     );
 }
@@ -61,26 +61,26 @@ function Textarea({ label, placeholder, value, onChange, rows = 3, hint, isLocke
 }) {
     return (
         <div className="relative group/field">
-            <div className="flex items-center justify-between mb-1.5 px-1">
-                <label className="block text-[11px] font-bold text-slate-500 tracking-wide uppercase">{label}</label>
+            <div className="flex items-center justify-between mb-2 px-1">
+                <label className="block text-[12px] font-black text-slate-800 tracking-wider uppercase">{label}</label>
                 <div className="flex items-center gap-2 opacity-0 group-hover/field:opacity-100 transition-opacity">
                     {onGenerate && (
                         <button 
                             onClick={onGenerate}
                             disabled={isGenerating || isLocked}
-                            className="p-1 text-slate-400 hover:text-emerald-500 disabled:opacity-30 transition-colors"
+                            className="p-1 text-slate-500 hover:text-emerald-500 disabled:opacity-30 transition-colors"
                             title="AI 重新生成此項"
                         >
-                            {isGenerating ? <Loader2 className="w-3 h-3 animate-spin" /> : <Wand2 className="w-3 h-3" />}
+                            {isGenerating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Wand2 className="w-3.5 h-3.5" />}
                         </button>
                     )}
                     {onToggleLock && (
                         <button 
                             onClick={onToggleLock}
-                            className={`p-1 transition-colors ${isLocked ? 'text-amber-500 shadow-sm' : 'text-slate-300 hover:text-slate-500'}`}
+                            className={`p-1 transition-colors ${isLocked ? 'text-amber-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                             title={isLocked ? '已鎖定，不參與一鍵生成' : '點擊鎖定此項內容'}
                         >
-                            {isLocked ? <Lock className="w-3 h-3" /> : <Unlock className="w-3 h-3" />}
+                            {isLocked ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
                         </button>
                     )}
                 </div>
@@ -90,13 +90,13 @@ function Textarea({ label, placeholder, value, onChange, rows = 3, hint, isLocke
                 onChange={e => onChange(e.target.value)}
                 placeholder={placeholder}
                 rows={rows}
-                className={`w-full px-3.5 py-2.5 rounded-xl border bg-white text-[13px] text-slate-800 placeholder:text-slate-300 focus:outline-none focus:ring-2 transition-all resize-none hover:border-slate-300 ${
+                className={`w-full p-[35px] rounded-xl border-2 bg-white text-[15px] text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-4 transition-all resize-none hover:border-slate-400 ${
                     isLocked 
-                        ? 'border-amber-100 bg-amber-50/10 focus:border-amber-200 focus:ring-amber-50' 
-                        : 'border-slate-200 focus:border-slate-400 focus:ring-slate-100'
+                        ? 'border-amber-400 bg-amber-50/40 focus:border-amber-500 focus:ring-amber-50' 
+                        : 'border-slate-200 focus:border-slate-900 focus:ring-slate-100'
                 }`}
             />
-            {hint && <p className="text-[10px] text-slate-400 mt-1 pl-1">{hint}</p>}
+            {hint && <p className="text-[11px] text-slate-600 mt-1.5 pl-1 font-extrabold italic">{hint}</p>}
         </div>
     );
 }
@@ -104,13 +104,15 @@ function Textarea({ label, placeholder, value, onChange, rows = 3, hint, isLocke
 /* ── Section divider with icon + title ── */
 function Section({ Icon, title, subtitle }: { Icon: React.ElementType; title: string; subtitle?: string }) {
     return (
-        <div className="flex items-center gap-2.5 pt-2 pb-1">
-            <Icon className="w-4 h-4 text-slate-400 shrink-0" strokeWidth={1.5} />
-            <div className="flex-1">
-                <p className="text-[15px] font-black text-slate-800 leading-none">{title}</p>
-                {subtitle && <p className="text-[10px] text-slate-400 mt-0.5">{subtitle}</p>}
+        <div className="flex items-center gap-3 pt-6 pb-2">
+            <div className="p-2 rounded-xl bg-slate-100 border border-slate-200">
+                <Icon className="w-5 h-5 text-slate-800 shrink-0" strokeWidth={2.5} />
             </div>
-            <div className="w-full max-w-[240px] h-px bg-slate-100" />
+            <div className="flex-1">
+                <p className="text-[17px] font-black text-slate-900 leading-none tracking-tight">{title}</p>
+                {subtitle && <p className="text-[11px] text-slate-700 mt-1.5 font-black uppercase tracking-widest">{subtitle}</p>}
+            </div>
+            <div className="w-full max-w-[300px] h-[2px] bg-slate-300" />
         </div>
     );
 }
@@ -236,99 +238,101 @@ export default function BrandDNATab({ config, setConfig, planLevel }: BrandDNATa
     return (
         <div className="space-y-5">
             
-            {/* ── AI Autofill & Dojo Banner ── */}
+            {/* ── 即時動態記憶 (Moved to top with light green dynamic style) ── */}
             <motion.div 
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-gradient-to-r from-emerald-500/10 via-cyan-500/10 to-indigo-500/10 border border-emerald-100 rounded-[28px] p-6 shadow-sm space-y-6"
+                className="p-6 rounded-[28px] bg-emerald-50/60 border border-emerald-100 relative overflow-hidden group/dojo shadow-sm shadow-emerald-100/50"
             >
-                <div className="flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center shadow-lg shadow-emerald-200">
-                            <Sparkles className="w-5 h-5 text-white" />
+                {/* Feature Gating Overlay — 練功房解鎖門檻：Tier 2 ($499) 以上 */}
+                {planLevel < 2 && (
+                    <div className="absolute inset-0 z-10 bg-white/40 backdrop-blur-[3px] flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-500">
+                        <div className="w-12 h-12 rounded-full bg-white shadow-xl flex items-center justify-center mb-3 border border-amber-100">
+                            <Lock className="w-5 h-5 text-amber-500" />
                         </div>
-                        <div>
-                            <p className="text-[14px] font-black text-slate-800 leading-none">AI 全局智能填充</p>
-                            <p className="text-[10px] text-slate-500 mt-1">根據品牌名稱與行業，自動編寫所有未鎖定內容</p>
-                        </div>
+                        <h5 className="text-[14px] font-black text-slate-800 mb-1">🔒 專屬功能：即時動態記憶</h5>
+                        <p className="text-[11px] text-slate-600 mb-4 font-medium leading-relaxed">
+                            想讓店長聽令於您的語音或即時指令嗎？<br/>
+                            升級至 **個人店長版** 以上即可解鎖解鎖「即時動態記憶」。
+                        </p>
+                        <button 
+                            onClick={() => window.dispatchEvent(new CustomEvent('switch-tab', { detail: 'billing' }))}
+                            className="px-8 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-600 text-white text-[13px] font-black shadow-lg shadow-emerald-500/20 active:scale-95 hover:brightness-110 transition-all border border-slate-100/15"
+                        >
+                            立即升級解鎖
+                        </button>
+                    </div>
+                )}
+
+                <div className="absolute top-0 right-0 p-3">
+                    <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${planLevel >= 2 ? 'bg-emerald-100 text-emerald-700 animate-pulse' : 'bg-slate-100 text-slate-400'}`}>
+                        <div className={`w-1.5 h-1.5 rounded-full ${planLevel >= 2 ? 'bg-emerald-500' : 'bg-slate-300'}`} />
+                        Dynamic Live
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-4 mb-4">
+                    <div className="p-2.5 rounded-2xl bg-white shadow-sm border border-emerald-50">
+                        <MessageSquare className="w-5 h-5 text-emerald-600" />
+                    </div>
+                    <div>
+                        <h4 className="text-[15px] font-black text-emerald-900 leading-tight">即時動態記憶</h4>
+                        <p className="text-[10px] text-emerald-600/70 font-bold tracking-tight">AI 的短期記憶區，會優先於所有設定生效。</p>
+                    </div>
+                </div>
+
+                <div className="space-y-3">
+                    <Textarea 
+                        label="" 
+                        placeholder="例：今日 A 套餐已售罄、目前店內繁忙需等候 20 分鐘..." 
+                        value={config.dynamic_context || ''} 
+                        onChange={v => setConfig((c: any) => ({ ...c, dynamic_context: v }))} 
+                        rows={2} 
+                    />
+                    
+                    <div className="text-[10px] text-emerald-600/50 font-bold flex items-center justify-between px-1">
+                        <span className="flex items-center gap-1.5"><BrainCircuit className="w-3.5 h-3.5" /> 最後更新：{config.last_dojo_update ? new Date(config.last_dojo_update).toLocaleString() : '尚無更新紀錄'}</span>
+                        <span className="bg-emerald-100/50 px-2 py-0.5 rounded-md">指令：@店長聽令</span>
+                    </div>
+                </div>
+            </motion.div>
+
+            {/* ── AI Auto-Generation Action Bar (Moved below Dojo) ── */}
+            <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white border border-slate-200 rounded-[24px] p-5 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4"
+            >
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center border border-slate-100">
+                        <Sparkles className="w-5 h-5 text-slate-400" />
+                    </div>
+                    <div>
+                        <p className="text-[14px] font-black text-slate-800 leading-none">AI 智庫自動生成 (僅本頁欄位)</p>
+                        <p className="text-[10px] text-slate-500 mt-1">根據品牌名稱與行業，自動填寫所有空缺內容</p>
                     </div>
                 </div>
 
                 <button
                     onClick={() => handleAIGenerate()}
                     disabled={!!isGenerating}
-                    className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-700 hover:to-teal-600 text-white font-black text-[15px] shadow-lg shadow-emerald-200 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+                    className="w-full md:w-auto py-4 px-10 rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-600 text-white font-black text-[15px] shadow-lg shadow-emerald-500/25 transition-all flex items-center justify-center gap-3 disabled:opacity-50 hover:brightness-110 active:scale-95 border border-white/20"
                 >
-                    {isGenerating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Wand2 className="w-5 h-5" />}
-                    {isGenerating ? 'AI 正在為您構思品牌靈魂...' : '🪄 AI 一鍵生成完整設定 (依據鎖定狀態)'}
+                    {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4" />}
+                    {isGenerating ? 'AI 正在構思中...' : '🪄 一鍵生成完整設定'}
                 </button>
-
-                {/* ── Dojo / 即時動態區塊 ── */}
-                <div className="p-5 rounded-2xl bg-white/60 border border-white/80 backdrop-blur-sm relative overflow-hidden group/dojo">
-                    {/* Feature Gating Overlay — 練功房解鎖門檻：Tier 2 ($499) 以上 */}
-                    {planLevel < 2 && (
-                        <div className="absolute inset-0 z-10 bg-white/40 backdrop-blur-[3px] flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-500">
-                            <div className="w-12 h-12 rounded-full bg-white shadow-xl flex items-center justify-center mb-3 border border-amber-100">
-                                <Lock className="w-5 h-5 text-amber-500" />
-                            </div>
-                            <h5 className="text-[14px] font-black text-slate-800 mb-1">🔒 專屬功能：店長練功房</h5>
-                            <p className="text-[11px] text-slate-600 mb-4 font-medium leading-relaxed">
-                                想讓店長聽令於您的語音或即時指令嗎？<br/>
-                                升級至 **個人店長版** 以上即可解鎖解鎖「即時動態記憶」。
-                            </p>
-                            <button 
-                                onClick={() => window.dispatchEvent(new CustomEvent('switch-tab', { detail: 'billing' }))}
-                                className="px-5 py-2 rounded-xl bg-slate-900 text-white text-[12px] font-black hover:bg-slate-800 transition-all shadow-lg active:scale-95"
-                            >
-                                立即升級解鎖
-                            </button>
-                        </div>
-                    )}
-
-                    <div className="absolute top-0 right-0 p-3">
-                        <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest ${planLevel >= 2 ? 'bg-emerald-100 text-emerald-700 animate-pulse' : 'bg-slate-100 text-slate-400'}`}>
-                            <div className={`w-1.5 h-1.5 rounded-full ${planLevel >= 2 ? 'bg-emerald-500' : 'bg-slate-300'}`} />
-                            Live Dojo
-                        </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 mb-4">
-                        <div className="p-2 rounded-xl bg-white shadow-sm border border-slate-100">
-                            <MessageSquare className="w-4 h-4 text-emerald-600" />
-                        </div>
-                        <div>
-                            <h4 className="text-[13px] font-black text-slate-800">店長練功房：即時動態記憶</h4>
-                            <p className="text-[10px] text-slate-500 font-medium tracking-tight">AI 的短期記憶區，會優先於所有設定生效。</p>
-                        </div>
-                    </div>
-
-                    <div className="space-y-3">
-                        <Textarea 
-                            label="" 
-                            placeholder="例：今日 A 套餐已售罄、目前店內繁忙需等候 20 分鐘..." 
-                            value={config.dynamic_context || ''} 
-                            onChange={v => setConfig((c: any) => ({ ...c, dynamic_context: v }))} 
-                            rows={2} 
-                        />
-                        
-                        <div className="text-[9.5px] text-slate-400 font-bold flex items-center justify-between">
-                            <span className="flex items-center gap-1.5"><BrainCircuit className="w-3 h-3" /> 最後更新：{config.last_dojo_update ? new Date(config.last_dojo_update).toLocaleString() : '尚無更新紀錄'}</span>
-                            <span className="text-emerald-600/70">支援指令：@店長聽令</span>
-                        </div>
-                    </div>
-                </div>
             </motion.div>
 
             {/* ── 行業 ── */}
             <Section Icon={Layers} title="行業類別" subtitle="選擇後 AI 語調自動對應" />
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-4 gap-3">
                 {INDUSTRIES.map(ind => (
                     <motion.button key={ind} whileTap={{ scale: 0.98 }}
                         onClick={() => handleIndustrySelect(ind)}
-                        className={`px-2 py-3 rounded-xl font-black border transition-all duration-300 text-center flex items-center justify-center ${
+                        className={`p-[35px] rounded-2xl font-black border-2 transition-all duration-300 text-center flex items-center justify-center ${
                             config.brand_dna.industry === ind
-                                ? 'bg-gradient-to-br from-emerald-500 to-cyan-600 border-transparent text-white shadow-lg text-[16.5px]'
-                                : 'bg-white border-slate-100 text-slate-600 hover:border-slate-300 hover:bg-slate-50 text-[13px]'
+                                ? 'bg-gradient-to-br from-emerald-500 to-cyan-600 border-transparent text-white shadow-xl text-[17px]'
+                                : 'bg-white border-slate-200 text-slate-600 hover:border-slate-400 hover:bg-slate-50 text-[14px] shadow-sm'
                         }`}
                     >
                         {ind}
@@ -379,7 +383,7 @@ export default function BrandDNATab({ config, setConfig, planLevel }: BrandDNATa
                 {Object.keys(TONE_PROMPTS).map(tone => (
                     <motion.button key={tone} whileTap={{ scale: 0.98 }}
                         onClick={() => setConfig((c: any) => ({ ...c, brand_dna: { ...c.brand_dna, tone, tone_prompt: TONE_PROMPTS[tone] } }))}
-                        className={`px-6 py-2.5 rounded-xl font-black border transition-all duration-300 ${
+                        className={`px-6 py-[35px] rounded-xl font-black border transition-all duration-300 ${
                             config.brand_dna.tone === tone
                                 ? 'bg-gradient-to-br from-emerald-500 to-cyan-600 border-transparent text-white shadow-lg text-[16.5px]'
                                 : 'bg-white border-slate-100 text-slate-600 hover:border-slate-300 text-[13px]'

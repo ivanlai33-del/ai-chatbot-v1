@@ -163,19 +163,19 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
             const [historyResult, intercepted] = await Promise.all([
                 supabase
                     .from('chat_logs')
-                    .select('user_message, ai_response')
+                    .select('role, content')
                     .eq('config_id', configId)
                     .eq('line_user_id', userId)
                     .order('created_at', { ascending: false })
-                    .limit(5),
+                    .limit(6), // Fetch last 3 turns
                 IntentInterceptor.intercept(safeMessage)
             ]);
 
             const history = historyResult.data || [];
-            const chatHistory = history.reverse().flatMap(h => [
-                { role: 'user', content: h.user_message },
-                { role: 'assistant', content: h.ai_response }
-            ]);
+            const chatHistory = history.reverse().map(h => ({
+                role: h.role === 'ai' ? 'assistant' : 'user',
+                content: h.content
+            }));
 
             // ⚡ 注入即時意圖數據 (如果是對話以外的資訊)
             let dynamicPrompt = systemPrompt;
@@ -196,17 +196,12 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
             const UsageService = (await import('@/lib/services/UsageService')).UsageService;
             UsageService.incrementUsage(config.user_id, 0); // 這裡不傳 tokens 是為了節省一次 token 計算
 
-            // Save chat log (non-blocking)
+            // Save chat log (non-blocking) - 🎯 INSERT TWO ROWS FOR MEMORY CONSISTENCY
             const isLead = /09\d{2}[-\s]?\d{3}[-\s]?\d{3}|(預約|報名|想買|電話)/i.test(userMessage + aiResponse);
-            supabase.from('chat_logs').insert({
-                config_id: configId,
-                user_id: config.user_id,
-                line_user_id: userId,
-                user_message: userMessage,
-                ai_response: aiResponse,
-                is_lead: isLead,
-                created_at: new Date().toISOString()
-            }).then(({ error }) => {
+            supabase.from('chat_logs').insert([
+                { config_id: configId, user_id: userId, role: 'user', content: userMessage },
+                { config_id: configId, user_id: userId, role: 'ai', content: aiResponse, is_lead: isLead }
+            ]).then(({ error }) => {
                 if (error) console.error(`[TIER1:LineWebhook][${configId}] Log failed:`, error.message);
             });
 

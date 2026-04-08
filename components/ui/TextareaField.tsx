@@ -17,7 +17,7 @@ export default function TextareaField({ label, placeholder, value, onChange, row
                 onChange={e => onChange(e.target.value)} 
                 placeholder={placeholder} 
                 rows={rows}
-                className="w-full bg-white border border-slate-200 hover:border-emerald-400 focus:border-emerald-500 rounded-2xl px-4 py-3 text-[15px] text-slate-800 placeholder-slate-400 outline-none transition-all duration-200 resize-none focus:shadow-[0_0_0_3px_rgba(6,199,85,0.12)] shadow-sm"
+                className="w-full bg-white border-2 border-black/30 hover:border-slate-500 focus:border-emerald-500 rounded-2xl px-4 py-3 text-[15px] text-slate-800 placeholder-slate-400 outline-none transition-all duration-200 resize-none focus:shadow-[0_0_0_4px_rgba(6,199,85,0.12)] shadow-sm"
             />
         </div>
     );

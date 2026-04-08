@@ -65,7 +65,14 @@ const STATIC_TOOLS: OpenAI.Chat.Completions.ChatCompletionTool[] = [
 
 export class AIService {
     static generateStoreSystemPrompt(config: any, isFree?: boolean): string {
-        const { brand_dna = {}, offerings = [], faq_base = [], logic_rules = '', contact_info = {} } = config;
+        const { 
+            brand_dna = {}, 
+            offerings = [], 
+            faq_base = [], 
+            logic_rules = '', 
+            contact_info = {},
+            dynamic_context = '' 
+        } = config;
         const rawName = brand_dna.name || '未命名專家';
         
         // Dynamic Title Detection: If name has expert keywords, use generic title, otherwise default to "助手"
@@ -121,6 +128,10 @@ export class AIService {
             if (contact_info.branches && contact_info.branches.length > 0) {
                 prompt += `- 分店據點: ${contact_info.branches.join(', ')}\n`;
             }
+        }
+
+        if (dynamic_context) {
+            prompt += `\n【店長練功房：即時動態指令 (最高優先權)】\n${dynamic_context}\n`;
         }
 
         if (isFree) {

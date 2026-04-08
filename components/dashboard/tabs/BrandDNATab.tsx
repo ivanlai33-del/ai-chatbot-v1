@@ -151,9 +151,10 @@ const INDUSTRIES = [
 interface BrandDNATabProps {
     config: any;
     setConfig: (fn: (c: any) => any) => void;
+    planLevel: number;
 }
 
-export default function BrandDNATab({ config, setConfig }: BrandDNATabProps) {
+export default function BrandDNATab({ config, setConfig, planLevel }: BrandDNATabProps) {
     const [isGenerating, setIsGenerating] = useState<string | boolean>(false);
     const [locks, setLocks] = useState<Record<string, boolean>>(config?.brand_dna?.locks || {});
 
@@ -264,8 +265,8 @@ export default function BrandDNATab({ config, setConfig }: BrandDNATabProps) {
 
                 {/* ── Dojo / 即時動態區塊 ── */}
                 <div className="p-5 rounded-2xl bg-white/60 border border-white/80 backdrop-blur-sm relative overflow-hidden group/dojo">
-                    {/* Feature Gating Overlay */}
-                    {!(config?.plan_level > 0) && (
+                    {/* Feature Gating Overlay — 練功房解鎖門檻：Tier 2 ($499) 以上 */}
+                    {planLevel < 2 && (
                         <div className="absolute inset-0 z-10 bg-white/40 backdrop-blur-[3px] flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-500">
                             <div className="w-12 h-12 rounded-full bg-white shadow-xl flex items-center justify-center mb-3 border border-amber-100">
                                 <Lock className="w-5 h-5 text-amber-500" />
@@ -285,8 +286,8 @@ export default function BrandDNATab({ config, setConfig }: BrandDNATabProps) {
                     )}
 
                     <div className="absolute top-0 right-0 p-3">
-                        <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest ${config?.plan_level > 0 ? 'bg-emerald-100 text-emerald-700 animate-pulse' : 'bg-slate-100 text-slate-400'}`}>
-                            <div className={`w-1.5 h-1.5 rounded-full ${config?.plan_level > 0 ? 'bg-emerald-500' : 'bg-slate-300'}`} />
+                        <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest ${planLevel >= 2 ? 'bg-emerald-100 text-emerald-700 animate-pulse' : 'bg-slate-100 text-slate-400'}`}>
+                            <div className={`w-1.5 h-1.5 rounded-full ${planLevel >= 2 ? 'bg-emerald-500' : 'bg-slate-300'}`} />
                             Live Dojo
                         </div>
                     </div>

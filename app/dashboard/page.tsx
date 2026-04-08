@@ -128,7 +128,7 @@ export default function DashboardPage() {
                         transition={{ type: 'spring', stiffness: 260, damping: 24 }}
                         className="space-y-5"
                     >
-                        {activeTab === 'brand' && <BrandDNATab config={config} setConfig={setConfig} />}
+                        {activeTab === 'brand' && <BrandDNATab config={config} setConfig={setConfig} planLevel={planLevel} />}
                         {activeTab === 'offerings' && <OfferingsTab config={config} setConfig={setConfig} />}
                         {activeTab === 'faq' && <FAQTab config={config} setConfig={setConfig} />}
                         {activeTab === 'logic' && <LogicTab config={config} setConfig={setConfig} />}

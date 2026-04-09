@@ -12,7 +12,7 @@ interface RAGTabProps {
 
 const MAX_FILES = 5;
 const MAX_SIZE_MB = 5;
-const ALLOWED_EXTENSIONS = ['pdf', 'txt', 'docx'];
+const ALLOWED_EXTENSIONS = ['pdf', 'txt'];
 
 function formatBytes(bytes: number) {
     if (bytes < 1024) return `${bytes} B`;
@@ -237,18 +237,17 @@ export default function RAGTab({ planLevel, bots, selectedBotId }: RAGTabProps) 
                                 ref={fileInputRef}
                                 type="file"
                                 className="hidden"
-                                accept=".pdf,.txt,.docx"
+                                accept=".pdf,.txt"
                                 onChange={handleFileUpload}
                             />
                         )}
                     </label>
 
                     {/* 格式說明 */}
-                    <div className="grid grid-cols-3 gap-2 mt-4">
+                    <div className="grid grid-cols-2 gap-2 mt-4">
                         {[
                             { ext: 'PDF', desc: '型錄、合約', color: 'text-red-600 bg-red-50' },
-                            { ext: 'TXT', desc: 'Q&A、說明', color: 'text-slate-600 bg-slate-50' },
-                            { ext: 'DOCX', desc: 'Word 文件', color: 'text-blue-600 bg-blue-50' },
+                            { ext: 'TXT', desc: 'Q&A、說明文字', color: 'text-slate-600 bg-slate-50' },
                         ].map(f => (
                             <div key={f.ext} className={`p-3 rounded-[14px] border ${f.color} text-center`}>
                                 <p className="text-[13px] font-black">{f.ext}</p>

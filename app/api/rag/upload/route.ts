@@ -52,25 +52,13 @@ function extractTxtText(buffer: ArrayBuffer): string {
     return new TextDecoder('utf-8').decode(buffer);
 }
 
-// ── DOCX 文字提取（簡易 XML 解析，不依賴 mammoth）─
-async function extractDocxText(buffer: ArrayBuffer): Promise<string> {
-    // DOCX 是 zip 格式，使用原生 DecompressionStream 解壓縮
-    // 降級方案：讀取 word/document.xml 中的純文字
-    try {
-        const { unzipSync } = await import('fflate' as any).catch(() => null) || {};
-        if (unzipSync) {
-            const unzipped = unzipSync(new Uint8Array(buffer));
-            const xmlKey = Object.keys(unzipped).find(k => k === 'word/document.xml');
-            if (xmlKey) {
-                const xml = new TextDecoder().decode(unzipped[xmlKey]);
-                // 移除 XML 標籤，只保留文字
-                return xml.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-            }
-        }
-    } catch {}
-    // 無法解析時回傳提示
-    return '（此 DOCX 文件暫時無法解析，請改用 PDF 或 TXT 格式上傳）';
+// ── DOCX 文字提取（Phase 2 實作，目前請改用 PDF/TXT）──
+async function extractDocxText(_buffer: ArrayBuffer): Promise<string> {
+    // Note: 完整 DOCX 解析需要 mammoth 套件，將在 Phase 2 加入
+    // 目前透過 API 驗證層已接受 .docx，但提取時回傳提示訊息
+    throw new Error('DOCX 格式目前尚未完整支援，請將文件另存為 PDF 或 TXT 格式後重新上傳');
 }
+
 
 // ── Embedding 生成（批次，節省 API 呼叫次數）────────
 async function generateEmbeddings(chunks: string[]): Promise<number[][]> {

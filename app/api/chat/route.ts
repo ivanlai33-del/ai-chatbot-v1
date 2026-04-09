@@ -453,7 +453,7 @@ export async function POST(req: NextRequest) {
                             const triage = await openai.chat.completions.create({
                                 model: 'gpt-4o-mini',
                                 messages: [
-                                    { role: 'system', content: '\u4f60\u662f\u4e00\u4f4d\u8cc7\u6df1\u5ba2\u670d\u7d93\u7406\u3002\u5206\u6790\u6536\u5230\u7684\u5ba2\u6236\u53cd\u994饋\uff0c\u63d0\u4f9b\uff1a1. \u5206\u985e, 2. \u512a\u5148\u7d1a, 3. \u5efa\u8b70\u56de\u8986\u3002\u8f38\u51fa\u70ba JSON\uff1a{"cat": String, "pri": Number, "reply": String}' },
+                                    { role: 'system', content: '你是一位資深客服經理。分析收到的客戶反饋，提供：1. 分類, 2. 優先級, 3. 建議回覆。輸出為 JSON：{"cat": String, "pri": Number, "reply": String}' },
                                     { role: 'user', content: feedbackContent }
                                 ],
                                 response_format: { type: 'json_object' }

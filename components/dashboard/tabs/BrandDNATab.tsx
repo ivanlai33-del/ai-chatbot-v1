@@ -409,6 +409,7 @@ export default function BrandDNATab({ config, setConfig, planLevel }: BrandDNATa
                     isLocked={locks.closing_phrase} onToggleLock={() => handleToggleLock('closing_phrase')}
                     onGenerate={() => handleAIGenerate('closing_phrase')} isGenerating={isGenerating === 'closing_phrase'}
                 />
+            </div>
 
         </div>
     );

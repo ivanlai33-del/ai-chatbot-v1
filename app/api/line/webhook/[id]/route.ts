@@ -158,9 +158,9 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
             // 🛡️ 第 3 道防護：訊息長度截斷（防止 Token 炸彈攻擊）
             const safeMessage = FreemiumGuard.sanitizeInput(userMessage);
 
-            // ⚡ 並行處理：歷史記錄 + 意圖攔截 + RAG 向量搜尋
+            // ⚡ 並行處理：歷史記錄 + 意圖攔截
             const { IntentInterceptor } = await import('@/lib/services/IntentInterceptor');
-            const [historyResult, intercepted, ragResult] = await Promise.all([
+            const [historyResult, intercepted] = await Promise.all([
                 supabase
                     .from('chat_logs')
                     .select('role, content')
@@ -169,12 +169,6 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
                     .order('created_at', { ascending: false })
                     .limit(10),
                 IntentInterceptor.intercept(safeMessage),
-                // 🧠 RAG：搜尋上傳文件中的相關段落
-                supabase.rpc('search_rag_chunks', {
-                    p_bot_id: configId,
-                    p_embedding: null,  // 由下方 inline embedding 取代（節省一次 RPC 呼叫）
-                    p_limit: 3,
-                }).then(() => ({ data: [] })).catch(() => ({ data: [] })) // placeholder
             ]);
 
             const history = historyResult.data || [];
@@ -189,29 +183,11 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
                 dynamicPrompt += `\n\n[即時資訊預載] 使用者詢問 ${intercepted.intent}，最新數據如下：\n${JSON.stringify(intercepted.data, null, 2)}`;
             }
 
-            // 🧠 RAG 向量搜尋：找出與用戶訊息最相關的知識庫段落
-            try {
-                const { data: hasRag } = await supabase
-                    .from('rag_documents')
-                    .select('id', { count: 'exact', head: true })
-                    .eq('bot_id', configId)
-                    .eq('status', 'ready');
-                
-                if (hasRag) {
-                    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-                    const searchRes = await fetch(`${baseUrl}/api/rag/search`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ query: safeMessage, botId: configId, limit: 3 }),
-                        signal: AbortSignal.timeout(4000) // 4 秒逾時，不阻塞回覆
-                    });
-                    const { chunks } = await searchRes.json();
-                    if (chunks?.length > 0) {
-                        dynamicPrompt += `\n\n【知識庫參考資料 (最相關段落，請優先參考)】\n${chunks.join('\n---\n')}`;
-                    }
-                }
-            } catch {
-                // RAG 失敗不阻塞主流程
+            // 🧠 RAG：直接呼叫 RAGService（無需 HTTP 請求，節省延遲）
+            const { searchRAGChunks } = await import('@/lib/services/RAGService');
+            const ragChunks = await searchRAGChunks(configId, safeMessage, 3);
+            if (ragChunks.length > 0) {
+                dynamicPrompt += `\n\n【知識庫參考資料 (最相關段落，請優先參考)】\n${ragChunks.join('\n---\n')}`;
             }
 
             // ⚡ DIRECT OpenAI call — skip AIService overhead:

@@ -174,7 +174,11 @@ export default function UnifiedBillingView() {
     if (loading) {
         return (
             <div className="flex items-center justify-center py-40">
-                <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }} className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full" />
+                <motion.div 
+                    animate={{ rotate: 360 }} 
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }} 
+                    className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full" 
+                />
             </div>
         );
     }
@@ -184,19 +188,17 @@ export default function UnifiedBillingView() {
 
     return (
         <div className="max-w-5xl mx-auto space-y-16 py-12 animate-in fade-in slide-in-from-bottom-8 duration-1000 relative">
-            {/* 🎨 Background Decoration */}
             <div className="absolute -top-20 -left-40 w-[600px] h-[600px] opacity-[0.02] pointer-events-none select-none z-0">
                 <img src="/b_02.svg" alt="Decoration" className="w-full h-full object-contain rotate-12" />
             </div>
 
-            {/* 👑 Page Header */}
             <header className="relative z-10 space-y-2 ml-2">
                 <h1 className="text-4xl font-black text-slate-900 tracking-tighter">帳單與訂閱管理</h1>
                 <p className="text-sm font-bold text-slate-400 uppercase tracking-[0.25em]">Manage your premium identity and payments</p>
                 <div className="w-12 h-1 bg-indigo-500 rounded-full mt-4" />
             </header>
 
-            {/* 💎 Current Subscription Status Card */}
+            {/* Current Subscription Status Card */}
             <section className="relative z-10">
                 <h2 className="text-xs font-black text-slate-400 underline decoration-slate-200 underline-offset-8 uppercase tracking-[0.4em] mb-8 ml-2">目前的收費狀態 / Subscription</h2>
                 <div className={cn(
@@ -294,7 +296,7 @@ order-b border-slate-200 hover:border-rose-400"
                 </div>
             </section>
 
-            {/* 🚀 Upgrade Options Section */}
+            {/* Upgrade Options Section */}
             <section className="relative z-10">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-10 ml-2">
                     <div className="space-y-3">
@@ -482,7 +484,7 @@ order-b border-slate-200 hover:border-rose-400"
                 </AnimatePresence>
             </section>
 
-            {/* 📑 Invoice Settings Section */}
+            {/* Invoice Settings Section */}
             <section className="relative z-10">
                  <h2 className="text-xs font-black text-slate-400 underline decoration-slate-200 underline-offset-8 uppercase tracking-[0.4em] mb-8 ml-2">發票需求與設定 / Invoicing</h2>
                 <div className="bg-white rounded-[32px] p-10 border border-slate-100 shadow-sm">
@@ -589,7 +591,7 @@ order-b border-slate-200 hover:border-rose-400"
                 </div>
             </section>
 
-            {/* 📝 Billing History Section */}
+            {/* Billing History Section */}
             <section className="relative z-10">
                 <div className="flex items-end justify-between mb-8 ml-2">
                      <h2 className="text-xs font-black text-slate-400 underline decoration-slate-200 underline-offset-8 uppercase tracking-[0.4em]">收費紀錄 / History</h2>
@@ -693,7 +695,7 @@ order-b border-slate-200 hover:border-rose-400"
                 )}
             </AnimatePresence>
 
-            {/* 🛡️ Modern SaaS Footer - Content-Relative Full Width */}
+            {/* Modern SaaS Footer - Content-Relative Full Width */}
             <footer className="mt-32 relative group">
                 {/* 50% 透明度的淺色玻璃背景 - 使用負邊距展開而非對螢幕定位 */}
                 <div className="absolute -inset-x-10 md:-inset-x-20 inset-y-0 bg-white/50 backdrop-blur-2xl border-t border-slate-200/60 z-0" />

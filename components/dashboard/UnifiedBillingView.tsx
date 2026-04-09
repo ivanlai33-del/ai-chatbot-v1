@@ -174,104 +174,91 @@ export default function UnifiedBillingView() {
     if (loading) {
         return (
             <div className="flex items-center justify-center py-40">
-                <motion.div 
-                    animate={{ rotate: 360 }} 
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }} 
-                    className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full" 
-                />
+                <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }} className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full" />
             </div>
         );
     }
 
     const currentPlan = getPlanByTier(planLevel);
-    const allAvailablePlans = AVAILABLE_PLAN_IDS.map((planId) => {
-        return PRICING_PLANS[planId];
-    });
+    
+    const allAvailablePlans = AVAILABLE_PLAN_IDS.map(id => PRICING_PLANS[id]);
 
     return (
-        <div className="max-w-5xl mx-auto space-y-16 py-12 animate-in fade-in slide-in-from-bottom-8 duration-1000 relative">
-            <div className="absolute -top-20 -left-40 w-[600px] h-[600px] opacity-[0.02] pointer-events-none select-none z-0">
-                <img src="/b_02.svg" alt="Decoration" className="w-full h-full object-contain rotate-12" />
+        <div className="max-w-5xl mx-auto space-y-10 py-6 animate-in fade-in slide-in-from-bottom-4 duration-700 relative">
+            {/* 🎨 Background Decoration */}
+            <div className="absolute -top-10 -left-20 w-[400px] h-[400px] opacity-[0.03] pointer-events-none select-none z-0">
+                <img src="/b_02.svg" alt="Decoration" className="w-full h-full object-contain" />
             </div>
 
-            <header className="relative z-10 space-y-2 ml-2">
-                <h1 className="text-4xl font-black text-slate-900 tracking-tighter">帳單與訂閱管理</h1>
-                <p className="text-sm font-bold text-slate-400 uppercase tracking-[0.25em]">Manage your premium identity and payments</p>
-                <div className="w-12 h-1 bg-indigo-500 rounded-full mt-4" />
-            </header>
-
-            {/* Current Subscription Status Card */}
-            <section className="relative z-10">
-                <h2 className="text-xs font-black text-slate-400 underline decoration-slate-200 underline-offset-8 uppercase tracking-[0.4em] mb-8 ml-2">目前的收費狀態 / Subscription</h2>
+            {/* 💎 Current Subscription Status Card */}
+            <section>
+                <h2 className="text-sm font-black text-slate-600 uppercase tracking-[0.3em] mb-4 ml-2">目前的收費狀態</h2>
                 <div className={cn(
-                    "relative overflow-hidden rounded-[32px] p-10 transition-all border border-slate-100 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.03)] bg-white",
-                    planLevel > 0 && "ring-1 ring-emerald-500/10"
+                    "relative overflow-hidden rounded-[40px] p-8 transition-all border-2",
+                    planLevel >= 5 ? "bg-gradient-to-br from-amber-500/5 to-white border-amber-200" :
+                    planLevel > 0 ? "bg-gradient-to-br from-[#06C755]/5 to-white border-emerald-200" :
+                    "bg-gradient-to-br from-slate-100 to-white border-slate-200"
                 )}>
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-10">
-                        <div className="flex items-center gap-8">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 relative z-10">
+                        <div className="flex items-center gap-6">
                             <div 
-                                className="w-24 h-24 rounded-[32px] flex items-center justify-center bg-white shadow-xl border-2 transition-transform hover:scale-105 duration-500"
+                                className="w-20 h-20 rounded-[2rem] flex items-center justify-center bg-white shadow-xl transition-all duration-500 border-4"
                                 style={{ borderColor: currentPlan?.color || '#f1f5f9' }}
                             >
-                                 <div className="text-5xl">{currentPlan?.emoji || "🎁"}</div>
+                                 <div className="text-4xl transform group-hover:scale-110 transition-transform">{currentPlan?.emoji || "🎁"}</div>
                             </div>
-                            <div className="space-y-3">
-                                 <h3 className="text-[38px] font-black text-slate-800 tracking-tight leading-none">
-                                    {currentPlan?.name || "體驗模式"}
+                            <div>
+                                 <h3 className="text-[34px] font-black text-slate-800 tracking-tight leading-none mb-2">
+                                    {currentPlan?.name || "尚未開通正式方案"}
                                 </h3>
-                                <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-2.5">
                                     {planLevel > 0 ? (
-                                        <>
-                                            <span className={cn(
-                                                "px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border",
-                                                cancelAtPeriodEnd ? "bg-amber-50 text-amber-600 border-amber-100" : "bg-emerald-50 text-emerald-600 border-emerald-100"
-                                            )}>
-                                                {cancelAtPeriodEnd ? 'Pending Cancellation' : 'Active 訂閱中'}
+                                        <div className="flex items-center gap-2">
+                                            {cancelAtPeriodEnd ? (
+                                                 <span className="flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-600 rounded-lg text-[10px] font-black uppercase tracking-widest border border-amber-100">
+                                                    Pending Cancellation
+                                                </span>
+                                            ) : (
+                                                 <span className="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-[10px] font-black uppercase tracking-widest border border-emerald-100">
+                                                    Active 訂閱執行中
+                                                </span>
+                                            )}
+                                             <span className="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-[10px] font-black uppercase tracking-widest border border-indigo-100">
+                                                {dbBillingCycle === 'yearly' ? '年費方案' : '月費方案'}
                                             </span>
-                                            <span className="px-4 py-1.5 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-indigo-100">
-                                                {dbBillingCycle === 'yearly' ? 'Annual 年繳' : 'Monthly 月繳'}
-                                            </span>
-                                        </>
+                                        </div>
                                     ) : (
-                                         <span className="px-4 py-1.5 bg-slate-100 text-slate-400 rounded-full text-[10px] font-black uppercase tracking-widest border border-slate-200">
-                                            Trial 體驗中
+                                         <span className="flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-500 rounded-lg text-[10px] font-black uppercase tracking-widest border border-slate-200">
+                                            Trial 體驗模式
                                         </span>
                                     )}
                                 </div>
                             </div>
                         </div>
 
-                        <div className="flex flex-col md:flex-row gap-8 lg:gap-16">
-                            <div className="grid grid-cols-2 md:block gap-4">
-                                <div className="mb-4">
-                                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-1">生效時間</p>
-                                    <p className="text-base font-bold text-slate-500">{planLevel > 0 ? '2026/03/28' : '--'}</p>
+                        <div className="flex flex-col md:flex-row gap-6 md:gap-12">
+                            <div className="space-y-2">
+                                <div className="flex justify-between md:block">
+                                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-0.5">開始時間</p>
+                                    <p className="text-sm font-bold text-slate-500 tracking-tight">{planLevel > 0 ? '2026/03/28' : '---'}</p>
                                 </div>
-                                <div>
-                                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-1">下次扣款</p>
-                                    <p className="text-base font-bold text-slate-500">{planLevel > 0 ? (dbBillingCycle === 'yearly' ? '2027/03/28' : '2026/04/28') : '--'}</p>
+                                <div className="flex justify-between md:block">
+                                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-0.5">預定結束</p>
+                                    <p className="text-sm font-bold text-slate-500 tracking-tight">{planLevel > 0 ? (dbBillingCycle === 'yearly' ? '2027/03/28' : '2026/04/28') : '---'}</p>
                                 </div>
                             </div>
-                            
-                            <div className="flex flex-col justify-center items-end text-right border-l border-slate-50 md:pl-16">
-                                 <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">
-                                    {cancelAtPeriodEnd ? "服務到期日" : "本期結帳週期"}
+                            <div className="h-px md:h-12 w-full md:w-px bg-slate-100" />
+                            <div className="text-right">
+                                 <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">
+                                    {cancelAtPeriodEnd ? "服務效期至" : "次期扣款日"}
                                 </p>
-                                <p className="text-4xl font-black text-slate-900 tracking-tighter mb-4">
-                                    {planLevel > 0 ? (dbBillingCycle === 'yearly' ? '2027 / 03 / 28' : '2026 / 04 / 28') : 'FREE TRIAL'}
+                                <p className="text-3xl font-black text-slate-800 tracking-tighter">
+                                    {planLevel > 0 ? (dbBillingCycle === 'yearly' ? '2027 / 03 / 28' : '2026 / 04 / 28') : '---'}
                                 </p>
                                 {planLevel > 0 && !cancelAtPeriodEnd && (
                                     <button 
                                         onClick={() => setIsCancelModalOpen(true)}
-                                        className="text-[10px] font-black text-slate-300 hover:text-rose-400 transition-all uppercase tracking-[0.2em] border-b border-transparent hover:border-rose-200 pb-0.5"
-                                    >
-                                        停止自動續約設定
-                                    </button>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-order-b border-slate-200 hover:border-rose-400"
+                                        className="mt-2 text-[9px] font-black text-slate-300 hover:text-rose-400 transition-all uppercase tracking-widest border-b border-slate-200 hover:border-rose-400"
                                     >
                                         停止自動續約設定
                                     </button>
@@ -298,48 +285,48 @@ order-b border-slate-200 hover:border-rose-400"
                 </div>
             </section>
 
-            {/* Upgrade Options Section */}
-            <section className="relative z-10">
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-10 ml-2">
-                    <div className="space-y-3">
-                        <h2 className="text-xs font-black text-slate-400 underline decoration-slate-200 underline-offset-8 uppercase tracking-[0.4em]">所有的服務方案 / Plans</h2>
+            {/* 🚀 Upgrade Options Section */}
+            <section>
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 ml-2">
+                    <div className="flex items-center gap-4">
+                        <h2 className="text-sm font-black text-slate-600 uppercase tracking-[0.3em]">所有的服務方案</h2>
                         <button 
                             onClick={() => setIsAllPlansExpanded(!isAllPlansExpanded)}
                             className={cn(
-                                "flex items-center gap-3 px-6 py-2.5 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all border",
+                                "group flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all border-2",
                                 isAllPlansExpanded 
-                                    ? "bg-slate-50 text-slate-400 border-slate-200" 
-                                    : "bg-white text-indigo-600 border-indigo-100 shadow-xl shadow-indigo-500/5 hover:border-indigo-300 hover:bg-indigo-50"
+                                    ? "bg-slate-50 text-slate-400 border-slate-100 hover:bg-slate-100" 
+                                    : "bg-white text-indigo-600 border-indigo-100 shadow-lg shadow-indigo-500/10 hover:border-indigo-300 hover:bg-indigo-50 hover:shadow-xl hover:-translate-y-0.5"
                             )}
                         >
-                            <span>{isAllPlansExpanded ? '收起詳細方案' : '展開所有方案'}</span>
-                            <ChevronRight className={cn("w-3.5 h-3.5 transition-transform duration-300", isAllPlansExpanded ? "rotate-90" : "rotate-0")} />
+                            <span>{isAllPlansExpanded ? '收起方案' : '展開所有方案'}</span>
+                            <ChevronRight className={cn("w-3.5 h-3.5 transition-transform duration-300", isAllPlansExpanded ? "rotate-90" : "rotate-0 group-hover:translate-x-1")} />
                         </button>
                     </div>
 
-                    <div className="flex items-center p-1.5 bg-slate-100/50 rounded-2xl w-fit shadow-inner border border-slate-200/50">
+                    <div className="flex items-center p-1 bg-slate-100 rounded-2xl w-fit shadow-inner">
                         <button 
                             onClick={() => setSelectedBillingCycle('monthly')}
                              className={cn(
-                                "px-6 py-2 rounded-xl text-[13px] font-black uppercase tracking-widest transition-all",
-                                selectedBillingCycle === 'monthly' ? "bg-white text-slate-800 shadow-md" : "text-slate-400 hover:text-slate-600"
+                                "px-6 py-2.5 rounded-xl text-[15px] font-black uppercase tracking-widest transition-all",
+                                selectedBillingCycle === 'monthly' ? "bg-white text-slate-800 shadow-sm" : "text-slate-400 hover:text-slate-600"
                             )}
                         >
-                            Monthly 月費
+                            月費方案
                         </button>
                         <button 
                             onClick={() => setSelectedBillingCycle('yearly')}
                              className={cn(
-                                "px-6 py-2 rounded-xl text-[13px] font-black uppercase tracking-widest transition-all flex items-center gap-2",
-                                selectedBillingCycle === 'yearly' ? "bg-white text-indigo-600 shadow-md" : "text-slate-400 hover:text-slate-600"
+                                "px-6 py-2.5 rounded-xl text-[15px] font-black uppercase tracking-widest transition-all flex items-center gap-2",
+                                selectedBillingCycle === 'yearly' ? "bg-white text-indigo-600 shadow-sm" : "text-slate-400 hover:text-slate-600"
                             )}
                         >
-                            Yearly 年費
+                            年費更划算
                              <span className={cn(
-                                "px-2 py-0.5 rounded text-[9px] font-black",
+                                "px-1.5 py-0.5 rounded text-[10px] font-black",
                                 selectedBillingCycle === 'yearly' ? "bg-indigo-500 text-white" : "bg-slate-200 text-slate-500"
                             )}>
-                                SAVE 15%
+                                贈送一個月
                             </span>
                         </button>
                     </div>
@@ -486,11 +473,11 @@ order-b border-slate-200 hover:border-rose-400"
                 </AnimatePresence>
             </section>
 
-            {/* Invoice Settings Section */}
-            <section className="relative z-10">
-                 <h2 className="text-xs font-black text-slate-400 underline decoration-slate-200 underline-offset-8 uppercase tracking-[0.4em] mb-8 ml-2">發票需求與設定 / Invoicing</h2>
-                <div className="bg-white rounded-[32px] p-10 border border-slate-100 shadow-sm">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+            {/* 📑 Invoice Settings Section */}
+            <section>
+                 <h2 className="text-sm font-black text-slate-600 uppercase tracking-[0.3em] mb-4 ml-2">發票需求與設定</h2>
+                <div className="bg-white rounded-[40px] p-8 border-2 border-slate-100 shadow-sm">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                         <div className="space-y-6">
                             <div className="flex items-center gap-3 p-1.5 bg-slate-50 rounded-2xl w-fit">
                                 <button 
@@ -593,23 +580,23 @@ order-b border-slate-200 hover:border-rose-400"
                 </div>
             </section>
 
-            {/* Billing History Section */}
-            <section className="relative z-10">
-                <div className="flex items-end justify-between mb-8 ml-2">
-                     <h2 className="text-xs font-black text-slate-400 underline decoration-slate-200 underline-offset-8 uppercase tracking-[0.4em]">收費紀錄 / History</h2>
-                    <button className="text-[10px] font-black text-indigo-500 uppercase tracking-[0.2em] hover:text-indigo-600 transition-all border-b border-indigo-100">所有帳務明細 View All</button>
+            {/* 📝 Billing History Section */}
+            <section>
+                <div className="flex items-center justify-between mb-4 ml-2">
+                     <h2 className="text-sm font-black text-slate-600 uppercase tracking-[0.3em]">最近的收費紀錄</h2>
+                    <button className="text-sm font-black text-indigo-500 uppercase tracking-widest hover:text-indigo-600 transition-all">所有帳務明細</button>
                 </div>
                 <div className="bg-white rounded-[32px] border border-slate-100 shadow-sm overflow-hidden">
                     {planLevel > 0 ? (
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
                                 <thead>
-                                    <tr className="bg-slate-50/50 border-b border-slate-100">
-                                         <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">ID</th>
-                                        <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">訂閱方案</th>
-                                        <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">日期</th>
-                                        <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">金額</th>
-                                        <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">狀態</th>
+                                    <tr className="bg-slate-50 border-b border-slate-100">
+                                         <th className="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Transaction ID</th>
+                                        <th className="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-[0.2em]">訂閱方案</th>
+                                        <th className="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-[0.2em]">日期</th>
+                                        <th className="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-[0.2em]">金額</th>
+                                        <th className="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-[0.2em]">狀態</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-50">
@@ -697,16 +684,16 @@ order-b border-slate-200 hover:border-rose-400"
                 )}
             </AnimatePresence>
 
-            {/* Modern SaaS Footer - Content-Relative Full Width */}
-            <footer className="mt-32 relative group">
-                {/* 50% 透明度的淺色玻璃背景 - 使用負邊距展開而非對螢幕定位 */}
-                <div className="absolute -inset-x-10 md:-inset-x-20 inset-y-0 bg-white/50 backdrop-blur-2xl border-t border-slate-200/60 z-0" />
+            {/* 🛡️ Modern SaaS Footer - Full Width Light Glass */}
+            <footer className="mt-32 -mx-10 md:-mx-20 w-screen relative left-1/2 right-1/2 -ml-[50vw] shadow-[0_-20px_50px_-10px_rgba(0,0,0,0.03)]">
+                {/* 50% 透明度的淺色玻璃背景 */}
+                <div className="absolute inset-0 bg-white/50 backdrop-blur-2xl border-t border-slate-200/60 z-0" />
                 
                 {/* 裝飾性感應光暈 */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-[1px] bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent z-10" />
+                <div className="absolute top-0 left-1/4 w-[500px] h-[1px] bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent z-10" />
 
-                <div className="relative z-10 py-24">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16 items-start">
+                <div className="max-w-6xl mx-auto px-10 md:px-20 py-24 relative z-10">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16">
                         {/* 1. 客服聯絡資訊 */}
                         <div className="space-y-6">
                             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Support 聯繫專區</h3>
@@ -715,10 +702,10 @@ order-b border-slate-200 hover:border-rose-400"
                                     <p className="text-[9px] font-black text-indigo-500 uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
                                         <Mail className="w-3 h-3" /> 官方客服信箱
                                     </p>
-                                    <p className="text-slate-700 font-bold text-lg hover:text-indigo-600 transition-colors tracking-tight">info@ycideas.com</p>
+                                    <p className="text-slate-700 font-bold text-lg hover:text-indigo-600 transition-colors">info@ycideas.com</p>
                                 </div>
                                 <div className="pt-2">
-                                    <div className="flex items-center gap-4 bg-white/40 p-3.5 rounded-[24px] border border-slate-200/50 shadow-sm hover:shadow-md hover:bg-white/60 transition-all cursor-pointer">
+                                    <div className="flex items-center gap-3 bg-white/40 p-3.5 rounded-[24px] border border-slate-200/50 shadow-sm hover:shadow-md hover:bg-white/60 transition-all cursor-pointer">
                                         <div className="w-12 h-12 rounded-2xl bg-[#06C755] flex items-center justify-center shadow-lg shadow-emerald-500/10">
                                             <MessageCircle className="w-6 h-6 text-white" />
                                         </div>
@@ -815,6 +802,9 @@ order-b border-slate-200 hover:border-rose-400"
                     </div>
                 </div>
             </footer>
+        </div>
+    );
+}
         </div>
     );
 }

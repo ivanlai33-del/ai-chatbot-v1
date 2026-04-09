@@ -163,16 +163,16 @@ export default function FAQTab({ config, setConfig }: FAQTabProps) {
         <div className="space-y-4">
 
             {/* ══ SECTION 1: 快速匯入 (collapsible) ══ */}
-            <div className="rounded-2xl border border-slate-200 overflow-hidden">
+            <div className="rounded-[24px]   overflow-hidden  mb-6">
                 <button
                     onClick={() => setPackOpen(v => !v)}
-                    className="flex items-center justify-between w-full px-5 py-3.5 bg-slate-50 hover:bg-slate-100 transition-colors"
+                    className="flex items-center justify-between w-full px-10 py-6 hover:bg-white/80 transition-colors group"
                 >
-                    <div className="flex items-center gap-2.5">
-                        <span className="text-[13px] font-black text-slate-700">快速匯入問答</span>
-                        <span className="text-[11px] text-slate-400 font-semibold">行業套組 + 通用標籤</span>
+                    <div className="flex flex-col text-left">
+                        <span className="text-[17px] font-black text-slate-800">快速匯入問答套組</span>
+                        <span className="text-[12px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-1">Industry Packs & Presets</span>
                     </div>
-                    <ChevronDown className={`w-4 h-4 text-slate-500 transition-transform duration-200 ${packOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown className={`w-6 h-6 text-slate-400 transition-transform duration-300 ${packOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 <AnimatePresence>
@@ -195,7 +195,7 @@ export default function FAQTab({ config, setConfig }: FAQTabProps) {
                                                 key={ind}
                                                 whileTap={{ scale: 0.96 }}
                                                 onClick={() => addPack(ind)}
-                                                className="py-2 px-2 rounded-xl bg-white border border-slate-200 text-[11.5px] font-bold text-slate-600 hover:border-slate-800 hover:bg-slate-800 hover:text-white transition-all text-center"
+                                                className="py-2 px-2 rounded-[24px] bg-white border border-slate-200 text-[11.5px] font-bold text-slate-600 hover:border-emerald-500 hover:bg-emerald-500 hover:text-white transition-all text-center"
                                             >
                                                 {ind}
                                             </motion.button>
@@ -205,7 +205,7 @@ export default function FAQTab({ config, setConfig }: FAQTabProps) {
 
                                 {/* Preset tags — 2-row wrap */}
                                 <div>
-                                    <p className="text-[10px] font-black text-slate-400 tracking-widest uppercase mb-2">通用標籤（單筆加入）</p>
+                                    <p className="text-[13px] font-black text-slate-600 tracking-widest uppercase mb-2">通用標籤（單筆加入）</p>
                                     <div className="grid grid-cols-3 gap-2">
                                         {FAQ_PRESETS.map(preset => (
                                             <button
@@ -214,7 +214,7 @@ export default function FAQTab({ config, setConfig }: FAQTabProps) {
                                                     ...c,
                                                     faq_base: [...c.faq_base, { q: preset.q, a: preset.a, tags: [] }]
                                                 }))}
-                                                className="py-2 px-2 rounded-xl bg-white border border-slate-200 text-[11px] font-bold text-slate-500 hover:border-slate-700 hover:bg-slate-700 hover:text-white transition-all text-center"
+                                                className="py-2 px-2 rounded-[24px] bg-white border border-slate-200 text-[11px] font-bold text-slate-500 hover:border-emerald-500 hover:bg-emerald-500 hover:text-white transition-all text-center"
                                             >
                                                 + {preset.label}
                                             </button>
@@ -233,13 +233,13 @@ export default function FAQTab({ config, setConfig }: FAQTabProps) {
                 return (
                     <motion.div
                         key={i}
-                        initial={{ opacity: 0, y: 5 }}
+                        initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="rounded-2xl border border-slate-200 bg-white shadow-[0_1px_6px_rgba(0,0,0,0.04)] overflow-hidden"
+                        className="rounded-[24px]    overflow-hidden group/card transition-all hover:bg-white/80"
                     >
                         {/* Header — always visible */}
                         <div
-                            className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-slate-50 transition-colors select-none"
+                            className="flex items-center gap-6 px-10 py-6 cursor-pointer hover:bg-white/40 transition-colors select-none"
                             onClick={() => toggleItem(i)}
                         >
                             {/* Collapse icon */}
@@ -256,14 +256,14 @@ export default function FAQTab({ config, setConfig }: FAQTabProps) {
                             </span>
 
                             {/* Question preview */}
-                            <span className={`flex-1 text-[13px] truncate ${item.q ? 'text-slate-800 font-semibold' : 'text-slate-400 font-medium'}`}>
+                            <span className={`flex-1 text-[17px] font-black tracking-tight truncate ${item.q ? 'text-slate-900' : 'text-slate-400'}`}>
                                 {item.q || '（請輸入問題）'}
                             </span>
 
                             {/* Delete */}
                             <button
                                 onClick={e => { e.stopPropagation(); removeFAQ(i); }}
-                                className="shrink-0 flex items-center gap-1 text-[11px] text-slate-400 hover:text-red-500 font-bold transition-colors hover:bg-red-50 px-2 py-1 rounded-lg"
+                                className="shrink-0 flex items-center gap-1 text-[11px] text-slate-400 hover:text-red-500 font-bold transition-colors hover:bg-red-50 px-2 py-1 rounded-[24px]"
                             >
                                 <Trash2 className="w-3.5 h-3.5" />
                                 <span className="hidden sm:inline">刪除</span>
@@ -303,16 +303,16 @@ export default function FAQTab({ config, setConfig }: FAQTabProps) {
 
             {/* ── Add FAQ ── */}
             <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={{ scale: 1.01, y: -2 }}
+                whileTap={{ scale: 0.99 }}
                 onClick={() => {
                     const newIdx = config.faq_base.length;
                     setConfig((c: any) => ({ ...c, faq_base: [...c.faq_base, { q: '', a: '', tags: [] }] }));
                     setTimeout(() => setExpandedItems(p => ({ ...p, [newIdx]: true })), 50);
                 }}
-                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl border-2 border-dashed border-slate-300 text-[13px] font-black text-slate-500 hover:bg-slate-50 hover:border-slate-400 transition-all"
+                className="w-full flex items-center justify-center gap-4 py-8 rounded-[24px]  bg-gradient-to-r from-emerald-500 to-cyan-600 text-[18px] font-black text-white transition-all shadow-xl shadow-emerald-500/20 active:scale-95"
             >
-                <Plus className="w-4 h-4" /> 新增 FAQ
+                <Plus className="w-5 h-5" /> 新增一個 FAQ 問題
             </motion.button>
         </div>
     );

@@ -11,12 +11,9 @@ const DELIVERY_PLATFORMS = [
 ];
 
 const SectionHeader = ({ icon: Icon, label }: { icon: any; label: string }) => (
-    <div className="flex items-center gap-2 pt-1 pb-1">
-        <div className="w-5 h-5 rounded-md bg-teal-100 flex items-center justify-center">
-            <Icon className="w-3 h-3 text-teal-600" />
-        </div>
-        <span className="text-[11px] font-black text-slate-400 tracking-widest uppercase">{label}</span>
-        <div className="flex-1 h-px bg-slate-100 ml-1" />
+    <div className="flex items-center gap-4 pt-12 pb-6 px-2 first:pt-4">
+        <p className="text-[14px] font-black text-slate-400 uppercase tracking-[0.2em]">{label}</p>
+        <div className="flex-1 h-[1px] bg-slate-100" />
     </div>
 );
 
@@ -35,14 +32,15 @@ export default function ContactTab({ config, setConfig }: ContactTabProps) {
     return (
         <div className="space-y-5">
 
-            {/* ── 基本聯絡 ── */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <InputField label="LINE 客服 ID" placeholder="@your_id" value={config.contact_info.line_id} onChange={v => setConfig((c: any) => ({ ...c, contact_info: { ...c.contact_info, line_id: v } }))} />
-                <InputField label="聯絡電話" placeholder="02-1234-5678" value={config.contact_info.phone} onChange={v => setConfig((c: any) => ({ ...c, contact_info: { ...c.contact_info, phone: v } }))} />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <InputField label="營業時間" placeholder="例：週一至週五 09:00-18:00" value={config.contact_info.hours} onChange={v => setConfig((c: any) => ({ ...c, contact_info: { ...c.contact_info, hours: v } }))} />
-                <InputField label="公休日說明" placeholder="例：每週二公休、國定假日休息" value={config.contact_info.closed_days} onChange={v => setConfig((c: any) => ({ ...c, contact_info: { ...c.contact_info, closed_days: v } }))} />
+            <div className=" rounded-[24px] p-10   space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <InputField label="LINE 客服 ID" placeholder="@your_id" value={config.contact_info.line_id} onChange={v => setConfig((c: any) => ({ ...c, contact_info: { ...c.contact_info, line_id: v } }))} />
+                    <InputField label="聯絡電話" placeholder="02-1234-5678" value={config.contact_info.phone} onChange={v => setConfig((c: any) => ({ ...c, contact_info: { ...c.contact_info, phone: v } }))} />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <InputField label="營業時間" placeholder="例：週一至週五 09:00-18:00" value={config.contact_info.hours} onChange={v => setConfig((c: any) => ({ ...c, contact_info: { ...c.contact_info, hours: v } }))} />
+                    <InputField label="公休日說明" placeholder="例：每週二公休、國定假日休息" value={config.contact_info.closed_days} onChange={v => setConfig((c: any) => ({ ...c, contact_info: { ...c.contact_info, closed_days: v } }))} />
+                </div>
             </div>
 
             {/* ── 位置資訊 ── */}
@@ -63,37 +61,38 @@ export default function ContactTab({ config, setConfig }: ContactTabProps) {
             />
 
             {/* ── 購物平台 ── */}
-            <SectionHeader icon={CheckCircle2} label="購物平台（AI 將主動引導）" />
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {SHOPPING_PLATFORMS.map(p => (
                     <label 
                         key={p} 
-                        className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl border-2 transition-all cursor-pointer ${
+                        className={`flex items-center gap-3 p-5 rounded-[24px] border transition-all cursor-pointer  ${
                             config.contact_info.platforms?.includes(p)
-                                ? 'bg-teal-50 border-teal-400 text-teal-700 shadow-sm'
-                                : 'bg-white border-slate-200 text-slate-500 hover:border-teal-300 hover:bg-teal-50/30'
+                                ? 'bg-gradient-to-r from-emerald-500 to-cyan-600 border-transparent text-white shadow-emerald-500/20'
+                                : 'bg-white/60  text-slate-600 hover:bg-white'
                         }`}
                     >
                         <input type="checkbox" className="hidden" checked={config.contact_info.platforms?.includes(p)} onChange={() => togglePlatform(p)} />
-                        <span className="text-[12px] font-bold">{p}</span>
-                        {config.contact_info.platforms?.includes(p) && <CheckCircle2 className="w-3.5 h-3.5 ml-auto text-teal-500" />}
+                        <span className="text-[17px] font-black">{p}</span>
+                        {config.contact_info.platforms?.includes(p) && <CheckCircle2 className="w-5 h-5 ml-auto text-emerald-400" />}
                     </label>
                 ))}
             </div>
 
             {/* ── 外送平台 ── */}
             <SectionHeader icon={Truck} label="外送平台（餐飲業適用）" />
-            <div className="space-y-2.5">
+            <div className="space-y-4">
                 {DELIVERY_PLATFORMS.map(p => (
-                    <div key={p.name} className={`flex items-center gap-3 px-4 py-3 rounded-xl border-2 ${p.color}`}>
-                        <span className="text-base">{p.emoji}</span>
-                        <span className="text-[13px] font-black w-20 shrink-0">{p.name}</span>
+                    <div key={p.name} className="flex items-center gap-6 p-6 rounded-[24px]    group hover:bg-white transition-all">
+                        <div className="w-14 h-14 rounded-[24px] bg-white shadow-sm flex items-center justify-center text-2xl border border-slate-50 group-hover:scale-110 transition-transform">
+                            {p.emoji}
+                        </div>
+                        <span className="text-[18px] font-black w-24 shrink-0 text-slate-800">{p.name}</span>
                         <input
                             type="text"
                             placeholder={`${p.name} 店家連結...`}
                             value={config.contact_info[p.key] || ''}
                             onChange={e => setConfig((c: any) => ({ ...c, contact_info: { ...c.contact_info, [p.key]: e.target.value } }))}
-                            className="flex-1 bg-white/70 text-[12px] text-slate-700 px-3 py-1.5 rounded-lg border border-white/80 focus:outline-none focus:border-teal-300 transition-all placeholder:text-slate-400"
+                            className="flex-1  text-[16px] font-bold text-slate-700 px-6 py-4 rounded-[24px]  focus:outline-none focus:bg-white focus:ring-4 focus:ring-emerald-500/10 transition-all placeholder:text-slate-300"
                         />
                     </div>
                 ))}

@@ -25,6 +25,7 @@ export function useChatInterface(initialType: string | null = null) {
     const [planLevel, setPlanLevel] = useState<number>(0); // 0: Free, 1: 499, 2: 1199
 
     const messagesRef = useRef<Message[]>([]);
+    const hasGreeted = useRef(false); // 防止登入後重複問候
     useEffect(() => {
         messagesRef.current = messages;
     }, [messages]);
@@ -231,24 +232,24 @@ export function useChatInterface(initialType: string | null = null) {
 
     // Initial Greeting
     useEffect(() => {
-        if (messages.length === 0) {
-            // Already an owner? Skip the sales pitch and give a warm welcome
-            if (lineUserId && botId) {
-                const softGreeting = SOFT_GREETINGS[Math.floor(Math.random() * SOFT_GREETINGS.length)];
-                addAiMessage(`${lineUserName ? `${lineUserName} 老闆` : '老闆'}您好！✨ ${softGreeting}`);
-                return;
-            }
+        // ⚡ 只觸發一次：防止 lineUserName/botId 設定後再次觸發問候
+        if (hasGreeted.current || messages.length > 0) return;
+        hasGreeted.current = true;
 
-            if (initialType === 'pricing') {
-                addAiMessage(`${lineUserName ? `${lineUserName} 老闆您好` : '老闆您好'}！我是您的 AI 客服助理。關於服務方案與預算，以下是我們為您準備的詳細對照：`, "pricing");
-            } else if (lineUserName) {
-                // Personal greeting for logged-in users who haven't activated yet
-                const softGreeting = SOFT_GREETINGS[Math.floor(Math.random() * SOFT_GREETINGS.length)];
-                addAiMessage(`${lineUserName} 老闆，${softGreeting}`);
-            } else {
-                const randomMsg = OWNER_INSIGHTS[Math.floor(Math.random() * OWNER_INSIGHTS.length)];
-                addAiMessage(randomMsg);
-            }
+        if (lineUserId && botId) {
+            const softGreeting = SOFT_GREETINGS[Math.floor(Math.random() * SOFT_GREETINGS.length)];
+            addAiMessage(`${lineUserName ? `${lineUserName} 老闆` : '老闆'}您好！✨ ${softGreeting}`);
+            return;
+        }
+
+        if (initialType === 'pricing') {
+            addAiMessage(`${lineUserName ? `${lineUserName} 老闆您好` : '老闆您好'}！我是您的 AI 客服助理。關於服務方案與預算，以下是我們為您準備的詳細對照：`, "pricing");
+        } else if (lineUserName) {
+            const softGreeting = SOFT_GREETINGS[Math.floor(Math.random() * SOFT_GREETINGS.length)];
+            addAiMessage(`${lineUserName} 老闆，${softGreeting}`);
+        } else {
+            const randomMsg = OWNER_INSIGHTS[Math.floor(Math.random() * OWNER_INSIGHTS.length)];
+            addAiMessage(randomMsg);
         }
     }, [initialType, lineUserName, botId]);
 

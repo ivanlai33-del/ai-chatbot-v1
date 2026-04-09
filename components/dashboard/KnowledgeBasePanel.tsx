@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Save, CheckCircle2, Star, ChevronRight, AlertTriangle,
     Tag, Package, HelpCircle, GitBranch, Phone, BookOpen, Settings,
-    Trash2, X
+    Trash2, X, Brain, Link2
 } from 'lucide-react';
 import { useState, useCallback } from 'react';
 import type { StoreConfig } from '@/lib/chat-types';
@@ -24,12 +24,14 @@ interface KnowledgeBasePanelProps {
     activeTab: string;
     setActiveTab: (tab: any) => void;
     isDirty?: boolean;
+    showDeleteConfirm?: boolean;
+    setShowDeleteConfirm?: (show: boolean) => void;
     children: React.ReactNode;
 }
 
-/* ─── Tab icon + label map ─────────────────────────────────── */
 const TAB_META: Record<string, { Icon: React.ElementType; desc: string }> = {
     brand:     { Icon: Tag,       desc: '品牌形象 · 語調' },
+    dojo:      { Icon: Brain,     desc: '戰略指令 · 指令積木' },
     offerings: { Icon: Package,   desc: '商品 · 服務定價' },
     faq:       { Icon: HelpCircle,desc: 'Q&A · 快速問答' },
     logic:     { Icon: GitBranch, desc: '行為 · 引導策略' },
@@ -43,20 +45,13 @@ export default function KnowledgeBasePanel({
     config, planLevel, bots, selectedBotId, setSelectedBotId,
     handleSave, isSaving, saveSuccess, tabs, activeTab, setActiveTab,
     onOpenSettings,
-    isDirty = false, children
+    isDirty = false, 
+    showDeleteConfirm = false,
+    setShowDeleteConfirm,
+    children 
 }: KnowledgeBasePanelProps) {
     const [pendingTab, setPendingTab] = useState<string | null>(null);
     const [showUnsavedWarning, setShowUnsavedWarning] = useState(false);
-    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-    const [isDeleting, setIsDeleting] = useState(false);
-
-    const pct = config.completion_pct;
-    const pctColor = pct >= 70 ? 'text-emerald-600' : pct >= 40 ? 'text-amber-500' : 'text-rose-500';
-    const barColor = pct >= 70 ? 'bg-emerald-400' : pct >= 40 ? 'bg-amber-400' : 'bg-rose-400';
-
-    // Derive current store name
-    const currentBot = bots.find(b => b.id === selectedBotId);
-    const storeName = currentBot?.channelName || currentBot?.channel_name || currentBot?.displayName || '';
 
     const handleTabClick = useCallback((tabId: string) => {
         if (tabId === activeTab) return;
@@ -66,244 +61,163 @@ export default function KnowledgeBasePanel({
         } else {
             setActiveTab(tabId);
         }
-    }, [isDirty, activeTab, setActiveTab]);
+    }, [activeTab, isDirty, setActiveTab]);
 
-    const confirmDiscard = () => { if (pendingTab) setActiveTab(pendingTab); setPendingTab(null); setShowUnsavedWarning(false); };
-    const confirmSaveFirst = async () => { await handleSave(); if (pendingTab) setActiveTab(pendingTab); setPendingTab(null); setShowUnsavedWarning(false); };
-    const cancelSwitch = () => { setPendingTab(null); setShowUnsavedWarning(false); };
-
-    const handleDeleteStore = async () => {
-        if (!selectedBotId) return;
-        setIsDeleting(true);
-        try {
-            // Call the delete API (we will create this next)
-            const res = await fetch(`/api/bot?botId=${selectedBotId}`, { method: 'DELETE' });
-            const data = await res.json();
-            if (data.success) {
-                alert('店家已從智庫移除並釋放。');
-                window.location.reload(); // Hard refresh to reset the bot selector slots state
-            }
-        } catch (e) {
-            console.error("Delete Error:", e);
-        } finally {
-            setIsDeleting(false);
-            setShowDeleteConfirm(false);
+    const confirmTabSwitch = () => {
+        if (pendingTab) {
+            setActiveTab(pendingTab);
+            setPendingTab(null);
         }
+        setShowUnsavedWarning(false);
     };
 
     return (
-        <div className="flex-1 flex flex-col overflow-hidden min-w-0 rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.06)] border border-slate-200 bg-white relative">
-
-            {/* ── Unsaved Warning Modal ── */}
-            <AnimatePresence>
-                {showUnsavedWarning && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                        className="absolute inset-0 z-50 flex items-center justify-center bg-black/25 backdrop-blur-sm rounded-3xl">
-                        <motion.div initial={{ scale: 0.92, y: 12 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0 }}
-                            transition={{ type: 'spring', stiffness: 320, damping: 28 }}
-                            className="bg-white rounded-3xl shadow-2xl p-7 mx-6 max-w-sm w-full border border-slate-100">
-                            <div className="flex items-start gap-3 mb-5">
-                                <AlertTriangle className="w-5 h-5 text-amber-500 mt-0.5 shrink-0" />
-                                <div>
-                                    <h3 className="text-[16px] font-black text-slate-800 mb-1">尚未儲存修改</h3>
-                                    <p className="text-[13px] text-slate-500 leading-relaxed">有未儲存的變更，切換後將會遺失。</p>
-                                </div>
-                            </div>
-                            <div className="flex flex-col gap-3">
-                                <button onClick={confirmSaveFirst} className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-600 text-white font-black text-[14px] shadow-lg shadow-emerald-500/20 hover:brightness-110 active:scale-95 transition-all">先儲存，再切換</button>
-                                <button onClick={confirmDiscard} className="w-full py-4 rounded-2xl border-2 border-slate-200 text-slate-600 font-bold text-[14px] hover:bg-slate-50 transition-all">放棄修改，直接切換</button>
-                                <button onClick={cancelSwitch} className="w-full py-2 text-slate-400 font-medium text-[12px] hover:text-slate-600 transition-all">取消</button>
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            {/* ════════ HEADER ════════ */}
-            <div className="px-[35px] py-[35px] border-b border-slate-100">
-
-                {/* Store name + save button row */}
-                <div className="flex items-start justify-between gap-4 mb-4">
-                    <div className="min-w-0">
-                        <AnimatePresence mode="wait">
-                            {storeName ? (
-                                <motion.div key={storeName} initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }}>
-                                    {/* Store name — large black text, no badge */}
-                                    <div className="flex items-center gap-2">
-                                        <h2 className="text-[26px] font-black text-slate-900 leading-tight tracking-tight truncate max-w-[340px]">
-                                            {storeName}
-                                        </h2>
-                                        {selectedBotId && !selectedBotId.startsWith('empty-') && (
-                                            <div className="flex items-center gap-1 shrink-0">
-                                                <button 
-                                                    onClick={onOpenSettings}
-                                                    className="p-1.5 rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-all"
-                                                    title="管理 API 金鑰"
-                                                >
-                                                    <Settings className="w-4 h-4" />
-                                                </button>
-                                                <button 
-                                                    onClick={() => setShowDeleteConfirm(true)}
-                                                    className="p-1.5 rounded-xl text-slate-300 hover:bg-rose-50 hover:text-rose-500 transition-all"
-                                                    title="從系統移除此店家"
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </button>
-                                            </div>
-                                        )}
-                                    </div>
-                                    <p className="text-[11px] text-slate-400 font-bold tracking-widest uppercase mt-0.5">AI 店長智庫</p>
-                                </motion.div>
-                            ) : (
-                                <motion.div key="default" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                                    <h2 className="text-[22px] font-black text-slate-800 leading-tight">AI 店長智庫</h2>
-                                    <p className="text-[11px] text-slate-400 font-bold tracking-widest uppercase mt-0.5">Knowledge Base</p>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-                    </div>
-
-                    {/* Save button */}
-                    <div className="relative shrink-0">
-                        <motion.button onClick={handleSave} disabled={isSaving}
-                            whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-                            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-[14px] transition-all disabled:opacity-50 ${
-                                isDirty
-                                    ? 'bg-gradient-to-r from-emerald-500 to-cyan-600 text-white shadow-lg shadow-emerald-500/20'
-                                    : 'bg-white border-2 border-slate-200 text-slate-600 hover:bg-slate-50'
-                            }`}
-                        >
-                            {isSaving ? <span className="animate-spin text-sm">◌</span> : <Save className="w-4 h-4" />}
-                            {isSaving ? '儲存中...' : isDirty ? '儲存變更' : '儲存'}
-                        </motion.button>
-                        <AnimatePresence>
-                            {saveSuccess && (
-                                <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                                    className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-emerald-600 text-[10px] font-black whitespace-nowrap flex items-center gap-1">
-                                    <CheckCircle2 className="w-3 h-3" /> 已儲存
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
+        <div className="flex-1 flex flex-col h-full bg-white/25 backdrop-blur-3xl  rounded-[40px] overflow-hidden">
+            {/* Header Area */}
+            <div className="bg-white/40 backdrop-blur-md border-b  px-8 py-4 flex items-center justify-between shrink-0">
+                <div className="flex items-center gap-6">
+                    <div>
+                        <div className="flex items-center gap-2 mb-1">
+                            <h2 className="text-[20px] font-black text-slate-900 leading-none">智庫中心面板</h2>
+                            <div className="px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-100 text-[10px] font-black text-emerald-600 uppercase tracking-wider">Live</div>
+                        </div>
+                        <p className="text-[12px] text-slate-500 font-bold uppercase tracking-widest flex items-center gap-2">
+                             System Configuration <ChevronRight className="w-3 h-3" /> <span className="text-slate-900">{activeTab}</span>
+                        </p>
                     </div>
                 </div>
 
-                {/* Bot Selector — 槽位數量依方案 tier 動態顯示 */}
-                <BotSelector bots={bots} selectedBotId={selectedBotId} setSelectedBotId={setSelectedBotId} tier={planLevel} />
-
-                {/* Pending warning */}
-                {bots.find(b => b.id === selectedBotId)?.status === 'pending' && (
-                    <div className="mt-3 flex items-center gap-2 px-4 py-2.5 bg-amber-50 border border-amber-200 rounded-xl text-amber-700 text-[12px] font-bold">
-                        <span>尚未完成 LINE 金鑰串接</span>
-                        <button onClick={() => window.location.href = `/dashboard/connect?action=new&botId=${selectedBotId}`}
-                            className="ml-auto bg-amber-500 text-white px-3 py-1 rounded-lg hover:bg-amber-600 transition-all text-[11px]">
-                            立即補齊
+                <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-1">
+                        <button 
+                            onClick={onOpenSettings}
+                            className="flex items-center gap-2 px-4 py-2 text-slate-500 hover:text-emerald-600 transition-all font-black text-[14px]"
+                        >
+                            <Settings className="w-4 h-4" />
+                            API金鑰設定
+                        </button>
+                        <button 
+                            onClick={() => setShowDeleteConfirm && setShowDeleteConfirm(true)}
+                            className="flex items-center gap-2 px-4 py-2 text-slate-500 hover:text-rose-500 transition-all font-black text-[14px]"
+                        >
+                            <Trash2 className="w-4 h-4" />
+                            刪除店長
+                        </button>
+                        <button 
+                            onClick={() => window.location.href = '/dashboard/connect'}
+                            className="flex items-center gap-2 px-4 py-2 text-slate-500 hover:text-indigo-600 transition-all font-black text-[14px]"
+                        >
+                            <Link2 className="w-4 h-4" />
+                            串接店長
                         </button>
                     </div>
-                )}
-
-                {/* Progress bar */}
-                <div className="mt-4">
-                    <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-[10px] font-bold text-slate-400 tracking-widest uppercase">知識庫完成度</span>
-                        <span className={`text-[12px] font-black ${pctColor}`}>{pct}%</span>
-                    </div>
-                    <div className="h-1 bg-slate-100 rounded-full overflow-hidden">
-                        <motion.div className={`h-full rounded-full ${barColor}`}
-                            initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 0.7, ease: 'easeOut' }} />
-                    </div>
+                    
+                    <button
+                        onClick={handleSave}
+                        disabled={!isDirty || isSaving}
+                        className={`
+                            relative h-12 px-6 rounded-[24px] flex items-center gap-3 font-black text-[14px] transition-all
+                            ${isSaving ? 'bg-slate-100 text-slate-400' : 
+                              isDirty ? 'bg-gradient-to-r from-emerald-500 to-cyan-600 text-white shadow-lg shadow-emerald-500/20 hover:-translate-y-0.5 active:translate-y-0' : 
+                              'bg-white/50 text-slate-400 '}
+                        `}
+                    >
+                        {isSaving ? <LoaderSpinner /> : <Save className="w-4 h-4" />}
+                        {isSaving ? '同步中...' : '儲存變更'}
+                        {isDirty && !isSaving && (
+                            <span className="absolute -top-1 -right-1 w-3 h-3 bg-rose-500 border-2 border-white rounded-full" />
+                        )}
+                    </button>
                 </div>
             </div>
 
-            {/* ════════ TAB NAV — 2×4 monochrome grid ════════ */}
-            <div className="px-[35px] py-[35px] border-b border-slate-100 bg-white">
-                <div className="grid grid-cols-4 gap-3 pb-4">
-                    {tabs.map(tab => {
-                        const meta = TAB_META[tab.id] || { Icon: Tag, desc: '' };
-                        const { Icon } = meta;
-                        const isActive = activeTab === tab.id;
-                        return (
-                            <motion.button
-                                key={tab.id}
-                                onClick={() => handleTabClick(tab.id as any)}
-                                whileHover={!isActive ? { scale: 1.02 } : {}}
-                                whileTap={{ scale: 0.98 }}
-                                className={`flex flex-col items-center justify-center gap-2.5 p-[25px] rounded-2xl transition-all duration-300 border-2 ${
-                                    isActive
-                                        ? 'bg-gradient-to-br from-emerald-500 to-cyan-600 border-transparent shadow-xl shadow-emerald-200/50'
-                                        : 'bg-white border-slate-200 text-slate-700 shadow-sm hover:border-slate-300 hover:bg-slate-50'
-                                }`}
+            <div className="flex flex-1 min-h-0">
+                {/* Fixed Side Navigation */}
+                <div className="w-[300px] border-r  bg-white/10 backdrop-blur-xl p-6 overflow-y-auto shrink-0 glass-scrollbar">
+                    <div className="space-y-1.5 pt-2">
+                        {tabs.map((tab) => {
+                            const meta = TAB_META[tab.id] || TAB_META.brand;
+                            const isActive = activeTab === tab.id;
+                            
+                            return (
+                                <motion.button
+                                    key={tab.id}
+                                    onClick={() => handleTabClick(tab.id as string)}
+                                    animate={{ scale: isActive ? 1.12 : 1 }}
+                                    transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                                    className={`
+                                        w-full group flex items-center gap-4 p-4 rounded-[24px] transition-all
+                                        ${isActive ? 'bg-gradient-to-r from-emerald-500 to-cyan-600 text-white shadow-lg shadow-emerald-500/20 z-10' : 'text-slate-500 hover:bg-white'}
+                                    `}
+                                >
+                                    <div className={`
+                                        p-2 rounded-[24px] transition-colors
+                                        ${isActive ? 'bg-white/20' : 'bg-slate-100 group-hover:bg-white shadow-sm'}
+                                    `}>
+                                        <meta.Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-slate-600'}`} strokeWidth={2.5} />
+                                    </div>
+                                    <div className="flex-1 text-left">
+                                        <p className="text-[15px] font-black leading-none mb-1">{tab.label}</p>
+                                        <p className={`text-[10px] font-bold uppercase tracking-wider ${isActive ? 'text-emerald-50/70' : 'text-slate-400'}`}>
+                                            {meta.desc}
+                                        </p>
+                                    </div>
+                                    {isActive && <ChevronRight className="w-4 h-4 text-white/50" />}
+                                </motion.button>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                {/* Main Content Area */}
+                <div className="flex-1 flex flex-col min-w-0 bg-transparent relative">
+                    <div className="flex-1 overflow-y-auto px-10 pt-6 pb-12 glass-scrollbar">
+                        {saveSuccess && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="mb-6 p-4 rounded-[24px] bg-emerald-500 text-white flex items-center gap-3 shadow-lg shadow-emerald-500/20"
                             >
-                                <Icon className={`transition-all ${isActive ? 'text-white w-7.5 h-7.5' : 'text-slate-500 w-5.5 h-5.5'}`} strokeWidth={isActive ? 2.5 : 1.5} />
-                                <span className={`font-black leading-tight text-center transition-all ${isActive ? 'text-white text-[19px]' : 'text-slate-800 text-[14.5px]'}`}>
-                                    {tab.label}
-                                </span>
-                                <span className={`font-bold text-center leading-tight hidden lg:block transition-all ${isActive ? 'text-white/90 text-[13px]' : 'text-slate-500 text-[10.5px]'}`}>
-                                    {meta.desc}
-                                </span>
-                            </motion.button>
-                        );
-                    })}
+                                <CheckCircle2 className="w-5 h-5" />
+                                <span className="font-black text-[14px]">變更已同步完成！你的 AI 店長變得更聰明了。</span>
+                            </motion.div>
+                        )}
+                        <div className="max-w-6xl">
+                            {children}
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            {/* ════════ CONTENT ════════ */}
-            {selectedBotId?.startsWith('empty-') ? (
-                <div className="flex-1 flex flex-col items-center justify-center p-10 text-center">
-                    <div className="w-16 h-16 rounded-2xl border-2 border-dashed border-slate-200 flex items-center justify-center mb-6">
-                        <ChevronRight className="w-6 h-6 text-slate-300" />
-                    </div>
-                    <h3 className="text-lg font-black text-slate-800 mb-2">此專屬店長空缺中</h3>
-                    <p className="text-slate-400 mb-7 max-w-sm text-[13px] leading-relaxed">
-                        請將您的 LINE 官方帳號與系統串聯，分配給這位店長。
-                    </p>
-                    <button onClick={() => window.location.href = '/dashboard/connect?action=new'}
-                        className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:brightness-110 text-white px-8 py-4 rounded-2xl font-black transition-all text-[14px] shadow-lg shadow-emerald-500/20">
-                        立即前往串接
-                    </button>
-                    <button onClick={() => window.location.href = '/dashboard/connect?action=new&mode=batch'}
-                        className="mt-3 text-slate-400 font-medium text-[12px] hover:text-slate-600 flex items-center gap-1.5">
-                        <Star className="w-3 h-3" />
-                        超過 3 個店家？批次同步
-                    </button>
-                </div>
-            ) : (
-                <div className="flex-1 overflow-y-auto px-[35px] py-[35px] custom-scrollbar">
-                    {children}
-                </div>
-            )}
-            {/* ── Delete Confirmation Modal ── */}
+            {/* Unsaved Warning Modal */}
             <AnimatePresence>
-                {showDeleteConfirm && (
-                    <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                            onClick={() => !isDeleting && setShowDeleteConfirm(false)}
-                            className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
-                        />
-                        <motion.div initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 20 }}
-                            className="relative w-full max-w-sm bg-white rounded-[40px] shadow-2xl p-10 text-center overflow-hidden"
+                {showUnsavedWarning && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="bg-white rounded-[24px] p-8 max-w-md w-full shadow-2xl"
                         >
-                            <div className="w-16 h-16 rounded-3xl bg-rose-50 text-rose-500 flex items-center justify-center mb-6 mx-auto">
-                                <AlertTriangle className="w-8 h-8" />
+                            <div className="w-16 h-16 rounded-[24px] bg-amber-50 flex items-center justify-center mb-6">
+                                <AlertTriangle className="w-8 h-8 text-amber-500" />
                             </div>
-                            <h3 className="text-xl font-black text-slate-800 mb-3">確定要清空此店長嗎？</h3>
-                            <p className="text-[13px] text-slate-500 font-medium leading-relaxed mb-8">
-                                此操作將永久移除 **「{storeName}」** 的所有 LINE 串接設定與知識庫內容。
-                                <br/><span className="text-rose-500 font-black mt-2 inline-block">刪除後無法撤銷，格位將釋放為空缺。</span>
+                            <h4 className="text-[24px] font-black text-slate-900 mb-2">尚未儲存變更！</h4>
+                            <p className="text-slate-500 font-bold mb-8 leading-relaxed">
+                                您有一些變更尚未儲存。如果現在離開，這些變更將會遺失。確定要切換分頁嗎？
                             </p>
-                            <div className="flex flex-col gap-3">
-                                <button 
-                                    onClick={handleDeleteStore}
-                                    disabled={isDeleting}
-                                    className="w-full py-4 bg-rose-500 text-white rounded-2xl font-black text-[13px] uppercase tracking-widest shadow-lg shadow-rose-500/20 hover:brightness-110 active:scale-95 transition-all disabled:opacity-50"
+                            <div className="flex gap-4">
+                                <button
+                                    onClick={() => setShowUnsavedWarning(false)}
+                                    className="flex-1 h-12 rounded-[24px] bg-slate-100 text-slate-600 font-black text-[14px]"
                                 >
-                                    {isDeleting ? '正在移除資料...' : '確認永久刪除'}
+                                    留在原處
                                 </button>
-                                <button 
-                                    onClick={() => setShowDeleteConfirm(false)}
-                                    disabled={isDeleting}
-                                    className="w-full py-4 bg-slate-100 text-slate-500 rounded-2xl font-black text-[13px] uppercase tracking-widest hover:bg-slate-200 transition-all disabled:opacity-50"
+                                <button
+                                    onClick={confirmTabSwitch}
+                                    className="flex-1 h-12 rounded-[24px] bg-slate-900 text-white font-black text-[14px]"
                                 >
-                                    取消
+                                    放棄並離開
                                 </button>
                             </div>
                         </motion.div>
@@ -311,5 +225,11 @@ export default function KnowledgeBasePanel({
                 )}
             </AnimatePresence>
         </div>
+    );
+}
+
+function LoaderSpinner() {
+    return (
+        <div className="w-4 h-4 border-2 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
     );
 }

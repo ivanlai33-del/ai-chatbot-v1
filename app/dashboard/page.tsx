@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import AISandboxChat from '@/components/dashboard/AISandboxChat';
 import BrandDNATab from '@/components/dashboard/tabs/BrandDNATab';
+import DojoTab from '@/components/dashboard/tabs/DojoTab';
 import OfferingsTab from '@/components/dashboard/tabs/OfferingsTab';
 import FAQTab from '@/components/dashboard/tabs/FAQTab';
 import LogicTab from '@/components/dashboard/tabs/LogicTab';
@@ -30,6 +31,7 @@ export default function DashboardPage() {
     const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
     const [activeTab, setActiveTab ] = useState<DashboardTabId>('brand');
     const [showApiKeysModal, setShowApiKeysModal] = useState(false);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [isLoadingAuth, setIsLoadingAuth] = useState(true);
 
     // Business Logic Hooks
@@ -52,6 +54,12 @@ export default function DashboardPage() {
             window.location.href = '/?require_login=true';
             return;
         }
+
+        // 🛠️ 滾動守衛：強制頁面回到頂部，避免重新整理時的滑動問題
+        if ('scrollRestoration' in window.history) {
+            window.history.scrollRestoration = 'manual';
+        }
+        window.scrollTo(0, 0);
 
         setLineUserId(uid);
         setIsLoadingAuth(false);
@@ -99,8 +107,11 @@ export default function DashboardPage() {
                 <AISandboxChat 
                     bots={bots} 
                     selectedBotId={selectedBotId} 
+                    setSelectedBotId={setSelectedBotId}
                     planLevel={planLevel} 
                     config={config} 
+                    onOpenSettings={() => setShowApiKeysModal(true)}
+                    onDeleteBot={() => setShowDeleteConfirm(true)}
                 />
             }
         >
@@ -118,6 +129,8 @@ export default function DashboardPage() {
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}
                 onOpenSettings={() => setShowApiKeysModal(true)}
+                showDeleteConfirm={showDeleteConfirm}
+                setShowDeleteConfirm={setShowDeleteConfirm}
             >
                 <AnimatePresence mode="wait">
                     <motion.div
@@ -129,6 +142,7 @@ export default function DashboardPage() {
                         className="space-y-5"
                     >
                         {activeTab === 'brand' && <BrandDNATab config={config} setConfig={setConfig} planLevel={planLevel} />}
+                        {activeTab === 'dojo' && <DojoTab config={config} setConfig={setConfig} planLevel={planLevel} />}
                         {activeTab === 'offerings' && <OfferingsTab config={config} setConfig={setConfig} />}
                         {activeTab === 'faq' && <FAQTab config={config} setConfig={setConfig} />}
                         {activeTab === 'logic' && <LogicTab config={config} setConfig={setConfig} />}

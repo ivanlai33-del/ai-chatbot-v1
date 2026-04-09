@@ -165,9 +165,9 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
                     .from('chat_logs')
                     .select('role, content')
                     .eq('config_id', configId)
-                    .eq('line_user_id', userId)
+                    .eq('user_id', userId)           // ✅ 修正：與 INSERT 的 user_id 欄位一致
                     .order('created_at', { ascending: false })
-                    .limit(6), // Fetch last 3 turns
+                    .limit(10), // Fetch last 5 turns (user + ai pairs)
                 IntentInterceptor.intercept(safeMessage)
             ]);
 
@@ -241,33 +241,35 @@ async function callOpenAIDirect(systemPrompt: string, userMessage: string, chatH
 
 /**
  * ⚡ 非同步 CRM 貼標引擎 (自動建檔、萃取意圖與標籤)
+ *
+ * 優化說明：
+ *   - 用單一 upsert 取代「select → insert/update」兩步走
+ *   - tags 批量寫入，不再逐筆串行
+ *   - summary 與 tags 寫入並行執行
+ *   總 DB 次數：從 5+ 次降至 2 次（並行）
  */
 async function extractCustomerProfile(botId: string, lineUserId: string, userMessage: string, aiResponse: string) {
     try {
-        // 1. 確保顧客建檔 (Get or Create)
-        let { data: customer } = await supabase
+        // ⚡ Step 1：單次 upsert 確保顧客建檔（含更新最後互動時間）
+        const { data: customer, error: upsertError } = await supabase
             .from('bot_customers')
+            .upsert(
+                {
+                    bot_id: botId,
+                    line_user_id: lineUserId,
+                    last_interacted_at: new Date().toISOString()
+                },
+                { onConflict: 'bot_id,line_user_id', ignoreDuplicates: false }
+            )
             .select('id')
-            .eq('bot_id', botId)
-            .eq('line_user_id', lineUserId)
-            .maybeSingle();
+            .single();
 
-        if (!customer) {
-            const { data: newCustomer, error } = await supabase
-                .from('bot_customers')
-                .insert({ bot_id: botId, line_user_id: lineUserId })
-                .select('id')
-                .single();
-            if (error || !newCustomer) return;
-            customer = newCustomer;
-        } else {
-            // 更新最後互動時間
-            await supabase.from('bot_customers')
-                .update({ last_interacted_at: new Date().toISOString() })
-                .eq('id', customer.id);
+        if (upsertError || !customer) {
+            console.error('[TIER1:CRM_Engine] Customer upsert failed:', upsertError?.message);
+            return;
         }
 
-        // 2. 呼叫 GPT 進行結構化萃取 (產生 JSON)
+        // ⚡ Step 2：呼叫 GPT 結構化萃取（與 DB upsert 同步完成後執行）
         const response = await openai.chat.completions.create({
             model: 'gpt-4o-mini',
             response_format: { type: 'json_object' },
@@ -286,26 +288,27 @@ async function extractCustomerProfile(botId: string, lineUserId: string, userMes
         });
 
         const result = JSON.parse(response.choices[0].message.content || '{}');
-        const tags = Array.isArray(result.tags) ? result.tags : [];
-        const summary = result.summary || '';
+        const tags: string[] = Array.isArray(result.tags) ? result.tags.slice(0, 3) : [];
+        const summary: string = result.summary || '';
 
-        // 3. 寫入萃取的摘要與標籤
-        if (summary) {
-            await supabase.from('bot_customers')
-                .update({ ai_summary: summary })
-                .eq('id', customer.id);
-        }
+        // ⚡ Step 3：summary 更新 + tags 批量 upsert 並行執行
+        await Promise.all([
+            // 3a. 更新 AI 摘要
+            summary
+                ? supabase.from('bot_customers')
+                    .update({ ai_summary: summary })
+                    .eq('id', customer.id)
+                : Promise.resolve(),
 
-        if (tags.length > 0) {
-            for (const tag of tags) {
-                // 使用 onConflict 避免重複插入相同標籤
-                await supabase.from('bot_customer_tags').upsert(
-                    { customer_id: customer.id, tag_name: tag },
+            // 3b. 批量寫入所有標籤（一次 DB 呼叫）
+            tags.length > 0
+                ? supabase.from('bot_customer_tags').upsert(
+                    tags.map(tag => ({ customer_id: customer.id, tag_name: tag })),
                     { onConflict: 'customer_id,tag_name' }
-                );
-            }
-        }
-        
+                  )
+                : Promise.resolve(),
+        ]);
+
     } catch (err: any) {
         console.error('[TIER1:CRM_Engine] Failed to extract profile:', err.message);
     }

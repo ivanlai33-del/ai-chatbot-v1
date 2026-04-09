@@ -93,7 +93,14 @@ let STATIC_TOOLS: OpenAI.Chat.Completions.ChatCompletionTool[] = [
     }
 ];
 
+// ⚡ 模組層快取：ai_service_tools 幾乎不變，每 5 分鐘才重查一次 DB
+let _dynamicToolsCache: { tools: OpenAI.Chat.Completions.ChatCompletionTool[]; registry: any[]; ts: number } | null = null;
+const TOOLS_CACHE_TTL = 5 * 60 * 1000;
+
 async function getDynamicTools(): Promise<{ tools: OpenAI.Chat.Completions.ChatCompletionTool[], registry: any[] }> {
+    if (_dynamicToolsCache && Date.now() - _dynamicToolsCache.ts < TOOLS_CACHE_TTL) {
+        return { tools: _dynamicToolsCache.tools, registry: _dynamicToolsCache.registry };
+    }
     try {
         const { data: serviceTools } = await supabase
             .from('ai_service_tools')
@@ -107,6 +114,7 @@ async function getDynamicTools(): Promise<{ tools: OpenAI.Chat.Completions.ChatC
                 parameters: st.parameters_schema
             }
         }));
+        _dynamicToolsCache = { tools: dynamicTools, registry: serviceTools, ts: Date.now() };
         return { tools: dynamicTools, registry: serviceTools };
     } catch (e) {
         console.error("Dynamic Tools Fetch Error:", e);
@@ -131,48 +139,61 @@ export async function POST(req: NextRequest) {
         const effectiveUserId = userId || context?.lineUserId;
         const effectiveUserName = userName || context?.lineUserName;
         const effectiveUserPicture = context?.lineUserPicture;
+        const currentMonth = new Date().toISOString().slice(0, 7); // "2026-04"
 
-        // 🚀 SaaS Identity & Usage Tracker
-        let userPlanLevel = isSaaS ? 1 : 0; // 如果 isSaaS 為 true，至少是 Pro 版
+        // ⚡ 非阻塞 Upsert (fire-and-forget)：確保用戶存在，不佔用主流程等待時間
+        if (effectiveUserId && effectiveUserName) {
+            supabase.rpc('upsert_platform_user', {
+                p_line_id: effectiveUserId,
+                p_name: effectiveUserName,
+                p_picture: effectiveUserPicture
+            }).catch((e: any) => console.error('[Chat] upsert_platform_user failed:', e.message));
+        }
+
+        // ⚡ 並行 DB 查詢：6 個查詢同時飛出，節省串行等待的 400–900ms
+        const [
+            userResult,
+            usageResult,
+            botResult,
+            campaignResult,
+            toolsResult,
+            botCountResult,
+        ] = await Promise.all([
+            effectiveUserId
+                ? supabase.from('platform_users').select('plan_level, role').eq('line_user_id', effectiveUserId).maybeSingle()
+                : Promise.resolve({ data: null }),
+            effectiveUserId
+                ? supabase.from('user_usage_stats').select('message_count').eq('line_user_id', effectiveUserId).eq('month', currentMonth).maybeSingle()
+                : Promise.resolve({ data: null }),
+            effectiveUserId
+                ? supabase.from('bots').select('brand_dna').eq('line_user_id', effectiveUserId).limit(1).maybeSingle()
+                : Promise.resolve({ data: null }),
+            supabase.from('ai_campaigns').select('promotion_script').eq('is_active', true),
+            getDynamicTools(),
+            isMaster
+                ? supabase.from('bots').select('*', { count: 'exact', head: true })
+                : Promise.resolve({ count: null }),
+        ]);
+
+        // ── 解析並行結果 ──────────────────────────────────────────
+        let userPlanLevel = isSaaS ? 1 : 0;
         let isAdmin = isMaster || false;
         let currentMonthCount = 0;
         let userSelectedPlan = "Free";
         let userPlanPeriod = "monthly";
-        const currentMonth = new Date().toISOString().slice(0, 7); // "2026-04"
 
         if (effectiveUserId) {
-            // 1. Ensure User Identity (Upsert)
-            if (effectiveUserName) {
-                await supabase.rpc('upsert_platform_user', {
-                    p_line_id: effectiveUserId,
-                    p_name: effectiveUserName,
-                    p_picture: effectiveUserPicture
-                });
-            }
+            const userData = (userResult as any).data;
+            const usageData = (usageResult as any).data;
 
-            // 2. Fetch Plan & Usage
-            const { data: userData } = await supabase
-                .from('platform_users')
-                .select('plan_level, role')
-                .eq('line_user_id', effectiveUserId)
-                .single();
-            
             if (userData) {
                 userPlanLevel = userData.plan_level || userPlanLevel;
                 isAdmin = userData.role === 'admin' || isAdmin;
             }
-            const { data: usageData } = await supabase
-                .from('user_usage_stats')
-                .select('message_count')
-                .eq('line_user_id', effectiveUserId)
-                .eq('month', currentMonth)
-                .single();
-            
             currentMonthCount = usageData?.message_count || 0;
 
-            // 3. 🛡️ SaaS Paywall Logic (Website Demo Chat)
+            // 🛡️ SaaS Paywall Logic
             const limit = getMonthlyQuota(userPlanLevel) || 10;
-
             if (currentMonthCount >= limit && !isMaster && !isSaaS && !isProvisioning) {
                 const plan = getPlanByTier(userPlanLevel);
                 console.warn(`[Paywall] User ${effectiveUserId} hit limit ${currentMonthCount}/${limit}.`);
@@ -183,8 +204,8 @@ export async function POST(req: NextRequest) {
             }
         }
 
-        // 🛠️ Restore Tool Registration & Security
-        const { tools: dynamicTools, registry } = await getDynamicTools();
+        // 🛠️ Tool Registration
+        const { tools: dynamicTools, registry } = toolsResult;
         const ALL_TOOLS = [...STATIC_TOOLS, ...dynamicTools];
 
         const lastUserMsg = messages[messages.length - 1];
@@ -198,13 +219,7 @@ export async function POST(req: NextRequest) {
         // 🏗️ Build Dynamic System Prompt with Identity Context
         let membershipContext = "";
         if (effectiveUserId) {
-            const { data: botData } = await supabase
-                .from('bots')
-                .select('brand_dna')
-                .eq('line_user_id', effectiveUserId)
-                .limit(1)
-                .single();
-            
+            const botData = (botResult as any).data;
             let identityContext = "";
             if (botData?.brand_dna) {
                 const dna = botData.brand_dna || {};
@@ -212,7 +227,6 @@ export async function POST(req: NextRequest) {
                 if (dna.industry) knownFields.push(`行業：${dna.industry}`);
                 if (dna.name) knownFields.push(`店名/公司名：${dna.name}`);
                 if (dna.services) knownFields.push(`主打服務/商品：${dna.services}`);
-                
                 if (knownFields.length > 0) {
                     identityContext = `\n【🧠 已知品牌設定資訊】：\n- ${knownFields.join('\n- ')}\n`;
                 }
@@ -220,16 +234,15 @@ export async function POST(req: NextRequest) {
 
             const currentPlan = getPlanByTier(userPlanLevel);
             userSelectedPlan = currentPlan?.name || "Free";
-            
-            // 下一段落：根據 Tier 提供給 AI 的具體對話動作指引
+
             let tierInstruction = "";
             if (userPlanLevel === 0) {
                 tierInstruction = "這是一位免費試用老闆。你的首要任務是展現 AI 的價值，並在對話收尾時自然地引導他升級『入門嚐鮮』或『單店主力』方案。";
-            } else if (userPlanLevel <= 2) { // 入門 / 單店
+            } else if (userPlanLevel <= 2) {
                 tierInstruction = `這是 ${userSelectedPlan} 老闆。請給予更專業的商業建議，並暗示『成長多店』方案具備管理多個店家的能力。`;
-            } else if (userPlanLevel <= 4) { // 成長 / 連鎖
+            } else if (userPlanLevel <= 4) {
                 tierInstruction = `這是 ${userSelectedPlan} 連鎖店老闆。請展現大局觀，專注於品牌連貫性與多店數據營運的幫助。`;
-            } else { // 旗艦
+            } else {
                 tierInstruction = `這是 ${userSelectedPlan} 尊榮旗艦老闆。請以最高規格的智慧秘書與商業參謀身份對應，專注於策略執行與超高流量的穩定性。`;
             }
 
@@ -245,29 +258,23 @@ export async function POST(req: NextRequest) {
         if (isExistingOwner) {
             dynamicSystemPrompt = OWNER_COACH_PROMPT;
         } else if (effectiveUserId) {
-            // Logged in but no bot yet (Onboarding Scenario)
             dynamicSystemPrompt = ONBOARDING_PROMPT;
         } else {
-            // Not logged in (Visitor/Sales Scenario)
             dynamicSystemPrompt = SALES_PROMPT;
         }
 
-        // 🚀 Revenue Engine: Fetch Active Campaigns
-        const { data: campaigns } = await supabase
-            .from('ai_campaigns')
-            .select('promotion_script')
-            .eq('is_active', true);
-        
+        // 🚀 Revenue Engine: Active Campaigns (from parallel fetch)
+        const campaigns = (campaignResult as any).data;
         if (campaigns?.length) {
-            dynamicSystemPrompt += `\n\n【目前後台啟動之限時促銷指令】：\n${campaigns.map(c => c.promotion_script).join('\n')}\n`;
+            dynamicSystemPrompt += `\n\n【目前後台啟動之限時促銷指令】：\n${campaigns.map((c: any) => c.promotion_script).join('\n')}\n`;
         }
-        
+
         dynamicSystemPrompt += membershipContext;
 
         // Segment Specifics
         if (isMaster) {
-            const { count: botCount } = await supabase.from('bots').select('*', { count: 'exact', head: true });
-            dynamicSystemPrompt = `${MASTER_HUB_PROMPT.replace('{botCount}', (botCount || 0).toString())}\n` + dynamicSystemPrompt;
+            const botCount = (botCountResult as any).count || 0;
+            dynamicSystemPrompt = `${MASTER_HUB_PROMPT.replace('{botCount}', botCount.toString())}\n` + dynamicSystemPrompt;
         }
 
         if (isSaaS) {
@@ -324,15 +331,21 @@ export async function POST(req: NextRequest) {
 
         let response;
         try {
-            // 🚀 Try Gemini First
-            response = await chatClient.chat.completions.create({
-                model: chatModel,
-                messages: combinedMessages as any,
-                tools: ALL_TOOLS.length > 0 ? ALL_TOOLS : undefined,
-                temperature: 0.7,
-            });
-        } catch (geminiErr) {
-            console.error('[Gemini Fallback] Gemini API failed, falling back to OpenAI:', geminiErr);
+            // 🚀 Try Gemini with 10s timeout—超時自動切回 OpenAI，不不卡死
+            const geminiTimeout = new Promise<never>((_, reject) =>
+                setTimeout(() => reject(new Error('Gemini timeout')), 10_000)
+            );
+            response = await Promise.race([
+                chatClient.chat.completions.create({
+                    model: chatModel,
+                    messages: combinedMessages as any,
+                    tools: ALL_TOOLS.length > 0 ? ALL_TOOLS : undefined,
+                    temperature: 0.7,
+                }),
+                geminiTimeout
+            ]);
+        } catch (geminiErr: any) {
+            console.error('[Gemini Fallback] Falling back to OpenAI:', geminiErr.message);
             // 🛡️ Fallback to OpenAI
             chatClient = openai;
             chatModel = isMaster ? 'gpt-4o' : 'gpt-4o-mini';
@@ -433,26 +446,33 @@ export async function POST(req: NextRequest) {
                 }
 
                 if (parsed.action === 'SUBMIT_FEEDBACK') {
-                    const feedbackContent = parsed.summary || "無內容";
-                    const triage = await chatClient.chat.completions.create({
-                        model: 'gpt-4o-mini', // 內部小分流維持 mini 或同步
-                        messages: [
-                            { role: 'system', content: '你是一位資深客服經理。分析收到的客戶反饋，提供：1. 分類, 2. 優先級, 3. 建議回覆。輸出為 JSON：{"cat": String, "pri": Number, "reply": String}' },
-                            { role: 'user', content: feedbackContent }
-                        ],
-                        response_format: { type: 'json_object' }
-                    });
-                    const tData = JSON.parse(triage.choices[0].message.content || '{}');
-                    await supabase.from('owner_feedback').insert({
-                        line_user_id: effectiveUserId,
-                        line_user_name: effectiveUserName,
-                        content: feedbackContent,
-                        feedback_type: 'report',
-                        category: tData.cat || 'General',
-                        priority: tData.pri || 3,
-                        smart_suggestion: tData.reply || "無建議",
-                        status: 'pending'
-                    });
+                    const feedbackContent = parsed.summary || "\u7121\u5167\u5bb9";
+                    // ⚡ \u975e\u963b\u585e (fire-and-forget)\uff1a\u4e0d\u963b\u585e\u7528\u6236\u7b49\u5f85\u56de\u8986
+                    ;(async () => {
+                        try {
+                            const triage = await openai.chat.completions.create({
+                                model: 'gpt-4o-mini',
+                                messages: [
+                                    { role: 'system', content: '\u4f60\u662f\u4e00\u4f4d\u8cc7\u6df1\u5ba2\u670d\u7d93\u7406\u3002\u5206\u6790\u6536\u5230\u7684\u5ba2\u6236\u53cd\u994饋\uff0c\u63d0\u4f9b\uff1a1. \u5206\u985e, 2. \u512a\u5148\u7d1a, 3. \u5efa\u8b70\u56de\u8986\u3002\u8f38\u51fa\u70ba JSON\uff1a{"cat": String, "pri": Number, "reply": String}' },
+                                    { role: 'user', content: feedbackContent }
+                                ],
+                                response_format: { type: 'json_object' }
+                            });
+                            const tData = JSON.parse(triage.choices[0].message.content || '{}');
+                            await supabase.from('owner_feedback').insert({
+                                line_user_id: effectiveUserId,
+                                line_user_name: effectiveUserName,
+                                content: feedbackContent,
+                                feedback_type: 'report',
+                                category: tData.cat || 'General',
+                                priority: tData.pri || 3,
+                                smart_suggestion: tData.reply || "\u7121\u5efa\u8b70",
+                                status: 'pending'
+                            });
+                        } catch (fbErr: any) {
+                            console.error('[Feedback BG] Failed:', fbErr.message);
+                        }
+                    })();
                 }
             } catch (e) {
                 console.error("Metadata Parse Error:", e);

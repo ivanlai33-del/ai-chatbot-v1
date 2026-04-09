@@ -118,11 +118,11 @@ function IndustrySelect({ group, onAppend }: {
                     setTimeout(() => { if (ref.current) ref.current.value = ''; }, 0);
                 }
             }}
-            className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-[12.5px] font-bold text-slate-700 focus:outline-none focus:border-slate-500 cursor-pointer hover:border-slate-400 transition-all"
+            className="w-full p-5 rounded-[24px] /40 bg-white/70 backdrop-blur-md text-[16px] font-black text-slate-800 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 cursor-pointer hover:bg-white shadow-sm transition-all"
         >
-            <option value="" disabled>＋ {group.label}</option>
+            <option value="" disabled className="text-slate-400">＋ 選取專屬 {group.label} 引導功能</option>
             {group.tags.map(tag => (
-                <option key={tag.label} value={tag.text}>{tag.label}</option>
+                <option key={tag.label} value={tag.text} className="text-slate-900 font-bold">{tag.label}</option>
             ))}
         </select>
     );
@@ -142,35 +142,33 @@ export default function LogicTab({ config, setConfig }: LogicTabProps) {
     return (
         <div className="space-y-5">
 
-            {/* ── 行業別下拉選單（只顯示當前選中的行業）── */}
-            <div>
-                <p className="text-[11px] font-black text-slate-400 tracking-widest uppercase mb-2.5">
+            <div className=" rounded-[24px] p-10  ">
+                <p className="text-[14px] font-black text-cyan-600 uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
                     專屬行業引導標籤（{selectedIndustry || '未選擇行業'}）
                 </p>
                 {activeGroup ? (
-                    <div className="w-1/3">
+                    <div className="max-w-md">
                         <IndustrySelect group={activeGroup} onAppend={append} />
                     </div>
                 ) : (
-                    <div className="w-full px-4 py-3 rounded-xl border border-dashed border-slate-200 bg-slate-50 text-[12px] font-bold text-slate-400 text-center">
+                    <div className="w-full px-8 py-10 rounded-[24px] border border-dashed border-slate-200 bg-white/30 text-[16px] font-black text-slate-400 text-center uppercase tracking-widest">
                         {selectedIndustry 
-                            ? `目前「${selectedIndustry}」尚無專屬預設標籤，您可以自由新增引導規則。`
-                            : '請先至「品牌 DNA」分頁選擇行業別，以顯示專屬引導標籤。'}
+                            ? `目前「${selectedIndustry}」尚無專屬預設標籤`
+                            : '請先至「品牌 DNA」分頁選擇行業別'}
                     </div>
                 )}
             </div>
 
-            {/* ── 通用 Tag（3 欄網格）── */}
-            <div>
-                <p className="text-[11px] font-black text-slate-400 tracking-widest uppercase mb-2.5">
-                    通用引導標籤
+            <div className=" rounded-[24px] p-10  ">
+                <p className="text-[14px] font-black text-emerald-600 uppercase tracking-[0.2em] mb-6">
+                    通用引導標籤庫
                 </p>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {LOGIC_PRESETS.map(tag => (
                         <button
                             key={tag.label}
                             onClick={() => append(tag.text)}
-                            className="py-2.5 px-3 rounded-xl bg-white border border-slate-200 text-[11.5px] font-bold text-slate-600 hover:border-slate-800 hover:bg-slate-800 hover:text-white transition-all text-center"
+                            className="py-5 px-4 rounded-[24px] bg-white border border-slate-100 text-[15px] font-black text-slate-700 hover:bg-emerald-500 hover:text-white hover:border-emerald-500 transition-all text-center shadow-sm active:scale-95"
                         >
                             + {tag.label}
                         </button>
@@ -180,8 +178,8 @@ export default function LogicTab({ config, setConfig }: LogicTabProps) {
 
             {/* ── AI 引導規則自由輸入 ── */}
             <div>
-                <p className="text-[11px] font-black text-slate-400 tracking-widest uppercase mb-2.5">
-                    AI 引導規則（自由輸入）
+                <p className="text-[14px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 ml-1">
+                    AI 引導規則（自由輸入整合）
                 </p>
                 <TextareaField
                     label=""

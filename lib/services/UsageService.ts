@@ -11,41 +11,16 @@ export class UsageService {
         const currentMonth = new Date().toISOString().slice(0, 7); // "2026-03"
 
         try {
-            // Use Supabase upsert with RPC or a simple select/update
-            // Since we want to increment, we can use a PostgreSQL function or a two-step process.
-            // For simplicity and common Next.js/Supabase patterns, we'll try to find and update.
-            
-            const { data: currentUsage, error: fetchError } = await supabase
-                .from('user_usage_stats')
-                .select('*')
-                .eq('user_id', userId)
-                .eq('month', currentMonth)
-                .maybeSingle();
+            // ⚡ 單次原子 RPC 呼叫，取代「select → insert/update」兩步走
+            //    防止競蓆條件：兩個并行請求同時讀到 0 再同時 insert
+            const { error } = await supabase.rpc('increment_user_usage', {
+                p_user_id: userId,
+                p_month: currentMonth,
+                p_tokens: tokens
+            });
 
-            if (fetchError) {
-                console.error('[UsageService] Fetch Error:', fetchError);
-                return;
-            }
-
-            if (!currentUsage) {
-                // First message of the month
-                await supabase.from('user_usage_stats').insert({
-                    user_id: userId,
-                    month: currentMonth,
-                    message_count: 1,
-                    total_tokens: tokens,
-                    last_updated: new Date().toISOString()
-                });
-            } else {
-                // Increment existing
-                await supabase
-                    .from('user_usage_stats')
-                    .update({
-                        message_count: (currentUsage.message_count || 0) + 1,
-                        total_tokens: (currentUsage.total_tokens || 0) + tokens,
-                        last_updated: new Date().toISOString()
-                    })
-                    .eq('id', currentUsage.id);
+            if (error) {
+                console.error('[UsageService] RPC Error:', error);
             }
         } catch (error) {
             console.error('[UsageService] General Error:', error);

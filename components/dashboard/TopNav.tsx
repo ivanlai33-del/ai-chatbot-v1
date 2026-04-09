@@ -37,29 +37,56 @@ export default function TopNav({
 
     const getPlanLabel = (level: number, cycle: 'monthly' | 'yearly' = 'monthly') => {
         const plan = getPlanByTier(level);
-        if (!plan) return { name: "普通會員", color: "bg-slate-100 text-slate-600", badge: "bg-slate-50 border-zinc-200" };
+        if (!plan) return { name: "普通會員", color: "text-white", badge: "bg-gradient-to-r from-slate-400 to-slate-500 shadow-slate-200" };
 
         const suffix = level > 0 ? (cycle === 'yearly' ? '/y' : '/m') : '';
         const displayName = `${plan.name}${suffix}`;
 
-        // Dynamic colors based on tier
-        if (level >= 5) return { 
-            name: displayName, 
-            color: "bg-amber-100 text-amber-700 font-black", 
-            badge: "bg-gradient-to-r from-amber-500/10 to-orange-500/10 border-amber-500/20 shadow-sm" 
-        };
-        if (level >= 3) return { 
-            name: displayName, 
-            color: "bg-indigo-100 text-indigo-700 font-bold", 
-            badge: "bg-indigo-50 border-indigo-100" 
-        };
-        if (level >= 1) return { 
-            name: displayName, 
-            color: "bg-emerald-100 text-emerald-700 font-bold", 
-            badge: "bg-emerald-50 border-emerald-100" 
-        };
-        
-        return { name: "普通會員", color: "bg-slate-100 text-slate-500", badge: "bg-slate-50 border-slate-100" };
+        // 🎨 Solid Gradient Matrix with Reversed (White) Text
+        switch (level) {
+            case 6: // 旗艦 Pro
+                return { 
+                    name: displayName, 
+                    color: "text-white font-black", 
+                    badge: "bg-gradient-to-br from-rose-500 via-orange-600 to-red-700 shadow-orange-500/20 border-white/10" 
+                };
+            case 5: // 旗艦 Lite
+                return { 
+                    name: displayName, 
+                    color: "text-white font-black", 
+                    badge: "bg-gradient-to-br from-amber-400 via-orange-500 to-orange-600 shadow-amber-500/20 border-white/10" 
+                };
+            case 4: // 連鎖專業
+                return { 
+                    name: displayName, 
+                    color: "text-white font-bold", 
+                    badge: "bg-gradient-to-br from-violet-500 via-purple-600 to-indigo-700 shadow-purple-500/20 border-white/10" 
+                };
+            case 3: // 成長多店
+                return { 
+                    name: displayName, 
+                    color: "text-white font-bold", 
+                    badge: "bg-gradient-to-br from-blue-500 via-indigo-600 to-indigo-800 shadow-blue-500/20 border-white/10" 
+                };
+            case 2: // 單店主力
+                return { 
+                    name: displayName, 
+                    color: "text-white font-bold", 
+                    badge: "bg-gradient-to-br from-cyan-500 via-teal-600 to-emerald-700 shadow-teal-500/20 border-white/10" 
+                };
+            case 1: // 入門嚐鮮
+                return { 
+                    name: displayName, 
+                    color: "text-white font-bold", 
+                    badge: "bg-gradient-to-br from-emerald-400 via-emerald-500 to-green-600 shadow-emerald-500/20 border-white/10" 
+                };
+            default:
+                return { 
+                    name: "普通會員", 
+                    color: "text-white font-bold", 
+                    badge: "bg-gradient-to-br from-slate-400 to-slate-600 shadow-slate-400/20 border-white/10" 
+                };
+        }
     };
 
     const currentPlan = getPlanLabel(planLevel, billingCycle);
@@ -70,55 +97,54 @@ export default function TopNav({
     };
 
     return (
-        <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-2xl shadow-sm border-b border-slate-200/60">
-            <div className="px-6 md:px-[100px] py-3.5 flex items-center justify-between">
-                <div className="flex items-center gap-3.5">
-                    <div className="w-[43.2px] h-[43.2px] relative">
+        <header className="sticky top-0 z-50 bg-white/40 backdrop-blur-3xl shadow-[0_4px_30px_rgba(0,0,0,0.03)] border-b border-white/40 ring-1 ring-black/5 h-[80px]">
+            <div className="px-6 md:px-[75px] h-full flex items-center justify-between max-w-[1900px] mx-auto w-full">
+                <div className="flex items-center gap-5">
+                    <div className="w-[50px] h-[50px] relative drop-shadow-sm">
                         <Image src="/Lai Logo_4.svg" alt="Lai Logo" fill className="object-contain" />
                     </div>
-                    <div>
-                        <span className="font-black text-[19.2px] tracking-tight text-slate-800">AI 店長智庫</span>
-                        <span className="ml-2 text-[14.4px] text-slate-400">Member Dashboard</span>
+                    <div className="flex flex-col">
+                        <span className="font-black text-[22px] tracking-tight text-slate-900 leading-none">AI 店長智庫</span>
+                        <span className="text-[11px] text-slate-400 font-extrabold uppercase tracking-[0.2em] mt-2 opacity-80">Member Dashboard</span>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                     {isMounted && (
                         <>
-                            <div className="flex items-center gap-1.5 mr-2">
+                            <div className="flex items-center gap-2 mr-3">
                                 {planLevel === 0 && (
                                     <motion.button
                                         whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(245, 158, 11, 0.4)" }}
                                         whileTap={{ scale: 0.95 }}
                                         onClick={() => window.location.href = '/dashboard/billing'}
-                                        className="mr-3 px-4 py-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[11px] font-black rounded-full shadow-lg shadow-orange-500/20 flex items-center gap-1.5 animate-pulse"
+                                        className="mr-3 px-5 py-2.5 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[12px] font-black rounded-full shadow-lg shadow-orange-500/20 flex items-center gap-1.5 animate-pulse"
                                     >
-                                        <Zap className="w-3 h-3 fill-current" />
+                                        <Zap className="w-3.5 h-3.5 fill-current" />
                                         立即解鎖正式版
                                     </motion.button>
                                 )}
                                 <motion.button
                                     whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                                     onClick={() => window.location.href = '/'}
-                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-slate-500 hover:bg-slate-100 transition-all text-[13px] font-bold border border-transparent hover:border-slate-200"
+                                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-slate-500 hover:bg-slate-100 transition-all text-[15px] font-bold border border-transparent hover:border-slate-200"
                                 >
-                                    <Home className="w-3.5 h-3.5" />
+                                    <Home className="w-4 h-4" />
                                     回首頁
                                 </motion.button>
                                 { (planLevel > 0 || lineUserId === "Ud8b8dd79162387a80b2b5a4aba20f604") && (
                                     <motion.button
-                                        whileHover={{ scale: 1.05 }}
+                                        whileHover={{ scale: 1.05, backgroundColor: '#3730A3' }}
                                         whileTap={{ scale: 0.95 }}
                                         onClick={() => window.location.href = '/console'}
-                                        className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-all text-[13px] font-black border border-indigo-100 shadow-sm shadow-indigo-500/5 group"
+                                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white transition-all text-[13px] font-black shadow-lg shadow-indigo-500/20"
                                     >
-                                        <LayoutDashboard className="w-3.5 h-3.5 text-indigo-500 group-hover:rotate-12 transition-transform" />
                                         營運戰情室
                                     </motion.button>
                                 )}
                             </div>
                             <div className={cn(
-                                "flex items-center gap-1.5 px-4 py-1.5 rounded-full text-[13px] font-black uppercase tracking-wider shadow-sm border mr-2",
+                                "flex items-center gap-2 px-5 py-2 rounded-full text-[15.5px] font-black uppercase tracking-wider shadow-sm border mr-3",
                                 currentPlan.badge
                             )}>
                                 <span className={currentPlan.color}>{currentPlan.name}</span>
@@ -129,16 +155,16 @@ export default function TopNav({
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                     onClick={() => setShowProfile(!showProfile)}
-                                    className="flex items-center gap-2.5 pl-3 border-l border-slate-200 hover:bg-slate-50 px-2 py-1.5 rounded-xl transition-all"
+                                    className="flex items-center gap-3.5 pl-4 border-l border-slate-200 hover:bg-slate-50 px-3 py-2 rounded-xl transition-all"
                                 >
                                     {userPicture ? (
-                                        <img src={userPicture} alt={userName} className="w-8 h-8 rounded-full border-2 border-emerald-400/60" />
+                                        <img src={userPicture} alt={userName} className="w-10 h-10 rounded-full border-2 border-emerald-400/60 shadow-sm" />
                                     ) : (
-                                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center">
-                                            <User className="w-4 h-4 text-white" />
+                                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center">
+                                            <User className="w-5 h-5 text-white" />
                                         </div>
                                     )}
-                                    <span className="text-sm text-slate-600 font-bold hidden sm:block">{userName} ▾</span>
+                                    <span className="text-[15.5px] text-slate-700 font-bold hidden sm:block">{userName} ▾</span>
                                 </motion.button>
 
                                 <AnimatePresence>
@@ -163,7 +189,7 @@ export default function TopNav({
                                                         <div className="flex-1 overflow-hidden">
                                                             <p className="font-black text-slate-800 text-base leading-tight truncate">{userName}</p>
                                                             <div className="flex items-center gap-1.5 mt-1 mb-2">
-                                                                <span className={cn("px-3 py-1 rounded-lg text-[13px] font-black uppercase tracking-widest leading-none", currentPlan.color)}>
+                                                                <span className={cn("px-3 py-1 rounded-lg text-[13px] font-black uppercase tracking-widest leading-none shadow-sm", currentPlan.badge, currentPlan.color)}>
                                                                     {currentPlan.name}
                                                                 </span>
                                                             </div>

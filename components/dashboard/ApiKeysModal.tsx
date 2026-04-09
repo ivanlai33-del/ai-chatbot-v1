@@ -194,8 +194,8 @@ export default function ApiKeysModal({ isOpen, onClose, botId, botName }: ApiKey
                         <button
                             disabled={isLoading || isSaving}
                             onClick={handleSave}
-                            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-[13px] font-black text-white shadow-lg transition-all ${
-                                isSaving ? 'bg-slate-400 cursor-not-allowed' : 'bg-emerald-500 hover:bg-emerald-600 active:scale-95'
+                            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-[13px] font-black text-white shadow-lg shadow-emerald-500/20 transition-all ${
+                                isSaving ? 'bg-slate-400 cursor-not-allowed' : 'bg-gradient-to-r from-emerald-500 to-cyan-600 active:scale-95'
                             }`}
                         >
                             {isSaving ? (

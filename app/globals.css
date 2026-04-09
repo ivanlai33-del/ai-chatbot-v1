@@ -14,24 +14,30 @@
 @layer base {
     * {
         @apply border-border;
-        /* Custom Light Scrollbar */
-        &::-webkit-scrollbar {
-            width: 5px;
-            height: 5px;
-        }
-        &::-webkit-scrollbar-track {
-            @apply bg-slate-50;
-        }
-        &::-webkit-scrollbar-thumb {
-            @apply bg-slate-300 rounded-full hover:bg-slate-400 transition-colors;
-        }
+        /* Default Light Scrollbar - Moved to a utility class to prevent overriding specific ones */
     }
 
     body {
-        @apply bg-background text-foreground antialiased;
+        @apply bg-[#E2E8F0] text-foreground antialiased;
         scrollbar-width: thin;
         scrollbar-color: #cbd5e1 #f8fafc;
     }
+}
+
+/* ── Global Custom Scrollbar Utility ── */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f8fafc;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
 }
 
 .chat-bubble-ai {
@@ -123,4 +129,48 @@
 }
 .scrollbar-dark::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* ✨ Glass Scrollbar (Translucent White) */
+.glass-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.5) transparent;
+}
+
+.glass-scrollbar::-webkit-scrollbar {
+    height: 8px !important;
+    width: 6px !important;
+    display: block !important;
+}
+.glass-scrollbar::-webkit-scrollbar-track {
+    background: transparent !important;
+    border-radius: 20px !important;
+}
+.glass-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.4) !important;
+    border-radius: 20px !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+.glass-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* ── Hide Scrollbar Utility ── */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* ✨ Simplified Glass Border (2px with High-Contrast Reflection) */
+.glass-border-refined {
+    border: 2px solid rgba(255, 255, 255, 0.6) !important;
+    background: rgba(255, 255, 255, 0.25) !important;
+    box-shadow: 
+        0 15px 45px -10px rgba(0, 0, 0, 0.15),
+        0 20px 60px -15px rgba(0, 0, 0, 0.05),
+        inset 0 1px 2px rgba(255, 255, 255, 0.8), /* Polished Highlight */
+        inset 0 0 0 1px rgba(255, 255, 255, 0.2);
 }

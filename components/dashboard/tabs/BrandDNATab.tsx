@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Tag, Users, MessageSquare, Hand, BrainCircuit, Layers, Wand2, Lock, Unlock, Loader2, Sparkles } from 'lucide-react';
+import { Tag, MessageSquare, BrainCircuit, Layers, Wand2, Lock, Unlock, Loader2, Sparkles, ChevronDown, Check, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 /* ── Shared: compact input field ── */
@@ -13,42 +13,44 @@ function Field({ label, placeholder, value, onChange, hint, isLocked, onToggleLo
 }) {
     return (
         <div className="relative group/field">
-            <div className="flex items-center justify-between mb-2 px-1">
-                <label className="block text-[12px] font-black text-slate-800 tracking-wider uppercase">{label}</label>
-                <div className="flex items-center gap-2 opacity-0 group-hover/field:opacity-100 transition-opacity">
+            <div className="flex items-center justify-between mb-3 px-2">
+                <label className="block text-[14px] font-black text-slate-800 tracking-[0.15em] uppercase opacity-80">{label}</label>
+                <div className="flex items-center gap-2 opacity-0 group-hover/field:opacity-100 transition-all duration-300 translate-x-1 group-hover/field:translate-x-0">
                     {onGenerate && (
                         <button 
                             onClick={onGenerate}
                             disabled={isGenerating || isLocked}
-                            className="p-1 text-slate-500 hover:text-emerald-500 disabled:opacity-30 transition-colors"
+                            className="p-1.5 rounded-[24px] text-slate-400 hover:text-emerald-500 hover:bg-emerald-50 disabled:opacity-30 transition-all"
                             title="AI 重新生成此項"
                         >
-                            {isGenerating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Wand2 className="w-3.5 h-3.5" />}
+                            {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4" />}
                         </button>
                     )}
                     {onToggleLock && (
                         <button 
                             onClick={onToggleLock}
-                            className={`p-1 transition-colors ${isLocked ? 'text-amber-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                            className={`p-1.5 rounded-[24px] transition-all ${isLocked ? 'text-amber-500 bg-amber-50 shadow-sm' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'}`}
                             title={isLocked ? '已鎖定，不參與一鍵生成' : '點擊鎖定此項內容'}
                         >
-                            {isLocked ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
+                            {isLocked ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
                         </button>
                     )}
                 </div>
             </div>
-            <input
-                type="text"
-                value={value}
-                onChange={e => onChange(e.target.value)}
-                placeholder={placeholder}
-                className={`w-full p-[35px] rounded-xl border-2 bg-white text-[15px] text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-4 transition-all hover:border-slate-400 ${
-                    isLocked 
-                        ? 'border-amber-400 bg-amber-50/40 focus:border-amber-500 focus:ring-amber-50' 
-                        : 'border-slate-200 focus:border-slate-900 focus:ring-slate-100'
-                }`}
-            />
-            {hint && <p className="text-[11px] text-slate-600 mt-1.5 pl-1 font-extrabold italic">{hint}</p>}
+            <div className="relative">
+                <input
+                    type="text"
+                    value={value}
+                    onChange={e => onChange(e.target.value)}
+                    placeholder={placeholder}
+                    className={`w-full p-5 rounded-[24px] border-0 bg-white/70 backdrop-blur-md text-[16px] text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-[6px] transition-all shadow-sm ring-1 ring-black/[0.04] ${
+                        isLocked 
+                            ? 'bg-amber-50/50 focus:ring-amber-100/50' 
+                            : 'focus:bg-white focus:ring-emerald-100/30'
+                    }`}
+                />
+            </div>
+            {hint && <p className="text-[11px] text-slate-500 mt-2 pl-2 font-bold italic opacity-70 tracking-tight">{hint}</p>}
         </div>
     );
 }
@@ -61,58 +63,59 @@ function Textarea({ label, placeholder, value, onChange, rows = 3, hint, isLocke
 }) {
     return (
         <div className="relative group/field">
-            <div className="flex items-center justify-between mb-2 px-1">
-                <label className="block text-[12px] font-black text-slate-800 tracking-wider uppercase">{label}</label>
-                <div className="flex items-center gap-2 opacity-0 group-hover/field:opacity-100 transition-opacity">
-                    {onGenerate && (
-                        <button 
-                            onClick={onGenerate}
-                            disabled={isGenerating || isLocked}
-                            className="p-1 text-slate-500 hover:text-emerald-500 disabled:opacity-30 transition-colors"
-                            title="AI 重新生成此項"
-                        >
-                            {isGenerating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Wand2 className="w-3.5 h-3.5" />}
-                        </button>
-                    )}
-                    {onToggleLock && (
-                        <button 
-                            onClick={onToggleLock}
-                            className={`p-1 transition-colors ${isLocked ? 'text-amber-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-                            title={isLocked ? '已鎖定，不參與一鍵生成' : '點擊鎖定此項內容'}
-                        >
-                            {isLocked ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
-                        </button>
-                    )}
+            {label && (
+                <div className="flex items-center justify-between mb-3 px-2">
+                    <label className="block text-[14px] font-black text-slate-800 tracking-[0.15em] uppercase opacity-80">{label}</label>
+                    <div className="flex items-center gap-2 opacity-0 group-hover/field:opacity-100 transition-all duration-300">
+                        {onGenerate && (
+                            <button 
+                                onClick={onGenerate}
+                                disabled={isGenerating || isLocked}
+                                className="p-1.5 rounded-[24px] text-slate-400 hover:text-emerald-500 hover:bg-emerald-50 disabled:opacity-30 transition-all"
+                            >
+                                {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4" />}
+                            </button>
+                        )}
+                        {onToggleLock && (
+                            <button 
+                                onClick={onToggleLock}
+                                className={`p-1.5 rounded-[24px] transition-all ${isLocked ? 'text-amber-500 bg-amber-50 shadow-sm' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'}`}
+                            >
+                                {isLocked ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
+                            </button>
+                        )}
+                    </div>
                 </div>
-            </div>
+            )}
             <textarea
                 value={value}
                 onChange={e => onChange(e.target.value)}
                 placeholder={placeholder}
                 rows={rows}
-                className={`w-full p-[35px] rounded-xl border-2 bg-white text-[15px] text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-4 transition-all resize-none hover:border-slate-400 ${
+                className={`w-full p-5 rounded-[24px] border-0 bg-white/70 backdrop-blur-md text-[16px] text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-[6px] transition-all resize-none shadow-sm ring-1 ring-black/[0.04] ${
                     isLocked 
-                        ? 'border-amber-400 bg-amber-50/40 focus:border-amber-500 focus:ring-amber-50' 
-                        : 'border-slate-200 focus:border-slate-900 focus:ring-slate-100'
+                        ? 'bg-amber-50/50 focus:ring-amber-100/50' 
+                        : 'focus:bg-white focus:ring-emerald-100/30'
                 }`}
             />
-            {hint && <p className="text-[11px] text-slate-600 mt-1.5 pl-1 font-extrabold italic">{hint}</p>}
+            {hint && <p className="text-[11px] text-slate-500 mt-2 pl-2 font-bold italic opacity-70 tracking-tight">{hint}</p>}
         </div>
     );
 }
 
 /* ── Section divider with icon + title ── */
-function Section({ Icon, title, subtitle }: { Icon: React.ElementType; title: string; subtitle?: string }) {
+function Section({ Icon, title, subtitle, action }: { Icon: React.ElementType; title: string; subtitle?: string; action?: React.ReactNode }) {
     return (
-        <div className="flex items-center gap-3 pt-6 pb-2">
-            <div className="p-2 rounded-xl bg-slate-100 border border-slate-200">
-                <Icon className="w-5 h-5 text-slate-800 shrink-0" strokeWidth={2.5} />
-            </div>
+        <div className="flex items-center gap-5 pt-8 pb-4">
             <div className="flex-1">
-                <p className="text-[17px] font-black text-slate-900 leading-none tracking-tight">{title}</p>
-                {subtitle && <p className="text-[11px] text-slate-700 mt-1.5 font-black uppercase tracking-widest">{subtitle}</p>}
+                {title && <p className="text-[24px] font-black text-slate-900 leading-none tracking-tight mb-2">{title}</p>}
+                {subtitle && <p className="text-[14px] text-slate-500 font-black uppercase tracking-[0.2em]">{subtitle}</p>}
             </div>
-            <div className="w-full max-w-[300px] h-[2px] bg-slate-300" />
+            {action && (
+                <div className="shrink-0 flex items-center gap-4">
+                    {action}
+                </div>
+            )}
         </div>
     );
 }
@@ -132,12 +135,12 @@ const INDUSTRY_TONES: Record<string, string> = {
     '醫療美容': '您是一位親切專業的醫美接待，熟悉療程與注意事項，善於解答疑慮並引導諮詢預約。',
     '教育補習': '您是一位熱忱的教育機構接待，熟悉課程與招生流程，善於為不同年齡層學員推薦合適課程。',
     '旅遊住宿': '您是一位充滿熱情的旅遊顧問與旅宿管家，熟悉行程與設施，善於激發客人的旅遊興趣。',
-    '不動產': '您是一位沉穩專業的房仲接待，熟悉物件資訊與交易流程，回話有條理且具說服力。',
-    '金融保險': '您是一位謹慎專業的金融服務接待，回話準確且附有免責提示，善於引導進一步諮詢。',
+    '不動產': '您是一位房仲接待，熟悉物件資訊與交易流程，回話有條理且具說服力。',
+    '金融保險': '您是一位專業的金融服務接待，回話準確且附有免責提示，善於引導進一步諮詢。',
     '寵物服務': '您是一位溫暖有愛的寵物服務接待，熟悉寵物照護知識，回話親切充滿關懷。',
     '專業顧問': '您是一位知性專業的服務接待，熟悉業務範疇與諮詢流程，回話清晰有條理。',
-    '健身運動': '您是一位充滿活力且專業的健身顧問，熟悉會籍與課程，用語積極正向，鼓勵客人行動。',
-    '居家服務': '您是一位值得信賴的居家服務管家，回話令人安心，善於引導客人提供報價所需資訊。',
+    '健身運動': '您是一位活力且專業的健身顧問，熟悉會籍與課程，用語積極正向，鼓勵客人行動。',
+    '居家服務': '您是一位值的信賴的居家服務管家，回話令人安心，善於引導客人提供報價所需資訊。',
     '汽車服務': '您是一位專業有效率的汽車保修廠長/顧問，熟悉車輛狀況，回話具備專業感且令人安心。',
     '婚慶攝影': '您是一位極具美感與耐心的婚慶攝影顧問，善於傾聽新人需求並提供客製化建議。',
     '3C維修': '您是一位邏輯清晰的 3C 專業維修技師，善於引導客人描述故障狀況並提供初步排除建議。',
@@ -158,7 +161,20 @@ interface BrandDNATabProps {
 
 export default function BrandDNATab({ config, setConfig, planLevel }: BrandDNATabProps) {
     const [isGenerating, setIsGenerating] = useState<string | boolean>(false);
+    const [isIndustryDropdownOpen, setIsIndustryDropdownOpen] = useState(false);
+    const dropdownRef = React.useRef<HTMLDivElement>(null);
     const [locks, setLocks] = useState<Record<string, boolean>>(config?.brand_dna?.locks || {});
+
+    // Close dropdown on click outside
+    React.useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsIndustryDropdownOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     const update = (field: string, value: string) => {
         setConfig((c: any) => ({ ...c, brand_dna: { ...c.brand_dna, [field]: value } }));
@@ -236,154 +252,133 @@ export default function BrandDNATab({ config, setConfig, planLevel }: BrandDNATa
     };
 
     return (
-        <div className="space-y-5">
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             
-            {/* ── 即時動態記憶 (Moved to top with light green dynamic style) ── */}
-            <motion.div 
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="p-6 rounded-[28px] bg-emerald-50/60 border border-emerald-100 relative overflow-hidden group/dojo shadow-sm shadow-emerald-100/50"
-            >
-                {/* Feature Gating Overlay — 練功房解鎖門檻：Tier 2 ($499) 以上 */}
-                {planLevel < 2 && (
-                    <div className="absolute inset-0 z-10 bg-white/40 backdrop-blur-[3px] flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-500">
-                        <div className="w-12 h-12 rounded-full bg-white shadow-xl flex items-center justify-center mb-3 border border-amber-100">
-                            <Lock className="w-5 h-5 text-amber-500" />
-                        </div>
-                        <h5 className="text-[14px] font-black text-slate-800 mb-1">🔒 專屬功能：即時動態記憶</h5>
-                        <p className="text-[11px] text-slate-600 mb-4 font-medium leading-relaxed">
-                            想讓店長聽令於您的語音或即時指令嗎？<br/>
-                            升級至 **個人店長版** 以上即可解鎖解鎖「即時動態記憶」。
-                        </p>
-                        <button 
-                            onClick={() => window.dispatchEvent(new CustomEvent('switch-tab', { detail: 'billing' }))}
-                            className="px-8 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-600 text-white text-[13px] font-black shadow-lg shadow-emerald-500/20 active:scale-95 hover:brightness-110 transition-all border border-slate-100/15"
-                        >
-                            立即升級解鎖
-                        </button>
-                    </div>
-                )}
 
-                <div className="absolute top-0 right-0 p-3">
-                    <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${planLevel >= 2 ? 'bg-emerald-100 text-emerald-700 animate-pulse' : 'bg-slate-100 text-slate-400'}`}>
-                        <div className={`w-1.5 h-1.5 rounded-full ${planLevel >= 2 ? 'bg-emerald-500' : 'bg-slate-300'}`} />
-                        Dynamic Live
-                    </div>
-                </div>
 
-                <div className="flex items-center gap-4 mb-4">
-                    <div className="p-2.5 rounded-2xl bg-white shadow-sm border border-emerald-50">
-                        <MessageSquare className="w-5 h-5 text-emerald-600" />
-                    </div>
-                    <div>
-                        <h4 className="text-[15px] font-black text-emerald-900 leading-tight">即時動態記憶</h4>
-                        <p className="text-[10px] text-emerald-600/70 font-bold tracking-tight">AI 的短期記憶區，會優先於所有設定生效。</p>
-                    </div>
-                </div>
-
-                <div className="space-y-3">
-                    <Textarea 
-                        label="" 
-                        placeholder="例：今日 A 套餐已售罄、目前店內繁忙需等候 20 分鐘..." 
-                        value={config.dynamic_context || ''} 
-                        onChange={v => setConfig((c: any) => ({ ...c, dynamic_context: v }))} 
-                        rows={2} 
-                    />
-                    
-                    <div className="text-[10px] text-emerald-600/50 font-bold flex items-center justify-between px-1">
-                        <span className="flex items-center gap-1.5"><BrainCircuit className="w-3.5 h-3.5" /> 最後更新：{config.last_dojo_update ? new Date(config.last_dojo_update).toLocaleString() : '尚無更新紀錄'}</span>
-                        <span className="bg-emerald-100/50 px-2 py-0.5 rounded-md">指令：@店長聽令</span>
-                    </div>
-                </div>
-            </motion.div>
-
-            {/* ── AI Auto-Generation Action Bar (Moved below Dojo) ── */}
-            <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white border border-slate-200 rounded-[24px] p-5 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4"
-            >
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center border border-slate-100">
-                        <Sparkles className="w-5 h-5 text-slate-400" />
-                    </div>
-                    <div>
-                        <p className="text-[14px] font-black text-slate-800 leading-none">AI 智庫自動生成 (僅本頁欄位)</p>
-                        <p className="text-[10px] text-slate-500 mt-1">根據品牌名稱與行業，自動填寫所有空缺內容</p>
-                    </div>
-                </div>
-
-                <button
-                    onClick={() => handleAIGenerate()}
-                    disabled={!!isGenerating}
-                    className="w-full md:w-auto py-4 px-10 rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-600 text-white font-black text-[15px] shadow-lg shadow-emerald-500/25 transition-all flex items-center justify-center gap-3 disabled:opacity-50 hover:brightness-110 active:scale-95 border border-white/20"
-                >
-                    {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4" />}
-                    {isGenerating ? 'AI 正在構思中...' : '🪄 一鍵生成完整設定'}
-                </button>
-            </motion.div>
-
-            {/* ── 行業 ── */}
-            <Section Icon={Layers} title="行業類別" subtitle="選擇後 AI 語調自動對應" />
-            <div className="grid grid-cols-4 gap-3">
-                {INDUSTRIES.map(ind => (
-                    <motion.button key={ind} whileTap={{ scale: 0.98 }}
-                        onClick={() => handleIndustrySelect(ind)}
-                        className={`p-[35px] rounded-2xl font-black border-2 transition-all duration-300 text-center flex items-center justify-center ${
-                            config.brand_dna.industry === ind
-                                ? 'bg-gradient-to-br from-emerald-500 to-cyan-600 border-transparent text-white shadow-xl text-[17px]'
-                                : 'bg-white border-slate-200 text-slate-600 hover:border-slate-400 hover:bg-slate-50 text-[14px] shadow-sm'
-                        }`}
+            {/* ── 行業類別 (僅顯示控制項) ── */}
+            {/* ── 行業類別 (左對齊且放大 20%) ── */}
+            <div className="flex items-center justify-start gap-4 pt-8 pb-10">
+                {/* Industry Dropdown Selection */}
+                <div className="relative" ref={dropdownRef}>
+                    <button
+                        onClick={() => setIsIndustryDropdownOpen(!isIndustryDropdownOpen)}
+                        className={`h-[90px] px-10 rounded-[24px] bg-white/60 backdrop-blur-md  ring-1 ring-black/[0.03] shadow-md flex items-center gap-8 transition-all hover:bg-white/80 ${isIndustryDropdownOpen ? 'ring-emerald-500/20 shadow-emerald-500/10' : ''}`}
                     >
-                        {ind}
-                    </motion.button>
-                ))}
+                        <div className="text-left">
+                            <p className="text-[14px] font-black text-slate-400 uppercase tracking-widest leading-none mb-2">目前選擇行業</p>
+                            <p className="text-[22px] font-black text-slate-900 leading-none">
+                                {config.brand_dna.industry || '請選擇您的行業'}
+                            </p>
+                        </div>
+                        <ChevronDown className={`w-6 h-6 text-slate-400 transition-transform duration-300 ${isIndustryDropdownOpen ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    <AnimatePresence>
+                        {isIndustryDropdownOpen && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                className="absolute top-full mt-3 left-0 w-[350px] bg-white/90 backdrop-blur-2xl rounded-[24px]  shadow-2xl z-[100] py-4 overflow-hidden ring-1 ring-black/[0.05]"
+                            >
+                                <div className="px-6 mb-3 flex items-center justify-between">
+                                    <span className="text-[12px] font-black text-slate-400 uppercase tracking-widest">行業類別清單</span>
+                                    <span className="text-[12px] font-bold text-emerald-500 py-0.5 px-3 bg-emerald-50 rounded-full">{INDUSTRIES.length} 組預設</span>
+                                </div>
+                                <div className="max-h-[350px] overflow-y-auto custom-scrollbar px-3 space-y-1">
+                                    {INDUSTRIES.map((ind) => {
+                                        const isSelected = config.brand_dna.industry === ind;
+                                        return (
+                                            <button
+                                                key={ind}
+                                                onClick={() => {
+                                                    handleIndustrySelect(ind);
+                                                    setIsIndustryDropdownOpen(false);
+                                                }}
+                                                className={`w-full flex items-center justify-between p-4 rounded-[24px] transition-all ${
+                                                    isSelected 
+                                                        ? 'bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 border border-emerald-500/20' 
+                                                        : 'hover:bg-black/[0.03] border border-transparent'
+                                                }`}
+                                            >
+                                                <span className={`text-[17px] font-black ${isSelected ? 'text-emerald-700' : 'text-slate-800'}`}>
+                                                    {ind}
+                                                </span>
+                                                {isSelected && <Check className="w-5 h-5 text-emerald-500 shrink-0" />}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
+
+                {/* AI Assistant Button */}
+                <motion.div 
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="bg-white/60 backdrop-blur-md rounded-[24px] pl-10 pr-4 py-3  flex items-center gap-10 ring-1 ring-black/[0.03] shadow-md h-[90px]"
+                >
+                    <div className="hidden lg:block text-right">
+                        <p className="text-[20px] font-black text-slate-800 leading-tight">AI 智庫助手</p>
+                        <p className="text-[12px] text-slate-400 font-bold uppercase tracking-widest mt-1">Auto-Magic</p>
+                    </div>
+                    <button
+                        onClick={() => handleAIGenerate()}
+                        disabled={!!isGenerating}
+                        className="h-[62px] px-10 rounded-[24px] bg-gradient-to-r from-emerald-500 to-cyan-600 text-white font-black text-[18px] transition-all flex items-center justify-center gap-3 disabled:opacity-50 hover:from-emerald-600 hover:to-cyan-700 active:scale-95 group shadow-lg shadow-emerald-500/20"
+                    >
+                        {isGenerating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Sparkles className="w-6 h-6 text-emerald-400 group-hover:rotate-12 transition-transform" />}
+                        {isGenerating ? 'AI 繪製中...' : '一鍵注入 DNA'}
+                    </button>
+                </motion.div>
             </div>
 
-            {/* ── 品牌基本資料 ── */}
-            <Section Icon={Tag} title="品牌基本資料" subtitle="定義品牌身份" />
 
-            <div className="grid grid-cols-2 gap-3">
-                <Field label="品牌名稱 *" placeholder="商店或品牌名稱" value={config.brand_dna.name} onChange={v => update('name', v)} hint="顯示在 AI 回話中" />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Field label="品牌正式名稱 *" placeholder="您的品牌或店家名稱" value={config.brand_dna.name} onChange={v => update('name', v)} hint="這會成為 AI 介紹自己的名稱" />
                 <Field 
-                    label="品牌標語" placeholder="一句話描述品牌特色" value={config.brand_dna.tagline} onChange={v => update('tagline', v)} 
+                    label="品牌精神 SLOGAN" placeholder="例：連結靈魂的每一杯咖啡" value={config.brand_dna.tagline} onChange={v => update('tagline', v)} 
                     isLocked={locks.tagline} onToggleLock={() => handleToggleLock('tagline')}
                     onGenerate={() => handleAIGenerate('tagline')} isGenerating={isGenerating === 'tagline'}
                 />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Field 
-                    label="目標客群" placeholder="例：25–40 歲家庭主婦" value={config.brand_dna.target_audience} onChange={v => update('target_audience', v)} hint="幫助 AI 調整溝通方式" 
+                    label="主要的目標客群" placeholder="例：對生活品質有要求的粉領族" value={config.brand_dna.target_audience} onChange={v => update('target_audience', v)} hint="AI 將以此調整說話的成熟度" 
                     isLocked={locks.target_audience} onToggleLock={() => handleToggleLock('target_audience')}
                     onGenerate={() => handleAIGenerate('target_audience')} isGenerating={isGenerating === 'target_audience'}
                 />
                 <Field 
-                    label="禁止話題" placeholder="例：競品、政治（逗號分隔）" value={config.brand_dna.forbidden_topics} onChange={v => update('forbidden_topics', v)} 
+                    label="對話中絕對禁止的話題" placeholder="例：競品比較、政治敏感內容" value={config.brand_dna.forbidden_topics} onChange={v => update('forbidden_topics', v)} 
                     isLocked={locks.forbidden_topics} onToggleLock={() => handleToggleLock('forbidden_topics')}
                     onGenerate={() => handleAIGenerate('forbidden_topics')} isGenerating={isGenerating === 'forbidden_topics'}
                 />
             </div>
 
             <Textarea 
-                label="品牌介紹" placeholder="品牌的故事、理念與背景..." value={config.brand_dna.introduction} onChange={v => update('introduction', v)} rows={3} 
+                label="品牌完整故事與背景理念" placeholder="描述品牌的初衷、堅持與背後的故事..." value={config.brand_dna.introduction} onChange={v => update('introduction', v)} rows={4} 
                 isLocked={locks.introduction} onToggleLock={() => handleToggleLock('introduction')}
                 onGenerate={() => handleAIGenerate('introduction')} isGenerating={isGenerating === 'introduction'}
             />
             <Textarea 
-                label="主要服務內容" placeholder="核心產品或服務，每行一項..." value={config.brand_dna.services} onChange={v => update('services', v)} rows={3} 
+                label="核心服務與產品內容清單" placeholder="描述您提供的具體服務，每行一項優點..." value={config.brand_dna.services} onChange={v => update('services', v)} rows={4} 
                 isLocked={locks.services} onToggleLock={() => handleToggleLock('services')}
                 onGenerate={() => handleAIGenerate('services')} isGenerating={isGenerating === 'services'}
             />
 
             {/* ── AI 語調 ── */}
-            <Section Icon={BrainCircuit} title="AI 語調個性" subtitle="選擇語調，可自由微調提示詞" />
+            <Section Icon={BrainCircuit} title="擬人化語調參數" subtitle="Tone & Persona" />
 
-            <div className="flex flex-wrap gap-2">
+            <div className="grid grid-cols-3 lg:grid-cols-5 gap-3">
                 {Object.keys(TONE_PROMPTS).map(tone => (
                     <motion.button key={tone} whileTap={{ scale: 0.98 }}
                         onClick={() => setConfig((c: any) => ({ ...c, brand_dna: { ...c.brand_dna, tone, tone_prompt: TONE_PROMPTS[tone] } }))}
-                        className={`px-6 py-[35px] rounded-xl font-black border transition-all duration-300 ${
+                        className={`px-6 py-[35px] rounded-[24px] font-black border transition-all duration-300 ${
                             config.brand_dna.tone === tone
                                 ? 'bg-gradient-to-br from-emerald-500 to-cyan-600 border-transparent text-white shadow-lg text-[16.5px]'
                                 : 'bg-white border-slate-100 text-slate-600 hover:border-slate-300 text-[13px]'

@@ -76,10 +76,10 @@ export default function BroadcastModal({ isOpen, onClose, botId, availableTags, 
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-            <div className="bg-white rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+            <div className="bg-white rounded-[24px] w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
                 <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-teal-100 text-teal-600 rounded-xl flex items-center justify-center">
+                        <div className="w-10 h-10 bg-teal-100 text-teal-600 rounded-[24px] flex items-center justify-center">
                             <Send className="w-5 h-5" />
                         </div>
                         <div>
@@ -87,7 +87,7 @@ export default function BroadcastModal({ isOpen, onClose, botId, availableTags, 
                             <p className="text-xs text-slate-500">精準投遞給目標受眾，大幅提升轉換率</p>
                         </div>
                     </div>
-                    <button onClick={onClose} className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-200 rounded-lg transition">
+                    <button onClick={onClose} title="關閉" aria-label="關閉對話框" className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-200 rounded-[24px] transition">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
@@ -107,7 +107,7 @@ export default function BroadcastModal({ isOpen, onClose, botId, availableTags, 
                                     <button
                                         key={tag}
                                         onClick={() => toggleTag(tag)}
-                                        className={`px-3 py-1.5 rounded-lg text-sm font-bold border transition-colors ${selectedTags.includes(tag) ? 'bg-blue-50 border-blue-500 text-blue-700 shadow-sm' : 'bg-white border-slate-200 text-slate-500 hover:border-blue-300'}`}
+                                        className={`px-3 py-1.5 rounded-[24px] text-sm font-bold border transition-colors ${selectedTags.includes(tag) ? 'bg-blue-50 border-blue-500 text-blue-700 shadow-sm' : 'bg-white border-slate-200 text-slate-500 hover:border-blue-300'}`}
                                     >
                                         #{tag}
                                     </button>
@@ -124,14 +124,14 @@ export default function BroadcastModal({ isOpen, onClose, botId, availableTags, 
                             <h3 className="font-bold text-sm text-slate-700">步驟 2：告訴 AI 推播的核心目的</h3>
                         </div>
                         <textarea
-                            className="w-full border border-slate-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none"
+                            className="w-full border border-slate-200 rounded-[24px] p-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none"
                             rows={3}
                             placeholder="例如：母親節檔期全面 8 折，針對這群客人推薦精華液套組，語氣要溫柔促銷..."
                             value={campaignContext}
                             onChange={(e) => setCampaignContext(e.target.value)}
                         />
                         <button 
-                            className="mt-2 text-sm bg-slate-900 text-white font-bold py-2 px-4 rounded-xl flex items-center justify-center gap-2 w-full hover:bg-slate-800 transition disabled:opacity-50"
+                            className="mt-2 text-[15px] bg-gradient-to-r from-emerald-500 to-cyan-600 text-white font-black py-4 px-4 rounded-[24px] flex items-center justify-center gap-2 w-full transition shadow-lg shadow-emerald-500/20 active:scale-95 disabled:opacity-50"
                             onClick={handleGenerateMessage}
                             disabled={isGenerating || !campaignContext}
                         >
@@ -140,10 +140,10 @@ export default function BroadcastModal({ isOpen, onClose, botId, availableTags, 
                     </div>
 
                     {/* Step 3: Review Message */}
-                    <div className="p-4 bg-yellow-50/50 border border-yellow-100 rounded-2xl">
+                    <div className="p-4 bg-yellow-50/50 border border-yellow-100 rounded-[24px]">
                         <h3 className="font-bold text-sm text-slate-700 mb-2">預覽即將發送的文字</h3>
                         <textarea
-                            className="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 resize-none"
+                            className="w-full bg-white border border-slate-200 rounded-[24px] p-3 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 resize-none"
                             rows={5}
                             placeholder="AI 構思的文案會顯示在這裡，您也可以手動修改..."
                             value={generatedMessage}
@@ -159,7 +159,7 @@ export default function BroadcastModal({ isOpen, onClose, botId, availableTags, 
                     <button 
                         onClick={handleSend}
                         disabled={isSending || !generatedMessage}
-                        className="px-6 py-2 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl shadow-md transition disabled:opacity-50 flex items-center gap-2"
+                        className="px-6 py-2 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-[24px] shadow-md transition disabled:opacity-50 flex items-center gap-2"
                     >
                         {isSending ? '發送中...' : '確認無誤，立刻發送'}
                     </button>

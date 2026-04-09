@@ -15,26 +15,33 @@ interface ConnectLayoutProps {
 
 export default function ConnectLayout({ onBack, title, subtitle, children, rightContent, hideHeaderBack }: ConnectLayoutProps) {
     return (
-        <main className="min-h-screen text-slate-800 font-sans pb-2 bg-[#F8FAFC]">
-            <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl shadow-sm border-b border-slate-200/60">
-                <div className="px-6 md:px-[100px] py-4 flex items-center justify-between max-w-[1600px] mx-auto w-full">
+        <main className="min-h-screen text-slate-800 font-sans relative overflow-hidden bg-[#E2E8F0]">
+            {/* 🎨 Background Accents for Depth */}
+            <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-emerald-200/30 rounded-full blur-[120px] pointer-events-none" />
+            <div className="absolute bottom-[-10%] right-[-10%] w-[35%] h-[35%] bg-cyan-200/30 rounded-full blur-[100px] pointer-events-none" />
+
+            <header className="sticky top-0 z-50 bg-white/40 backdrop-blur-3xl shadow-[0_4px_30px_rgba(0,0,0,0.03)] border-b border-white/40 ring-1 ring-black/5">
+                <div className="px-6 md:px-[75px] py-6 flex items-center justify-between max-w-[1900px] mx-auto w-full">
                     {!hideHeaderBack ? (
                         <button 
                             onClick={onBack} 
-                            className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-all font-bold text-sm bg-slate-100/50 hover:bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200"
+                            className="group flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-all font-black text-[13px] bg-white/60 hover:bg-white px-5 py-2.5 rounded-2xl border border-white shadow-sm ring-1 ring-black/[0.03]"
                         >
-                            <ArrowLeft className="w-4 h-4" />
-                            返回
+                            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                            返回智庫
                         </button>
                     ) : (
                         <div className="w-20 md:block hidden" />
                     )}
                     
-                    <div className="flex items-center gap-3 text-slate-800">
-                        <div className="w-[32px] h-[32px] relative">
+                    <div className="flex items-center gap-4 text-slate-900">
+                        <div className="w-[40px] h-[40px] relative drop-shadow-sm">
                             <Image src="/Lai Logo_4.svg" alt="Logo" fill />
                         </div>
-                        <h1 className="font-black text-lg tracking-tight">{title}</h1>
+                        <div className="flex flex-col">
+                            <h1 className="font-black text-[22px] tracking-tight leading-none">{title}</h1>
+                            {subtitle && <p className="text-[11px] text-slate-400 font-black tracking-widest uppercase mt-1.5 opacity-80">{subtitle}</p>}
+                        </div>
                     </div>
                     
                     <div className="flex items-center gap-6">
@@ -44,7 +51,7 @@ export default function ConnectLayout({ onBack, title, subtitle, children, right
                 </div>
             </header>
 
-            <div className="px-6 md:px-[100px] py-4 max-w-[1400px] mx-auto min-h-[calc(100vh-100px)]">
+            <div className="px-6 md:px-[75px] py-10 max-w-[1700px] mx-auto min-h-[calc(100vh-120px)] relative z-10 transition-all duration-700">
                 {children}
             </div>
         </main>

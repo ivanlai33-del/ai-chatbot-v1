@@ -36,16 +36,19 @@ export default function AudienceTab({ botId, planLevel }: AudienceTabProps) {
 
     if (planLevel < 2) {
         return (
-            <div className="bg-white rounded-2xl p-8 border border-slate-200 text-center space-y-4">
-                <div className="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto">
-                    <Users className="w-8 h-8" />
+            <div className="py-20 flex flex-col items-center justify-center text-center px-10  rounded-[24px]  ">
+                <div className="w-24 h-24 rounded-[24px] bg-white flex items-center justify-center mb-8 shadow-2xl border border-emerald-50">
+                    <Users className="w-10 h-10 text-emerald-500" strokeWidth={2.5} />
                 </div>
-                <h3 className="text-xl font-bold text-slate-800">CRM 分眾行銷功能</h3>
-                <p className="text-slate-500 text-sm max-w-sm mx-auto">
-                    本功能包含 AI 自動貼標與分眾推播，僅限單店主力 (含) 以上方案使用。升級方案以解鎖完整的客群分析工具。
+                <h3 className="text-[32px] font-black text-slate-900 mb-4">CRM 分眾行銷尚未開通</h3>
+                <p className="text-[18px] text-slate-600 max-w-lg mb-10 font-bold leading-relaxed">
+                    本功能包含 <span className="text-emerald-600">AI 自動貼標與分眾推播</span>，僅限單店主力方案以上使用。升級以解鎖完整的客群分析工具。
                 </p>
-                <button className="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full text-sm font-bold shadow-md hover:shadow-lg transition">
-                    了解升級方案
+                <button 
+                    onClick={() => window.location.href = '/dashboard/upgrade'}
+                    className="px-12 py-5 bg-gradient-to-r from-emerald-500 to-cyan-600 text-white rounded-[24px] text-[17px] font-black shadow-xl shadow-emerald-500/20 hover:scale-105 transition-all active:scale-95"
+                >
+                    了解及解鎖方案 →
                 </button>
             </div>
         );
@@ -53,32 +56,32 @@ export default function AudienceTab({ botId, planLevel }: AudienceTabProps) {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h3 className="text-lg font-bold text-slate-800">AI 顧客名單與分眾標籤</h3>
-                    <p className="text-xs text-slate-400 mt-1">系統自動分析對話意圖並分配標籤，讓推播更精準。</p>
+            <div className="flex items-center justify-between mb-10 pt-4 px-2">
+
+
+                <div className="flex items-center gap-4">
+                    <button 
+                        onClick={() => setIsModalOpen(true)}
+                        className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-emerald-500 to-cyan-600 text-white rounded-[24px] text-[15px] font-black shadow-xl shadow-emerald-500/20 transition-all active:scale-95 hover:from-emerald-600 hover:to-cyan-700"
+                    >
+                        <Send className="w-5 h-5 text-emerald-400" />
+                        多重篩選推播
+                    </button>
                 </div>
-                <button 
-                    onClick={() => setIsModalOpen(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg text-sm font-bold shadow hover:bg-teal-700 transition"
-                >
-                    <Send className="w-4 h-4" />
-                    多重篩選推播
-                </button>
             </div>
 
             {loading ? (
                 <div className="p-10 text-center text-slate-400 text-sm">載入名單中...</div>
             ) : (
-                <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                <div className=" rounded-[24px]  overflow-hidden ">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-sm whitespace-nowrap">
-                            <thead className="bg-slate-50 border-b border-slate-100 text-slate-500">
+                            <thead className="bg-white/60 border-b  text-slate-500">
                                 <tr>
-                                    <th className="px-6 py-4 font-bold">顧客資訊</th>
-                                    <th className="px-6 py-4 font-bold">AI 標籤</th>
-                                    <th className="px-6 py-4 font-bold w-1/3">自動總結摘要</th>
-                                    <th className="px-6 py-4 font-bold text-right">上次互動</th>
+                                    <th className="px-8 py-6 text-[15px] font-black uppercase tracking-widest">顧客資訊</th>
+                                    <th className="px-8 py-6 text-[15px] font-black uppercase tracking-widest">AI 標籤</th>
+                                    <th className="px-8 py-6 text-[15px] font-black uppercase tracking-widest w-1/3">自動總結摘要</th>
+                                    <th className="px-8 py-6 text-[15px] font-black uppercase tracking-widest text-right">上次互動</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
@@ -108,7 +111,7 @@ export default function AudienceTab({ botId, planLevel }: AudienceTabProps) {
                                             <td className="px-6 py-4">
                                                 <div className="flex gap-1.5 flex-wrap">
                                                     {c.tags?.map((t: string) => (
-                                                        <span key={t} className="px-2.5 py-1 bg-blue-50 text-blue-600 border border-blue-100 rounded-md text-[11px] font-bold">
+                                                        <span key={t} className="px-3 py-1 bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 rounded-[24px] text-[12px] font-black">
                                                             #{t}
                                                         </span>
                                                     ))}

@@ -76,57 +76,56 @@ export default function OfferingsTab({ config, setConfig }: OfferingsTabProps) {
                 return (
                     <motion.div
                         key={i}
-                        initial={{ opacity: 0, y: 6 }}
+                        initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="rounded-2xl border border-slate-200 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-hidden"
+                        className="rounded-[24px]    overflow-hidden group/card transition-all hover:bg-white/80"
                     >
                         {/* ── Card header (always visible) ── */}
                         <div
-                            className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-slate-50 transition-colors select-none"
+                            className="flex items-center gap-6 px-10 py-6 cursor-pointer hover:bg-white/40 transition-colors select-none"
                             onClick={() => toggle(i)}
                         >
                             {/* Collapse indicator */}
-                            <div className="shrink-0 w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400">
+                            <div className="shrink-0 w-8 h-8 rounded-[24px] bg-white shadow-sm flex items-center justify-center text-slate-400 border border-slate-50">
                                 {open
-                                    ? <ChevronDown className="w-3.5 h-3.5" />
-                                    : <ChevronRight className="w-3.5 h-3.5" />
+                                    ? <ChevronDown className="w-4 h-4" />
+                                    : <ChevronRight className="w-4 h-4" />
                                 }
                             </div>
 
-                            {/* Number badge */}
-                            <span className="shrink-0 w-6 h-6 rounded-lg bg-slate-800 flex items-center justify-center text-white text-[11px] font-black">
-                                {i + 1}
-                            </span>
-
                             {/* Name preview */}
-                            <span className={`flex-1 text-[13px] font-bold truncate ${hasName ? 'text-slate-800' : 'text-slate-400'}`}>
-                                {item.name || '（新商品 / 服務）'}
-                            </span>
+                            <div className="flex-1 flex flex-col min-w-0">
+                                <span className={`text-[18px] font-black tracking-tight truncate ${hasName ? 'text-slate-900' : 'text-slate-400'}`}>
+                                    {item.name || '新增商品 / 服務項目'}
+                                </span>
+                                {item.category && (
+                                    <span className="text-[12px] text-slate-400 font-bold uppercase tracking-widest mt-1">{item.category}</span>
+                                )}
+                            </div>
 
                             {/* Price preview */}
                             {item.price && !open && (
-                                <span className="text-[12px] text-slate-400 font-semibold shrink-0">
-                                    NT${item.price}
-                                </span>
+                                <div className="hidden sm:flex flex-col items-end mr-6">
+                                    <span className="text-[11px] text-slate-400 font-black uppercase tracking-widest mb-1">PRICE</span>
+                                    <span className="text-[17px] text-slate-900 font-black">NT$ {item.price}</span>
+                                </div>
                             )}
 
                             {/* Actions */}
-                            <div className="flex items-center gap-1 shrink-0" onClick={e => e.stopPropagation()}>
+                            <div className="flex items-center gap-2 shrink-0" onClick={e => e.stopPropagation()}>
                                 <button
                                     onClick={() => duplicate(i)}
-                                    title="複製此項目"
-                                    className="flex items-center gap-1 text-[11px] text-slate-400 hover:text-sky-600 font-bold transition-colors hover:bg-sky-50 px-2 py-1 rounded-lg"
+                                    className="p-3 rounded-[24px] bg-white border border-slate-100 text-slate-400 hover:text-indigo-600 hover:border-indigo-100 transition-all active:scale-90 shadow-sm"
+                                    title="複製項目"
                                 >
-                                    <Copy className="w-3.5 h-3.5" />
-                                    <span className="hidden sm:inline">複製</span>
+                                    <Copy className="w-4 h-4" />
                                 </button>
                                 <button
                                     onClick={() => remove(i)}
-                                    title="刪除此項目"
-                                    className="flex items-center gap-1 text-[11px] text-slate-400 hover:text-red-500 font-bold transition-colors hover:bg-red-50 px-2 py-1 rounded-lg"
+                                    className="p-3 rounded-[24px] bg-white border border-slate-100 text-slate-400 hover:text-red-500 hover:border-red-100 transition-all active:scale-90 shadow-sm"
+                                    title="刪除項目"
                                 >
-                                    <Trash2 className="w-3.5 h-3.5" />
-                                    <span className="hidden sm:inline">刪除</span>
+                                    <Trash2 className="w-4 h-4" />
                                 </button>
                             </div>
                         </div>
@@ -184,7 +183,7 @@ export default function OfferingsTab({ config, setConfig }: OfferingsTabProps) {
                                         </div>
 
                                         {/* ── AI CONTEXT ── */}
-                                        <div className="p-3 rounded-xl bg-slate-50 border border-dashed border-slate-200">
+                                        <div className="p-3 rounded-[24px] bg-slate-50 border border-dashed border-slate-200">
                                             <TextareaField
                                                 label="AI 備註（僅供 AI 學習，不對外顯示）"
                                                 placeholder="額外補充資訊，讓 AI 更了解此商品..."
@@ -203,16 +202,16 @@ export default function OfferingsTab({ config, setConfig }: OfferingsTabProps) {
 
             {/* ── Add button ── */}
             <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={{ scale: 1.01, y: -2 }}
+                whileTap={{ scale: 0.99 }}
                 onClick={() => {
                     setConfig((c: any) => ({ ...c, offerings: [...c.offerings, { ...EMPTY_OFFERING }] }));
                     // Auto-expand newly added item
                     setTimeout(() => setExpanded(p => ({ ...p, [config.offerings.length]: true })), 50);
                 }}
-                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl border-2 border-dashed border-slate-300 text-[13px] font-black text-slate-500 hover:bg-slate-50 hover:border-slate-400 transition-all"
+                className="w-full flex items-center justify-center gap-4 py-8 rounded-[24px]  bg-gradient-to-r from-emerald-500 to-cyan-600 text-[18px] font-black text-white transition-all shadow-xl shadow-emerald-500/20 active:scale-95"
             >
-                <Plus className="w-4 h-4" /> 新增商品 / 服務
+                <Plus className="w-5 h-5" /> 新增一個商品或服務
             </motion.button>
         </div>
     );

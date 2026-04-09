@@ -184,7 +184,12 @@ export default function UnifiedBillingView() {
     const allAvailablePlans = AVAILABLE_PLAN_IDS.map(id => PRICING_PLANS[id]);
 
     return (
-        <div className="max-w-5xl mx-auto space-y-10 py-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="max-w-5xl mx-auto space-y-10 py-6 animate-in fade-in slide-in-from-bottom-4 duration-700 relative">
+            {/* 🎨 Background Decoration */}
+            <div className="absolute -top-10 -left-20 w-[400px] h-[400px] opacity-[0.03] pointer-events-none select-none z-0">
+                <img src="/b_02.svg" alt="Decoration" className="w-full h-full object-contain" />
+            </div>
+
             {/* 💎 Current Subscription Status Card */}
             <section>
                 <h2 className="text-sm font-black text-slate-400 uppercase tracking-[0.3em] mb-4 ml-2">目前的收費狀態</h2>

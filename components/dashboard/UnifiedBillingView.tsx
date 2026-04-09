@@ -805,6 +805,3 @@ export default function UnifiedBillingView() {
         </div>
     );
 }
-        </div>
-    );
-}

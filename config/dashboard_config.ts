@@ -26,7 +26,7 @@ export const PLAN_CONFIG = {
 
 export const DASHBOARD_TABS = [
     { id: 'brand', label: '品牌 DNA', emoji: '✨' },
-    { id: 'dojo', label: 'AI 練功房', emoji: '🥋' },
+    { id: 'dojo', label: '即時下指令', emoji: '📢' },
     { id: 'offerings', label: '商品/服務', emoji: '🛍️' },
     { id: 'faq', label: '常見問題', emoji: '💬' },
     { id: 'logic', label: '引導規則', emoji: '🧠' },

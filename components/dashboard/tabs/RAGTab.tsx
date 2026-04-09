@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Lock, Database, FileText, Globe, CheckCircle2 } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Lock, Database, FileText, CheckCircle2, RefreshCw, X, Upload, AlertCircle, Info } from 'lucide-react';
 
 interface RAGTabProps {
     planLevel: number;
@@ -10,197 +10,331 @@ interface RAGTabProps {
     selectedBotId: string | null;
 }
 
+const MAX_FILES = 5;
+const MAX_SIZE_MB = 5;
+const ALLOWED_EXTENSIONS = ['pdf', 'txt', 'docx'];
+
+function formatBytes(bytes: number) {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 export default function RAGTab({ planLevel, bots, selectedBotId }: RAGTabProps) {
+    const [documents, setDocuments] = useState<any[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [uploading, setUploading] = useState(false);
+    const [uploadError, setUploadError] = useState('');
+    const [userId, setUserId] = useState('');
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const pollRef = useRef<NodeJS.Timeout | null>(null);
+
+    // 取得 userId from cookie
+    useEffect(() => {
+        const getCookie = (name: string) => {
+            const match = document.cookie.split('; ').find(r => r.startsWith(name + '='));
+            return match ? decodeURIComponent(match.split('=')[1]) : '';
+        };
+        setUserId(getCookie('line_user_id') || localStorage.getItem('line_user_id') || '');
+    }, []);
+
+    useEffect(() => {
+        if (selectedBotId && planLevel >= 2) fetchDocuments();
+        return () => { if (pollRef.current) clearInterval(pollRef.current); };
+    }, [selectedBotId, planLevel]);
+
+    const fetchDocuments = async () => {
+        if (!selectedBotId) return;
+        setLoading(true);
+        try {
+            const res = await fetch(`/api/rag/upload?botId=${selectedBotId}`);
+            const data = await res.json();
+            if (data.documents) setDocuments(data.documents);
+        } catch {}
+        setLoading(false);
+    };
+
+    // 輪詢等待 processing 狀態完成
+    const startPolling = () => {
+        if (pollRef.current) clearInterval(pollRef.current);
+        pollRef.current = setInterval(async () => {
+            const res = await fetch(`/api/rag/upload?botId=${selectedBotId}`);
+            const data = await res.json();
+            if (data.documents) {
+                setDocuments(data.documents);
+                const stillProcessing = data.documents.some((d: any) => d.status === 'processing');
+                if (!stillProcessing) {
+                    clearInterval(pollRef.current!);
+                    pollRef.current = null;
+                }
+            }
+        }, 3000);
+    };
+
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file || !selectedBotId || !userId) return;
+
+        setUploadError('');
+
+        // 前端驗證
+        const ext = file.name.split('.').pop()?.toLowerCase() || '';
+        if (!ALLOWED_EXTENSIONS.includes(ext)) {
+            setUploadError(`僅支援 ${ALLOWED_EXTENSIONS.join('、')} 格式`);
+            return;
+        }
+        if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+            setUploadError(`檔案大小超過 ${MAX_SIZE_MB}MB 上限`);
+            return;
+        }
+        if (documents.filter(d => d.status !== 'error').length >= MAX_FILES) {
+            setUploadError(`每個店長最多 ${MAX_FILES} 份文件，請先刪除舊文件`);
+            return;
+        }
+
+        setUploading(true);
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('botId', selectedBotId);
+        formData.append('userId', userId);
+
+        try {
+            const res = await fetch('/api/rag/upload', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (!res.ok) {
+                setUploadError(data.error || '上傳失敗，請稍後再試');
+            } else {
+                await fetchDocuments();
+                startPolling(); // 開始輪詢，等待 AI 學習完成
+            }
+        } catch {
+            setUploadError('網路錯誤，請稍後再試');
+        }
+        setUploading(false);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+    };
+
+    const handleDelete = async (docId: string) => {
+        if (!confirm('確定要刪除此文件？刪除後 AI 將無法再使用其中的知識。')) return;
+        try {
+            await fetch(`/api/rag/upload?docId=${docId}`, { method: 'DELETE' });
+            setDocuments(prev => prev.filter(d => d.id !== docId));
+        } catch {
+            alert('刪除失敗，請稍後再試');
+        }
+    };
+
+    // ── 未升級封鎖畫面 ──────────────────────────────
     if (planLevel < 2) {
         return (
-            <div className="py-16 flex flex-col items-center justify-center text-center px-10 bg-white/10 backdrop-blur-md rounded-[24px] /20 shadow-sm">
-                <div className="w-24 h-24 rounded-[24px] bg-white/60 flex items-center justify-center mb-8 shadow-2xl /40">
+            <div className="py-16 flex flex-col items-center justify-center text-center px-10 bg-white/10 backdrop-blur-md rounded-[24px] shadow-sm">
+                <div className="w-24 h-24 rounded-[24px] bg-white/60 flex items-center justify-center mb-8 shadow-2xl">
                     <Lock className="w-10 h-10 text-emerald-500" strokeWidth={2.5} />
                 </div>
-                <h3 className="text-[32px] font-black text-slate-900 mb-4">PDF 深度學習 (RAG) 尚未開通</h3>
-                <p className="text-[18px] text-slate-600 max-w-lg mb-10 font-bold leading-relaxed">
-                    此功能目前僅限於 <span className="text-emerald-600">單店主力 ($499) 方案以上</span> 用戶使用，升級後可讓 AI 自動讀懂您的型錄與說明書。
+                <h3 className="text-[28px] font-black text-slate-900 mb-4">PDF / 網頁學習尚未開通</h3>
+                <p className="text-[16px] text-slate-600 max-w-lg mb-8 font-bold leading-relaxed">
+                    此功能限 <span className="text-emerald-600">旗艦版</span> 以上使用，升級後可讓 AI 自動讀懂您的型錄與說明書，精準回答客人問題。
                 </p>
-
-                {/* 功能預覽 */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mb-8 text-left">
+                <div className="grid grid-cols-2 gap-4 max-w-sm mb-8 text-left">
                     {[
-                        { icon: FileText, title: '上傳 PDF 型錄', desc: '商品型錄、服務說明書、價格表' },
-                        { icon: Database, title: 'AI 自動學習', desc: '讀取完成，問什麼都能精準回答' },
+                        { icon: FileText, title: '上傳 PDF 型錄', desc: '商品型錄、服務說明、價格表' },
+                        { icon: Database, title: 'AI 語意學習', desc: '向量搜尋，問什麼都能精準回答' },
                     ].map(f => (
-                        <div key={f.title} className="p-4 rounded-[24px] bg-slate-50 border border-slate-100 flex items-start gap-3">
-                            <f.icon className="w-6 h-6 text-emerald-500 shrink-0" />
+                        <div key={f.title} className="p-4 rounded-[20px] bg-white border border-slate-100 flex items-start gap-3">
+                            <f.icon className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
                             <div>
-                                <p className="text-xs font-black text-slate-600">{f.title}</p>
+                                <p className="text-[12px] font-black text-slate-700">{f.title}</p>
                                 <p className="text-[11px] text-slate-400 mt-0.5 leading-tight">{f.desc}</p>
                             </div>
                         </div>
                     ))}
                 </div>
-
-                <motion.button 
-                    onClick={() => window.location.href = '/dashboard/upgrade'} 
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    className="px-8 py-3 rounded-[24px] bg-gradient-to-r from-emerald-500 to-cyan-600 text-white font-black text-sm shadow-xl shadow-emerald-500/20 transition-all hover:from-emerald-600 hover:to-cyan-700 active:scale-95"
+                <button
+                    onClick={() => window.dispatchEvent(new CustomEvent('switch-tab', { detail: 'billing' }))}
+                    className="px-10 py-4 rounded-[16px] bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-black text-[15px] shadow-lg hover:scale-105 active:scale-95 transition-all"
                 >
-                    了解升級方案 →
-                </motion.button>
+                    立即升級解鎖 →
+                </button>
             </div>
         );
     }
 
-    const [documents, setDocuments] = React.useState<{id: string, name: string, size: string, status: 'ready' | 'loading' | 'error', type: string}[]>([
-        { id: '1', name: '品牌經營核心策略.pdf', size: '1.2 MB', status: 'ready', type: 'pdf' },
-        { id: '2', name: '2026年夏季商品價目表.pdf', size: '850 KB', status: 'ready', type: 'pdf' },
-    ]);
-
-    const MAX_FILES = 5;
-    const MAX_SIZE_MB = 5;
-
-    const currentBot = bots.find(b => b.id === selectedBotId);
-    const isLimitReached = documents.length >= MAX_FILES;
-
-    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        if (isLimitReached) {
-            alert(`已達上傳上限 (${MAX_FILES} 份文件)，請先移除舊文件。`);
-            return;
-        }
-
-        if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-            alert(`檔案太大 (上限 ${MAX_SIZE_MB}MB)！請提供更精簡的 PDF 版本。`);
-            return;
-        }
-
-        // Mock upload behavior
-        const newDoc = {
-            id: Date.now().toString(),
-            name: file.name,
-            size: (file.size / 1024 / 1024).toFixed(1) + ' MB',
-            status: 'loading' as const,
-            type: file.name.split('.').pop() || 'file'
-        };
-        
-        setDocuments(prev => [...prev, newDoc]);
-        
-        // Simulate finished processing
-        setTimeout(() => {
-            setDocuments(prev => prev.map(d => d.id === newDoc.id ? { ...d, status: 'ready' } : d));
-        }, 3000);
-    };
-
-    const removeDoc = (id: string) => {
-        setDocuments(prev => prev.filter(d => d.id !== id));
-    };
+    const readyCount = documents.filter(d => d.status === 'ready').length;
+    const isLimitReached = documents.filter(d => d.status !== 'error').length >= MAX_FILES;
 
     return (
-        <div className="py-8 px-2">
-            <div className="flex items-center justify-between mb-10 pt-4">
+        <div className="space-y-6">
 
-
-                <div className="flex items-center gap-4 text-[13px] font-black bg-white/60 backdrop-blur-md p-5 rounded-[24px]  shadow-sm ring-1 ring-black/[0.03]">
-                    <span className="text-slate-400 uppercase tracking-widest">已使用席位:</span>
-                    <span className={isLimitReached ? "text-red-500" : "text-emerald-600"}>
-                        {documents.length} / {MAX_FILES} 份
-                    </span>
+            {/* 說明橫幅 */}
+            <div className="flex items-start gap-4 p-5 rounded-[20px] bg-blue-50 border border-blue-200">
+                <Info className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
+                <div>
+                    <p className="text-[13px] font-black text-blue-800 mb-1">📚 PDF 知識庫 — AI 向量語意學習</p>
+                    <p className="text-[12px] text-blue-700 leading-relaxed">
+                        上傳文件後，AI 會將內容切分成小段落並生成向量索引。當客人發問時，AI 會自動搜尋最相關的段落作為回答參考。
+                        支援 <span className="font-black">PDF、TXT、DOCX</span>，單檔上限 <span className="font-black">5MB</span>，最多 <span className="font-black">5 份</span>。
+                    </p>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-                {/* 📤 Upload Zone */}
-                <div className="lg:col-span-12 xl:col-span-5 space-y-6 text-left">
-                    <div className={cn(
-                        "relative p-12 rounded-[24px] border-2 border-dashed transition-all flex flex-col items-center justify-center text-center gap-8 group",
-                        isLimitReached 
-                            ? "bg-white/10 /20 opacity-60" 
-                            : "bg-white/60 border-emerald-500/20 backdrop-blur-md hover:border-emerald-500/40 hover:bg-white "
-                    )}>
-                        <div className="w-24 h-24 rounded-[24px] bg-white shadow-2xl flex items-center justify-center border border-emerald-50 transition-transform group-hover:scale-105">
-                            <FileText className={isLimitReached ? "text-slate-300 w-10 h-10" : "text-emerald-500 w-10 h-10"} />
-                        </div>
-                        <div>
-                            <p className="text-[24px] font-black text-slate-900">上傳 AI 學習文件</p>
-                            <p className="text-[14px] text-slate-400 font-bold mt-2 uppercase tracking-[0.1em]">僅支援 PDF (單一檔案上限 5MB)</p>
+            {/* 上傳錯誤提示 */}
+            <AnimatePresence>
+                {uploadError && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        className="flex items-center gap-3 p-4 rounded-[16px] bg-red-50 border border-red-200"
+                    >
+                        <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
+                        <p className="text-[13px] font-black text-red-700">{uploadError}</p>
+                        <button onClick={() => setUploadError('')} className="ml-auto text-red-400 hover:text-red-600">
+                            <X className="w-4 h-4" />
+                        </button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                {/* 上傳區 */}
+                <div className="lg:col-span-5">
+                    <label className={`relative flex flex-col items-center justify-center gap-6 p-10 rounded-[24px] border-2 border-dashed transition-all cursor-pointer group
+                        ${isLimitReached
+                            ? 'border-slate-200 bg-slate-50 opacity-60 cursor-not-allowed'
+                            : uploading
+                                ? 'border-cyan-400 bg-cyan-50 animate-pulse'
+                                : 'border-emerald-300 bg-white/60 hover:border-emerald-400 hover:bg-white hover:shadow-lg'
+                        }`}
+                    >
+                        <div className={`w-20 h-20 rounded-[20px] flex items-center justify-center shadow-md transition-transform group-hover:scale-105
+                            ${uploading ? 'bg-cyan-100' : 'bg-white'}`}
+                        >
+                            {uploading
+                                ? <RefreshCw className="w-9 h-9 text-cyan-500 animate-spin" />
+                                : <Upload className="w-9 h-9 text-emerald-500" />
+                            }
                         </div>
 
-                        {!isLimitReached ? (
-                            <label className="cursor-pointer">
-                                <span className="mt-4 inline-block p-5 bg-gradient-to-r from-emerald-500 to-cyan-600 text-white text-[16px] font-black rounded-[24px] transition-all shadow-xl shadow-emerald-500/20 active:scale-95 hover:from-emerald-600 hover:to-cyan-700">
-                                    選擇檔案
-                                </span>
-                                <input type="file" className="hidden" accept=".pdf,.doc,.docx,.txt" onChange={handleFileUpload} />
-                            </label>
-                        ) : (
-                            <div className="mt-4 px-6 py-3 bg-red-50 rounded-[24px] border border-red-100 flex items-center gap-3">
-                                <X className="w-5 h-5 text-red-500" />
-                                <span className="text-[14px] text-red-600 font-black">席位已額滿，請移除舊檔</span>
-                            </div>
+                        <div className="text-center">
+                            <p className="text-[18px] font-black text-slate-900">
+                                {uploading ? 'AI 正在學習中...' : isLimitReached ? '已達文件上限' : '點擊上傳文件'}
+                            </p>
+                            <p className="text-[12px] text-slate-400 font-bold mt-1 uppercase tracking-widest">
+                                {uploading ? '分析中，請稍候' : 'PDF · TXT · DOCX · 最大 5MB'}
+                            </p>
+                        </div>
+
+                        {/* 配額指示 */}
+                        <div className={`flex items-center gap-2 px-4 py-2 rounded-full text-[12px] font-black
+                            ${isLimitReached ? 'bg-red-100 text-red-600' : 'bg-emerald-50 text-emerald-700'}`}
+                        >
+                            <div className={`w-2 h-2 rounded-full ${isLimitReached ? 'bg-red-500' : 'bg-emerald-500'}`} />
+                            {readyCount} / {MAX_FILES} 份已學習
+                        </div>
+
+                        {!isLimitReached && !uploading && (
+                            <input
+                                ref={fileInputRef}
+                                type="file"
+                                className="hidden"
+                                accept=".pdf,.txt,.docx"
+                                onChange={handleFileUpload}
+                            />
                         )}
+                    </label>
+
+                    {/* 格式說明 */}
+                    <div className="grid grid-cols-3 gap-2 mt-4">
+                        {[
+                            { ext: 'PDF', desc: '型錄、合約', color: 'text-red-600 bg-red-50' },
+                            { ext: 'TXT', desc: 'Q&A、說明', color: 'text-slate-600 bg-slate-50' },
+                            { ext: 'DOCX', desc: 'Word 文件', color: 'text-blue-600 bg-blue-50' },
+                        ].map(f => (
+                            <div key={f.ext} className={`p-3 rounded-[14px] border ${f.color} text-center`}>
+                                <p className="text-[13px] font-black">{f.ext}</p>
+                                <p className="text-[10px] mt-0.5 opacity-70">{f.desc}</p>
+                            </div>
+                        ))}
                     </div>
                 </div>
 
-                {/* 📜 Document List */}
-                <div className="lg:col-span-12 xl:col-span-7 space-y-4 text-left">
-                    <div className="flex items-center justify-between px-2 mb-6">
-                        <p className="text-[14px] font-black text-slate-400 uppercase tracking-[0.2em]">當前知識庫清單</p>
-                        <span className="text-[12px] font-black text-slate-400 uppercase tracking-widest">{documents.length} FILES</span>
+                {/* 文件清單 */}
+                <div className="lg:col-span-7 space-y-3">
+                    <div className="flex items-center justify-between px-1 mb-2">
+                        <p className="text-[12px] font-black text-slate-400 uppercase tracking-widest">知識庫文件清單</p>
+                        <button onClick={fetchDocuments} className="text-[11px] font-black text-slate-400 hover:text-slate-600 flex items-center gap-1 transition-colors">
+                            <RefreshCw className="w-3.5 h-3.5" /> 重新整理
+                        </button>
                     </div>
 
-                    {documents.length > 0 ? (
-                        <div className="space-y-4">
-                            {documents.map((doc) => (
-                                <motion.div 
+                    {loading && documents.length === 0 ? (
+                        <div className="py-12 text-center text-slate-400 text-sm">載入中...</div>
+                    ) : documents.length === 0 ? (
+                        <div className="py-16 border-2 border-dashed border-slate-200 rounded-[24px] flex flex-col items-center justify-center text-center opacity-50">
+                            <Database className="w-10 h-10 text-slate-300 mb-3" />
+                            <p className="text-[14px] font-black text-slate-400">尚無文件，請從左側上傳</p>
+                        </div>
+                    ) : (
+                        <AnimatePresence>
+                            {documents.map(doc => (
+                                <motion.div
+                                    key={doc.id}
                                     layout
                                     initial={{ opacity: 0, x: 10 }}
                                     animate={{ opacity: 1, x: 0 }}
-                                    key={doc.id} 
-                                    className="p-8 rounded-[24px] bg-white/60 backdrop-blur-md   flex items-center justify-between hover:bg-white/80 transition-all group"
+                                    exit={{ opacity: 0, x: -10 }}
+                                    className="p-5 rounded-[20px] bg-white border border-slate-100 shadow-sm flex items-center gap-4 group hover:shadow-md transition-all"
                                 >
-                                    <div className="flex items-center gap-6">
-                                        <div className="w-14 h-14 rounded-[24px] bg-white shadow-sm flex items-center justify-center text-slate-400 border border-slate-100">
-                                            <FileText className="w-6 h-6" />
-                                        </div>
-                                        <div>
-                                            <p className="text-[18px] font-black text-slate-900">{doc.name}</p>
-                                            <div className="flex items-center gap-4 mt-2">
-                                                <span className="text-[12px] font-bold text-slate-400 uppercase tracking-widest">{doc.size}</span>
-                                                <div className="w-1 h-1 rounded-full bg-slate-200"></div>
-                                                {doc.status === 'ready' ? (
-                                                    <span className="text-[12px] font-black text-emerald-500 flex items-center gap-1.5 uppercase tracking-widest">
-                                                        <CheckCircle2 className="w-4 h-4" /> 學習完成
-                                                    </span>
-                                                ) : (
-                                                    <span className="text-[12px] font-black text-blue-500 flex items-center gap-1.5 animate-pulse uppercase tracking-widest">
-                                                        <RefreshCw className="w-4 h-4 animate-spin" /> 正在閱讀
-                                                    </span>
-                                                )}
-                                            </div>
+                                    {/* 檔案圖示 */}
+                                    <div className="w-12 h-12 rounded-[14px] bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0">
+                                        <FileText className="w-5 h-5 text-slate-400" />
+                                    </div>
+
+                                    {/* 文件資訊 */}
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-[14px] font-black text-slate-900 truncate">{doc.file_name}</p>
+                                        <div className="flex items-center gap-3 mt-1 flex-wrap">
+                                            <span className="text-[11px] text-slate-400 font-bold uppercase">{doc.file_type}</span>
+                                            <span className="text-[11px] text-slate-400">{formatBytes(doc.file_size)}</span>
+                                            {doc.chunk_count > 0 && (
+                                                <span className="text-[11px] text-slate-400">{doc.chunk_count} 個段落</span>
+                                            )}
                                         </div>
                                     </div>
-                                    <button 
-                                        onClick={() => removeDoc(doc.id)}
-                                        className="p-3 rounded-[24px] opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all active:scale-90"
-                                        title="移除此文件"
+
+                                    {/* 狀態 */}
+                                    <div className="shrink-0 mr-2">
+                                        {doc.status === 'ready' && (
+                                            <span className="flex items-center gap-1.5 text-[11px] font-black text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full">
+                                                <CheckCircle2 className="w-3.5 h-3.5" /> 學習完成
+                                            </span>
+                                        )}
+                                        {doc.status === 'processing' && (
+                                            <span className="flex items-center gap-1.5 text-[11px] font-black text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full animate-pulse">
+                                                <RefreshCw className="w-3.5 h-3.5 animate-spin" /> AI 學習中
+                                            </span>
+                                        )}
+                                        {doc.status === 'error' && (
+                                            <span className="flex items-center gap-1.5 text-[11px] font-black text-red-500 bg-red-50 px-3 py-1.5 rounded-full" title={doc.error_message}>
+                                                <AlertCircle className="w-3.5 h-3.5" /> 學習失敗
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    {/* 刪除 */}
+                                    <button
+                                        onClick={() => handleDelete(doc.id)}
+                                        className="p-2 rounded-[12px] opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all"
+                                        title="刪除此文件"
                                     >
-                                        <X className="w-5 h-5" />
+                                        <X className="w-4 h-4" />
                                     </button>
                                 </motion.div>
                             ))}
-                        </div>
-                    ) : (
-                        <div className="py-24 border-2 border-dotted border-slate-200 rounded-[24px] flex flex-col items-center justify-center text-center opacity-40 bg-white/20">
-                            <Database className="w-12 h-12 text-slate-300 mb-4" />
-                            <p className="text-[15px] font-black text-slate-400 uppercase tracking-widest">尚無學習資料，請從左側上傳</p>
-                        </div>
+                        </AnimatePresence>
                     )}
                 </div>
             </div>
         </div>
     );
 }
-
-import { cn } from '@/lib/utils';
-import { RefreshCw, X } from 'lucide-react';

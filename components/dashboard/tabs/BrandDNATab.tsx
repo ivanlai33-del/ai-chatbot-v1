@@ -404,14 +404,11 @@ export default function BrandDNATab({ config, setConfig, planLevel }: BrandDNATa
                 onGenerate={() => handleAIGenerate('welcome_message')} isGenerating={isGenerating === 'welcome_message'}
             />
 
-            <div className="grid grid-cols-2 gap-3">
-                <Field 
-                    label="結尾慣用語" placeholder="例：歡迎再來" value={config.brand_dna.closing_phrase} onChange={v => update('closing_phrase', v)} hint="AI 回話的固定結語" 
+            <div className="grid grid-cols-1 gap-3">
+                <Field label="結尾慣用語" placeholder="例：歡迎再來" value={config.brand_dna.closing_phrase} onChange={v => update('closing_phrase', v)} hint="AI 回話的固定結語" 
                     isLocked={locks.closing_phrase} onToggleLock={() => handleToggleLock('closing_phrase')}
                     onGenerate={() => handleAIGenerate('closing_phrase')} isGenerating={isGenerating === 'closing_phrase'}
                 />
-                <Field label="轉真人客服關鍵字" placeholder="例：投訴、真人、轉接" value={config.brand_dna.human_trigger_keywords} onChange={v => update('human_trigger_keywords', v)} hint="偵測到後轉交人工" />
-            </div>
 
         </div>
     );

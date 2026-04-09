@@ -86,7 +86,12 @@ export class AIService {
         if (brand_dna.tagline) prompt += `品牌標語：${brand_dna.tagline}\n`;
         if (brand_dna.introduction) prompt += `品牌介紹：${brand_dna.introduction}\n`;
         if (brand_dna.services) prompt += `服務內容：${brand_dna.services}\n`;
-        
+        if (brand_dna.target_audience) prompt += `主要目標客群：${brand_dna.target_audience}\n`;
+
+        if (brand_dna.forbidden_topics) {
+            prompt += `\n【絕對禁忌】：以下話題嚴禁討論或回應，若被問到請委婉引開話題：${brand_dna.forbidden_topics}\n`;
+        }
+
         prompt += `\n【您的語調個性】\n${brand_dna.tone_prompt || '親切專業'}\n`;
 
         if (offerings && offerings.length > 0) {
@@ -94,12 +99,18 @@ export class AIService {
             offerings.forEach((item: any) => {
                 if (item.name) {
                     prompt += `✦ ${item.name}`;
-                    if (item.price) prompt += ` | 售價: ${item.price}`;
+                    if (item.category) prompt += ` | 分類: ${item.category}`;
+                    if (item.price) prompt += ` | 售價: NT$${item.price}`;
                     if (item.size) prompt += ` | 規格: ${item.size}`;
-                    if (item.url) prompt += ` | 連結: ${item.url}`;
-                    if (item.description) prompt += `\n  - 產品說明: ${item.description}`;
-                    if (item.ai_context) prompt += `\n  - 店長筆記 (內部資訊，請轉化為對客人的建議): ${item.ai_context}`;
+                    if (item.duration) prompt += ` | 時長: ${item.duration}`;
+                    if (item.url) prompt += ` | 商品連結: ${item.url}`;
+                    if (item.booking_url) prompt += ` | 預約連結: ${item.booking_url}`;
                     prompt += `\n`;
+                    if (item.description) prompt += `  - 介紹: ${item.description}\n`;
+                    if (item.target_audience_item) prompt += `  - 適合對象: ${item.target_audience_item}\n`;
+                    if (item.customization_note) prompt += `  - 客製選項: ${item.customization_note}\n`;
+                    if (item.caution_note) prompt += `  - ⚠️ 注意事項: ${item.caution_note}\n`;
+                    if (item.ai_context) prompt += `  - 店長筆記 (請轉化為對客人的建議): ${item.ai_context}\n`;
                 }
             });
         }
@@ -118,15 +129,27 @@ export class AIService {
         }
 
         if (contact_info) {
-            prompt += `\n【聯絡資訊】\n`;
-            if (contact_info.line_id) prompt += `- LINE 客服: ${contact_info.line_id}\n`;
-            if (contact_info.phone) prompt += `- 聯絡電話: ${contact_info.phone}\n`;
-            if (contact_info.hours) prompt += `- 營業時間: ${contact_info.hours}\n`;
-            if (contact_info.platforms && contact_info.platforms.length > 0) {
-                prompt += `- 採購平台: ${contact_info.platforms.join(', ')}\n`;
-            }
-            if (contact_info.branches && contact_info.branches.length > 0) {
-                prompt += `- 分店據點: ${contact_info.branches.join(', ')}\n`;
+            const hasContact = contact_info.line_id || contact_info.phone || contact_info.hours ||
+                contact_info.map_url || contact_info.booking_method || contact_info.instagram;
+            if (hasContact) {
+                prompt += `\n【聯絡與到達資訊】\n`;
+                if (contact_info.line_id) prompt += `- LINE 客服: ${contact_info.line_id}\n`;
+                if (contact_info.phone) prompt += `- 聯絡電話: ${contact_info.phone}\n`;
+                if (contact_info.hours) prompt += `- 營業時間: ${contact_info.hours}\n`;
+                if (contact_info.closed_days) prompt += `- 公休日: ${contact_info.closed_days}\n`;
+                if (contact_info.map_url) prompt += `- Google Map: ${contact_info.map_url}\n`;
+                if (contact_info.parking_info) prompt += `- 停車資訊: ${contact_info.parking_info}\n`;
+                if (contact_info.booking_method) prompt += `- 預約方式: ${contact_info.booking_method}\n`;
+                if (contact_info.platforms && contact_info.platforms.length > 0) {
+                    prompt += `- 購物平台: ${contact_info.platforms.join(', ')}\n`;
+                }
+                if (contact_info.foodpanda_url) prompt += `- Foodpanda 點餐: ${contact_info.foodpanda_url}\n`;
+                if (contact_info.ubereats_url) prompt += `- Uber Eats 點餐: ${contact_info.ubereats_url}\n`;
+                if (contact_info.instagram) prompt += `- Instagram: ${contact_info.instagram}\n`;
+                if (contact_info.facebook) prompt += `- Facebook: ${contact_info.facebook}\n`;
+                if (contact_info.branches && contact_info.branches.length > 0) {
+                    prompt += `- 分店據點:\n${contact_info.branches.map((b: string) => `  · ${b}`).join('\n')}\n`;
+                }
             }
         }
 

@@ -142,7 +142,7 @@ export default function DashboardPage() {
                         className="space-y-5"
                     >
                         {activeTab === 'brand' && <BrandDNATab config={config} setConfig={setConfig} planLevel={planLevel} />}
-                        {activeTab === 'dojo' && <DojoTab config={config} setConfig={setConfig} planLevel={planLevel} />}
+                        {activeTab === 'dojo' && <DojoTab config={config} setConfig={setConfig} planLevel={planLevel} onSave={handleSave} isSaving={isSaving} />}
                         {activeTab === 'offerings' && <OfferingsTab config={config} setConfig={setConfig} />}
                         {activeTab === 'faq' && <FAQTab config={config} setConfig={setConfig} />}
                         {activeTab === 'logic' && <LogicTab config={config} setConfig={setConfig} />}

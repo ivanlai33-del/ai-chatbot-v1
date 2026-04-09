@@ -684,16 +684,16 @@ export default function UnifiedBillingView() {
                 )}
             </AnimatePresence>
 
-            {/* 🛡️ Modern SaaS Footer - Full Width Light Glass */}
-            <footer className="mt-32 -mx-10 md:-mx-20 w-screen relative left-1/2 right-1/2 -ml-[50vw] shadow-[0_-20px_50px_-10px_rgba(0,0,0,0.03)]">
-                {/* 50% 透明度的淺色玻璃背景 */}
-                <div className="absolute inset-0 bg-white/50 backdrop-blur-2xl border-t border-slate-200/60 z-0" />
+            {/* 🛡️ Modern SaaS Footer - Content-Relative Full Width */}
+            <footer className="mt-32 relative group">
+                {/* 50% 透明度的淺色玻璃背景 - 使用負邊距展開而非對螢幕定位 */}
+                <div className="absolute -inset-x-10 md:-inset-x-20 inset-y-0 bg-white/50 backdrop-blur-2xl border-t border-slate-200/60 z-0" />
                 
                 {/* 裝飾性感應光暈 */}
-                <div className="absolute top-0 left-1/4 w-[500px] h-[1px] bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent z-10" />
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-[1px] bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent z-10" />
 
-                <div className="max-w-6xl mx-auto px-10 md:px-20 py-24 relative z-10">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16">
+                <div className="relative z-10 py-24">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16 items-start">
                         {/* 1. 客服聯絡資訊 */}
                         <div className="space-y-6">
                             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Support 聯繫專區</h3>
@@ -702,10 +702,10 @@ export default function UnifiedBillingView() {
                                     <p className="text-[9px] font-black text-indigo-500 uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
                                         <Mail className="w-3 h-3" /> 官方客服信箱
                                     </p>
-                                    <p className="text-slate-700 font-bold text-lg hover:text-indigo-600 transition-colors">info@ycideas.com</p>
+                                    <p className="text-slate-700 font-bold text-lg hover:text-indigo-600 transition-colors tracking-tight">info@ycideas.com</p>
                                 </div>
                                 <div className="pt-2">
-                                    <div className="flex items-center gap-3 bg-white/40 p-3.5 rounded-[24px] border border-slate-200/50 shadow-sm hover:shadow-md hover:bg-white/60 transition-all cursor-pointer">
+                                    <div className="flex items-center gap-4 bg-white/40 p-3.5 rounded-[24px] border border-slate-200/50 shadow-sm hover:shadow-md hover:bg-white/60 transition-all cursor-pointer">
                                         <div className="w-12 h-12 rounded-2xl bg-[#06C755] flex items-center justify-center shadow-lg shadow-emerald-500/10">
                                             <MessageCircle className="w-6 h-6 text-white" />
                                         </div>

@@ -141,13 +141,19 @@ export async function POST(req: NextRequest) {
         const effectiveUserPicture = context?.lineUserPicture;
         const currentMonth = new Date().toISOString().slice(0, 7); // "2026-04"
 
-        // ⚡ 非阻塞 Upsert (fire-and-forget)：確保用戶存在，不佔用主流程等待時間
+        // ⚡ 非阻塞 Upsert (fire-and-forget)：確保用戶存在
         if (effectiveUserId && effectiveUserName) {
-            supabase.rpc('upsert_platform_user', {
-                p_line_id: effectiveUserId,
-                p_name: effectiveUserName,
-                p_picture: effectiveUserPicture
-            }).catch((e: any) => console.error('[Chat] upsert_platform_user failed:', e.message));
+            (async () => {
+                try {
+                    await supabase.rpc('upsert_platform_user', {
+                        p_line_id: effectiveUserId,
+                        p_name: effectiveUserName,
+                        p_picture: effectiveUserPicture
+                    });
+                } catch (e: any) {
+                    console.error('[Chat] upsert_platform_user failed:', e?.message || e);
+                }
+            })();
         }
 
         // ⚡ 並行 DB 查詢：6 個查詢同時飛出，節省串行等待的 400–900ms

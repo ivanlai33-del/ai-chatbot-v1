@@ -50,10 +50,12 @@ export interface PricingPlan {
   };
 
   limits: {
-    stores: number;          // 店數上限（-1 = 無限）
-    monthlyQuota: number;    // 每月訊息額度（-1 = 無限）
-    dailyQuota: number;      // 每日訊息上限（防刷保護，-1 = 無限）
-    isLifetimeQuota: boolean; // true = 終身額度（免費版），false = 每月重置
+    stores: number;               // 店數上限（-1 = 無限）
+    monthlyQuota: number;         // 每月訊息額度（-1 = 無限）
+    dailyQuota: number;           // 每日訊息上限（防刷保護，-1 = 無限）
+    isLifetimeQuota: boolean;     // true = 終身額度（免費版），false = 每月重置
+    maxLineMembers: number;       // 全帳號 LINE 好友數上限（-1 = 無限）
+    maxLineMembersPerStore: number; // 單店 LINE 好友數上限（-1 = 無限）
   };
 
   features: string[];        // 功能列表
@@ -95,7 +97,9 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       stores: 1,
       monthlyQuota: 20,
       dailyQuota: 5,
-      isLifetimeQuota: true,  // ← 終身額度，不重置
+      isLifetimeQuota: true,
+      maxLineMembers: 200,
+      maxLineMembersPerStore: 200,
     },
     features: [
       '24H AI 全時段自動接單',
@@ -136,6 +140,8 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       monthlyQuota: 500,
       dailyQuota: 30,
       isLifetimeQuota: false,
+      maxLineMembers: 1000,
+      maxLineMembersPerStore: 1000,
     },
     features: [
       '24H AI 全時段自動接單',
@@ -178,6 +184,8 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       monthlyQuota: 2000,
       dailyQuota: 100,
       isLifetimeQuota: false,
+      maxLineMembers: 3000,
+      maxLineMembersPerStore: 3000,
     },
     features: [
       '24H AI 全時段自動接單',
@@ -219,6 +227,8 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       monthlyQuota: 5000,
       dailyQuota: 300,
       isLifetimeQuota: false,
+      maxLineMembers: 8000,
+      maxLineMembersPerStore: 3000,
     },
     features: [
       '單店主力所有功能',
@@ -259,6 +269,8 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       monthlyQuota: 10000,
       dailyQuota: 500,
       isLifetimeQuota: false,
+      maxLineMembers: 15000,
+      maxLineMembersPerStore: 3000,
     },
     features: [
       '成長多店所有功能',
@@ -292,8 +304,10 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
     limits: {
       stores: 3,
       monthlyQuota: 15000,
-      dailyQuota: -1,        // 無每日上限（大量帳號）
+      dailyQuota: -1,
       isLifetimeQuota: false,
+      maxLineMembers: 20000,
+      maxLineMembersPerStore: 8000,
     },
     features: [
       '連鎖專業所有功能',
@@ -334,6 +348,8 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       monthlyQuota: 30000,
       dailyQuota: -1,
       isLifetimeQuota: false,
+      maxLineMembers: 25000,
+      maxLineMembersPerStore: 5000,
     },
     features: [
       '旗艦 Lite 所有功能',

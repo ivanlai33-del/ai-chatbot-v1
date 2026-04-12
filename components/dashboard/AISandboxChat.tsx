@@ -2,9 +2,11 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Lock, Star, Settings, Trash2, Link2, ChevronDown, Check } from 'lucide-react';
+import { Send, Lock, Star, Settings, Trash2, Link2, ChevronDown, Check, AlertTriangle } from 'lucide-react';
 import ChatBotAvatar from '@/components/chat/ChatBotAvatar';
 import { useChatSandbox } from '@/hooks/useChatSandbox';
+import { getStoreLimit } from '@/lib/config/pricing';
+import { getPlanName, getRequiredPlanName } from '@/lib/feature-access';
 
 interface AISandboxChatProps {
     bots: any[];
@@ -106,7 +108,9 @@ export default function AISandboxChat({
                             >
                                 <div className="px-5 mb-2 flex items-center justify-between">
                                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">切換 AI 店長</span>
-                                    <span className="text-[10px] font-bold text-emerald-500 py-0.5 px-2 bg-emerald-50 rounded-full">{bots.length} / 10</span>
+                                    <span className={`text-[10px] font-bold py-0.5 px-2 rounded-full ${bots.length >= getStoreLimit(planLevel) ? 'bg-amber-50 text-amber-600' : 'bg-emerald-50 text-emerald-500'}`}>
+                                        {bots.length} / {getStoreLimit(planLevel)}
+                                    </span>
                                 </div>
                                 <div className="max-h-[300px] overflow-y-auto custom-scrollbar px-2">
                                     {bots.map((bot) => {
@@ -143,15 +147,27 @@ export default function AISandboxChat({
                                     })}
                                 </div>
                                 <div className="mt-2 pt-2 border-t border-slate-100 px-2">
-                                    <button 
-                                        onClick={() => window.location.href = '/dashboard/connect?action=new'}
-                                        className="w-full py-3 px-4 rounded-xl flex items-center gap-3 text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 transition-all font-bold text-[13px]"
-                                    >
-                                        <div className="w-8 h-8 rounded-full border border-dashed border-slate-300 flex items-center justify-center">
-                                            <span className="text-[18px] leading-none">+</span>
-                                        </div>
-                                        建立新店長席位
-                                    </button>
+                                    {bots.length >= getStoreLimit(planLevel) ? (
+                                        <button 
+                                            onClick={() => window.dispatchEvent(new CustomEvent('switch-tab', { detail: 'billing' }))}
+                                            className="w-full py-3 px-4 rounded-xl flex items-center gap-3 text-amber-600 bg-amber-50/50 hover:bg-amber-50 transition-all font-black text-[13px] border border-dashed border-amber-200"
+                                        >
+                                            <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm">
+                                                <Lock className="w-4 h-4 text-amber-500" />
+                                            </div>
+                                            席位已達上限 (升級解鎖)
+                                        </button>
+                                    ) : (
+                                        <button 
+                                            onClick={() => window.location.href = '/dashboard/connect?action=new'}
+                                            className="w-full py-3 px-4 rounded-xl flex items-center gap-3 text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 transition-all font-bold text-[13px]"
+                                        >
+                                            <div className="w-8 h-8 rounded-full border border-dashed border-slate-300 flex items-center justify-center">
+                                                <span className="text-[18px] leading-none">+</span>
+                                            </div>
+                                            建立新店長席位
+                                        </button>
+                                    )}
                                 </div>
                             </motion.div>
                         )}

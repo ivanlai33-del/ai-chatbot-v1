@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useRef, useState, useEffect } from 'react';
-import { Plus, Bot, Link2 } from 'lucide-react';
+import { Plus, Bot, Link2, Lock } from 'lucide-react';
 import { getStoreLimit } from '@/lib/config/pricing';
+import { getRequiredPlanName } from '@/lib/feature-access';
 
 interface BotSelectorProps {
     bots: any[];
@@ -75,7 +76,12 @@ export default function BotSelector({ bots, selectedBotId, setSelectedBotId, tie
                             <button
                                 onClick={() => {
                                     if (!bot) {
-                                        window.location.href = `/dashboard/connect?action=new&slot=${index}`;
+                                        // 如果是空席位，檢查是否已達總數上限
+                                        if (bots.length >= maxSlots) {
+                                            window.dispatchEvent(new CustomEvent('switch-tab', { detail: 'billing' }));
+                                        } else {
+                                            window.location.href = `/dashboard/connect?action=new&slot=${index}`;
+                                        }
                                     } else {
                                         setSelectedBotId(bot.id);
                                     }
@@ -110,9 +116,15 @@ export default function BotSelector({ bots, selectedBotId, setSelectedBotId, tie
                                 ) : (
                                     <>
                                         <div className="w-12 h-12 rounded-xl border-2 border-dashed border-slate-200 flex items-center justify-center bg-slate-50 shrink-0">
-                                            <Plus className={`w-5 h-5 ${isSelected ? 'text-white' : 'text-slate-400'}`} />
+                                            {bots.length >= maxSlots ? (
+                                                <Lock className={`w-5 h-5 ${isSelected ? 'text-white' : 'text-amber-400'}`} />
+                                            ) : (
+                                                <Plus className={`w-5 h-5 ${isSelected ? 'text-white' : 'text-slate-400'}`} />
+                                            )}
                                         </div>
-                                        <span className={`text-[12.5px] font-bold ${isSelected ? 'text-white' : 'text-slate-400'}`}>尚未串聯</span>
+                                        <span className={`text-[12.5px] font-bold ${isSelected ? 'text-white' : bots.length >= maxSlots ? 'text-amber-600/60' : 'text-slate-400'}`}>
+                                            {bots.length >= maxSlots ? '席位已滿' : '尚未串聯'}
+                                        </span>
                                     </>
                                 )}
                             </button>

@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Tag, MessageSquare, BrainCircuit, Layers, Wand2, Lock, Unlock, Loader2, Sparkles, ChevronDown, Check, Search } from 'lucide-react';
+import { Tag, MessageSquare, BrainCircuit, Layers, Wand2, Lock, Unlock, Loader2, Sparkles, ChevronDown, Check, Search, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getFeatureAccess, getRequiredPlanName } from '@/lib/feature-access';
 
 /* ── Shared: compact input field ── */
 function Field({ label, placeholder, value, onChange, hint, isLocked, onToggleLock, onGenerate, isGenerating }: {
@@ -250,6 +251,30 @@ export default function BrandDNATab({ config, setConfig, planLevel }: BrandDNATa
             setIsGenerating(false);
         }
     };
+
+    const fa = getFeatureAccess(planLevel);
+    const isLocked = !fa.brandDNA;
+
+    if (isLocked) {
+        return (
+            <div className="py-20 flex flex-col items-center justify-center text-center px-10 bg-white/10 backdrop-blur-md rounded-[24px] shadow-sm">
+                <div className="w-24 h-24 rounded-[24px] bg-white/60 flex items-center justify-center mb-8 shadow-2xl">
+                    <ShieldCheck className="w-10 h-10 text-emerald-500" strokeWidth={2.5} />
+                </div>
+                <h3 className="text-[28px] font-black text-slate-900 mb-4">品牌 DNA 功能尚未開通</h3>
+                <p className="text-[16px] text-slate-600 max-w-lg mb-8 font-bold leading-relaxed">
+                    升級至 <span className="text-emerald-600">{getRequiredPlanName('brandDNA')}</span> 以上方案，
+                    即可設定品牌特色、對話語調、歡迎語與結語，打造具備靈魂的 AI 店長。
+                </p>
+                <button
+                    onClick={() => window.dispatchEvent(new CustomEvent('switch-tab', { detail: 'billing' }))}
+                    className="px-10 py-4 rounded-[16px] bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-black text-[15px] shadow-lg hover:scale-105 active:scale-95 transition-all"
+                >
+                    立即升級解鎖 →
+                </button>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">

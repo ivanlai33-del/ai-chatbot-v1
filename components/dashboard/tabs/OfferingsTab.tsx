@@ -2,13 +2,15 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ChevronRight, Plus, Trash2, Copy } from 'lucide-react';
+import { ChevronDown, ChevronRight, Plus, Trash2, Copy, Lock, ShoppingBag } from 'lucide-react';
 import InputField from '@/components/ui/InputField';
 import TextareaField from '@/components/ui/TextareaField';
+import { getFeatureAccess, getPlanName, getRequiredPlanName, isAtLimit, formatLimit } from '@/lib/feature-access';
 
 interface OfferingsTabProps {
     config: any;
     setConfig: (fn: (c: any) => any) => void;
+    planLevel?: number;
 }
 
 const EMPTY_OFFERING = {
@@ -33,7 +35,12 @@ const DETAIL_FIELDS = [
     { key: 'booking_url',          label: '預約連結',    placeholder: 'https://forms.google.com/...' },
 ];
 
-export default function OfferingsTab({ config, setConfig }: OfferingsTabProps) {
+export default function OfferingsTab({ config, setConfig, planLevel = 0 }: OfferingsTabProps) {
+    const fa = getFeatureAccess(planLevel);
+    const productLimit = fa.products; // 0 = 關閉, -1 = 無限
+    const currentCount = config.offerings?.length ?? 0;
+    const atLimit = isAtLimit(currentCount, productLimit);
+    const isLocked = productLimit === 0;
     // Track which cards are expanded
     const [expanded, setExpanded] = useState<Record<number, boolean>>({});
     const toggle = (i: number) => setExpanded(p => ({ ...p, [i]: !p[i] }));
@@ -68,8 +75,40 @@ export default function OfferingsTab({ config, setConfig }: OfferingsTabProps) {
 
     const isOpen = (i: number) => expanded[i] === true;
 
+    // 免費方案或 starter ($199) 都看不到此功能
+    if (isLocked) {
+        return (
+            <div className="py-20 flex flex-col items-center justify-center text-center px-10 bg-white/10 backdrop-blur-md rounded-[24px] shadow-sm">
+                <div className="w-24 h-24 rounded-[24px] bg-white/60 flex items-center justify-center mb-8 shadow-2xl">
+                    <ShoppingBag className="w-10 h-10 text-emerald-500" strokeWidth={2.5} />
+                </div>
+                <h3 className="text-[28px] font-black text-slate-900 mb-4">商品 / 服務智庫尚未開通</h3>
+                <p className="text-[16px] text-slate-600 max-w-lg mb-8 font-bold leading-relaxed">
+                    此功能需升級至 <span className="text-emerald-600">{getRequiredPlanName('products', 1)}</span> 以上，
+                    即可建立商品與服務清單，讓 AI 精準為客人介紹與推薦。
+                </p>
+                <button
+                    onClick={() => window.dispatchEvent(new CustomEvent('switch-tab', { detail: 'billing' }))}
+                    className="px-10 py-4 rounded-[16px] bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-black text-[15px] shadow-lg hover:scale-105 active:scale-95 transition-all"
+                >
+                    立即升級解鎖 →
+                </button>
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-3">
+            {/* 額度指示列 */}
+            <div className="flex items-center justify-between px-2 mb-1">
+                <p className="text-[12px] font-black text-slate-400 uppercase tracking-widest">商品 / 服務清單</p>
+                <div className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-[12px] font-black transition-colors
+                    ${atLimit ? 'bg-red-100 text-red-600' : 'bg-emerald-50 text-emerald-700'}`}>
+                    <div className={`w-2 h-2 rounded-full ${atLimit ? 'bg-red-500' : 'bg-emerald-500'}`} />
+                    {currentCount} / {formatLimit(productLimit)} 項
+                    {atLimit && <span className="ml-1">(已達上限)</span>}
+                </div>
+            </div>
             {config.offerings.map((item: any, i: number) => {
                 const open = isOpen(i);
                 const hasName = !!item.name;
@@ -201,18 +240,32 @@ export default function OfferingsTab({ config, setConfig }: OfferingsTabProps) {
             })}
 
             {/* ── Add button ── */}
-            <motion.button
-                whileHover={{ scale: 1.01, y: -2 }}
-                whileTap={{ scale: 0.99 }}
-                onClick={() => {
-                    setConfig((c: any) => ({ ...c, offerings: [...c.offerings, { ...EMPTY_OFFERING }] }));
-                    // Auto-expand newly added item
-                    setTimeout(() => setExpanded(p => ({ ...p, [config.offerings.length]: true })), 50);
-                }}
-                className="w-full flex items-center justify-center gap-4 py-8 rounded-[24px]  bg-gradient-to-r from-emerald-500 to-cyan-600 text-[18px] font-black text-white transition-all shadow-xl shadow-emerald-500/20 active:scale-95"
-            >
-                <Plus className="w-5 h-5" /> 新增一個商品或服務
-            </motion.button>
+            {atLimit ? (
+                <div className="w-full flex flex-col items-center justify-center gap-3 py-8 rounded-[24px] border-2 border-dashed border-amber-200 bg-amber-50">
+                    <div className="flex items-center gap-2 text-amber-600">
+                        <Lock className="w-5 h-5" />
+                        <span className="text-[15px] font-black">已達 {formatLimit(productLimit)} 項上限（{getPlanName(planLevel)}）</span>
+                    </div>
+                    <button
+                        onClick={() => window.dispatchEvent(new CustomEvent('switch-tab', { detail: 'billing' }))}
+                        className="px-6 py-2.5 rounded-[12px] bg-gradient-to-r from-emerald-500 to-cyan-500 text-white text-[13px] font-black shadow-md hover:scale-105 transition-all"
+                    >
+                        升級方案以新增更多 →
+                    </button>
+                </div>
+            ) : (
+                <motion.button
+                    whileHover={{ scale: 1.01, y: -2 }}
+                    whileTap={{ scale: 0.99 }}
+                    onClick={() => {
+                        setConfig((c: any) => ({ ...c, offerings: [...c.offerings, { ...EMPTY_OFFERING }] }));
+                        setTimeout(() => setExpanded(p => ({ ...p, [config.offerings.length]: true })), 50);
+                    }}
+                    className="w-full flex items-center justify-center gap-4 py-8 rounded-[24px] bg-gradient-to-r from-emerald-500 to-cyan-600 text-[18px] font-black text-white transition-all shadow-xl shadow-emerald-500/20 active:scale-95"
+                >
+                    <Plus className="w-5 h-5" /> 新增一個商品或服務
+                </motion.button>
+            )}
         </div>
     );
 }

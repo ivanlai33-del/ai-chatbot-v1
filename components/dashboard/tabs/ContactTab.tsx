@@ -1,8 +1,9 @@
 'use client';
 
-import { CheckCircle2, MapPin, Truck, Share2 } from 'lucide-react';
+import { CheckCircle2, MapPin, Truck, Share2, Phone } from 'lucide-react';
 import InputField from '@/components/ui/InputField';
 import TextareaField from '@/components/ui/TextareaField';
+import { getFeatureAccess, getRequiredPlanName } from '@/lib/feature-access';
 
 const SHOPPING_PLATFORMS = ['蝦皮購物', 'Momo 購物', 'PChome', '官方網站', 'Pinkoi', '酷澎 Coupang'];
 const DELIVERY_PLATFORMS = [
@@ -20,14 +21,39 @@ const SectionHeader = ({ icon: Icon, label }: { icon: any; label: string }) => (
 interface ContactTabProps {
     config: any;
     setConfig: (fn: (c: any) => any) => void;
+    planLevel?: number;
 }
 
-export default function ContactTab({ config, setConfig }: ContactTabProps) {
+export default function ContactTab({ config, setConfig, planLevel = 0 }: ContactTabProps) {
+    const fa = getFeatureAccess(planLevel);
+    const isLocked = !fa.contactPortal;
+
     const togglePlatform = (p: string) => {
         const ps = config.contact_info.platforms || [];
         const next = ps.includes(p) ? ps.filter((x: string) => x !== p) : [...ps, p];
         setConfig((c: any) => ({ ...c, contact_info: { ...c.contact_info, platforms: next } }));
     };
+
+    if (isLocked) {
+        return (
+            <div className="py-20 flex flex-col items-center justify-center text-center px-10 bg-white/10 backdrop-blur-md rounded-[24px] shadow-sm">
+                <div className="w-24 h-24 rounded-[24px] bg-white/60 flex items-center justify-center mb-8 shadow-2xl">
+                    <Phone className="w-10 h-10 text-emerald-500" strokeWidth={2.5} />
+                </div>
+                <h3 className="text-[28px] font-black text-slate-900 mb-4">聯絡窗口功能尚未開通</h3>
+                <p className="text-[16px] text-slate-600 max-w-lg mb-8 font-bold leading-relaxed">
+                    升級至 <span className="text-emerald-600">{getRequiredPlanName('contactPortal')}</span> 以上方案，
+                    即可設定商家電話、門市地址、營業時間等資訊，讓 AI 直接為客人指引聯絡。
+                </p>
+                <button
+                    onClick={() => window.dispatchEvent(new CustomEvent('switch-tab', { detail: 'billing' }))}
+                    className="px-10 py-4 rounded-[16px] bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-black text-[15px] shadow-lg hover:scale-105 active:scale-95 transition-all"
+                >
+                    立即升級解鎖 →
+                </button>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-5">

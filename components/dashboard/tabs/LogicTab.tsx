@@ -2,6 +2,8 @@
 
 import { useRef } from 'react';
 import TextareaField from '@/components/ui/TextareaField';
+import { Lock } from 'lucide-react';
+import { getFeatureAccess, getPlanName, isAtLimit, formatLimit } from '@/lib/feature-access';
 
 const LOGIC_PRESETS = [
     { label: '首次購優惠', text: '- 當客人首次詢問時，提供「首購 9 折」優惠碼：WELCOME90\n' },
@@ -97,28 +99,31 @@ const INDUSTRY_LOGIC_GROUPS = [
 interface LogicTabProps {
     config: any;
     setConfig: (fn: (c: any) => any) => void;
+    planLevel?: number;
 }
 
 /* Single industry dropdown: selecting an option appends its text then resets */
-function IndustrySelect({ group, onAppend }: {
+function IndustrySelect({ group, onAppend, disabled }: {
     group: typeof INDUSTRY_LOGIC_GROUPS[0];
     onAppend: (text: string) => void;
+    disabled?: boolean;
 }) {
     const ref = useRef<HTMLSelectElement>(null);
     return (
         <select
             ref={ref}
             defaultValue=""
+            disabled={disabled}
             aria-label={`${group.label} 引導規則`}
             title={`${group.label} 引導規則`}
             onChange={e => {
                 const val = e.target.value;
-                if (val) {
+                if (val && !disabled) {
                     onAppend(val);
                     setTimeout(() => { if (ref.current) ref.current.value = ''; }, 0);
                 }
             }}
-            className="w-full p-5 rounded-[24px] /40 bg-white/70 backdrop-blur-md text-[16px] font-black text-slate-800 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 cursor-pointer hover:bg-white shadow-sm transition-all"
+            className={`w-full p-5 rounded-[24px] /40 bg-white/70 backdrop-blur-md text-[16px] font-black text-slate-800 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 cursor-pointer hover:bg-white shadow-sm transition-all ${disabled ? 'opacity-40 cursor-not-allowed' : ''}`}
         >
             <option value="" disabled className="text-slate-400">＋ 選取專屬 {group.label} 引導功能</option>
             {group.tags.map(tag => (
@@ -128,9 +133,19 @@ function IndustrySelect({ group, onAppend }: {
     );
 }
 
-export default function LogicTab({ config, setConfig }: LogicTabProps) {
-    const append = (text: string) =>
+export default function LogicTab({ config, setConfig, planLevel = 0 }: LogicTabProps) {
+    const fa = getFeatureAccess(planLevel);
+    const ruleLimit = fa.guidanceRules; // 1 = 免費 1 條, -1 = 無限
+    // 計算現有觸發規則行數（以跟 - 開頭的行為一條規則）
+    const ruleLines = (config.logic_rules || '')
+        .split('\n')
+        .filter((line: string) => line.trim().startsWith('-')).length;
+    const atLimit = isAtLimit(ruleLines, ruleLimit);
+
+    const append = (text: string) => {
+        if (atLimit) return; // 額度滿時不允許新增
         setConfig((c: any) => ({ ...c, logic_rules: c.logic_rules + text }));
+    };
 
     const selectedIndustry = config.brand_dna?.industry || '';
     
@@ -141,6 +156,32 @@ export default function LogicTab({ config, setConfig }: LogicTabProps) {
 
     return (
         <div className="space-y-5">
+            {/* 額度指示列 */}
+            <div className="flex items-center justify-between px-2">
+                <p className="text-[12px] font-black text-slate-400 uppercase tracking-widest">引導規則庫</p>
+                <div className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-[12px] font-black
+                    ${atLimit ? 'bg-red-100 text-red-600' : 'bg-emerald-50 text-emerald-700'}`}>
+                    <div className={`w-2 h-2 rounded-full ${atLimit ? 'bg-red-500' : 'bg-emerald-500'}`} />
+                    {ruleLines} / {formatLimit(ruleLimit)} 條
+                    {atLimit && <span className="ml-1">(已達上限)</span>}
+                </div>
+            </div>
+
+            {/* 額度滿時的升級提示 */}
+            {atLimit && (
+                <div className="flex items-center gap-3 p-4 rounded-[16px] bg-amber-50 border border-amber-200">
+                    <Lock className="w-4 h-4 text-amber-500 shrink-0" />
+                    <p className="text-[13px] font-black text-amber-700 flex-1">
+                        已達 {getPlanName(planLevel)} 方案的 {formatLimit(ruleLimit)} 條引導規則上限。新增請先刪除舊規則，或升級方案。
+                    </p>
+                    <button
+                        onClick={() => window.dispatchEvent(new CustomEvent('switch-tab', { detail: 'billing' }))}
+                        className="shrink-0 px-4 py-2 rounded-[10px] bg-gradient-to-r from-emerald-500 to-cyan-500 text-white text-[12px] font-black shadow-md hover:scale-105 transition-all"
+                    >
+                        升級方案 →
+                    </button>
+                </div>
+            )}
 
             <div className=" rounded-[24px] p-10  ">
                 <p className="text-[14px] font-black text-cyan-600 uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
@@ -148,7 +189,10 @@ export default function LogicTab({ config, setConfig }: LogicTabProps) {
                 </p>
                 {activeGroup ? (
                     <div className="max-w-md">
-                        <IndustrySelect group={activeGroup} onAppend={append} />
+                        <IndustrySelect group={activeGroup} onAppend={append} disabled={atLimit} />
+                        {atLimit && (
+                            <p className="text-[11px] text-amber-500 font-bold mt-2 ml-1">已達上限，請先刪除舊規則或升級方案</p>
+                        )}
                     </div>
                 ) : (
                     <div className="w-full px-8 py-10 rounded-[24px] border border-dashed border-slate-200 bg-white/30 text-[16px] font-black text-slate-400 text-center uppercase tracking-widest">
@@ -168,7 +212,12 @@ export default function LogicTab({ config, setConfig }: LogicTabProps) {
                         <button
                             key={tag.label}
                             onClick={() => append(tag.text)}
-                            className="py-5 px-4 rounded-[24px] bg-white border border-slate-100 text-[15px] font-black text-slate-700 hover:bg-emerald-500 hover:text-white hover:border-emerald-500 transition-all text-center shadow-sm active:scale-95"
+                            disabled={atLimit}
+                            className={`py-5 px-4 rounded-[24px] bg-white border border-slate-100 text-[15px] font-black text-slate-700 transition-all text-center shadow-sm active:scale-95
+                                ${atLimit
+                                    ? 'opacity-40 cursor-not-allowed'
+                                    : 'hover:bg-emerald-500 hover:text-white hover:border-emerald-500'
+                                }`}
                         >
                             + {tag.label}
                         </button>

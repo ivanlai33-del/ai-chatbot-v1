@@ -4,11 +4,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Save, CheckCircle2, Star, ChevronRight, AlertTriangle,
     Tag, Package, HelpCircle, GitBranch, Phone, BookOpen, Settings,
-    Trash2, X, Brain, Link2
+    Trash2, X, Brain, Link2, Lock
 } from 'lucide-react';
 import { useState, useCallback } from 'react';
 import type { StoreConfig } from '@/lib/chat-types';
 import BotSelector from './BotSelector';
+import { getFeatureAccess } from '@/lib/feature-access';
 
 interface KnowledgeBasePanelProps {
     config: StoreConfig;
@@ -138,6 +139,18 @@ export default function KnowledgeBasePanel({
                         {tabs.map((tab) => {
                             const meta = TAB_META[tab.id] || TAB_META.brand;
                             const isActive = activeTab === tab.id;
+                            const fa = getFeatureAccess(planLevel);
+                            
+                            // Check lock status for sidebar indicator
+                            let isTabLocked = false;
+                            if (tab.id === 'dojo') isTabLocked = fa.instantCommands === 0;
+                            if (tab.id === 'offerings') isTabLocked = fa.products === 0;
+                            if (tab.id === 'faq') isTabLocked = fa.faq === 0;
+                            if (tab.id === 'logic') isTabLocked = fa.guidanceRules === 0;
+                            if (tab.id === 'contact') isTabLocked = !fa.contactPortal;
+                            if (tab.id === 'rag') isTabLocked = fa.pdfLearning === 0 && fa.webLearning === 0;
+                            if (tab.id === 'audience') isTabLocked = !fa.crmTagging;
+                            if (tab.id === 'brand') isTabLocked = !fa.brandDNA;
                             
                             return (
                                 <motion.button
@@ -157,7 +170,12 @@ export default function KnowledgeBasePanel({
                                         <meta.Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-slate-600'}`} strokeWidth={2.5} />
                                     </div>
                                     <div className="flex-1 text-left">
-                                        <p className="text-[15px] font-black leading-none mb-1">{tab.label}</p>
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <p className="text-[15px] font-black leading-none">{tab.label}</p>
+                                            {isTabLocked && (
+                                                <Lock className={`w-3 h-3 ${isActive ? 'text-white/60' : 'text-amber-400'}`} />
+                                            )}
+                                        </div>
                                         <p className={`text-[10px] font-bold uppercase tracking-wider ${isActive ? 'text-emerald-50/70' : 'text-slate-400'}`}>
                                             {meta.desc}
                                         </p>

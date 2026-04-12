@@ -5,8 +5,9 @@ import { motion } from 'framer-motion';
 import {
     MessageSquare, Tag, Sparkles, BrainCircuit, Wand2,
     Unlock, Lock, Brain, Loader2, ChevronRight, Save,
-    Info, Zap, CheckCircle2, AlertCircle, ArrowRight
+    Info, Zap, CheckCircle2, AlertCircle
 } from 'lucide-react';
+import { getFeatureAccess, getPlanName, getRequiredPlanName } from '@/lib/feature-access';
 
 /* ────────────────────────────────────────────────────────────
    積木定義 — 附上「點下去會發生什麼」步驟說明
@@ -223,7 +224,7 @@ export default function DojoTab({ config, setConfig, planLevel, onSave, isSaving
             </div>
 
             {/* ── Feature Gate ── */}
-            {planLevel < 2 && (
+            {getFeatureAccess(planLevel).instantCommands === 0 && (
                 <div className="relative rounded-[24px] overflow-hidden">
                     <div className="absolute inset-0 z-10 bg-white/60 backdrop-blur-[12px] flex flex-col items-center justify-center p-10 text-center">
                         <div className="w-16 h-16 rounded-[20px] bg-white shadow-xl flex items-center justify-center mb-5 border border-amber-100">
@@ -231,7 +232,7 @@ export default function DojoTab({ config, setConfig, planLevel, onSave, isSaving
                         </div>
                         <h5 className="text-[22px] font-black text-slate-900 mb-3">🔒 需要升級才能使用</h5>
                         <p className="text-[15px] text-slate-500 mb-6 max-w-md leading-relaxed">
-                            升級至「個人店長版」以上，即可解鎖指令積木，擁有 AI 店長的最高指令優先權。
+                            升級至「<span className="text-emerald-600">{getRequiredPlanName('instantCommands', 1)}</span>」以上，即可解鎖指令積木，擁有 AI 店長的最高指令優先權。
                         </p>
                         <button
                             onClick={() => window.dispatchEvent(new CustomEvent('switch-tab', { detail: 'billing' }))}
@@ -246,15 +247,21 @@ export default function DojoTab({ config, setConfig, planLevel, onSave, isSaving
                 </div>
             )}
 
-            {planLevel >= 2 && (
+            {getFeatureAccess(planLevel).instantCommands > 0 && (
                 <div className="grid grid-cols-12 gap-6">
 
                     {/* ── 左側：積木選單 ── */}
                     <div className="col-span-12 lg:col-span-5 space-y-3">
-                        <p className="text-[12px] font-black text-slate-400 tracking-[0.2em] uppercase px-1 flex items-center gap-2">
-                            <span className="w-2 h-4 bg-cyan-500 rounded-full" />
-                            步驟 1：選擇指令積木
-                        </p>
+                        <div className="flex items-center justify-between px-1 mb-1">
+                            <p className="text-[12px] font-black text-slate-400 tracking-[0.2em] uppercase flex items-center gap-2">
+                                <span className="w-2 h-4 bg-cyan-500 rounded-full" />
+                                步驟 1：選擇指令積木
+                            </p>
+                            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-50 text-[11px] font-black text-cyan-700">
+                                <Zap className="w-3 h-3" />
+                                可同時啟用 {getFeatureAccess(planLevel).instantCommands} 條（{getPlanName(planLevel)}）
+                            </div>
+                        </div>
                         {DOJO_BRICKS.map(brick => (
                             <CommandBrick
                                 key={brick.id}

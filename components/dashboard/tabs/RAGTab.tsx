@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, Database, FileText, CheckCircle2, RefreshCw, X, Upload, AlertCircle, Info } from 'lucide-react';
+import { Lock, Database, FileText, Globe, CheckCircle2, RefreshCw, X, Upload, AlertCircle, Info } from 'lucide-react';
+import { getFeatureAccess, getRequiredPlanName, formatLimit } from '@/lib/feature-access';
 
 interface RAGTabProps {
     planLevel: number;
@@ -10,7 +11,6 @@ interface RAGTabProps {
     selectedBotId: string | null;
 }
 
-const MAX_FILES = 5;
 const MAX_SIZE_MB = 5;
 const ALLOWED_EXTENSIONS = ['pdf', 'txt'];
 
@@ -21,6 +21,12 @@ function formatBytes(bytes: number) {
 }
 
 export default function RAGTab({ planLevel, bots, selectedBotId }: RAGTabProps) {
+    const fa = getFeatureAccess(planLevel);
+    const pdfLimit = fa.pdfLearning; // 0 = 關閉, -1 = 無限
+    const webLimit = fa.webLearning;  // 0 = 關閉, -1 = 無限
+    const isPdfLocked = pdfLimit === 0;
+    const isWebLocked = webLimit === 0;
+
     const [documents, setDocuments] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
@@ -39,7 +45,7 @@ export default function RAGTab({ planLevel, bots, selectedBotId }: RAGTabProps) 
     }, []);
 
     useEffect(() => {
-        if (selectedBotId && planLevel >= 2) fetchDocuments();
+        if (selectedBotId && pdfLimit > 0) fetchDocuments();
         return () => { if (pollRef.current) clearInterval(pollRef.current); };
     }, [selectedBotId, planLevel]);
 
@@ -87,8 +93,9 @@ export default function RAGTab({ planLevel, bots, selectedBotId }: RAGTabProps) 
             setUploadError(`檔案大小超過 ${MAX_SIZE_MB}MB 上限`);
             return;
         }
-        if (documents.filter(d => d.status !== 'error').length >= MAX_FILES) {
-            setUploadError(`每個店長最多 ${MAX_FILES} 份文件，請先刪除舊文件`);
+        const maxFiles = pdfLimit === -1 ? 9999 : pdfLimit;
+        if (documents.filter(d => d.status !== 'error').length >= maxFiles) {
+            setUploadError(`此方案最多 ${formatLimit(pdfLimit)} 份文件，請先刪除舊文件`);
             return;
         }
 
@@ -124,8 +131,8 @@ export default function RAGTab({ planLevel, bots, selectedBotId }: RAGTabProps) 
         }
     };
 
-    // ── 未升級封鎖畫面 ──────────────────────────────
-    if (planLevel < 2) {
+    // ── PDF 學習權限封鎖畫面 ──
+    if (isPdfLocked) {
         return (
             <div className="py-16 flex flex-col items-center justify-center text-center px-10 bg-white/10 backdrop-blur-md rounded-[24px] shadow-sm">
                 <div className="w-24 h-24 rounded-[24px] bg-white/60 flex items-center justify-center mb-8 shadow-2xl">
@@ -133,7 +140,7 @@ export default function RAGTab({ planLevel, bots, selectedBotId }: RAGTabProps) 
                 </div>
                 <h3 className="text-[28px] font-black text-slate-900 mb-4">PDF / 網頁學習尚未開通</h3>
                 <p className="text-[16px] text-slate-600 max-w-lg mb-8 font-bold leading-relaxed">
-                    此功能限 <span className="text-emerald-600">旗艦版</span> 以上使用，升級後可讓 AI 自動讀懂您的型錄與說明書，精準回答客人問題。
+                    此功能限 <span className="text-emerald-600">{getRequiredPlanName('pdfLearning', 1)}</span> 以上使用，升級後可讓 AI 自動讀懂您的型錄與說明書，精準回答客人問題。
                 </p>
                 <div className="grid grid-cols-2 gap-4 max-w-sm mb-8 text-left">
                     {[
@@ -159,8 +166,9 @@ export default function RAGTab({ planLevel, bots, selectedBotId }: RAGTabProps) 
         );
     }
 
+    const maxFiles = pdfLimit === -1 ? 9999 : pdfLimit;
     const readyCount = documents.filter(d => d.status === 'ready').length;
-    const isLimitReached = documents.filter(d => d.status !== 'error').length >= MAX_FILES;
+    const isLimitReached = documents.filter(d => d.status !== 'error').length >= maxFiles;
 
     return (
         <div className="space-y-6">
@@ -172,7 +180,7 @@ export default function RAGTab({ planLevel, bots, selectedBotId }: RAGTabProps) 
                     <p className="text-[13px] font-black text-blue-800 mb-1">📚 PDF 知識庫 — AI 向量語意學習</p>
                     <p className="text-[12px] text-blue-700 leading-relaxed">
                         上傳文件後，AI 會將內容切分成小段落並生成向量索引。當客人發問時，AI 會自動搜尋最相關的段落作為回答參考。
-                        支援 <span className="font-black">PDF、TXT、DOCX</span>，單檔上限 <span className="font-black">5MB</span>，最多 <span className="font-black">5 份</span>。
+                        支援 <span className="font-black">PDF、TXT</span>，單檔上限 <span className="font-black">{MAX_SIZE_MB}MB</span>，此方案最多 <span className="font-black">{formatLimit(pdfLimit)} 份</span>。
                     </p>
                 </div>
             </div>
@@ -229,7 +237,7 @@ export default function RAGTab({ planLevel, bots, selectedBotId }: RAGTabProps) 
                             ${isLimitReached ? 'bg-red-100 text-red-600' : 'bg-emerald-50 text-emerald-700'}`}
                         >
                             <div className={`w-2 h-2 rounded-full ${isLimitReached ? 'bg-red-500' : 'bg-emerald-500'}`} />
-                            {readyCount} / {MAX_FILES} 份已學習
+                            {readyCount} / {formatLimit(pdfLimit)} 份已學習
                         </div>
 
                         {!isLimitReached && !uploading && (
@@ -334,6 +342,32 @@ export default function RAGTab({ planLevel, bots, selectedBotId }: RAGTabProps) 
                     )}
                 </div>
             </div>
+
+            {/* 網頁學習封鎖提示 */}
+            <WebLearningLockedBanner planLevel={planLevel} />
+        </div>
+    );
+}
+
+// ── 網頁學習封鎖提示（未开通層級的守門員）──
+export function WebLearningLockedBanner({ planLevel }: { planLevel: number }) {
+    const fa = getFeatureAccess(planLevel);
+    if (fa.webLearning > 0) return null;
+    return (
+        <div className="mt-6 p-5 rounded-[20px] bg-indigo-50 border border-indigo-200 flex items-start gap-4">
+            <Globe className="w-5 h-5 text-indigo-500 shrink-0 mt-0.5" />
+            <div className="flex-1">
+                <p className="text-[13px] font-black text-indigo-800 mb-1">🌐 網頁學習尚未開通</p>
+                <p className="text-[12px] text-indigo-700 leading-relaxed">
+                    升級至 <span className="font-black">{getRequiredPlanName('webLearning', 1)}</span> 以上，即可指定官網 URL 讓 AI 自動爬取學習，此方案可使用 <span className="font-black">{formatLimit(fa.webLearning)} 頁</span>。
+                </p>
+            </div>
+            <button
+                onClick={() => window.dispatchEvent(new CustomEvent('switch-tab', { detail: 'billing' }))}
+                className="shrink-0 px-4 py-2 rounded-[10px] bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-[12px] font-black shadow-md hover:scale-105 transition-all"
+            >
+                升級解鎖 →
+            </button>
         </div>
     );
 }

@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Users, Send } from 'lucide-react';
+import { Users, Send, Lock } from 'lucide-react';
 import BroadcastModal from './BroadcastModal';
+import { getFeatureAccess, getPlanName, getRequiredPlanName, formatLimit } from '@/lib/feature-access';
 
 interface AudienceTabProps {
     botId: string | null;
@@ -10,6 +11,9 @@ interface AudienceTabProps {
 }
 
 export default function AudienceTab({ botId, planLevel }: AudienceTabProps) {
+    const fa = getFeatureAccess(planLevel);
+    const isCRMLocked = !fa.crmTagging; // 免費或 starter 無 CRM
+    const broadcastLimit = fa.crmBroadcast; // 0 = 關閉, -1 = 無限
     const [customers, setCustomers] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -34,18 +38,18 @@ export default function AudienceTab({ botId, planLevel }: AudienceTabProps) {
         setLoading(false);
     };
 
-    if (planLevel < 2) {
+    if (isCRMLocked) {
         return (
             <div className="py-20 flex flex-col items-center justify-center text-center px-10  rounded-[24px]  ">
                 <div className="w-24 h-24 rounded-[24px] bg-white flex items-center justify-center mb-8 shadow-2xl border border-emerald-50">
                     <Users className="w-10 h-10 text-emerald-500" strokeWidth={2.5} />
                 </div>
-                <h3 className="text-[32px] font-black text-slate-900 mb-4">CRM 分眾行銷尚未開通</h3>
+                <h3 className="text-[32px] font-black text-slate-900 mb-4">CRM 分眾行銃尚未開通</h3>
                 <p className="text-[18px] text-slate-600 max-w-lg mb-10 font-bold leading-relaxed">
-                    本功能包含 <span className="text-emerald-600">AI 自動貼標與分眾推播</span>，僅限單店主力方案以上使用。升級以解鎖完整的客群分析工具。
+                    本功能包含 <span className="text-emerald-600">AI 自動貼標與分眾推播</span>，需升級至 <span className="text-emerald-600">{getRequiredPlanName('crmTagging')}</span> 以上使用。升級以解鎖完整的客群分析工具。
                 </p>
                 <button 
-                    onClick={() => window.location.href = '/dashboard/upgrade'}
+                    onClick={() => window.dispatchEvent(new CustomEvent('switch-tab', { detail: 'billing' }))}
                     className="px-12 py-5 bg-gradient-to-r from-emerald-500 to-cyan-600 text-white rounded-[24px] text-[17px] font-black shadow-xl shadow-emerald-500/20 hover:scale-105 transition-all active:scale-95"
                 >
                     了解及解鎖方案 →
@@ -60,13 +64,32 @@ export default function AudienceTab({ botId, planLevel }: AudienceTabProps) {
 
 
                 <div className="flex items-center gap-4">
-                    <button 
-                        onClick={() => setIsModalOpen(true)}
-                        className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-emerald-500 to-cyan-600 text-white rounded-[24px] text-[15px] font-black shadow-xl shadow-emerald-500/20 transition-all active:scale-95 hover:from-emerald-600 hover:to-cyan-700"
-                    >
-                        <Send className="w-5 h-5 text-emerald-400" />
-                        多重篩選推播
-                    </button>
+                    {broadcastLimit === 0 ? (
+                        <div className="flex items-center gap-2 px-6 py-3 rounded-[24px] bg-amber-50 border border-amber-200">
+                            <Lock className="w-4 h-4 text-amber-500" />
+                            <span className="text-[13px] font-black text-amber-700">推播功能需升級至 {getRequiredPlanName('crmBroadcast', 1)}</span>
+                            <button
+                                onClick={() => window.dispatchEvent(new CustomEvent('switch-tab', { detail: 'billing' }))}
+                                className="ml-2 px-3 py-1 rounded-[10px] bg-gradient-to-r from-emerald-500 to-cyan-500 text-white text-[11px] font-black"
+                            >
+                                升級 →
+                            </button>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 text-[12px] font-black text-emerald-700">
+                                <Send className="w-3.5 h-3.5" />
+                                每月推播額度：{formatLimit(broadcastLimit)} 則
+                            </div>
+                            <button 
+                                onClick={() => setIsModalOpen(true)}
+                                className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-emerald-500 to-cyan-600 text-white rounded-[24px] text-[15px] font-black shadow-xl shadow-emerald-500/20 transition-all active:scale-95 hover:from-emerald-600 hover:to-cyan-700"
+                            >
+                                <Send className="w-5 h-5 text-emerald-400" />
+                                多重篩選推播
+                            </button>
+                        </>
+                    )}
                 </div>
             </div>
 

@@ -143,10 +143,10 @@ export default function DashboardPage() {
                     >
                         {activeTab === 'brand' && <BrandDNATab config={config} setConfig={setConfig} planLevel={planLevel} />}
                         {activeTab === 'dojo' && <DojoTab config={config} setConfig={setConfig} planLevel={planLevel} onSave={handleSave} isSaving={isSaving} />}
-                        {activeTab === 'offerings' && <OfferingsTab config={config} setConfig={setConfig} />}
-                        {activeTab === 'faq' && <FAQTab config={config} setConfig={setConfig} />}
-                        {activeTab === 'logic' && <LogicTab config={config} setConfig={setConfig} />}
-                        {activeTab === 'contact' && <ContactTab config={config} setConfig={setConfig} />}
+                        {activeTab === 'offerings' && <OfferingsTab config={config} setConfig={setConfig} planLevel={planLevel} />}
+                        {activeTab === 'faq' && <FAQTab config={config} setConfig={setConfig} planLevel={planLevel} />}
+                        {activeTab === 'logic' && <LogicTab config={config} setConfig={setConfig} planLevel={planLevel} />}
+                        {activeTab === 'contact' && <ContactTab config={config} setConfig={setConfig} planLevel={planLevel} />}
                         {activeTab === 'rag' && <RAGTab planLevel={planLevel} bots={bots} selectedBotId={selectedBotId} />}
                         {activeTab === 'audience' && <AudienceTab botId={selectedBotId} planLevel={planLevel} />}
                     </motion.div>

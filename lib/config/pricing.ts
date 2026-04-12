@@ -50,12 +50,28 @@ export interface PricingPlan {
   };
 
   limits: {
-    stores: number;               // 店數上限（-1 = 無限）
-    monthlyQuota: number;         // 每月訊息額度（-1 = 無限）
-    dailyQuota: number;           // 每日訊息上限（防刷保護，-1 = 無限）
-    isLifetimeQuota: boolean;     // true = 終身額度（免費版），false = 每月重置
-    maxLineMembers: number;       // 全帳號 LINE 好友數上限（-1 = 無限）
+    stores: number;                 // 店數上限（-1 = 無限）
+    monthlyQuota: number;           // 每月訊息額度（-1 = 無限）
+    dailyQuota: number;             // 每日訊息上限（防刷保護，-1 = 無限）
+    isLifetimeQuota: boolean;       // true = 終身額度（免費版），false = 每月重置
+    maxLineMembers: number;         // 全帳號 LINE 好友數上限（-1 = 無限）
     maxLineMembersPerStore: number; // 單店 LINE 好友數上限（-1 = 無限）
+  };
+
+  // ─── 八大智庫功能開通權限 ────────────────────────────────
+  featureAccess: {
+    brandDNA: boolean;          // 1. 品牌 DNA
+    instantCommands: number;    // 2. 即時下指令（可同時啟用條數，0=關閉）
+    products: number;           // 3. 商品/服務（上限項數，-1=無限）
+    faq: number;                // 4. 常見問題（上限組數，-1=無限）
+    guidanceRules: number;      // 5. 引導規則（可同時啟用條數，-1=無限）
+    contactPortal: boolean;     // 6. 聯絡窗口
+    pdfLearning: number;        // 7a. PDF 學習（上限份數，0=關閉，-1=無限）
+    webLearning: number;        // 7b. 網頁學習（上限URL數，0=關閉，-1=無限）
+    crmTagging: boolean;        // 8a. CRM 自動打標籤
+    crmBroadcast: number;       // 8b. CRM 主動推播（每月則數，0=關閉，-1=無限）
+    crmScheduled: boolean;      // 8c. CRM 排程推播
+    crmPersonalized: boolean;   // 8d. CRM 個人化推播
   };
 
   features: string[];        // 功能列表
@@ -101,6 +117,20 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       maxLineMembers: 200,
       maxLineMembersPerStore: 200,
     },
+    featureAccess: {
+      brandDNA: true,
+      instantCommands: 0,
+      products: 0,
+      faq: 0,
+      guidanceRules: 1,
+      contactPortal: true,
+      pdfLearning: 0,
+      webLearning: 0,
+      crmTagging: false,
+      crmBroadcast: 0,
+      crmScheduled: false,
+      crmPersonalized: false,
+    },
     features: [
       '24H AI 全時段自動接單',
       '品牌性格自助設定',
@@ -140,8 +170,22 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       monthlyQuota: 500,
       dailyQuota: 30,
       isLifetimeQuota: false,
-      maxLineMembers: 1000,
-      maxLineMembersPerStore: 1000,
+      maxLineMembers: 500,
+      maxLineMembersPerStore: 500,
+    },
+    featureAccess: {
+      brandDNA: true,
+      instantCommands: 0,
+      products: 10,
+      faq: 10,
+      guidanceRules: 3,
+      contactPortal: true,
+      pdfLearning: 0,
+      webLearning: 0,
+      crmTagging: false,
+      crmBroadcast: 0,
+      crmScheduled: false,
+      crmPersonalized: false,
     },
     features: [
       '24H AI 全時段自動接單',
@@ -184,8 +228,22 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       monthlyQuota: 2000,
       dailyQuota: 100,
       isLifetimeQuota: false,
-      maxLineMembers: 3000,
-      maxLineMembersPerStore: 3000,
+      maxLineMembers: 1500,
+      maxLineMembersPerStore: 1500,
+    },
+    featureAccess: {
+      brandDNA: true,
+      instantCommands: 2,
+      products: 30,
+      faq: 30,
+      guidanceRules: 5,
+      contactPortal: true,
+      pdfLearning: 3,
+      webLearning: 0,
+      crmTagging: true,
+      crmBroadcast: 0,
+      crmScheduled: false,
+      crmPersonalized: false,
     },
     features: [
       '24H AI 全時段自動接單',
@@ -227,8 +285,22 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       monthlyQuota: 5000,
       dailyQuota: 300,
       isLifetimeQuota: false,
-      maxLineMembers: 8000,
-      maxLineMembersPerStore: 3000,
+      maxLineMembers: 3500,
+      maxLineMembersPerStore: 1200,
+    },
+    featureAccess: {
+      brandDNA: true,
+      instantCommands: 5,
+      products: 100,
+      faq: 80,
+      guidanceRules: 10,
+      contactPortal: true,
+      pdfLearning: 10,
+      webLearning: 0,
+      crmTagging: true,
+      crmBroadcast: 3000,
+      crmScheduled: false,
+      crmPersonalized: false,
     },
     features: [
       '單店主力所有功能',
@@ -269,8 +341,22 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       monthlyQuota: 10000,
       dailyQuota: 500,
       isLifetimeQuota: false,
-      maxLineMembers: 15000,
-      maxLineMembersPerStore: 3000,
+      maxLineMembers: 7500,
+      maxLineMembersPerStore: 1250,
+    },
+    featureAccess: {
+      brandDNA: true,
+      instantCommands: 10,
+      products: 200,
+      faq: 100,
+      guidanceRules: 20,
+      contactPortal: true,
+      pdfLearning: 15,
+      webLearning: 15,
+      crmTagging: true,
+      crmBroadcast: 7000,
+      crmScheduled: true,
+      crmPersonalized: false,
     },
     features: [
       '成長多店所有功能',
@@ -306,8 +392,22 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       monthlyQuota: 15000,
       dailyQuota: -1,
       isLifetimeQuota: false,
-      maxLineMembers: 20000,
-      maxLineMembersPerStore: 8000,
+      maxLineMembers: 12000,
+      maxLineMembersPerStore: 4000,
+    },
+    featureAccess: {
+      brandDNA: true,
+      instantCommands: 15,
+      products: 300,
+      faq: 150,
+      guidanceRules: 35,
+      contactPortal: true,
+      pdfLearning: 20,
+      webLearning: 20,
+      crmTagging: true,
+      crmBroadcast: 10000,
+      crmScheduled: true,
+      crmPersonalized: true,
     },
     features: [
       '連鎖專業所有功能',
@@ -348,8 +448,22 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       monthlyQuota: 30000,
       dailyQuota: -1,
       isLifetimeQuota: false,
-      maxLineMembers: 25000,
+      maxLineMembers: 22000,
       maxLineMembersPerStore: 5000,
+    },
+    featureAccess: {
+      brandDNA: true,
+      instantCommands: -1,
+      products: -1,
+      faq: 200,
+      guidanceRules: -1,
+      contactPortal: true,
+      pdfLearning: 30,
+      webLearning: 30,
+      crmTagging: true,
+      crmBroadcast: 15000,
+      crmScheduled: true,
+      crmPersonalized: true,
     },
     features: [
       '旗艦 Lite 所有功能',

@@ -1,10 +1,11 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ChevronRight, Plus, Trash2 } from 'lucide-react';
+import { ChevronDown, ChevronRight, Plus, Trash2, Lock, HelpCircle } from 'lucide-react';
 import InputField from '@/components/ui/InputField';
 import TextareaField from '@/components/ui/TextareaField';
 import { useState } from 'react';
+import { getFeatureAccess, getPlanName, getRequiredPlanName, isAtLimit, formatLimit } from '@/lib/feature-access';
 
 const FAQ_PRESETS = [
     { label: '營業時間與店址', q: '請問你們的營業時間與地址在哪裡？', a: '我們位於 [請填寫地址]，營業時間為 [請填寫時間]。歡迎您的光臨！' },
@@ -130,9 +131,15 @@ const INDUSTRY_FAQ_PACKS: Record<string, { q: string; a: string }[]> = {
 interface FAQTabProps {
     config: any;
     setConfig: (fn: (c: any) => any) => void;
+    planLevel?: number;
 }
 
-export default function FAQTab({ config, setConfig }: FAQTabProps) {
+export default function FAQTab({ config, setConfig, planLevel = 0 }: FAQTabProps) {
+    const fa = getFeatureAccess(planLevel);
+    const faqLimit = fa.faq; // 0 = 關閉, -1 = 無限
+    const currentCount = config.faq_base?.length ?? 0;
+    const atLimit = isAtLimit(currentCount, faqLimit);
+    const isLocked = faqLimit === 0;
     const [packOpen, setPackOpen] = useState(false);
     const [expandedItems, setExpandedItems] = useState<Record<number, boolean>>({});
 
@@ -159,8 +166,40 @@ export default function FAQTab({ config, setConfig }: FAQTabProps) {
         setConfig((c: any) => ({ ...c, faq_base: f }));
     };
 
+    // 免費方案 (free/tier=0) 不開放 FAQ
+    if (isLocked) {
+        return (
+            <div className="py-20 flex flex-col items-center justify-center text-center px-10 bg-white/10 backdrop-blur-md rounded-[24px] shadow-sm">
+                <div className="w-24 h-24 rounded-[24px] bg-white/60 flex items-center justify-center mb-8 shadow-2xl">
+                    <HelpCircle className="w-10 h-10 text-emerald-500" strokeWidth={2.5} />
+                </div>
+                <h3 className="text-[28px] font-black text-slate-900 mb-4">常見問題智庫尚未開通</h3>
+                <p className="text-[16px] text-slate-600 max-w-lg mb-8 font-bold leading-relaxed">
+                    此功能需升級至 <span className="text-emerald-600">{getRequiredPlanName('faq', 1)}</span> 以上，
+                    即可建立標準化常見問答庫，讓 AI 24 小時自動回覆客人常見問類。
+                </p>
+                <button
+                    onClick={() => window.dispatchEvent(new CustomEvent('switch-tab', { detail: 'billing' }))}
+                    className="px-10 py-4 rounded-[16px] bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-black text-[15px] shadow-lg hover:scale-105 active:scale-95 transition-all"
+                >
+                    立即升級解鎖 →
+                </button>
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-4">
+            {/* 額度指示列 */}
+            <div className="flex items-center justify-between px-2">
+                <p className="text-[12px] font-black text-slate-400 uppercase tracking-widest">常見問答庫</p>
+                <div className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-[12px] font-black
+                    ${atLimit ? 'bg-red-100 text-red-600' : 'bg-emerald-50 text-emerald-700'}`}>
+                    <div className={`w-2 h-2 rounded-full ${atLimit ? 'bg-red-500' : 'bg-emerald-500'}`} />
+                    {currentCount} / {formatLimit(faqLimit)} 組
+                    {atLimit && <span className="ml-1">(已達上限)</span>}
+                </div>
+            </div>
 
             {/* ══ SECTION 1: 快速匯入 (collapsible) ══ */}
             <div className="rounded-[24px]   overflow-hidden  mb-6">
@@ -302,18 +341,33 @@ export default function FAQTab({ config, setConfig }: FAQTabProps) {
             })}
 
             {/* ── Add FAQ ── */}
-            <motion.button
-                whileHover={{ scale: 1.01, y: -2 }}
-                whileTap={{ scale: 0.99 }}
-                onClick={() => {
-                    const newIdx = config.faq_base.length;
-                    setConfig((c: any) => ({ ...c, faq_base: [...c.faq_base, { q: '', a: '', tags: [] }] }));
-                    setTimeout(() => setExpandedItems(p => ({ ...p, [newIdx]: true })), 50);
-                }}
-                className="w-full flex items-center justify-center gap-4 py-8 rounded-[24px]  bg-gradient-to-r from-emerald-500 to-cyan-600 text-[18px] font-black text-white transition-all shadow-xl shadow-emerald-500/20 active:scale-95"
-            >
-                <Plus className="w-5 h-5" /> 新增一個 FAQ 問題
-            </motion.button>
+            {atLimit ? (
+                <div className="w-full flex flex-col items-center justify-center gap-3 py-8 rounded-[24px] border-2 border-dashed border-amber-200 bg-amber-50">
+                    <div className="flex items-center gap-2 text-amber-600">
+                        <Lock className="w-5 h-5" />
+                        <span className="text-[15px] font-black">已達 {formatLimit(faqLimit)} 組上限（{getPlanName(planLevel)}）</span>
+                    </div>
+                    <button
+                        onClick={() => window.dispatchEvent(new CustomEvent('switch-tab', { detail: 'billing' }))}
+                        className="px-6 py-2.5 rounded-[12px] bg-gradient-to-r from-emerald-500 to-cyan-500 text-white text-[13px] font-black shadow-md hover:scale-105 transition-all"
+                    >
+                        升級方案以新增更多 →
+                    </button>
+                </div>
+            ) : (
+                <motion.button
+                    whileHover={{ scale: 1.01, y: -2 }}
+                    whileTap={{ scale: 0.99 }}
+                    onClick={() => {
+                        const newIdx = config.faq_base.length;
+                        setConfig((c: any) => ({ ...c, faq_base: [...c.faq_base, { q: '', a: '', tags: [] }] }));
+                        setTimeout(() => setExpandedItems(p => ({ ...p, [newIdx]: true })), 50);
+                    }}
+                    className="w-full flex items-center justify-center gap-4 py-8 rounded-[24px] bg-gradient-to-r from-emerald-500 to-cyan-600 text-[18px] font-black text-white transition-all shadow-xl shadow-emerald-500/20 active:scale-95"
+                >
+                    <Plus className="w-5 h-5" /> 新增一個 FAQ 問題
+                </motion.button>
+            )}
         </div>
     );
 }

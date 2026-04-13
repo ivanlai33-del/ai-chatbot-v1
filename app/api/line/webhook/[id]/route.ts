@@ -108,6 +108,8 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
         const client = new messagingApi.MessagingApiClient({
             channelAccessToken: config.channel_access_token
         });
+        
+        const backgroundTasks: Promise<any>[] = [];
 
         // ⚡ Check cache first, only query DB on cache miss
         let storeConfig = getCachedStoreConfig(configId);
@@ -201,21 +203,28 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
 
             // 🧾 計費記帳 (Usage Logic)
             const UsageService = (await import('@/lib/services/UsageService')).UsageService;
-            UsageService.incrementUsage(config.user_id, 0); // 這裡不傳 tokens 是為了節省一次 token 計算
+            backgroundTasks.push(UsageService.incrementUsage(config.user_id, 0));
 
-            // Save chat log (non-blocking) - 🎯 INSERT TWO ROWS FOR MEMORY CONSISTENCY
+            // Save chat log (non-blocking but awaited at the end)
             const isLead = /09\d{2}[-\s]?\d{3}[-\s]?\d{3}|(預約|報名|想買|電話)/i.test(userMessage + aiResponse);
-            supabase.from('chat_logs').insert([
+            const logTask = supabase.from('chat_logs').insert([
                 { config_id: configId, user_id: userId, role: 'user', content: userMessage },
                 { config_id: configId, user_id: userId, role: 'ai', content: aiResponse, is_lead: isLead }
             ]).then(({ error }) => {
                 if (error) console.error(`[TIER1:LineWebhook][${configId}] Log failed:`, error.message);
             });
+            backgroundTasks.push(logTask);
 
-            // 🎯 CRM 自動貼標引擎 (非同步觸發，無感執行不拖累回應速度)
+            // 🎯 CRM 自動貼標引擎
             if (userId) {
-                extractCustomerProfile(configId, userId, userMessage, aiResponse);
+                backgroundTasks.push(extractCustomerProfile(configId, userId, userMessage, aiResponse));
             }
+        }
+        
+        // ⚡ Vercel Serverless 防護：確保所有背景任務 (Log, CRM, Usage) 在回傳前執行完畢
+        if (backgroundTasks.length > 0) {
+            await Promise.allSettled(backgroundTasks);
+            console.log(`[TIER1:LineWebhook][${configId}] ${backgroundTasks.length} background tasks completed.`);
         }
     } catch (err: any) {
         console.error(`[TIER1:LineWebhook][${configId}] processEvents error:`, err.message);

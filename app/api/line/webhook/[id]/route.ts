@@ -207,12 +207,13 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
 
             // Save chat log (non-blocking but awaited at the end)
             const isLead = /09\d{2}[-\s]?\d{3}[-\s]?\d{3}|(預約|報名|想買|電話)/i.test(userMessage + aiResponse);
-            const logTask = supabase.from('chat_logs').insert([
-                { config_id: configId, user_id: userId, role: 'user', content: userMessage },
-                { config_id: configId, user_id: userId, role: 'ai', content: aiResponse, is_lead: isLead }
-            ]).then(({ error }) => {
+            const logTask = (async () => {
+                const { error } = await supabase.from('chat_logs').insert([
+                    { config_id: configId, user_id: userId, role: 'user', content: userMessage },
+                    { config_id: configId, user_id: userId, role: 'ai', content: aiResponse, is_lead: isLead }
+                ]);
                 if (error) console.error(`[TIER1:LineWebhook][${configId}] Log failed:`, error.message);
-            });
+            })();
             backgroundTasks.push(logTask);
 
             // 🎯 CRM 自動貼標引擎

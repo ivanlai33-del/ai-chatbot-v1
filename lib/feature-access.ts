@@ -32,11 +32,14 @@ export function getRequiredPlanName(
   for (const planId of PLAN_IDS_ORDERED) {
     const plan = PRICING_PLANS[planId];
     const val = plan.featureAccess[feature];
-    if (typeof val === 'boolean' && val === true) return plan.name;
+    
+    if (typeof val === 'boolean' && val === true && minValue === true) {
+      return plan.name;
+    }
+    
     if (typeof val === 'number' && typeof minValue === 'number') {
       if (val >= minValue) return plan.name;
     }
-    if (typeof minValue === 'boolean' && val === true) return plan.name;
   }
   return '旗艦 Pro';
 }

@@ -116,10 +116,40 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
             : '你現在是 LINE 官方帳號的 AI 店長。請簡短、精確且有禮貌地回答客戶。';
 
         for (const event of events) {
-            if (event.type !== 'message' || event.message.type !== 'text') continue;
+            if (event.type !== 'message' || (event.message.type !== 'text' && event.message.type !== 'image')) continue;
 
             const userId = event.source.userId;
-            const userMessage = event.message.text;
+            const messageType = event.message.type;
+            let userMessage = '';
+            let imageBase64: string | null = null;
+
+            if (messageType === 'text') {
+                userMessage = (event.message as any).text || '';
+            } else if (messageType === 'image') {
+                userMessage = '【傳送了一張圖片】';
+                const fa = FreemiumGuard.getFeatureAccess(config.selected_plan_tier || 0);
+                if (!fa.visionAI) {
+                    await client.replyMessage({
+                        replyToken: event.replyToken,
+                        messages: [{ type: 'text', text: '受限於目前的訂閱方案，本店長還沒有開通眼睛 👀。請用文字描述您的問題唷！' }]
+                    });
+                    console.log(`[TIER1:LineWebhook][${configId}] Blocked image from user without visionAI plan`);
+                    continue; // Skip further processing
+                }
+                
+                try {
+                    // Download image directly from LINE
+                    const stream = await client.getMessageContent(event.message.id);
+                    const chunks: any[] = [];
+                    for await (const chunk of stream) chunks.push(chunk);
+                    const buffer = Buffer.concat(chunks);
+                    imageBase64 = buffer.toString('base64');
+                    console.log(`[TIER1:LineWebhook][${configId}] Successfully downloaded image: ${imageBase64.length} bytes`);
+                } catch (imgError) {
+                    console.error('[TIER1:LineWebhook] Failed to fetch image content:', imgError);
+                    imageBase64 = null;
+                }
+            }
             
             // 🛡️ 社交禮儀 (Social Protocol)：群組靜默過濾
             const source = event.source;
@@ -184,7 +214,7 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
             }
 
             // ⚡ DIRECT OpenAI call — skip AIService overhead:
-            const aiResponse = await callOpenAIDirect(dynamicPrompt, safeMessage, chatHistory);
+            const aiResponse = await callOpenAIDirect(dynamicPrompt, userMessage, chatHistory, imageBase64);
 
             await client.replyMessage({
                 replyToken: event.replyToken,
@@ -192,9 +222,9 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
             });
             console.log(`[TIER1:LineWebhook][${configId}] Reply sent.`);
 
-            // 🧾 計費記帳 (Usage Logic)
+            // 🧾 計費記帳 (Usage Logic): 影像訊息加倍扣除 (折抵 3 個額度)
             const UsageService = (await import('@/lib/services/UsageService')).UsageService;
-            backgroundTasks.push(UsageService.incrementUsage(config.user_id, 0));
+            backgroundTasks.push(UsageService.incrementUsage(config.user_id, imageBase64 ? 2 : 0));
 
             // Save chat log (non-blocking but awaited at the end)
             const isLead = /09\d{2}[-\s]?\d{3}[-\s]?\d{3}|(預約|報名|想買|電話)/i.test(userMessage + aiResponse);
@@ -228,14 +258,24 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
  * Skips: Moderation API, dynamic tools, member tier lookup.
  * Uses: gpt-4o-mini (fastest), max_tokens cap (prevent runaway responses).
  */
-async function callOpenAIDirect(systemPrompt: string, userMessage: string, chatHistory: any[] = []): Promise<string> {
+async function callOpenAIDirect(systemPrompt: string, userMessage: string, chatHistory: any[] = [], imageBase64: string | null = null): Promise<string> {
     try {
+        let userPayload: any = userMessage;
+        
+        // Construct multimodal array if image is present
+        if (imageBase64) {
+            userPayload = [
+                { type: 'text', text: '請辨識或解析此圖片細節，並專注回答與本店商品或服務相關的內容。' },
+                { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${imageBase64}`, detail: 'low' } }
+            ];
+        }
+
         const response = await openai.chat.completions.create({
             model: 'gpt-4o-mini',
             messages: [
                 { role: 'system', content: systemPrompt },
                 ...chatHistory,
-                { role: 'user', content: userMessage }
+                { role: 'user', content: userPayload }
             ],
             temperature: 0.7,
             max_tokens: 600,  // Cap prevents slow long responses

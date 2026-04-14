@@ -222,9 +222,32 @@ async function handleSingleEvent(
     }
 
     // ─── E. 一般顧客對話（AI 回覆）─────────────────────────
-    if (event.type === 'message' && event.message.type === 'text') {
+    if (event.type === 'message' && (event.message.type === 'text' || event.message.type === 'image')) {
+        const userMessageText = event.message.type === 'text' ? event.message.text.trim() : '【傳送了一張圖片】';
+        let imgBase64: string | null = null;
+        
+        if (event.message.type === 'image') {
+            // Check vision permissions
+            const { getFeatureAccess } = await import('@/lib/feature-access');
+            const fa = getFeatureAccess(bot.plan_tier || 0); // fallback to free if undefined
+            // Note: Older bots might not have plan_tier cached correctly, we can also bypass or strict block.
+            if (!fa.visionAI) {
+                await safeReply(lineClient, event.replyToken, '受限於目前的訂閱方案，本店長還沒有開通眼睛 👀。請用文字描述您的問題唷！', logger);
+                return;
+            }
+            try {
+                const stream = await lineClient.getMessageContent(event.message.id);
+                const chunks: any[] = [];
+                for await (const chunk of stream) chunks.push(chunk);
+                const buffer = Buffer.concat(chunks);
+                imgBase64 = buffer.toString('base64');
+            } catch (err: any) {
+                logger.error('Failed to download image content', err);
+            }
+        }
+
         await handleCustomerChat(
-            event.message.text.trim(),
+            userMessageText,
             lineUserId,
             activeBot,
             event.replyToken,
@@ -233,7 +256,8 @@ async function handleSingleEvent(
             chatClient,
             chatModel,
             supabase,
-            logger
+            logger,
+            imgBase64
         );
     }
 }
@@ -249,7 +273,8 @@ async function handleCustomerChat(
     chatClient: OpenAI,
     chatModel: string,
     supabase: SupabaseClient,
-    logger: BotLogger
+    logger: BotLogger,
+    imageBase64: string | null = null
 ): Promise<void> {
 
     // 🚀 極速並行化：同時查詢歷史紀錄與攔截意圖 (天氣/股票/匯率)
@@ -290,7 +315,15 @@ ${bot.dynamic_context ? `\n【店長今日動態公告】：${bot.dynamic_contex
             content: `[即時資訊預載] 使用者詢問 ${intercepted.intent}，數據如下：\n${JSON.stringify(intercepted.data, null, 2)}`
         });
     }
-    messages.push({ role: 'user', content: userMessage });
+
+    let userPayload: any = userMessage;
+    if (imageBase64) {
+        userPayload = [
+            { type: 'text', text: '請為顧客辨識這張圖片，並依據本店的商品或領域專注回答。' },
+            { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${imageBase64}`, detail: 'low' } }
+        ];
+    }
+    messages.push({ role: 'user', content: userPayload });
 
     // Concurrency slot
     const limit = getConcurrentLimit(bot.selected_plan);

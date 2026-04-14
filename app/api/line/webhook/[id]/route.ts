@@ -18,26 +18,14 @@ import { supabase } from '@/lib/supabase';
 import { AIService } from '@/lib/services/AIService';
 import { FreemiumGuard } from '@/lib/services/FreemiumGuard';
 import OpenAI from 'openai';
+import { Redis } from '@upstash/redis';
 import * as crypto from 'crypto';
 
 export const maxDuration = 60;
 
-// Module-level OpenAI client (reused across invocations in warm instances)
+// Module-level clients (reused across invocations in warm instances)
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
-// In-memory store config cache (TTL: 5 minutes)
-// Avoids repeated DB round-trips for configs that rarely change
-const storeConfigCache = new Map<string, { data: any; expiresAt: number }>();
-const CACHE_TTL_MS = 5 * 60 * 1000;
-
-function getCachedStoreConfig(configId: string): any | null {
-    const entry = storeConfigCache.get(configId);
-    if (entry && Date.now() < entry.expiresAt) return entry.data;
-    return null;
-}
-function setCachedStoreConfig(configId: string, data: any) {
-    storeConfigCache.set(configId, { data, expiresAt: Date.now() + CACHE_TTL_MS });
-}
+const redis = Redis.fromEnv();
 
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
     const configId = params.id;
@@ -111,13 +99,16 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
         
         const backgroundTasks: Promise<any>[] = [];
 
-        // ⚡ Check cache first, only query DB on cache miss
-        let storeConfig = getCachedStoreConfig(configId);
+        // ⚡ Check Redis cache first, only query DB on cache miss
+        let storeConfig = await redis.get(`store_config:${configId}`);
         if (!storeConfig) {
             const { data } = await supabase
                 .from('store_configs').select('*').eq('bot_config_id', configId).maybeSingle();
             storeConfig = data;
-            setCachedStoreConfig(configId, storeConfig);
+            if (storeConfig) {
+                // Set cache with 5 minutes expiration (TTL: 300 seconds)
+                await redis.set(`store_config:${configId}`, storeConfig, { ex: 300 });
+            }
         }
 
         const systemPrompt = storeConfig

@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
 
+// 允許此 API 最長執行 60 秒 (保護 AI 學習不被強制中斷)
+export const maxDuration = 60;
+
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -130,19 +133,22 @@ export async function POST(req: NextRequest) {
 
         const docId = docRecord.id;
 
-        // 5. 非同步處理（不讓 HTTP 等太久）
-        processDocument(file, docId, botId).catch(err => {
+        // 5. 執行學習（強制 await 以防止 Vercel 將其強制關閉）
+        try {
+            await processDocument(file, docId, botId);
+        } catch (err: any) {
             console.error(`[RAG] Document processing failed for ${docId}:`, err.message);
-            supabase.from('rag_documents').update({
+            await supabase.from('rag_documents').update({
                 status: 'error',
                 error_message: err.message,
             }).eq('id', docId);
-        });
+            return NextResponse.json({ error: err.message }, { status: 400 });
+        }
 
         return NextResponse.json({
             success: true,
             documentId: docId,
-            message: '文件已接收，正在進行 AI 學習（約 10-30 秒）',
+            message: '文件已完成 AI 學習並建立向量索引',
         });
 
     } catch (err: any) {

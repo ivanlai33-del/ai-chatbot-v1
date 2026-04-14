@@ -21,6 +21,7 @@ import { Client, WebhookEvent } from '@line/bot-sdk';
 import OpenAI from 'openai';
 import { SupabaseClient } from '@supabase/supabase-js';
 
+import { Redis } from '@upstash/redis';
 import { supabase as globalSupabase } from '@/lib/supabase';
 import { decrypt } from '@/lib/encryption';
 import { markAsProcessed, getIdempotencyKey } from '@/lib/middleware/idempotency';
@@ -48,12 +49,25 @@ export async function processStoreEvents(
     const logger = new BotLogger(TIER, botId);
     logger.info(`Processing ${events.length} event(s)`);
 
-    // 1. 取得 Bot 設定
-    const { data: bot, error: botError } = await globalSupabase
-        .from('bots')
-        .select('*')
-        .eq('id', botId)
-        .single();
+    const redis = Redis.fromEnv();
+    
+    // 1. 取得 Bot 設定 (加上 Redis 快取防護)
+    let bot: any = await redis.get(`bot_config:${botId}`);
+    let botError = null;
+
+    if (!bot) {
+        const { data, error } = await globalSupabase
+            .from('bots')
+            .select('*')
+            .eq('id', botId)
+            .single();
+        bot = data;
+        botError = error;
+        
+        if (bot && !error) {
+            await redis.set(`bot_config:${botId}`, bot, { ex: 300 });
+        }
+    }
 
     if (botError || !bot) {
         logger.error('Bot not found in DB', botError);

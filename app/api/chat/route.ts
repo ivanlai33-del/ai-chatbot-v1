@@ -14,6 +14,7 @@ import { WeatherService } from '@/lib/services/WeatherService';
 import { StockService } from '@/lib/services/StockService';
 import { checkRateLimit } from '@/lib/middleware/rateLimit';
 import { getRandomNagMessage } from '@/config/trial_nags';
+import { Redis } from '@upstash/redis';
 
 import { GLOBAL_SECURITY_PROMPT } from './prompts/security';
 import { 
@@ -35,11 +36,26 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
 
+const redis = Redis.fromEnv();
+
 // 🚀 Google Gemini (OpenAI-compatible) Initialization
 const googleAI = process.env.GOOGLE_API_KEY ? new OpenAI({
     apiKey: process.env.GOOGLE_API_KEY,
     baseURL: "https://generativelanguage.googleapis.com/v1/openai"
 }) : null;
+
+async function getCached<T>(key: string, fetcher: () => Promise<T>, ttl: number = 300): Promise<T> {
+    try {
+        const cached = await redis.get(key);
+        if (cached) return cached as T;
+    } catch(e) { console.warn('Redis read error', e); }
+
+    const fresh = await fetcher();
+    try {
+        if (fresh) await redis.set(key, fresh, { ex: ttl });
+    } catch(e) { console.warn('Redis write error', e); }
+    return fresh;
+}
 
 function logToFile(data: any) {
     console.log('[ChatAPI]', JSON.stringify(data));
@@ -156,7 +172,7 @@ export async function POST(req: NextRequest) {
             })();
         }
 
-        // ⚡ 並行 DB 查詢：6 個查詢同時飛出，節省串行等待的 400–900ms
+        // ⚡ 並行 DB 查詢（結合 Redis 快取保護：減少 3 個直接查 DB 的壓力）
         const [
             userResult,
             usageResult,
@@ -166,18 +182,30 @@ export async function POST(req: NextRequest) {
             botCountResult,
         ] = await Promise.all([
             effectiveUserId
-                ? supabase.from('platform_users').select('plan_level, role').eq('line_user_id', effectiveUserId).maybeSingle()
+                ? getCached(`web_user_plan:${effectiveUserId}`, async () => {
+                      const { data } = await supabase.from('platform_users').select('plan_level, role').eq('line_user_id', effectiveUserId).maybeSingle();
+                      return { data };
+                  })
                 : Promise.resolve({ data: null }),
             effectiveUserId
                 ? supabase.from('user_usage_stats').select('message_count').eq('line_user_id', effectiveUserId).eq('month', currentMonth).maybeSingle()
                 : Promise.resolve({ data: null }),
             effectiveUserId
-                ? supabase.from('bots').select('brand_dna').eq('line_user_id', effectiveUserId).limit(1).maybeSingle()
+                ? getCached(`web_bot_dna:${effectiveUserId}`, async () => {
+                      const { data } = await supabase.from('bots').select('brand_dna').eq('line_user_id', effectiveUserId).limit(1).maybeSingle();
+                      return { data };
+                  })
                 : Promise.resolve({ data: null }),
-            supabase.from('ai_campaigns').select('promotion_script').eq('is_active', true),
+            getCached(`active_campaigns`, async () => {
+                const { data } = await supabase.from('ai_campaigns').select('promotion_script').eq('is_active', true);
+                return { data };
+            }),
             getDynamicTools(),
             isMaster
-                ? supabase.from('bots').select('*', { count: 'exact', head: true })
+                ? getCached(`total_bot_count`, async () => {
+                      const { count } = await supabase.from('bots').select('*', { count: 'exact', head: true });
+                      return { count };
+                  }, 600) // 總數可以快取 10 分鐘
                 : Promise.resolve({ count: null }),
         ]);
 

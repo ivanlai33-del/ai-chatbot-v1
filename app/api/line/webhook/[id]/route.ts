@@ -139,8 +139,11 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
                 }
                 
                 try {
-                    // Download image directly from LINE
-                    const stream = await client.getMessageContent(event.message.id);
+                    // Download image directly from LINE using BlobClient
+                    const blobClient = new messagingApi.MessagingApiBlobClient({
+                        channelAccessToken: config.channel_access_token
+                    });
+                    const stream = await blobClient.getMessageContent(event.message.id) as NodeJS.ReadableStream;
                     const chunks: any[] = [];
                     for await (const chunk of stream) chunks.push(chunk);
                     const buffer = Buffer.concat(chunks);

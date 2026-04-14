@@ -356,10 +356,12 @@ ${bot.dynamic_context ? `\n【店長今日動態公告】：${bot.dynamic_contex
     }
 
     // 異步寫 Log（不阻塞回覆）
-    supabase.from('chat_logs').insert([
+    // ⚡ Await insertion to prevent Vercel Serverless from dropping the history
+    const { error: logError } = await supabase.from('chat_logs').insert([
         { bot_id: bot.id, user_id: lineUserId, role: 'user', content: userMessage },
         { bot_id: bot.id, user_id: lineUserId, role: 'ai', content: aiResponse }
-    ]).then(({ error }) => { if (error) logger.error('Chat log insert failed', error); });
+    ]);
+    if (logError) logger.error('Chat log insert failed', logError);
 
     // 💎 強力版(1199)：自動擷取預約意圖
     const is1199Plan = (bot.selected_plan || '').includes('1199') || (bot.selected_plan || '').includes('強力');

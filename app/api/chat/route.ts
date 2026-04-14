@@ -159,11 +159,14 @@ export async function POST(req: NextRequest) {
 
         // ⚡ 非阻塞 Upsert (fire-and-forget 特性在 Vercel Serverless 會被中止，故整合入下方的 Promise.all 並行執行)
         const upsertPromise = (effectiveUserId && effectiveUserName) 
-            ? supabase.rpc('upsert_platform_user', {
-                  p_line_id: effectiveUserId,
-                  p_name: effectiveUserName,
-                  p_picture: effectiveUserPicture
-              }).catch(e => console.error('[Chat] upsert_platform_user failed:', e?.message || e))
+            ? (async () => {
+                  const { error } = await supabase.rpc('upsert_platform_user', {
+                      p_line_id: effectiveUserId,
+                      p_name: effectiveUserName,
+                      p_picture: effectiveUserPicture
+                  });
+                  if (error) console.error('[Chat] upsert_platform_user failed:', error.message);
+              })()
             : Promise.resolve();
 
         // ⚡ 並行 DB 查詢（結合 Redis 快取保護與 Upsert：所有工作同時飛出，節省串行等待）

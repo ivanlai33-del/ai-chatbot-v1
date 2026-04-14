@@ -127,7 +127,8 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
                 userMessage = (event.message as any).text || '';
             } else if (messageType === 'image') {
                 userMessage = '【傳送了一張圖片】';
-                const fa = FreemiumGuard.getFeatureAccess(config.selected_plan_tier || 0);
+                const { getFeatureAccess } = await import('@/lib/feature-access');
+                const fa = getFeatureAccess(config.selected_plan_tier || 0);
                 if (!fa.visionAI) {
                     await client.replyMessage({
                         replyToken: event.replyToken,

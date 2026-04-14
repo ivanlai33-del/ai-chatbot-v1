@@ -229,7 +229,7 @@ async function handleSingleEvent(
         if (event.message.type === 'image') {
             // Check vision permissions
             const { getFeatureAccess } = await import('@/lib/feature-access');
-            const fa = getFeatureAccess(bot.plan_tier || 0); // fallback to free if undefined
+            const fa = getFeatureAccess(bot.plan_level || 0); // fallback to free if undefined
             // Note: Older bots might not have plan_tier cached correctly, we can also bypass or strict block.
             if (!fa.visionAI) {
                 await safeReply(lineClient, event.replyToken, '受限於目前的訂閱方案，本店長還沒有開通眼睛 👀。請用文字描述您的問題唷！', logger);

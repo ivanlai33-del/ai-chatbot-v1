@@ -157,22 +157,16 @@ export async function POST(req: NextRequest) {
         const effectiveUserPicture = context?.lineUserPicture;
         const currentMonth = new Date().toISOString().slice(0, 7); // "2026-04"
 
-        // ⚡ 非阻塞 Upsert (fire-and-forget)：確保用戶存在
-        if (effectiveUserId && effectiveUserName) {
-            (async () => {
-                try {
-                    await supabase.rpc('upsert_platform_user', {
-                        p_line_id: effectiveUserId,
-                        p_name: effectiveUserName,
-                        p_picture: effectiveUserPicture
-                    });
-                } catch (e: any) {
-                    console.error('[Chat] upsert_platform_user failed:', e?.message || e);
-                }
-            })();
-        }
+        // ⚡ 非阻塞 Upsert (fire-and-forget 特性在 Vercel Serverless 會被中止，故整合入下方的 Promise.all 並行執行)
+        const upsertPromise = (effectiveUserId && effectiveUserName) 
+            ? supabase.rpc('upsert_platform_user', {
+                  p_line_id: effectiveUserId,
+                  p_name: effectiveUserName,
+                  p_picture: effectiveUserPicture
+              }).catch(e => console.error('[Chat] upsert_platform_user failed:', e?.message || e))
+            : Promise.resolve();
 
-        // ⚡ 並行 DB 查詢（結合 Redis 快取保護：減少 3 個直接查 DB 的壓力）
+        // ⚡ 並行 DB 查詢（結合 Redis 快取保護與 Upsert：所有工作同時飛出，節省串行等待）
         const [
             userResult,
             usageResult,
@@ -180,6 +174,7 @@ export async function POST(req: NextRequest) {
             campaignResult,
             toolsResult,
             botCountResult,
+            // upsertResult 不需接收
         ] = await Promise.all([
             effectiveUserId
                 ? getCached(`web_user_plan:${effectiveUserId}`, async () => {
@@ -207,6 +202,7 @@ export async function POST(req: NextRequest) {
                       return { count };
                   }, 600) // 總數可以快取 10 分鐘
                 : Promise.resolve({ count: null }),
+            upsertPromise,
         ]);
 
         // ── 解析並行結果 ──────────────────────────────────────────
@@ -481,32 +477,30 @@ export async function POST(req: NextRequest) {
 
                 if (parsed.action === 'SUBMIT_FEEDBACK') {
                     const feedbackContent = parsed.summary || "\u7121\u5167\u5bb9";
-                    // ⚡ \u975e\u963b\u585e (fire-and-forget)\uff1a\u4e0d\u963b\u585e\u7528\u6236\u7b49\u5f85\u56de\u8986
-                    ;(async () => {
-                        try {
-                            const triage = await openai.chat.completions.create({
-                                model: 'gpt-4o-mini',
-                                messages: [
-                                    { role: 'system', content: '你是一位資深客服經理。分析收到的客戶反饋，提供：1. 分類, 2. 優先級, 3. 建議回覆。輸出為 JSON：{"cat": String, "pri": Number, "reply": String}' },
-                                    { role: 'user', content: feedbackContent }
-                                ],
-                                response_format: { type: 'json_object' }
-                            });
-                            const tData = JSON.parse(triage.choices[0].message.content || '{}');
-                            await supabase.from('owner_feedback').insert({
-                                line_user_id: effectiveUserId,
-                                line_user_name: effectiveUserName,
-                                content: feedbackContent,
-                                feedback_type: 'report',
-                                category: tData.cat || 'General',
-                                priority: tData.pri || 3,
-                                smart_suggestion: tData.reply || "\u7121\u5efa\u8b70",
-                                status: 'pending'
-                            });
-                        } catch (fbErr: any) {
-                            console.error('[Feedback BG] Failed:', fbErr.message);
-                        }
-                    })();
+                    // ⚡ 強制 await：Vercel Serverless 環境不允許 fire-and-forget，必須等待完成再回傳
+                    try {
+                        const triage = await openai.chat.completions.create({
+                            model: 'gpt-4o-mini',
+                            messages: [
+                                { role: 'system', content: '你是一位資深客服經理。分析收到的客戶反饋，提供：1. 分類, 2. 優先級, 3. 建議回覆。輸出為 JSON：{"cat": String, "pri": Number, "reply": String}' },
+                                { role: 'user', content: feedbackContent }
+                            ],
+                            response_format: { type: 'json_object' }
+                        });
+                        const tData = JSON.parse(triage.choices[0].message.content || '{}');
+                        await supabase.from('owner_feedback').insert({
+                            line_user_id: effectiveUserId,
+                            line_user_name: effectiveUserName,
+                            content: feedbackContent,
+                            feedback_type: 'report',
+                            category: tData.cat || 'General',
+                            priority: tData.pri || 3,
+                            smart_suggestion: tData.reply || "\u7121\u5efa\u8b70",
+                            status: 'pending'
+                        });
+                    } catch (fbErr: any) {
+                        console.error('[Feedback BG] Failed:', fbErr.message);
+                    }
                 }
             } catch (e) {
                 console.error("Metadata Parse Error:", e);

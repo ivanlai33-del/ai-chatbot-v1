@@ -218,7 +218,7 @@ export default function DojoTab({ config, setConfig, planLevel, onSave, isSaving
                     <p className="text-[14px] font-black text-slate-800 mb-1">📢 即時下指令給 AI 店長</p>
                     <p className="text-[13px] text-slate-600 leading-relaxed">
                         有突發狀況、新資訊或想調整 AI 的說話方式？在這裡直接告訴店長。
-                        <span className="font-black text-cyan-700"> 選積木 → 填內容 → 按儲存</span>，3 秒即時生效。
+                        <span className="font-black text-cyan-700"> 選積木 → 填內容 → 按儲存</span>，<span className="text-amber-600 font-bold">⚠️ 配合高效能保護機制，前線更新最多需 5 分鐘生效。</span>
                     </p>
                 </div>
             </div>
@@ -345,9 +345,9 @@ export default function DojoTab({ config, setConfig, planLevel, onSave, isSaving
                                     {isSaving ? (
                                         <><Loader2 className="w-4 h-4 animate-spin" /> 儲存中...</>
                                     ) : saved ? (
-                                        <><CheckCircle2 className="w-4 h-4" /> 已生效！</>
+                                        <><CheckCircle2 className="w-4 h-4" /> 儲存成功！(最慢5分鐘後生效)</>
                                     ) : (
-                                        <><Save className="w-4 h-4" /> 儲存並生效</>
+                                        <><Save className="w-4 h-4" /> 儲存並套用</>
                                     )}
                                 </button>
                             </div>

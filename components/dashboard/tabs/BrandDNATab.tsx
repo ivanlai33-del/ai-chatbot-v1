@@ -279,7 +279,13 @@ export default function BrandDNATab({ config, setConfig, planLevel }: BrandDNATa
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             
-
+            {/* 快取延遲提示 */}
+            <div className="flex items-center gap-3 p-4 rounded-[16px] bg-amber-50 border border-amber-200/60 mt-4">
+                <ShieldCheck className="w-5 h-5 text-amber-500 shrink-0" />
+                <p className="text-[13px] text-amber-700 leading-relaxed font-bold">
+                    【高效能快取防護啟用中】為了確保百萬級流量不崩潰，您在這裡與全站其他地方修改的店長設定，前線系統最長需要 5 分鐘才會重新載入最新版本（即時對話歷史不受影響）。
+                </p>
+            </div>
 
             {/* ── 行業類別 (僅顯示控制項) ── */}
             {/* ── 行業類別 (左對齊且放大 20%) ── */}

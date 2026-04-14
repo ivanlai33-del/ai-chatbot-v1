@@ -70,6 +70,7 @@ export interface PricingPlan {
     webLearning: number;        // 7b. 網頁學習（上限URL數，0=關閉，-1=無限）
     crmTagging: boolean;        // 8a. CRM 自動打標籤
     crmBroadcast: number;       // 8b. CRM 主動推播（每月則數，0=關閉，-1=無限）
+    crmScheduled: boolean;      // 8c. CRM 排程推播
     crmPersonalized: boolean;   // 8d. CRM 個人化推播
     visionAI: boolean;          // 9. 圖片視覺辨識能力 (GPT-4o Vision)
   };

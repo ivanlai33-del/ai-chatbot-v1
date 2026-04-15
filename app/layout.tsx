@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import VisitorTracker from "@/components/VisitorTracker";
+import CookieBanner from "@/components/CookieBanner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -57,7 +59,11 @@ export default function RootLayout({
         <html lang="zh-TW">
             <head>
             </head>
-            <body className={inter.className}>{children}</body>
+            <body className={inter.className}>
+                {children}
+                <VisitorTracker />
+                <CookieBanner />
+            </body>
         </html>
     );
 }

@@ -99,30 +99,90 @@ export default function UnifiedBillingView() {
             return;
         }
 
+        // 免費方案不需要金流
+        if (level === 0) {
+            if (!confirm('確定要回到免費方案嗎？')) return;
+            // 呼叫原本的模擬升級 API
+            try {
+                const res = await fetch('/api/platform/user/upgrade', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ lineUserId, planLevel: 0, billingCycle: 'monthly' })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    window.location.reload();
+                }
+            } catch (e) {
+                console.error("Degrade error", e);
+            }
+            return;
+        }
+
+        const targetPlan = getPlanByTier(level);
+        if (!targetPlan) return;
+
         try {
-            const res = await fetch('/api/platform/user/upgrade', {
+            // 1. 呼叫我們新建立的 Checkout API 取得加密包裹
+            const res = await fetch('/api/payment/checkout', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
-                    lineUserId, 
-                    planLevel: level,
-                    billingCycle: cycle 
+                    planId: targetPlan.id,
+                    cycle 
                 })
             });
-            const data = await res.json();
-            if (data.success) {
-                const targetPlan = getPlanByTier(level);
-                setPlanLevel(level);
-                setDbBillingCycle(cycle);
-                setCancelAtPeriodEnd(false); // Reset cancellation on upgrade
-                alert(`已成功模擬切換為：${targetPlan?.name || '免費版'}`);
-                window.location.reload();
-            } else {
-                alert(`切換失敗: ${data.error}`);
+            
+            const result = await res.json();
+            
+            if (!result.success) {
+                alert(`金流初始化失敗: ${result.error}`);
+                return;
             }
+
+            const { MerchantID, TradeInfo, TradeSha, Version, TargetUrl } = result.data;
+
+            // 2. 動態產生 HTML Form 並提交至藍新 (最安全且相容性最高的跳轉方式)
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = TargetUrl;
+
+            const fields = {
+                MerchantID,
+                TradeInfo,
+                TradeSha,
+                Version
+            };
+
+            // 如果是定期定額，欄位名稱略有不同 (藍新規範)
+            if (cycle === 'monthly') {
+                const monthlyFields = {
+                    MerchantID_: MerchantID,
+                    PostData_: TradeInfo
+                };
+                Object.entries(monthlyFields).forEach(([key, value]) => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = key;
+                    input.value = value as string;
+                    form.appendChild(input);
+                });
+            } else {
+                Object.entries(fields).forEach(([key, value]) => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = key;
+                    input.value = value as string;
+                    form.appendChild(input);
+                });
+            }
+
+            document.body.appendChild(form);
+            form.submit();
+
         } catch (e) {
-            console.error("Upgrade error", e);
-            alert('系統錯誤，請稍後再試');
+            console.error("Payment initiation error", e);
+            alert('金流系統暫時無法連線，請稍後再試');
         }
     };
 

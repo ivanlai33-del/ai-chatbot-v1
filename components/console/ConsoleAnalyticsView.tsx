@@ -139,7 +139,17 @@ export default function ConsoleAnalyticsView() {
         );
     }
 
-    if (!data) return null;
+    // 如果載入完成但沒有數據，仍然渲染 Header 讓按鈕出現
+    if (!data && !loading) {
+        return (
+            <div className="space-y-6">
+                <RenderHeader />
+                <div className="flex flex-col items-center justify-center h-full min-h-[300px] bg-slate-900/20 rounded-3xl border border-dashed border-slate-800">
+                    <span className="text-sm font-bold text-slate-500 uppercase tracking-widest">目前尚無營運數據</span>
+                </div>
+            </div>
+        );
+    }
 
     // --- Components ---
     const MetricCard = ({ title, value, icon: Icon, colorClass }: any) => (

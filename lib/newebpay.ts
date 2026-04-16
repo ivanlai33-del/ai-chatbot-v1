@@ -12,6 +12,7 @@ export interface NewebPayConfig {
     hashKey: string;
     hashIV: string;
     version: string;
+    baseUrl: string;
     returnUrl: string;
     notifyUrl: string;
     backendUrl: string;
@@ -40,6 +41,7 @@ export function getNewebPayConfig(): NewebPayConfig {
         hashKey,
         hashIV,
         version,
+        baseUrl,
         returnUrl: `${appUrl}/dashboard/billing/success`,
         notifyUrl: `${appUrl}/api/payment/webhook`,
         backendUrl,

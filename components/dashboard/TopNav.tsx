@@ -25,9 +25,11 @@ export default function TopNav({
     userPicture, 
     lineUserId,
     planLevel, 
-    billingCycle = 'monthly',
+    billingCycle: initialBillingCycle = 'monthly',
     onLogout 
 }: Omit<TopNavProps, 'subscriptionStatus' | 'nextBillingDate' | 'planConfig'>) {
+    const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>(initialBillingCycle);
+    const [imageError, setImageError] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
     const [isMounted, setIsMounted] = useState(false);
 
@@ -157,11 +159,16 @@ export default function TopNav({
                                     onClick={() => setShowProfile(!showProfile)}
                                     className="flex items-center gap-3.5 pl-4 border-l border-slate-200 hover:bg-slate-50 px-3 py-2 rounded-xl transition-all"
                                 >
-                                    {userPicture ? (
-                                        <img src={userPicture} alt={userName} className="w-10 h-10 rounded-full border-2 border-emerald-400/60 shadow-sm" />
+                                    {userPicture && !imageError ? (
+                                        <img 
+                                            src={userPicture} 
+                                            alt={userName} 
+                                            className="w-10 h-10 rounded-full border-2 border-emerald-400/60 shadow-sm" 
+                                            onError={() => setImageError(true)}
+                                        />
                                     ) : (
                                         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center">
-                                            <User className="w-5 h-5 text-white" />
+                                            <span className="text-white font-black">{userName?.[0]}</span>
                                         </div>
                                     )}
                                     <span className="text-[15.5px] text-slate-700 font-bold hidden sm:block">{userName} ▾</span>
@@ -179,11 +186,16 @@ export default function TopNav({
                                             >
                                                 <div className="p-6 bg-gradient-to-br from-slate-50 to-white border-b border-slate-100">
                                                     <div className="flex items-center gap-4">
-                                                        <div className="w-14 h-14 rounded-2xl bg-white overflow-hidden border-2 border-white shadow-md">
-                                                            {userPicture ? (
-                                                                <img src={userPicture} className="w-full h-full object-cover" alt="User" />
+                                                        <div className="w-14 h-14 rounded-2xl bg-white overflow-hidden border-2 border-white shadow-md flex items-center justify-center">
+                                                            {userPicture && !imageError ? (
+                                                                <img 
+                                                                    src={userPicture} 
+                                                                    className="w-full h-full object-cover" 
+                                                                    alt="User" 
+                                                                    onError={() => setImageError(true)}
+                                                                />
                                                             ) : (
-                                                                <User className="w-6 h-6 text-slate-400" />
+                                                                <span className="text-xl font-black text-emerald-600">{userName?.[0]}</span>
                                                             )}
                                                         </div>
                                                         <div className="flex-1 overflow-hidden">

@@ -94,7 +94,7 @@ export default function ConsoleAnalyticsView() {
                 <div>
                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-0.5">系統身份狀態</p>
                     <p className="text-base font-black text-white flex items-center gap-2">
-                        {impersonationMode === 'admin' ? '🛡️ 最高管理者模式' : '👤 模擬免費會員中'}
+                        {impersonationMode === 'admin' ? '🛡️ iVan 最高管理者' : '👤 模擬免費會員中'}
                         {impersonationMode === 'free' && (
                             <span className="flex h-2 w-2 relative">
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>

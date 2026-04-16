@@ -179,8 +179,13 @@ export default function ConsoleHeader({
                             className="flex items-center gap-2.5 p-1.5 rounded-xl border border-slate-700/50 hover:bg-slate-800 transition-all active:scale-95 group"
                         >
                             <div className="w-7 h-7 rounded-lg bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center overflow-hidden">
-                                {localStorage.getItem('line_user_picture') ? (
-                                    <img src={localStorage.getItem('line_user_picture')!} className="w-full h-full object-cover" alt="User" />
+                                {localStorage.getItem('line_user_picture') && !imageError ? (
+                                    <img 
+                                        src={localStorage.getItem('line_user_picture')!} 
+                                        className="w-full h-full object-cover" 
+                                        alt="User" 
+                                        onError={() => setImageError(true)}
+                                    />
                                 ) : (
                                     <span className="text-[10px] font-black text-indigo-400">{lineUserName?.[0]}</span>
                                 )}
@@ -202,7 +207,16 @@ export default function ConsoleHeader({
                                         <div className="p-6 bg-gradient-to-br from-slate-900 to-[#0f172a] border-b border-slate-800">
                                             <div className="flex items-center gap-4">
                                                 <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 border-2 border-indigo-500/20 flex items-center justify-center overflow-hidden">
-                                                    <img src={localStorage.getItem('line_user_picture')!} className="w-full h-full object-cover" alt="User" />
+                                                    {localStorage.getItem('line_user_picture') && !imageError ? (
+                                                        <img 
+                                                            src={localStorage.getItem('line_user_picture')!} 
+                                                            className="w-full h-full object-cover" 
+                                                            alt="User" 
+                                                            onError={() => setImageError(true)}
+                                                        />
+                                                    ) : (
+                                                        <span className="text-xl font-black text-indigo-400">{lineUserName?.[0]}</span>
+                                                    )}
                                                 </div>
                                                 <div className="flex-1 overflow-hidden">
                                                     <p className="font-black text-white text-base leading-tight truncate">{lineUserName}</p>

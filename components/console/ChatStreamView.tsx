@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { MessageSquare, Clock, User, CheckCircle2, AlertCircle, ShoppingCart, Zap, ArrowUpRight } from 'lucide-react';
+import { MessageSquare, Clock, User, CheckCircle2, AlertCircle, ShoppingCart, Zap, ArrowUpRight, RefreshCw } from 'lucide-react';
 
 const CHAT_STREAM_DATA = [
     { id: '1', store: '台北旗艦店', botName: 'AI小美', status: 'active', visitor: '訪客 #8210', time: '剛才', lastMsg: '我想看明天的美甲預約時段', intent: 'booking', sentiment: 'positive' },

@@ -302,40 +302,7 @@ export default function ConsoleAnalyticsView() {
 
     return (
         <div className="space-y-6 animate-in fade-in duration-700 pb-20">
-                        {impersonationMode === 'admin' ? <Eye className="w-6 h-6" /> : <RefreshCw className="w-6 h-6 animate-pulse" />}
-                    </div>
-                    <div>
-                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-0.5">系統身份狀態</p>
-                        <p className="text-base font-black text-white flex items-center gap-2">
-                            {impersonationMode === 'admin' ? '🛡️ 最高管理者模式' : '👤 模擬免費會員中'}
-                            {impersonationMode === 'free' && (
-                                <span className="flex h-2 w-2 relative">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
-                                </span>
-                            )}
-                        </p>
-                    </div>
-                    <button
-                        onClick={handleToggleRole}
-                        className={`ml-4 px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all active:scale-95 ${
-                            impersonationMode === 'admin' 
-                            ? 'bg-slate-800 text-slate-400 hover:bg-rose-500/20 hover:text-rose-400 border border-slate-700 hover:border-rose-500/30' 
-                            : 'bg-indigo-500 text-white hover:bg-indigo-600 shadow-lg shadow-indigo-500/20'
-                        }`}
-                    >
-                        {impersonationMode === 'admin' ? '模擬一般會員' : '恢復管理模式'}
-                    </button>
-                </div>
-
-                <button 
-                    onClick={() => fetchAnalytics(true)}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-2xl transition-all text-xs font-black uppercase tracking-widest border border-slate-700 active:scale-95"
-                >
-                    <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-                    即時更新
-                </button>
-            </div>
+            <RenderHeader />
 
             {/* Top Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

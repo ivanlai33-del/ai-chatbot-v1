@@ -167,8 +167,8 @@ export default function UnifiedBillingView() {
         if (!targetPlan) return;
 
         try {
-            // 1. 呼叫我們新建立的 Checkout API 取得加密包裹
-            const res = await fetch('/api/payment/checkout', {
+            // 1. 呼叫我們新建立的 Checkout API 取得加密包裹 (加入時間戳強制破壞快取)
+            const res = await fetch(`/api/payment/checkout?t=${Date.now()}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
@@ -184,7 +184,10 @@ export default function UnifiedBillingView() {
                 return;
             }
 
-            const { MerchantID, TradeInfo, TradeSha, Version, TargetUrl } = result.data;
+            // 【前後端對齊診斷】前端印出拿到的確切資料
+            console.log('[NewebPay Debug] API RECEIVED DATA:', result.data);
+
+            const { MerchantID, TradeInfo, TradeSha, Version, TimeStamp, RespondType, TargetUrl } = result.data;
 
             // 2. 動態產生 HTML Form 並提交至藍新 (最安全且相容性最高的跳轉方式)
             const form = document.createElement('form');
@@ -195,31 +198,21 @@ export default function UnifiedBillingView() {
                 MerchantID,
                 TradeInfo,
                 TradeSha,
-                Version
+                Version,
+                TimeStamp,
+                RespondType
             };
 
-            // 如果是定期定額，欄位名稱略有不同 (藍新規範)
-            if (cycle === 'monthly') {
-                const monthlyFields = {
-                    MerchantID_: MerchantID,
-                    PostData_: TradeInfo
-                };
-                Object.entries(monthlyFields).forEach(([key, value]) => {
+            // 統一使用 MPG 2.0 欄位結構提交
+            Object.entries(fields).forEach(([key, value]) => {
+                if (value !== undefined && value !== null) {
                     const input = document.createElement('input');
                     input.type = 'hidden';
                     input.name = key;
-                    input.value = value as string;
+                    input.value = value.toString();
                     form.appendChild(input);
-                });
-            } else {
-                Object.entries(fields).forEach(([key, value]) => {
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = key;
-                    input.value = value as string;
-                    form.appendChild(input);
-                });
-            }
+                }
+            });
 
             document.body.appendChild(form);
             form.submit();

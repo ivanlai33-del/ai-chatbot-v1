@@ -43,75 +43,70 @@ export async function POST(req: NextRequest) {
         const config = getNewebPayConfig();
         const merchantOrderNo = generateMerchantOrderNo(); // 產生唯一訂單編號
 
-        let tradeInfoObj: any = {};
+        const timeStamp = Math.floor(Date.now() / 1000).toString();
 
-        // 4. 根據週期決定走哪一條路徑
-        if (isYearly) {
-            // --- 年繳方案：走 MPG (單筆付款) ---
-            tradeInfoObj = {
-                MerchantID: config.merchantId,
-                RespondType: 'JSON',
-                TimeStamp: Math.floor(Date.now() / 1000).toString(),
-                Version: config.version,
-                MerchantOrderNo: merchantOrderNo,
-                Amt: amount,
-                ItemDesc: `${plan.name} (年繳方案)`,
-                Email: userEmail,
-                LoginType: 0,
-                ReturnURL: config.returnUrl,
-                NotifyURL: config.notifyUrl,
-                ClientBackURL: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/billing`,
-                OrderComment: `User ID: ${userId}`,
-                // 限制只能用信用卡、LINE Pay、Apple Pay 等 (視需求調整)
-                CREDIT: 1,
-                ANDROIDPAY: 1,
-                SAMSUNGPAY: 1,
-                LINEPAY: 1,
-            };
-        } else {
-            // --- 月繳方案：走 Periodical (定期定額) ---
-            // 注意：定期定額 API 與 MPG 欄位略有不同
-            tradeInfoObj = {
-                MerchantID_: config.merchantId,
-                PostData_ : '', // 稍後會由加密組成
-                RespondType: 'JSON',
-                TimeStamp: Math.floor(Date.now() / 1000).toString(),
-                Version: '1.0', // 定期定額 API 版本通常固定為 1.0
-                MerchantOrderNo: merchantOrderNo,
-                PeriodAmt: amount,              // 每期扣款金額
-                PeriodType: 'M',                // M: 月, W: 週, Y: 年
-                PeriodPoint: '01',              // 每月 1 號扣款 (可自訂)
-                PeriodStartType: 1,             // 1: 立即扣第一期
-                PeriodTimes: 99,                // 扣款次數 (99 代表直到取消)
-                ReturnURL: config.returnUrl,
-                PType: 'CREDIT',                // 定期定額強制使用信用卡
-                NotifyURL: config.notifyUrl,
-                ExtenID: userId,                // 存放 User ID 方便回傳對應
-                Email: userEmail,
-                ItemDesc: `${plan.name} (月繳訂閱)`,
-            };
-            
-            // 定期定額的加密邏輯稍微不同，這裡是先準備資料
-            // 實務上藍新定期定額是以另一套 API 接收，
-            // 這裡我們先回傳讓前端能組裝表單即可。
+        // 4. 準備交易物件 (基礎 MPG 參數)
+        const tradeInfoObj: any = {
+            MerchantID: config.merchantId,
+            RespondType: 'JSON',
+            TimeStamp: timeStamp,
+            Version: config.version,
+            MerchantOrderNo: merchantOrderNo,
+            Amt: amount,
+            ItemDesc: 'Subscription',
+            Email: userEmail,
+            LoginType: 0,
+            ReturnURL: config.returnUrl,
+            NotifyURL: config.notifyUrl,
+            ClientBackURL: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/billing`,
+            CREDIT: 1,
+            ANDROIDPAY: 1,
+            SAMSUNGPAY: 1,
+            LINEPAY: isYearly ? 1 : 0, 
+        };
+
+        // 5. 【關鍵驗證】如果是月繳，才加入定期定額參數
+        // 如果年繳也失敗，那就是加密公式 (SHA) 問題。
+        // 如果年繳成功但月繳失敗，那就是定期定額參數或權限問題。
+        if (!isYearly) {
+            Object.assign(tradeInfoObj, {
+                PeriodAmt: amount,
+                PeriodType: 'M',
+                PeriodPoint: '01',
+                PeriodStartType: 1,
+                PeriodTimes: 99
+            });
         }
 
-        // 5. 執行加密
+        // 6. 執行加密
         const tradeInfoChain = genDataChain(tradeInfoObj);
+        console.log('[NewebPay Debug] DataChain:', tradeInfoChain); // 方便您在本機看欄位的拼湊
+
         const aesEncrypt = createMpgAesEncrypt(tradeInfoChain, config.hashKey, config.hashIV);
         const shaEncrypt = createMpgShaEncrypt(aesEncrypt, config.hashKey, config.hashIV);
 
-        // 6. 回傳結果給前端
+        // 【同步驗證關鍵】將最終回傳值印出來
+        console.log('[NewebPay Debug] FINAL AES (TradeInfo):', aesEncrypt);
+        console.log('[NewebPay Debug] FINAL TradeSha:', shaEncrypt);
+
+        // 7. 回傳結果給前端 (強制禁用快取，避免前後端資料錯位)
         return NextResponse.json({
             success: true,
             data: {
                 MerchantID: config.merchantId,
                 TradeInfo: aesEncrypt,
                 TradeSha: shaEncrypt,
-                Version: isYearly ? config.version : '1.0',
-                TargetUrl: isYearly ? config.backendUrl : (config.backendUrl.includes('ccore') ? 'https://ccore.newebpay.com/MPG/period' : 'https://core.newebpay.com/MPG/period'), // 自動判斷測試/正式定期定額網址
+                Version: config.version,
+                RespondType: 'JSON',
+                TimeStamp: timeStamp,
+                TargetUrl: config.backendUrl,
                 OrderNo: merchantOrderNo,
                 Amount: amount
+            }
+        }, {
+            headers: {
+                'Cache-Control': 'no-store, max-age=0',
+                'Pragma': 'no-cache'
             }
         });
 

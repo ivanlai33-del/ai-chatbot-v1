@@ -20,28 +20,19 @@ export interface NewebPayConfig {
 
 // 取得環境變數中的藍新設定
 export function getNewebPayConfig(): NewebPayConfig {
-    const merchantId = process.env.NEWEBPAY_MERCHANT_ID || '';
-    const hashKey = process.env.NEWEBPAY_HASH_KEY || '';
-    const hashIV = process.env.NEWEBPAY_HASH_IV || '';
-    const version = process.env.NEWEBPAY_VERSION || '2.0';
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const backendUrl = process.env.NEXT_PUBLIC_NEWEBPAY_URL || 'https://ccore.newebpay.com/MPG/mpg_gateway';
-
-    // 根據 MPG URL 推算 Periodical Update URL
-    const periodicalUpdateUrl = backendUrl.includes('ccore') 
-        ? 'https://ccore.newebpay.com/MPG/periodical_update'
-        : 'https://core.newebpay.com/MPG/periodical_update';
+    // 強力清理：移除兩端的空格與可能被誤加的引號
+    const cleanEnv = (val: string | undefined) => (val || '').trim().replace(/^["']|["']$/g, '');
+    
+    const merchantId = cleanEnv(process.env.NEWEBPAY_MERCHANT_ID);
+    const hashKey = cleanEnv(process.env.NEWEBPAY_HASH_KEY);
+    const hashIV = cleanEnv(process.env.NEWEBPAY_HASH_IV);
+    const version = cleanEnv(process.env.NEWEBPAY_VERSION) || '2.0';
+    const appUrl = (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000').trim();
+    const backendUrl = (process.env.NEXT_PUBLIC_NEWEBPAY_URL || '').trim();
+    const periodicalUpdateUrl = process.env.NEWEBPAY_PERIODICAL_UPDATE_URL || 'https://core.newebpay.com/MPG/periodical';
 
     if (!merchantId || !hashKey || !hashIV) {
-        console.warn('⚠️ 藍新金流環境變數未完全配置 (NEWEBPAY_MERCHANT_ID, NEWEBPAY_HASH_KEY, NEWEBPAY_HASH_IV)');
-    }
-
-    // 增加加密參數長度校驗，避免出現 "Invalid initialization vector" 等難以排查的錯誤
-    if (hashKey && hashKey.length !== 32) {
-        throw new Error(`[NewebPay Config Error] NEWEBPAY_HASH_KEY 必須為 32 個字元，目前長度為: ${hashKey.length}`);
-    }
-    if (hashIV && hashIV.length !== 16) {
-        throw new Error(`[NewebPay Config Error] NEWEBPAY_HASH_IV 必須為 16 個字元，目前長度為: ${hashIV.length}`);
+        throw new Error('NewebPay configuration is missing in environment variables');
     }
 
     return {
@@ -49,30 +40,27 @@ export function getNewebPayConfig(): NewebPayConfig {
         hashKey,
         hashIV,
         version,
-        returnUrl: `${appUrl}/dashboard/billing/success`,     // 使用者付完款後被跳轉回來的畫面
-        notifyUrl: `${appUrl}/api/payment/webhook`,           // 藍新幕後通知我們付款成功的 API
+        returnUrl: `${appUrl}/dashboard/billing/success`,
+        notifyUrl: `${appUrl}/api/payment/webhook`,
         backendUrl,
         periodicalUpdateUrl
     };
 }
 
-/**
- * AES-256-CBC 加密 TradeInfo
- * @param tradeInfoStr 已組裝好的訂單字串（例如 MerchantID=...&Amt=...）
- */
 export function createMpgAesEncrypt(tradeInfoStr: string, hashKey: string, hashIV: string): string {
     const cipher = crypto.createCipheriv('aes-256-cbc', hashKey, hashIV);
     let encrypted = cipher.update(tradeInfoStr, 'utf8', 'hex');
     encrypted += cipher.final('hex');
-    return encrypted;
+    return encrypted.toUpperCase(); 
 }
 
-/**
- * SHA256 產生校驗碼 TradeSha
- * @param aesEncrypted 透過 AES 加密後的 TradeInfo Hex 字串
- */
 export function createMpgShaEncrypt(aesEncrypted: string, hashKey: string, hashIV: string): string {
-    const shaString = `HashKey=${hashKey}&${aesEncrypted}&HashIV=${hashIV}`;
+    // 【對齊診斷結果 A】使用帶標籤的標準 2.0 公式
+    const shaString = `HashKey=${hashKey}&TradeInfo=${aesEncrypted}&HashIV=${hashIV}`;
+    
+    // 輸出原始字串供手動校驗
+    console.log('[NewebPay Debug] SHA Raw String (Standard 2.0):', shaString);
+
     const hash = crypto.createHash('sha256').update(shaString).digest('hex');
     return hash.toUpperCase();
 }
@@ -105,13 +93,14 @@ export function decryptTradeInfo(encryptedTradeInfo: string, hashKey: string, ha
     }
 }
 
-/**
- * 將物件轉換為 x-www-form-urlencoded 字串 (NewebPay 要求格式)
- */
 export function genDataChain(orderParams: Record<string, any>): string {
+    // 【MS 帳號可能路徑】移除 A-Z 排序，使用自然順序
     return Object.entries(orderParams)
-        .filter(([_, value]) => value !== undefined && value !== null)
-        .map(([key, value]) => `${key}=${encodeURIComponent(value.toString())}`)
+        .filter(([_, value]) => value !== undefined && value !== null && value !== '') 
+        .map(([key, value]) => {
+            const encoded = encodeURIComponent(value.toString()).replace(/%20/g, '+');
+            return `${key}=${encoded}`;
+        })
         .join('&');
 }
 

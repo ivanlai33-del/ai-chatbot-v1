@@ -23,7 +23,8 @@ import {
     Info,
     AlertCircle,
     Store,
-    MessageCircle
+    MessageCircle,
+    HelpCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { 
@@ -53,6 +54,16 @@ export default function UnifiedBillingView() {
     const [invoiceTitle, setInvoiceTitle] = useState('');
     const [taxId, setTaxId] = useState('');
     const [mailingAddress, setMailingAddress] = useState('');
+    
+    // Cancellation & Refund States
+    const [billingHistory, setBillingHistory] = useState<any[]>([]);
+    const [cancelStep, setCancelStep] = useState(1); // 1: Survey, 2: Benefits, 3: Final
+    const [cancelReason, setCancelReason] = useState('');
+    const [cancelFeedback, setCancelFeedback] = useState('');
+    const [isRefundEligible, setIsRefundEligible] = useState(false);
+    const [subStartDate, setSubStartDate] = useState<string | null>(null);
+    const [subEndDate, setSubEndDate] = useState<string | null>(null);
+
 
     useEffect(() => {
         const getCookie = (name: string) => {
@@ -87,11 +98,44 @@ export default function UnifiedBillingView() {
                 })
                 .catch(err => console.error("Sync Error:", err))
                 .finally(() => setLoading(false));
+
+            // Fetch History
+            fetchHistory(uid);
         } else {
             console.warn("No lineUserId found in localStorage or cookies on Billing view");
             setLoading(false);
         }
     }, []);
+
+    const fetchHistory = async (uid: string) => {
+        try {
+            const res = await fetch(`/api/payment/history?lineUserId=${uid}`);
+            const data = await res.json();
+            if (data.success) {
+                setBillingHistory(data.history);
+                
+                // 檢查是否符合退款條件 (最近一筆在 7 天內且狀態為 active)
+                const latest = data.history.find((h: any) => h.status === 'active');
+                if (latest) {
+                    const start = new Date(latest.date).getTime();
+                    const now = Date.now();
+                    const days = (now - start) / (1000 * 60 * 60 * 24);
+                    if (days <= 7) {
+                        setIsRefundEligible(true);
+                    }
+                    setSubStartDate(latest.date);
+                    // 根據目前方案推算結束日期 (僅顯示用)
+                    const end = new Date(latest.date);
+                    if (latest.billingCycle === '年繳') end.setFullYear(end.getFullYear() + 1);
+                    else end.setMonth(end.getMonth() + 1);
+                    setSubEndDate(end.toISOString());
+                }
+            }
+        } catch (e) {
+            console.error("Fetch history error", e);
+        }
+    };
+
 
     const handleUpgrade = async (level: number, cycle: 'monthly' | 'yearly') => {
         if (!lineUserId) {
@@ -215,21 +259,55 @@ export default function UnifiedBillingView() {
     const handleCancelSubscription = async () => {
         if (!lineUserId) return;
         try {
-            const res = await fetch('/api/platform/user/cancel', {
+            const res = await fetch('/api/payment/cancel', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ lineUserId })
+                body: JSON.stringify({ 
+                    lineUserId,
+                    reason: cancelReason,
+                    feedback: cancelFeedback
+                })
             });
             const data = await res.json();
             if (data.success) {
                 setCancelAtPeriodEnd(true);
                 setIsCancelModalOpen(false);
-                alert('已停止自動續約設定。您可以繼續使用服務直到本期結束。');
+                alert(data.message);
+                fetchHistory(lineUserId);
+            } else {
+                alert(data.error);
             }
         } catch (e) {
             console.error("Cancel error", e);
         }
     };
+
+    const handleRequestRefund = async () => {
+        if (!lineUserId) return;
+        if (!confirm('確定要申請退款嗎？申請後管理員將進行審核，若核准將全額退費並移除方案權限。')) return;
+
+        try {
+            const res = await fetch('/api/payment/refund', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    lineUserId,
+                    reason: cancelReason || '客戶申請七天內退款'
+                })
+            });
+            const data = await res.json();
+            if (data.success) {
+                alert(data.message);
+                setIsCancelModalOpen(false);
+                fetchHistory(lineUserId);
+            } else {
+                alert(data.error);
+            }
+        } catch (e) {
+            console.error("Refund error", e);
+        }
+    };
+
 
     if (loading) {
         return (
@@ -642,7 +720,7 @@ export default function UnifiedBillingView() {
                     <button className="text-sm font-black text-indigo-500 uppercase tracking-widest hover:text-indigo-600 transition-all">所有帳務明細</button>
                 </div>
                 <div className="bg-white rounded-[32px] border border-slate-100 shadow-sm overflow-hidden">
-                    {planLevel > 0 ? (
+                    {billingHistory.length > 0 ? (
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
                                 <thead>
@@ -655,15 +733,20 @@ export default function UnifiedBillingView() {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-50">
-                                    <tr className="hover:bg-slate-50/50 transition-all">
-                                        <td className="px-8 py-6 font-mono text-xs text-slate-500 uppercase tracking-widest">INV-2026-0328</td>
-                                        <td className="px-8 py-6 text-sm font-bold text-slate-700">{currentPlan?.name || "未知方案"}</td>
-                                        <td className="px-8 py-6 text-sm text-slate-500 font-medium tracking-tight">2026-03-28</td>
-                                        <td className="px-8 py-6 text-sm font-black text-slate-800">${(dbBillingCycle === 'yearly' ? currentPlan?.pricing.annual : currentPlan?.pricing.monthly)?.toLocaleString()}</td>
-                                        <td className="px-8 py-6">
-                                            <span className="px-2.5 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-[9px] font-black uppercase tracking-widest border border-emerald-100">Paid 成功</span>
-                                        </td>
-                                    </tr>
+                                    {billingHistory.map((item) => (
+                                        <tr key={item.id} className="hover:bg-slate-50/50 transition-all">
+                                            <td className="px-8 py-6 font-mono text-xs text-slate-500 uppercase tracking-widest">{item.orderNo}</td>
+                                            <td className="px-8 py-6 text-sm font-bold text-slate-700">{item.planName} ({item.billingCycle})</td>
+                                            <td className="px-8 py-6 text-sm text-slate-500 font-medium tracking-tight">{item.date}</td>
+                                            <td className="px-8 py-6 text-sm font-black text-slate-800">${item.amount.toLocaleString()}</td>
+                                            <td className="px-8 py-6">
+                                                {item.status === 'active' && <span className="px-2.5 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-[9px] font-black uppercase tracking-widest border border-emerald-100">Paid 已過帳</span>}
+                                                {item.status === 'canceling' && <span className="px-2.5 py-1 bg-amber-50 text-amber-600 rounded-lg text-[9px] font-black uppercase tracking-widest border border-amber-100">Canceling 待取消</span>}
+                                                {item.status === 'refund_requested' && <span className="px-2.5 py-1 bg-purple-50 text-purple-600 rounded-lg text-[9px] font-black uppercase tracking-widest border border-purple-100">Refund 申請退款中</span>}
+                                                {item.status === 'canceled' && <span className="px-2.5 py-1 bg-slate-100 text-slate-400 rounded-lg text-[9px] font-black uppercase tracking-widest border border-slate-200">Terminated 已終止</span>}
+                                            </td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                         </div>
@@ -676,64 +759,146 @@ export default function UnifiedBillingView() {
                 </div>
             </section>
 
-            {/* 🛡️ Subscription Cancellation Modal */}
+
             <AnimatePresence>
                 {isCancelModalOpen && (
                     <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
                         <motion.div 
                             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                            onClick={() => setIsCancelModalOpen(false)}
+                            onClick={() => { setIsCancelModalOpen(false); setCancelStep(1); }}
                             className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
                         />
                         <motion.div 
+                            key={cancelStep}
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            exit={{ opacity: 0, scale: 0.95, y: -20 }}
                             className="relative w-full max-w-md bg-white rounded-[40px] shadow-2xl p-10 overflow-hidden"
                         >
                             <div className="absolute top-0 right-0 p-6">
-                                <button onClick={() => setIsCancelModalOpen(false)} className="p-2 hover:bg-slate-50 rounded-full transition-all text-slate-400 hover:text-slate-800">
+                                <button onClick={() => { setIsCancelModalOpen(false); setCancelStep(1); }} className="p-2 hover:bg-slate-50 rounded-full transition-all text-slate-400 hover:text-slate-800">
                                     <X className="w-5 h-5" />
                                 </button>
                             </div>
 
-                            <div className="flex flex-col items-center text-center">
-                                <div className="w-20 h-20 rounded-3xl bg-rose-50 text-rose-500 flex items-center justify-center mb-6">
-                                    <AlertTriangle className="w-10 h-10" />
+                            {cancelStep === 1 && (
+                                <div className="flex flex-col items-center text-center">
+                                    <div className="w-20 h-20 rounded-3xl bg-indigo-50 text-indigo-500 flex items-center justify-center mb-6">
+                                        <HelpCircle className="w-10 h-10" />
+                                    </div>
+                                    <h3 className="text-3xl font-black text-slate-800 tracking-tight mb-2">為什麼想離開呢？</h3>
+                                    <p className="text-slate-500 font-bold mb-6">您的建議是我們進步最大的動力</p>
+                                    
+                                    <div className="w-full space-y-3 mb-8">
+                                        {['價格太高', '不符合需求', '功能太複雜', '暫時不需要了', '其他原因'].map(r => (
+                                            <button 
+                                                key={r}
+                                                onClick={() => setCancelReason(r)}
+                                                className={cn(
+                                                    "w-full py-4 px-6 rounded-2xl border-2 transition-all font-bold text-left flex items-center justify-between",
+                                                    cancelReason === r ? "border-indigo-500 bg-indigo-50 text-indigo-600" : "border-slate-100 hover:border-indigo-200"
+                                                )}
+                                            >
+                                                {r}
+                                                {cancelReason === r && <CheckCircle2 className="w-5 h-5" />}
+                                            </button>
+                                        ))}
+                                    </div>
+
+                                    <button 
+                                        disabled={!cancelReason}
+                                        onClick={() => setCancelStep(2)}
+                                        className="w-full py-4 bg-indigo-500 text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg disabled:opacity-50 transition-all"
+                                    >
+                                        下一步
+                                    </button>
                                 </div>
-                                 <h3 className="text-3xl font-black text-slate-800 tracking-tight mb-2">確定要停止自動續約嗎？</h3>
-                                <div className="space-y-4 mb-8">
-                                     <p className="text-base text-slate-500 font-medium leading-relaxed">
-                                        您的服務不會立即中斷。停止後，您可以繼續使用 **「${currentPlan?.name}」** 直到 **2026/04/28** 本期結束。
-                                    </p>
-                                    <div className="p-4 bg-slate-50 rounded-2xl text-left">
-                                         <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">停止後您將失去：</p>
-                                        <ul className="space-y-2">
-                                             <li className="flex items-center gap-2 text-sm font-bold text-slate-600">
-                                                <div className="w-1 h-1 bg-rose-400 rounded-full" /> 24/7 AI 客服自動化服務
-                                            </li>
-                                            <li className="flex items-center gap-2 text-sm font-bold text-slate-600">
-                                                <div className="w-1 h-1 bg-rose-400 rounded-full" /> RAG 專屬知識庫 management 權限
-                                            </li>
-                                        </ul>
+                            )}
+
+                            {cancelStep === 2 && (
+                                <div className="flex flex-col items-center text-center">
+                                    <div className="w-20 h-20 rounded-3xl bg-rose-50 text-rose-500 flex items-center justify-center mb-6">
+                                        <AlertTriangle className="w-10 h-10" />
+                                    </div>
+                                    <h3 className="text-3xl font-black text-slate-800 tracking-tight mb-2">確定要失去特權嗎？</h3>
+                                    <div className="space-y-4 mb-8">
+                                        <p className="text-base text-slate-500 font-medium leading-relaxed">
+                                            停止後，您將在效期結束後失去：
+                                        </p>
+                                        <div className="p-5 bg-slate-50 rounded-[30px] text-left border border-slate-100">
+                                            <ul className="space-y-3">
+                                                <li className="flex items-center gap-3 text-sm font-bold text-slate-600">
+                                                    <div className="w-2 h-2 bg-rose-400 rounded-full" /> 24/7 AI 自動化回話服務
+                                                </li>
+                                                <li className="flex items-center gap-3 text-sm font-bold text-slate-600">
+                                                    <div className="w-2 h-2 bg-rose-400 rounded-full" /> 專屬知識庫 (RAG) 管理權限
+                                                </li>
+                                                <li className="flex items-center gap-3 text-sm font-bold text-slate-600">
+                                                    <div className="w-2 h-2 bg-rose-400 rounded-full" /> 顧客標籤與 CRM 自動追蹤
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-col gap-3 w-full">
+                                        <button 
+                                            onClick={() => setCancelStep(3)}
+                                            className="w-full py-4 bg-rose-500 text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg hover:brightness-110 active:scale-95 transition-all"
+                                        >
+                                            我已暸解，繼續取消
+                                        </button>
+                                        <button 
+                                            onClick={() => { setIsCancelModalOpen(false); setCancelStep(1); }}
+                                            className="w-full py-4 bg-emerald-500 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:brightness-110 transition-all"
+                                        >
+                                            保留我的精彩服務
+                                        </button>
                                     </div>
                                 </div>
+                            )}
 
-                                <div className="flex flex-col gap-3 w-full">
-                                    <button 
-                                        onClick={handleCancelSubscription}
-                                        className="w-full py-4 bg-rose-500 text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-rose-500/20 hover:brightness-110 active:scale-95 transition-all"
-                                    >
-                                        確認停止自動續約
-                                    </button>
-                                     <button 
-                                        onClick={() => setIsCancelModalOpen(false)}
-                                        className="w-full py-4 bg-slate-100 text-slate-600 rounded-2xl font-black text-base uppercase tracking-widest hover:bg-slate-200 transition-all font-bold"
-                                    >
-                                        我再考慮看看
-                                    </button>
+                            {cancelStep === 3 && (
+                                <div className="flex flex-col items-center text-center">
+                                    <div className="w-20 h-20 rounded-3xl bg-amber-50 text-amber-500 flex items-center justify-center mb-6">
+                                        <Sparkles className="w-10 h-10" />
+                                    </div>
+                                    <h3 className="text-3xl font-black text-slate-800 tracking-tight mb-2">最後的處理方式</h3>
+                                    <p className="text-slate-500 font-medium mb-8">
+                                        服務會持續提供至 {subEndDate ? new Date(subEndDate).toLocaleDateString() : '本期結束'}。
+                                    </p>
+
+                                    <div className="flex flex-col gap-4 w-full">
+                                        {isRefundEligible && (
+                                            <div className="p-6 rounded-[30px] bg-indigo-50 border-2 border-indigo-100 mb-2">
+                                                <div className="flex items-center gap-2 text-indigo-600 font-black mb-2">
+                                                    <Info className="w-4 h-4" /> 您符合 7 天內退款資格！
+                                                </div>
+                                                <p className="text-xs text-indigo-500 font-bold mb-4">申請後將由專人審核，核准後將全額刷退並立即終止服務。</p>
+                                                <button 
+                                                    onClick={handleRequestRefund}
+                                                    className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg"
+                                                >
+                                                    申請 7 天無條件退款
+                                                </button>
+                                            </div>
+                                        )}
+
+                                        <button 
+                                            onClick={handleCancelSubscription}
+                                            className="w-full py-4 bg-slate-100 text-rose-500 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-rose-50 transition-all"
+                                        >
+                                            僅停止自動續約 (不退費)
+                                        </button>
+                                        
+                                        <button 
+                                            onClick={() => { setIsCancelModalOpen(false); setCancelStep(1); }}
+                                            className="w-full py-4 text-slate-400 font-black text-xs uppercase tracking-widest hover:text-slate-600"
+                                        >
+                                            算了，我再考慮看看
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                         </motion.div>
                     </div>
                 )}

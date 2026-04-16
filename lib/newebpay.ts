@@ -15,6 +15,7 @@ export interface NewebPayConfig {
     returnUrl: string;
     notifyUrl: string;
     backendUrl: string;
+    periodicalUpdateUrl: string;
 }
 
 // 取得環境變數中的藍新設定
@@ -24,9 +25,23 @@ export function getNewebPayConfig(): NewebPayConfig {
     const hashIV = process.env.NEWEBPAY_HASH_IV || '';
     const version = process.env.NEWEBPAY_VERSION || '2.0';
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const backendUrl = process.env.NEXT_PUBLIC_NEWEBPAY_URL || 'https://ccore.newebpay.com/MPG/mpg_gateway';
+
+    // 根據 MPG URL 推算 Periodical Update URL
+    const periodicalUpdateUrl = backendUrl.includes('ccore') 
+        ? 'https://ccore.newebpay.com/MPG/periodical_update'
+        : 'https://core.newebpay.com/MPG/periodical_update';
 
     if (!merchantId || !hashKey || !hashIV) {
         console.warn('⚠️ 藍新金流環境變數未完全配置 (NEWEBPAY_MERCHANT_ID, NEWEBPAY_HASH_KEY, NEWEBPAY_HASH_IV)');
+    }
+
+    // 增加加密參數長度校驗，避免出現 "Invalid initialization vector" 等難以排查的錯誤
+    if (hashKey && hashKey.length !== 32) {
+        throw new Error(`[NewebPay Config Error] NEWEBPAY_HASH_KEY 必須為 32 個字元，目前長度為: ${hashKey.length}`);
+    }
+    if (hashIV && hashIV.length !== 16) {
+        throw new Error(`[NewebPay Config Error] NEWEBPAY_HASH_IV 必須為 16 個字元，目前長度為: ${hashIV.length}`);
     }
 
     return {
@@ -36,7 +51,8 @@ export function getNewebPayConfig(): NewebPayConfig {
         version,
         returnUrl: `${appUrl}/dashboard/billing/success`,     // 使用者付完款後被跳轉回來的畫面
         notifyUrl: `${appUrl}/api/payment/webhook`,           // 藍新幕後通知我們付款成功的 API
-        backendUrl: process.env.NEXT_PUBLIC_NEWEBPAY_URL || 'https://ccore.newebpay.com/MPG/mpg_gateway', 
+        backendUrl,
+        periodicalUpdateUrl
     };
 }
 
@@ -110,4 +126,13 @@ export function generateMerchantOrderNo(prefix = 'ORD'): string {
     const randomStr = crypto.randomBytes(2).toString('hex').toUpperCase();
     
     return `${prefix}${timestamp}${randomStr}`;
+}
+
+/**
+ * 產生定期定額執行/中止所需的加密資料 (Periodical Update API)
+ * @param orderParams 包含 MerchantOrderNo, PeriodNo, PeriodType ('terminate') 等
+ */
+export function createPeriodicalUpdatePayload(orderParams: Record<string, any>, hashKey: string, hashIV: string): string {
+    const dataChain = genDataChain(orderParams);
+    return createMpgAesEncrypt(dataChain, hashKey, hashIV);
 }

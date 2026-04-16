@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
                     status: 'active',
                     start_date: startDate.toISOString(),
                     end_date: endDate.toISOString(),
-                    payment_ref: tradeNo,
+                    payment_ref: merchantOrderNo, // 儲存我們產生的訂單號，以便後續取消訂閱時使用
                     auto_renew: cycle === 'MONTHLY'
                 });
 

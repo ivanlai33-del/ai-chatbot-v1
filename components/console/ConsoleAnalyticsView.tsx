@@ -388,13 +388,13 @@ export default function ConsoleAnalyticsView() {
                 />
                 <MetricCard 
                     title="手機用戶" 
-                    value={`${displayData.deviceMap['Mobile'] || 0}`} 
+                    value={`${(displayData.deviceMap as Record<string, number>)['Mobile'] || 0}`} 
                     icon={Smartphone} 
                     colorClass="text-rose-500" 
                 />
                 <MetricCard 
                     title="桌機用戶" 
-                    value={`${Math.max(displayData.totalVisitors - (displayData.deviceMap['Mobile'] || 0), 0)}`} 
+                    value={`${Math.max(displayData.totalVisitors - ((displayData.deviceMap as Record<string, number>)['Mobile'] || 0), 0)}`} 
                     icon={Laptop} 
                     colorClass="text-indigo-500" 
                 />

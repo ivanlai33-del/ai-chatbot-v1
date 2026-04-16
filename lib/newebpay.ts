@@ -41,7 +41,7 @@ export function getNewebPayConfig(): NewebPayConfig {
         hashKey,
         hashIV,
         version,
-        baseUrl,
+        baseUrl: appUrl,
         returnUrl: `${appUrl}/dashboard/billing/success`,
         notifyUrl: `${appUrl}/api/payment/webhook`,
         backendUrl,

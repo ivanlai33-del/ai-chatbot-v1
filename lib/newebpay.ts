@@ -53,7 +53,7 @@ export function createMpgAesEncrypt(tradeInfoStr: string, hashKey: string, hashI
     const cipher = crypto.createCipheriv('aes-256-cbc', hashKey, hashIV);
     let encrypted = cipher.update(tradeInfoStr, 'utf8', 'hex');
     encrypted += cipher.final('hex');
-    return encrypted.toUpperCase(); 
+    return encrypted; // ✅ 保持小寫 Hex，符合藍新規範 (TradeInfo 不可轉大寫)
 }
 
 export function createMpgShaEncrypt(aesEncrypted: string, hashKey: string, hashIV: string): string {

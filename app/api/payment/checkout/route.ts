@@ -60,9 +60,6 @@ export async function POST(req: NextRequest) {
             NotifyURL: config.notifyUrl,
             ClientBackURL: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/billing`,
             CREDIT: 1,
-            ANDROIDPAY: 1,
-            SAMSUNGPAY: 1,
-            LINEPAY: isYearly ? 1 : 0, 
         };
 
         // 5. 【關鍵驗證】如果是月繳，才加入定期定額參數

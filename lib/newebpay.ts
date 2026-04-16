@@ -97,12 +97,8 @@ export function decryptTradeInfo(encryptedTradeInfo: string, hashKey: string, ha
 
 export function genDataChain(orderParams: Record<string, any>): string {
     return Object.entries(orderParams)
-        .sort(([a], [b]) => a.localeCompare(b))
         .filter(([_, value]) => value !== undefined && value !== null && value !== '') 
-        .map(([key, value]) => {
-            const encoded = encodeURIComponent(value.toString()).replace(/%20/g, '+');
-            return `${key}=${encoded}`;
-        })
+        .map(([key, value]) => `${key}=${value}`)
         .join('&');
 }
 

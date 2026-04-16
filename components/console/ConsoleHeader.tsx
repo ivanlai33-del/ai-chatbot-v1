@@ -29,6 +29,7 @@ export default function ConsoleHeader({
     const [isOpen, setIsOpen] = useState(false);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [imageError, setImageError] = useState(false);
 
     const getPlanLabel = (level: number, cycle: 'monthly' | 'yearly' = 'monthly') => {
         const plan = getPlanByTier(level);

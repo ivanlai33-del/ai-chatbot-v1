@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
             ItemDesc: 'Subscription',
             Email: userEmail,
             LoginType: 0,
-            ReturnURL: config.returnUrl,
+            ReturnURL: `${config.baseUrl}/api/payment/return`,
             NotifyURL: config.notifyUrl,
             ClientBackURL: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/billing`,
             CREDIT: 1,

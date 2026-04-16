@@ -26,8 +26,22 @@ export async function GET(req: NextRequest) {
         const contentTagMap: Record<string, number> = {};
         const deviceMap: Record<string, number> = {};
         const cityMap: Record<string, number> = {};
+        const siteMap: Record<string, number> = {};
 
         rawLogs?.forEach(log => {
+            // 站台分布統計 (從 page_url 提取 Host)
+            try {
+                if (log.page_url) {
+                    const url = new URL(log.page_url);
+                    const host = url.hostname;
+                    siteMap[host] = (siteMap[host] || 0) + 1;
+                } else {
+                    siteMap['未知站台'] = (siteMap['未知站台'] || 0) + 1;
+                }
+            } catch (e) {
+                siteMap['其它來源'] = (siteMap['其它來源'] || 0) + 1;
+            }
+
             // UTM 來源統計
             const source = log.utm_source || '直接流量 (Direct)';
             utmMap[source] = (utmMap[source] || 0) + 1;
@@ -40,7 +54,7 @@ export async function GET(req: NextRequest) {
             const city = log.city || '未知';
             cityMap[city] = (cityMap[city] || 0) + 1;
 
-            // 內容標籤統計 (content_tags 是 JSONB 陣列)
+            // 內容標籤統計
             if (Array.isArray(log.content_tags)) {
                 log.content_tags.forEach((tag: string) => {
                     contentTagMap[tag] = (contentTagMap[tag] || 0) + 1;
@@ -49,6 +63,10 @@ export async function GET(req: NextRequest) {
         });
 
         // 3. 格式化為前端圖表需要的格式
+        const siteData = Object.entries(siteMap)
+            .map(([name, value]) => ({ name, value }))
+            .sort((a, b) => b.value - a.value);
+
         const utmData = Object.entries(utmMap)
             .map(([name, value]) => ({ name, value }))
             .sort((a, b) => b.value - a.value);
@@ -65,11 +83,12 @@ export async function GET(req: NextRequest) {
             success: true,
             summary: {
                 totalVisitors: rawLogs?.length || 0,
+                siteData,
                 utmData,
                 contentTags,
                 deviceMap,
                 cities,
-                latestLogs: rawLogs?.slice(0, 10) // 僅回傳前 10 筆用於審計表
+                latestLogs: rawLogs?.slice(0, 10)
             }
         });
     } catch (e: any) {

@@ -11,14 +11,37 @@ const B2B_LEADS = [
 ];
 
 export default function BusinessCollaborationView() {
+    const [leads, setLeads] = React.useState<any[]>([]);
+    const [loading, setLoading] = React.useState(true);
+
+    const fetchLeads = async () => {
+        const lineId = localStorage.getItem('line_user_id');
+        if (!lineId) return;
+        try {
+            const res = await fetch(`/api/console/leads?userId=${lineId}`);
+            const data = await res.json();
+            if (data.success) {
+                setLeads(data.leads || []);
+            }
+        } catch (e) {
+            console.error("Failed to fetch leads", e);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    React.useEffect(() => {
+        fetchLeads();
+    }, []);
+
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Header / Summary */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {[
-                    { label: '本月商業洽談', value: '12 筆', icon: Briefcase, color: 'text-indigo-400' },
+                    { label: '本月商業洽談', value: `${leads.length} 筆`, icon: Briefcase, color: 'text-indigo-400' },
                     { label: '資料完整率', value: '92%', icon: Target, color: 'text-emerald-400' },
-                    { label: '潛在合作價值', value: '$250K+', icon: Users, color: 'text-amber-400' },
+                    { label: '潛在合作價值', value: `$${leads.length * 20}K+`, icon: Users, color: 'text-amber-400' },
                 ].map((stat, i) => (
                     <motion.div 
                         initial={{ opacity: 0, y: 20 }}
@@ -48,9 +71,6 @@ export default function BusinessCollaborationView() {
                             <p className="text-[10px] text-slate-500 font-bold mt-1">AI 已自動為您標註具備商業合作潛力的訪客</p>
                         </div>
                     </div>
-                    <button className="px-4 py-2 bg-indigo-500 text-white rounded-xl text-xs font-black hover:bg-indigo-400 transition-all shadow-lg shadow-indigo-500/20">
-                        一鍵匯出捕獲資料
-                    </button>
                 </div>
 
                 <div className="overflow-x-auto">
@@ -65,7 +85,19 @@ export default function BusinessCollaborationView() {
                             </tr>
                         </thead>
                         <tbody className="text-[11px]">
-                            {B2B_LEADS.map((lead, i) => (
+                            {loading ? (
+                                <tr>
+                                    <td colSpan={5} className="px-6 py-20 text-center">
+                                        <Loader2 className="w-6 h-6 text-indigo-500 animate-spin mx-auto" />
+                                    </td>
+                                </tr>
+                            ) : leads.length === 0 ? (
+                                <tr>
+                                    <td colSpan={5} className="px-6 py-20 text-center text-slate-500 font-bold italic">
+                                        目前尚無擷取到商務洽談名單
+                                    </td>
+                                </tr>
+                            ) : leads.map((lead, i) => (
                                 <tr key={lead.id} className="hover:bg-slate-800/30 transition-all group">
                                     <td className="px-6 py-5 border-b border-slate-700/20">
                                         <div className="flex items-center gap-3">
@@ -73,11 +105,11 @@ export default function BusinessCollaborationView() {
                                                 <Building2 className="w-5 h-5 text-slate-400 group-hover:text-indigo-400" />
                                             </div>
                                             <div>
-                                                <p className="font-black text-slate-200">{lead.company}</p>
+                                                <p className="font-black text-slate-200">{lead.company_name || '未知企業'}</p>
                                                 <div className="flex items-center gap-2 mt-1">
-                                                    <span className="text-[10px] text-slate-500">{lead.contact} · {lead.role}</span>
+                                                    <span className="text-[10px] text-slate-500">{lead.contact_name} · {lead.role || '決策者'}</span>
                                                     <span className="text-[10px] text-emerald-500 font-bold flex items-center gap-1">
-                                                        <Phone className="w-3 h-3" /> {lead.phone}
+                                                        <Phone className="w-3 h-3" /> {lead.contact_phone}
                                                     </span>
                                                 </div>
                                             </div>
@@ -85,18 +117,18 @@ export default function BusinessCollaborationView() {
                                     </td>
                                     <td className="px-6 py-5 border-b border-slate-700/20">
                                         <span className="px-3 py-1 bg-indigo-500/10 text-indigo-400 rounded-full font-black text-[10px]">
-                                            {lead.intent}
+                                            {lead.intent_category || '品牌代理'}
                                         </span>
                                     </td>
                                     <td className="px-6 py-5 border-b border-slate-700/20">
-                                        <p className="text-slate-400 max-w-xs leading-relaxed italic">「{lead.details}」</p>
+                                        <p className="text-slate-400 max-w-xs leading-relaxed italic truncate">「{lead.summary_details}」</p>
                                     </td>
                                     <td className="px-6 py-5 border-b border-slate-700/20">
                                         <div className="flex items-center gap-1.5 text-emerald-400 font-black">
                                             <CheckCircle2 className="w-4 h-4" />
-                                            {lead.status}
+                                            資料已收齊
                                         </div>
-                                        <p className="text-[9px] text-slate-600 mt-1">{lead.time}</p>
+                                        <p className="text-[9px] text-slate-600 mt-1">{new Date(lead.created_at).toLocaleDateString()}</p>
                                     </td>
                                     <td className="px-6 py-5 border-b border-slate-700/20">
                                         <button className="p-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-400 hover:text-white hover:border-indigo-500 transition-all">

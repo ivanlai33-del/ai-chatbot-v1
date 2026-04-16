@@ -64,17 +64,17 @@ export default function AICommandConsole({ lineUserId, lineUserName }: AICommand
     return (
         <div className="flex h-screen bg-[#020617] text-slate-200 font-sans overflow-hidden">
             {/* 🏰 Modular Sidebar (Lego-based) */}
-            <aside className={`bg-slate-950/50 backdrop-blur-xl border-r border-white/5 flex flex-col transition-all duration-500 ease-in-out ${isSidebarOpen ? 'w-64' : 'w-20'}`}>
-                <div className="p-6 flex items-center justify-between border-b border-white/5">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center shadow-2xl shadow-indigo-500/20 ring-4 ring-indigo-500/5">
-                            <Sparkles className="w-5 h-5 text-white" />
+            <aside className={`bg-slate-950/50 backdrop-blur-xl border-r border-white/5 flex flex-col transition-all duration-500 ease-in-out ${isSidebarOpen ? 'w-[330px]' : 'w-[104px]'}`}>
+                <div className="p-8 flex items-center justify-between border-b border-white/5">
+                    <div className="flex items-center gap-4">
+                        <div className="w-14 h-14 rounded-2xl bg-indigo-600 flex items-center justify-center shadow-2xl shadow-indigo-500/20 ring-4 ring-indigo-500/5">
+                            <Sparkles className="w-8 h-8 text-white" />
                         </div>
                         {isSidebarOpen && (
                             <motion.h1 
                                 initial={{ opacity: 0, x: -10 }} 
                                 animate={{ opacity: 1, x: 0 }}
-                                className="text-sm font-black tracking-[.25em] uppercase text-white"
+                                className="text-base font-black tracking-[.25em] uppercase text-white"
                             >
                                 iVan HQ
                             </motion.h1>
@@ -82,7 +82,7 @@ export default function AICommandConsole({ lineUserId, lineUserName }: AICommand
                     </div>
                 </div>
 
-                <nav className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
+                <nav className="flex-1 overflow-y-auto p-5 space-y-3 custom-scrollbar">
                     {/* Iterate over registry to build menu */}
                     {WIDGET_REGISTRY.map((widget) => {
                         const Icon = widget.icon;
@@ -92,21 +92,21 @@ export default function AICommandConsole({ lineUserId, lineUserName }: AICommand
                             <button
                                 key={widget.id}
                                 onClick={() => setActiveTab(widget.id)}
-                                className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group relative ${
+                                className={`w-full flex items-center gap-5 px-5 py-5 rounded-[24px] transition-all duration-300 group relative ${
                                     isActive 
                                         ? 'bg-indigo-500 text-white shadow-xl shadow-indigo-500/20' 
                                         : 'text-slate-500 hover:bg-white/5 hover:text-slate-200'
                                 }`}
                             >
-                                <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'scale-110' : 'group-hover:scale-110 transition-transform'}`} />
+                                <Icon className={`w-7 h-7 flex-shrink-0 ${isActive ? 'scale-110' : 'group-hover:scale-110 transition-transform'}`} />
                                 {isSidebarOpen && (
-                                    <span className="text-[11px] font-black uppercase tracking-widest">{widget.label}</span>
+                                    <span className="text-[14px] font-black uppercase tracking-widest">{widget.label}</span>
                                 )}
                                 {widget.status === 'new' && isSidebarOpen && (
-                                    <span className="absolute right-4 px-1.5 py-0.5 bg-rose-500 text-[8px] font-black rounded italic">NEW</span>
+                                    <span className="absolute right-5 px-2 py-0.5 bg-rose-500 text-[10px] font-black rounded italic">NEW</span>
                                 )}
                                 {isActive && (
-                                    <motion.div layoutId="activeInd" className="absolute left-0 w-1 h-6 bg-white rounded-full" />
+                                    <motion.div layoutId="activeInd" className="absolute left-0 w-1.5 h-8 bg-white rounded-full" />
                                 )}
                             </button>
                         );
@@ -114,9 +114,9 @@ export default function AICommandConsole({ lineUserId, lineUserName }: AICommand
 
                     {/* Placeholder for Adding New Widgets */}
                     {isSidebarOpen && (
-                        <button className="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl text-slate-600 hover:text-slate-400 border border-dashed border-slate-800 transition-all mt-8 group">
-                            <PlusCircle className="w-5 h-5 group-hover:rotate-90 transition-transform" />
-                            <span className="text-[10px] font-black uppercase tracking-widest">開發新功能積木</span>
+                        <button className="w-full flex items-center gap-5 px-5 py-5 rounded-[24px] text-slate-600 hover:text-slate-400 border border-dashed border-slate-800 transition-all mt-10 group">
+                            <PlusCircle className="w-7 h-7 group-hover:rotate-90 transition-transform" />
+                            <span className="text-[12px] font-black uppercase tracking-widest">開發新功能積木</span>
                         </button>
                     )}
                 </nav>

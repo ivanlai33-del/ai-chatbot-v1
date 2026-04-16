@@ -12,6 +12,32 @@ const CHAT_STREAM_DATA = [
 ];
 
 export default function ChatStreamView() {
+    const [chats, setChats] = React.useState<any[]>([]);
+    const [loading, setLoading] = React.useState(true);
+
+    const fetchLiveFeed = async () => {
+        const lineId = localStorage.getItem('line_user_id');
+        if (!lineId) return;
+        try {
+            const res = await fetch(`/api/console/live-feed?userId=${lineId}`);
+            const data = await res.json();
+            if (data.success) {
+                setChats(data.feed || []);
+            }
+        } catch (e) {
+            console.error("Failed to fetch live feed", e);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    React.useEffect(() => {
+        fetchLiveFeed();
+        // 每 30 秒自動刷新一次
+        const timer = setInterval(fetchLiveFeed, 30000);
+        return () => clearInterval(timer);
+    }, []);
+
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Live Activity Wall */}
@@ -27,70 +53,62 @@ export default function ChatStreamView() {
                             </div>
                             <div>
                                 <h3 className="text-sm font-black text-white tracking-widest uppercase">全站即時聊天總覽</h3>
-                                <p className="text-[10px] text-slate-500 font-bold mt-1">目前有 5 位 AI 店長正在與 12 位訪客對話中</p>
+                                <p className="text-[10px] text-slate-500 font-bold mt-1">
+                                    {loading ? '正在同步對話中...' : `目前擷取到最新 ${chats.length} 筆活躍對話`}
+                                </p>
                             </div>
                         </div>
                         <div className="flex items-center gap-6">
-                            <div className="hidden sm:flex items-center gap-4">
-                                <div className="text-right">
-                                    <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">目前 AI 回覆率</p>
-                                    <p className="text-sm font-black text-emerald-400">98.5%</p>
-                                </div>
-                                <div className="w-12 h-6 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center px-1">
-                                    <div className="w-4 h-4 bg-emerald-400 rounded-full ml-auto shadow-sm" />
-                                </div>
-                            </div>
+                            <button onClick={fetchLiveFeed} className="p-2 hover:bg-white/5 rounded-lg transition-colors">
+                                <RefreshCw className={`w-4 h-4 text-slate-500 ${loading ? 'animate-spin' : ''}`} />
+                            </button>
                         </div>
                     </div>
 
                     <div className="p-6 space-y-4">
-                        {CHAT_STREAM_DATA.map((chat, i) => (
-                            <motion.div 
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: i * 0.1 }}
-                                key={chat.id} 
-                                className="group p-5 rounded-2xl bg-slate-800/40 border border-slate-700/50 hover:border-indigo-500/30 hover:bg-slate-800/60 transition-all flex flex-col md:flex-row md:items-center justify-between gap-6"
-                            >
-                                <div className="flex items-start gap-4">
-                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border transition-all ${
-                                        chat.status === 'active' ? 'bg-indigo-500/10 border-indigo-500/30 text-indigo-400' :
-                                        chat.status === 'captured' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' :
-                                        'bg-slate-800 border-slate-700 text-slate-500'
-                                    }`}>
-                                        <User className="w-6 h-6" />
-                                    </div>
-                                    <div className="space-y-1">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-xs font-black text-slate-200">{chat.visitor}</span>
-                                            <span className="text-[9px] px-2 py-0.5 bg-slate-700/50 text-slate-400 rounded-full font-bold uppercase tracking-widest">{chat.store}</span>
+                        {loading ? (
+                            <div className="flex flex-col items-center justify-center py-20 opacity-40">
+                                <Loader2 className="w-8 h-8 text-indigo-500 animate-spin mb-4" />
+                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">掃描信號中...</p>
+                            </div>
+                        ) : chats.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center py-20 opacity-30 italic text-slate-500 text-sm">
+                                暫時沒有新的對話紀錄
+                            </div>
+                        ) : (
+                            chats.map((chat, i) => (
+                                <motion.div 
+                                    initial={{ opacity: 0, x: -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: i * 0.1 }}
+                                    key={chat.id} 
+                                    className="group p-5 rounded-2xl bg-slate-800/40 border border-slate-700/50 hover:border-indigo-500/30 hover:bg-slate-800/60 transition-all flex flex-col md:flex-row md:items-center justify-between gap-6"
+                                >
+                                    <div className="flex items-start gap-4">
+                                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border transition-all bg-indigo-500/10 border-indigo-500/30 text-indigo-400`}>
+                                            <User className="w-6 h-6" />
                                         </div>
-                                        <p className="text-[11px] text-slate-400 italic">「{chat.lastMsg}」</p>
-                                        <div className="flex items-center gap-2 mt-2">
-                                            <Zap className="w-3 h-3 text-indigo-400" />
-                                            <span className="text-[10px] font-bold text-indigo-300">由 {chat.botName} 分身回覆中</span>
+                                        <div className="space-y-1">
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-xs font-black text-slate-200">{chat.visitor}</span>
+                                                <span className="text-[9px] px-2 py-0.5 bg-slate-700/50 text-slate-400 rounded-full font-bold uppercase tracking-widest">{chat.store}</span>
+                                            </div>
+                                            <p className="text-[11px] text-slate-400 italic">「{chat.lastMsg}」</p>
+                                            <div className="flex items-center gap-2 mt-2">
+                                                <Zap className="w-3 h-3 text-indigo-400" />
+                                                <span className="text-[10px] font-bold text-indigo-300">最後更新：{chat.time}</span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div className="flex items-center gap-4 border-t md:border-t-0 pt-4 md:pt-0 border-slate-700/50 md:justify-end w-full md:w-auto">
-                                    <div className="text-right">
-                                        <div className="flex items-center gap-2 justify-end mb-1">
-                                            {chat.intent === 'booking' && <span className="bg-amber-500/20 text-amber-500 px-2 py-0.5 rounded-lg text-[9px] font-black tracking-widest uppercase flex items-center gap-1"><ShoppingCart className="w-3 h-3" /> 預約諮詢</span>}
-                                            {chat.intent === 'lead_captured' && <span className="bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-lg text-[9px] font-black tracking-widest uppercase flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> 成功領資</span>}
-                                            {chat.intent === 'intervention_requested' && <span className="bg-rose-500/20 text-rose-500 px-2 py-0.5 rounded-lg text-[9px] font-black tracking-widest uppercase flex items-center gap-1"><AlertCircle className="w-3 h-3" /> 請求介入</span>}
-                                        </div>
-                                        <div className="flex items-center gap-2 justify-end">
-                                            <Clock className="w-3 h-3 text-slate-600" />
-                                            <span className="text-[10px] text-slate-500 font-bold">{chat.time}</span>
-                                        </div>
+                                    <div className="flex items-center gap-4 border-t md:border-t-0 pt-4 md:pt-0 border-slate-700/50 md:justify-end w-full md:w-auto">
+                                        <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 text-slate-300 border border-slate-700 hover:bg-indigo-500 hover:text-white hover:border-indigo-400 transition-all text-[11px] font-black">
+                                            查看詳情 <ArrowUpRight className="w-4 h-4" />
+                                        </button>
                                     </div>
-                                    <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 text-slate-300 border border-slate-700 hover:bg-indigo-500 hover:text-white hover:border-indigo-400 transition-all text-[11px] font-black">
-                                        查看對話 <ArrowUpRight className="w-4 h-4" />
-                                    </button>
-                                </div>
-                            </motion.div>
-                        ))}
+                                </motion.div>
+                            ))
+                        )}
                     </div>
                 </div>
             </div>

@@ -35,7 +35,7 @@ export interface ConsoleWidget {
 export const WIDGET_REGISTRY: ConsoleWidget[] = [
     {
         id: 'dashboard',
-        label: '營運指揮中心',
+        label: '📊 訪客情報與全站監控',
         icon: LayoutDashboard,
         component: ConsoleAnalyticsView,
         status: 'stable',

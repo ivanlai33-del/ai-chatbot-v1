@@ -9,6 +9,9 @@ export default function VisitorTracker() {
     const viewedSections = useSectionTracker();
     const { profile } = useLiff();
 
+    const startTimeRef = useRef<number>(Date.now());
+    const [duration, setDuration] = React.useState(0);
+
     useEffect(() => {
         const handleConsentUpdate = () => {
             trackVisitor();
@@ -16,27 +19,34 @@ export default function VisitorTracker() {
 
         window.addEventListener('cookie_consent_updated', handleConsentUpdate);
 
-        // 延遲執行，確保不影響首頁載入效能
+        // 縮短延遲執行，確保能抓到快速過客 (500ms)
         const timer = setTimeout(() => {
             const consent = localStorage.getItem('cookie_consent');
             if (consent === 'accepted' || profile?.userId) {
                 trackVisitor();
             }
-        }, 3000);
+        }, 500);
+
+        // 停留時間心跳監聽 (每 10 秒發送一次更新)
+        const heartbeat = setInterval(() => {
+            if (localStorage.getItem('cookie_consent') === 'accepted') {
+                const currentDuration = Math.floor((Date.now() - startTimeRef.current) / 1000);
+                setDuration(currentDuration);
+                updateBehavior(currentDuration);
+            }
+        }, 10000);
 
         return () => {
             window.removeEventListener('cookie_consent_updated', handleConsentUpdate);
             clearTimeout(timer);
+            clearInterval(heartbeat);
         };
     }, [profile]);
 
-    // 當看過的區塊更新時，同步更新（設定一個簡單的 Throttle 避免過度頻繁寫入）
+    // 當看過的區塊更新時，同步更新
     useEffect(() => {
         if (viewedSections.length > 0) {
-            const timer = setTimeout(() => {
-                updateBehavior();
-            }, 5000);
-            return () => clearTimeout(timer);
+            updateBehavior(duration);
         }
     }, [viewedSections]);
 
@@ -65,6 +75,7 @@ export default function VisitorTracker() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     ip: geo.ip || 'Unknown',
+                    country: geo.country_name || 'Unknown', // 加入國家欄位
                     city: geo.city || 'Unknown',
                     district: geo.region || 'Unknown',
                     isp: geo.org || 'Unknown',
@@ -78,11 +89,12 @@ export default function VisitorTracker() {
                     utm_term: urlParams.get('utm_term'),
                     page_url: window.location.href,
                     page_title: document.title,
-                    browser: navigator.userAgent.split(' ')[0], // Simple parser
+                    browser: navigator.userAgent.split(' ')[0],
                     os: navigator.platform,
                     device_type: /Mobi|Android/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop',
                     liff_user_id: profile?.userId || null,
-                    content_tags: viewedSections
+                    content_tags: viewedSections,
+                    duration: 0 // 初始停留時間
                 })
             });
         } catch (e) {
@@ -90,8 +102,7 @@ export default function VisitorTracker() {
         }
     };
 
-    const updateBehavior = async () => {
-        // 僅更新行為標籤，減少 API 負擔
+    const updateBehavior = async (currentDuration: number) => {
         try {
             await fetch('/api/platform/track', {
                 method: 'POST',
@@ -100,7 +111,7 @@ export default function VisitorTracker() {
                     visitor_id: getFingerprint(),
                     session_id: window.name,
                     content_tags: viewedSections,
-                    // 其他欄位在後端可選擇忽略或更新
+                    duration: currentDuration // 更新停留時間
                 })
             });
         } catch (e) {}

@@ -94,8 +94,8 @@ export function decryptTradeInfo(encryptedTradeInfo: string, hashKey: string, ha
 }
 
 export function genDataChain(orderParams: Record<string, any>): string {
-    // 【MS 帳號可能路徑】移除 A-Z 排序，使用自然順序
     return Object.entries(orderParams)
+        .sort(([a], [b]) => a.localeCompare(b))
         .filter(([_, value]) => value !== undefined && value !== null && value !== '') 
         .map(([key, value]) => {
             const encoded = encodeURIComponent(value.toString()).replace(/%20/g, '+');

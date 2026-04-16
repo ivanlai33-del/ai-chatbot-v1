@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Users, Phone, Building2, Briefcase, CheckCircle2, ChevronRight, MessageSquare, Target } from 'lucide-react';
+import { Users, Phone, Building2, Briefcase, CheckCircle2, ChevronRight, MessageSquare, Target, Loader2 } from 'lucide-react';
 
 const B2B_LEADS = [
     { id: '1', company: 'XX 數位行銷公司', contact: '王經理', role: '行銷總監', intent: '開發企業專屬聊天機器人', details: '希望能串接其自有的廣告追蹤系統，並建立品牌專屬語調。', phone: '02-2345-XXXX', status: '資料已收齊', time: '1小時前' },

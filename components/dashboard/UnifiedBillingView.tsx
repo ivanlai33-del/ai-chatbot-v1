@@ -63,7 +63,7 @@ export default function UnifiedBillingView() {
     const [isRefundEligible, setIsRefundEligible] = useState(false);
     const [subStartDate, setSubStartDate] = useState<string | null>(null);
     const [subEndDate, setSubEndDate] = useState<string | null>(null);
-
+    const [isSimulating, setIsSimulating] = useState(false); // 模擬免費會員模式中
 
     useEffect(() => {
         const getCookie = (name: string) => {
@@ -73,6 +73,12 @@ export default function UnifiedBillingView() {
 
         const uid = localStorage.getItem('line_user_id') || getCookie('line_user_id');
         setLineUserId(uid);
+        
+        // 檢查是否正在「模擬免費會員」模式，若是則隱藏系統特權按鈕
+        fetch('/api/debug/toggle-identity')
+            .then(res => res.json())
+            .then(json => setIsSimulating(json.mode === 'free'))
+            .catch(() => setIsSimulating(false));
         
         if (uid) {
             fetch(`/api/platform/user?lineUserId=${uid}`, { cache: 'no-store' })
@@ -393,8 +399,8 @@ export default function UnifiedBillingView() {
                         </div>
                     </div>
                     
-                    {/* 🛡️ Superuser Administrative / Sandbox Panel — Only for Authorized ID */}
-                    {lineUserId === 'Ud8b8dd79162387a80b2b5a4aba20f604' && (
+                    {/* 🛡️ Superuser Administrative / Sandbox Panel — Only for Authorized ID & Not Simulating */}
+                    {lineUserId === 'Ud8b8dd79162387a80b2b5a4aba20f604' && !isSimulating && (
                         <div className="mt-8 pt-6 border-t font-black border-slate-100 flex flex-wrap items-center gap-2 animate-in fade-in zoom-in duration-500">
                             <span className="text-[10px] text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md uppercase tracking-[0.2em] mr-4 py-2 flex items-center gap-2">
                                 <ShieldCheck className="w-3 h-3" /> 系統營運特權：

@@ -57,11 +57,10 @@ export function createMpgAesEncrypt(tradeInfoStr: string, hashKey: string, hashI
 }
 
 export function createMpgShaEncrypt(aesEncrypted: string, hashKey: string, hashIV: string): string {
-    // 【對齊診斷結果 A】使用帶標籤的標準 2.0 公式
-    const shaString = `HashKey=${hashKey}&TradeInfo=${aesEncrypted}&HashIV=${hashIV}`;
+    // ✅ 正確格式：HashKey={Key}&{TradeInfo (hex)}&HashIV={IV}，中間不加 TradeInfo=
+    const shaString = `HashKey=${hashKey}&${aesEncrypted}&HashIV=${hashIV}`;
     
-    // 輸出原始字串供手動校驗
-    console.log('[NewebPay Debug] SHA Raw String (Standard 2.0):', shaString);
+    console.log('[NewebPay Debug] SHA Raw String:', shaString.substring(0, 80) + '...');
 
     const hash = crypto.createHash('sha256').update(shaString).digest('hex');
     return hash.toUpperCase();
@@ -96,9 +95,13 @@ export function decryptTradeInfo(encryptedTradeInfo: string, hashKey: string, ha
 }
 
 export function genDataChain(orderParams: Record<string, any>): string {
+    // ✅ 藍新規範：value 做 URL encode，空白轉 +，其他特殊字元 encode
     return Object.entries(orderParams)
         .filter(([_, value]) => value !== undefined && value !== null && value !== '') 
-        .map(([key, value]) => `${key}=${value}`)
+        .map(([key, value]) => {
+            const encoded = encodeURIComponent(String(value)).replace(/%20/g, '+');
+            return `${key}=${encoded}`;
+        })
         .join('&');
 }
 

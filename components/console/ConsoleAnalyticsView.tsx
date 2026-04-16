@@ -17,11 +17,47 @@ export default function ConsoleAnalyticsView() {
     const [data, setData] = useState<VisitorIntelligenceData | null>(null);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
+    const [impersonationMode, setImpersonationMode] = useState<'admin' | 'free'>('admin');
+
+    // 檢查目前的模擬身份狀態
+    const checkImpersonationMode = async () => {
+        try {
+            const res = await fetch('/api/debug/toggle-identity');
+            const json = await res.json();
+            setImpersonationMode(json.mode || 'admin');
+        } catch (e) {
+            console.error("Failed to check impersonation mode:", e);
+        }
+    };
+
+    const handleToggleRole = async () => {
+        const nextMode = impersonationMode === 'admin' ? 'free' : 'admin';
+        try {
+            const res = await fetch('/api/debug/toggle-identity', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mode: nextMode })
+            });
+            const json = await res.json();
+            if (json.success) {
+                // 強制刷新以套用新的 Cookie 權限
+                window.location.reload();
+            }
+        } catch (e) {
+            alert('切換身份失敗，請稍後再試');
+        }
+    };
 
     const fetchAnalytics = async (isRefresh = false) => {
         if (isRefresh) setRefreshing(true);
         const lineId = localStorage.getItem('line_user_id');
-        if (!lineId) return;
+        
+        if (!lineId) {
+            console.warn("No line_user_id found for analytics.");
+            setLoading(false);
+            setRefreshing(false);
+            return;
+        }
 
         try {
             const res = await fetch(`/api/console/visitor-intelligence?userId=${lineId}`);
@@ -39,14 +75,66 @@ export default function ConsoleAnalyticsView() {
 
     useEffect(() => {
         fetchAnalytics();
+        checkImpersonationMode();
         const interval = setInterval(() => fetchAnalytics(false), 300000); // 5 分鐘自動更新
         return () => clearInterval(interval);
     }, []);
 
+    // ── Render Header (Always visible) ──────────────────────────
+    const RenderHeader = () => (
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-slate-900/40 p-5 rounded-3xl border border-slate-700/50 gap-4 mb-6">
+            <div className="flex items-center gap-4">
+                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${
+                    impersonationMode === 'admin' 
+                    ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20' 
+                    : 'bg-rose-500/10 text-rose-400 border border-rose-500/20 shadow-[0_0_15px_rgba(244,63,94,0.1)]'
+                }`}>
+                    {impersonationMode === 'admin' ? <Eye className="w-6 h-6" /> : <RefreshCw className="w-6 h-6 animate-pulse" />}
+                </div>
+                <div>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-0.5">系統身份狀態</p>
+                    <p className="text-base font-black text-white flex items-center gap-2">
+                        {impersonationMode === 'admin' ? '🛡️ 最高管理者模式' : '👤 模擬免費會員中'}
+                        {impersonationMode === 'free' && (
+                            <span className="flex h-2 w-2 relative">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+                            </span>
+                        )}
+                    </p>
+                </div>
+                <button
+                    onClick={handleToggleRole}
+                    className={`ml-4 px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all active:scale-95 ${
+                        impersonationMode === 'admin' 
+                        ? 'bg-slate-800 text-slate-400 hover:bg-rose-500/20 hover:text-rose-400 border border-slate-700 hover:border-rose-500/30' 
+                        : 'bg-indigo-500 text-white hover:bg-indigo-600 shadow-lg shadow-indigo-500/20'
+                    }`}
+                >
+                    {impersonationMode === 'admin' ? '模擬一般會員' : '恢復管理模式'}
+                </button>
+            </div>
+
+            <button 
+                onClick={() => fetchAnalytics(true)}
+                className="flex items-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-2xl transition-all text-xs font-black uppercase tracking-widest border border-slate-700 active:scale-95"
+            >
+                <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+                即時更新
+            </button>
+        </div>
+    );
+
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-full min-h-[400px]">
-                <Loader2 className="w-10 h-10 text-indigo-500 animate-spin opacity-50" />
+            <div className="space-y-6">
+                <RenderHeader />
+                <div className="flex items-center justify-center h-full min-h-[300px] bg-slate-900/20 rounded-3xl border border-dashed border-slate-800">
+                    <div className="flex flex-col items-center gap-4">
+                        <Loader2 className="w-10 h-10 text-indigo-500 animate-spin opacity-50" />
+                        <span className="text-xs font-bold text-slate-600 animate-pulse uppercase tracking-[0.2em]">載入指揮中心數據中...</span>
+                    </div>
+                </div>
             </div>
         );
     }
@@ -214,11 +302,35 @@ export default function ConsoleAnalyticsView() {
 
     return (
         <div className="space-y-6 animate-in fade-in duration-700 pb-20">
-            {/* Header Controls */}
-            <div className="flex justify-end">
+                        {impersonationMode === 'admin' ? <Eye className="w-6 h-6" /> : <RefreshCw className="w-6 h-6 animate-pulse" />}
+                    </div>
+                    <div>
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-0.5">系統身份狀態</p>
+                        <p className="text-base font-black text-white flex items-center gap-2">
+                            {impersonationMode === 'admin' ? '🛡️ 最高管理者模式' : '👤 模擬免費會員中'}
+                            {impersonationMode === 'free' && (
+                                <span className="flex h-2 w-2 relative">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+                                </span>
+                            )}
+                        </p>
+                    </div>
+                    <button
+                        onClick={handleToggleRole}
+                        className={`ml-4 px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all active:scale-95 ${
+                            impersonationMode === 'admin' 
+                            ? 'bg-slate-800 text-slate-400 hover:bg-rose-500/20 hover:text-rose-400 border border-slate-700 hover:border-rose-500/30' 
+                            : 'bg-indigo-500 text-white hover:bg-indigo-600 shadow-lg shadow-indigo-500/20'
+                        }`}
+                    >
+                        {impersonationMode === 'admin' ? '模擬一般會員' : '恢復管理模式'}
+                    </button>
+                </div>
+
                 <button 
                     onClick={() => fetchAnalytics(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition-all text-xs font-bold"
+                    className="flex items-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-2xl transition-all text-xs font-black uppercase tracking-widest border border-slate-700 active:scale-95"
                 >
                     <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
                     即時更新

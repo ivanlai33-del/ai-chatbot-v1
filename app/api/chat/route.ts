@@ -211,6 +211,14 @@ export async function POST(req: NextRequest) {
         // ── 解析並行結果 ──────────────────────────────────────────
         let userPlanLevel = isSaaS ? 1 : 0;
         let isAdmin = isMaster || false;
+
+        // 【偵錯模式攔截】管理員模擬一般會員測試
+        const debugMode = req.cookies.get('x-admin-test-mode')?.value;
+        if (debugMode === 'free') {
+            console.log(`[Debug Mode] Identity Override: Treating admin as Free Member.`);
+            isAdmin = false;
+        }
+
         let currentMonthCount = 0;
         let userSelectedPlan = "Free";
         let userPlanPeriod = "monthly";
@@ -221,7 +229,8 @@ export async function POST(req: NextRequest) {
 
             if (userData) {
                 userPlanLevel = userData.plan_level || userPlanLevel;
-                isAdmin = userData.role === 'admin' || isAdmin;
+                // 如果開啟測試模式，不論 DB role 報什麼，都強制回傳 false
+                isAdmin = debugMode === 'free' ? false : (userData.role === 'admin' || isAdmin);
             }
             currentMonthCount = usageData?.message_count || 0;
 

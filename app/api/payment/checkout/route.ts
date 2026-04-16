@@ -59,7 +59,9 @@ export async function POST(req: NextRequest) {
             ReturnURL: `${config.baseUrl}/api/payment/return`,
             NotifyURL: config.notifyUrl,
             ClientBackURL: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/billing`,
-            CREDIT: 1,
+            CREDIT: 1,       // 信用卡一次付清 + 國外卡
+            ANDROIDPAY: 1,   // Google Pay
+            APPLEPAY: 1,     // Apple Pay
         };
 
         // 5. 【關鍵驗證】如果是月繳，才加入定期定額參數

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSectionTracker } from '@/hooks/useSectionTracker';
 import { useLiff } from '@/components/Liff/LiffProvider';
 
@@ -10,7 +10,7 @@ export default function VisitorTracker() {
     const { profile } = useLiff();
 
     const startTimeRef = useRef<number>(Date.now());
-    const [duration, setDuration] = React.useState(0);
+    const [duration, setDuration] = useState(0);
 
     useEffect(() => {
         const handleConsentUpdate = () => {

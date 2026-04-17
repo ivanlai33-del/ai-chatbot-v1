@@ -5,10 +5,31 @@ import { Map, MapPin, TrendingUp, Flame, Ghost, Users, Search, Target, Loader2 }
 import { motion } from 'framer-motion';
 
 export default function MarketIntelligenceView() {
+    const [stats, setStats] = useState<any[]>([]);
+    const [summary, setSummary] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
     const [monitors, setMonitors] = useState<any[]>([]);
     const [loadingMonitors, setLoadingMonitors] = useState(false);
 
+    const ADMIN_ID = "Ud8b8dd79162387a80b2b5a4aba20f604";
+
     useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                const res = await fetch(`/api/console/market?userId=${ADMIN_ID}`);
+                const data = await res.json();
+                if (data.success) {
+                    setStats(data.regions || []);
+                    setSummary(data.summary || null);
+                }
+            } catch (e) {
+                console.error("Market Pulse Fetch Error:", e);
+            } finally {
+                setLoading(false);
+            }
+        };
+
         const fetchMonitors = async () => {
             const botId = localStorage.getItem('last_selected_bot_id');
             if (!botId) return;
@@ -25,6 +46,8 @@ export default function MarketIntelligenceView() {
                 setLoadingMonitors(false);
             }
         };
+
+        fetchData();
         fetchMonitors();
     }, []);
 
@@ -78,8 +101,8 @@ export default function MarketIntelligenceView() {
                         <Map className="w-6 h-6 text-indigo-500" />
                     </div>
                     <div>
-                        <h2 className="text-lg font-black text-white uppercase tracking-[0.2em]">台灣全域市場情報</h2>
-                        <p className="text-[10px] text-slate-500 font-bold mt-1 tracking-widest uppercase">追蹤來訪熱區與「數位沙漠」分布圖</p>
+                        <h2 className="text-lg font-black text-white uppercase tracking-[0.2em] text-left">台灣全域市場情報</h2>
+                        <p className="text-[10px] text-slate-500 font-bold mt-1 tracking-widest uppercase text-left">追蹤來訪熱區與「數位沙漠」分布圖</p>
                     </div>
                 </div>
 
@@ -178,8 +201,8 @@ export default function MarketIntelligenceView() {
                             <Ghost className="w-6 h-6 text-rose-500" />
                         </div>
                         <div>
-                            <h2 className="text-lg font-black text-white uppercase tracking-[0.2em]">競品情報監控系統</h2>
-                            <p className="text-[10px] text-slate-500 font-bold mt-1 tracking-widest uppercase">自動追蹤對手動態並產生戰略報告</p>
+                            <h2 className="text-lg font-black text-white uppercase tracking-[0.2em] text-left">競品情報監控系統</h2>
+                            <p className="text-[10px] text-slate-500 font-bold mt-1 tracking-widest uppercase text-left">自動追蹤對手動態並產生戰略報告</p>
                         </div>
                     </div>
                 </div>
@@ -187,7 +210,7 @@ export default function MarketIntelligenceView() {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     <div className="lg:col-span-4 p-8 rounded-[32px] bg-slate-900/60 border border-white/5 space-y-6 self-start">
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">新增監控對象</label>
+                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest text-left">新增監控對象</label>
                             <div className="flex gap-2">
                                 <input 
                                     type="url" 
@@ -209,7 +232,7 @@ export default function MarketIntelligenceView() {
                             <p className="text-[11px] font-black text-rose-400 flex items-center gap-2">
                                 <Flame className="w-3.5 h-3.5" /> 爬蟲積木運作中
                             </p>
-                            <p className="text-[10px] text-slate-400 leading-relaxed font-medium">
+                            <p className="text-[10px] text-slate-400 leading-relaxed font-medium text-left">
                                 系統將會使用 Crawlee 自動巡視目標網頁，並由 GPT-4o 進行語意對比分析，產生決策建議。
                             </p>
                         </div>
@@ -237,24 +260,24 @@ export default function MarketIntelligenceView() {
                                                 </p>
                                             </div>
                                             <div>
-                                                <h4 className="text-sm font-black text-slate-100 truncate">{m.brand_name || m.url}</h4>
-                                                <p className="text-[10px] text-slate-600 truncate">{m.url}</p>
+                                                <h4 className="text-sm font-black text-slate-100 truncate text-left">{m.brand_name || m.url}</h4>
+                                                <p className="text-[10px] text-slate-600 truncate text-left">{m.url}</p>
                                             </div>
                                             {latest ? (
                                                 <>
                                                     <div className="space-y-3 py-3 border-y border-white/5">
                                                         <div className="space-y-1">
-                                                            <p className="text-[9px] font-black text-slate-500 uppercase">新產品/服務</p>
-                                                            <p className="text-xs text-slate-300 font-medium line-clamp-2">{latest.newProducts}</p>
+                                                            <p className="text-[9px] font-black text-slate-500 uppercase text-left">新產品/服務</p>
+                                                            <p className="text-xs text-slate-300 font-medium line-clamp-2 text-left">{latest.newProducts}</p>
                                                         </div>
                                                         <div className="space-y-1">
-                                                            <p className="text-[9px] font-black text-slate-500 uppercase">價格/促銷</p>
-                                                            <p className="text-xs text-rose-400 font-black line-clamp-2">{latest.pricingUpdates}</p>
+                                                            <p className="text-[9px] font-black text-slate-500 uppercase text-left">價格/促銷</p>
+                                                            <p className="text-xs text-rose-400 font-black line-clamp-2 text-left">{latest.pricingUpdates}</p>
                                                         </div>
                                                     </div>
                                                     <div className="bg-indigo-500/10 p-4 rounded-2xl border border-indigo-500/20">
-                                                        <p className="text-[11px] font-black text-indigo-400 mb-1">💡 指揮官建議：</p>
-                                                        <p className="text-xs text-slate-200 leading-relaxed italic">{latest.recommendation}</p>
+                                                        <p className="text-[11px] font-black text-indigo-400 mb-1 text-left">💡 指揮官建議：</p>
+                                                        <p className="text-xs text-slate-200 leading-relaxed italic text-left">{latest.recommendation}</p>
                                                     </div>
                                                 </>
                                             ) : (
@@ -287,8 +310,8 @@ export default function MarketIntelligenceView() {
                             <TrendingUp className="w-10 h-10 text-white" />
                         </div>
                         <div className="space-y-2">
-                            <h3 className="text-lg font-black text-white uppercase tracking-widest">市場擴張建議系統</h3>
-                            <p className="text-sm text-slate-400 leading-relaxed max-w-2xl font-medium italic">
+                            <h3 className="text-lg font-black text-white uppercase tracking-widest text-left">市場擴張建議系統</h3>
+                            <p className="text-sm text-slate-400 leading-relaxed max-w-2xl font-medium italic text-left">
                                 「iVan 指揮官，目前 {summary?.desert_region || '部分地區'} 雖然擁有高來訪量，但店長開通數卻為 0，這顯示該區有極強的數位轉型缺口。建議針對該區域投放專屬的『開通路徑引導』廣告，以在對手進入前先行搶佔市場。」
                             </p>
                         </div>

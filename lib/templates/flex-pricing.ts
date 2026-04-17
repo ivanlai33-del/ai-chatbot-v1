@@ -33,7 +33,7 @@ export const getPricingFlexMessage = () => {
                     color: color,
                     badge: plan.badge,
                     features: plan.features.slice(0, 3), // Show first 3 features to keep card compact
-                    actionUrl: `https://bot.ycideas.com/dashboard/billing?plan=${plan.id}`
+                    actionUrl: `https://bot.ycideas.com/liff/subscribe?plan=${plan.id}`
                 });
             })
         }

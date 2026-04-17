@@ -324,7 +324,7 @@ export default function UnifiedBillingView() {
         <div className="max-w-5xl mx-auto space-y-10 py-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* 💎 Current Subscription Status Card */}
             <section>
-                <h2 className="text-sm font-black text-slate-400 uppercase tracking-[0.3em] mb-4 ml-2">目前的收費狀態</h2>
+                <h2 className="text-sm font-black text-slate-600 uppercase tracking-[0.3em] mb-4 ml-2">目前的收費狀態</h2>
                 <div className={cn(
                     "relative overflow-hidden rounded-[40px] p-8 transition-all border-2",
                     planLevel >= 5 ? "bg-gradient-to-br from-amber-500/5 to-white border-amber-200" :
@@ -371,17 +371,17 @@ export default function UnifiedBillingView() {
                         <div className="flex flex-col md:flex-row gap-6 md:gap-12">
                             <div className="space-y-2">
                                 <div className="flex justify-between md:block">
-                                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-0.5">開始時間</p>
+                                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-0.5">開始時間</p>
                                     <p className="text-sm font-bold text-slate-500 tracking-tight">{planLevel > 0 ? '2026/03/28' : '---'}</p>
                                 </div>
                                 <div className="flex justify-between md:block">
-                                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-0.5">預定結束</p>
+                                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-0.5">預定結束</p>
                                     <p className="text-sm font-bold text-slate-500 tracking-tight">{planLevel > 0 ? (dbBillingCycle === 'yearly' ? '2027/03/28' : '2026/04/28') : '---'}</p>
                                 </div>
                             </div>
                             <div className="h-px md:h-12 w-full md:w-px bg-slate-100" />
                             <div className="text-right">
-                                 <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">
+                                     <p className="text-[11px] font-black text-slate-600 uppercase tracking-[0.2em] mb-1">
                                     {cancelAtPeriodEnd ? "服務效期至" : "次期扣款日"}
                                 </p>
                                 <p className="text-3xl font-black text-slate-800 tracking-tighter">
@@ -421,27 +421,27 @@ export default function UnifiedBillingView() {
             <section>
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 ml-2">
                     <div className="flex items-center gap-4">
-                        <h2 className="text-sm font-black text-slate-400 uppercase tracking-[0.3em]">所有的服務方案</h2>
+                        <h2 className="text-sm font-black text-slate-600 uppercase tracking-[0.3em]">所有的服務方案</h2>
                         <button 
                             onClick={() => setIsAllPlansExpanded(!isAllPlansExpanded)}
                             className={cn(
-                                "group flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all border-2",
+                                "group flex items-center gap-3 px-8 py-3 rounded-2xl text-[13px] font-black uppercase tracking-widest transition-all border-2",
                                 isAllPlansExpanded 
                                     ? "bg-slate-50 text-slate-400 border-slate-100 hover:bg-slate-100" 
-                                    : "bg-white text-indigo-600 border-indigo-100 shadow-lg shadow-indigo-500/10 hover:border-indigo-300 hover:bg-indigo-50 hover:shadow-xl hover:-translate-y-0.5"
+                                    : "bg-indigo-600 text-white border-indigo-500 shadow-xl shadow-indigo-500/30 hover:bg-indigo-700 hover:-translate-y-0.5"
                             )}
                         >
                             <span>{isAllPlansExpanded ? '收起方案' : '展開所有方案'}</span>
-                            <ChevronRight className={cn("w-3.5 h-3.5 transition-transform duration-300", isAllPlansExpanded ? "rotate-90" : "rotate-0 group-hover:translate-x-1")} />
+                            <ChevronRight className={cn("w-4 h-4 transition-transform duration-300", isAllPlansExpanded ? "rotate-90" : "rotate-0 group-hover:translate-x-1")} />
                         </button>
                     </div>
 
-                    <div className="flex items-center p-1 bg-slate-100 rounded-2xl w-fit shadow-inner">
+                    <div className="flex items-center p-1.5 bg-slate-100 rounded-[22px] w-fit shadow-inner border border-slate-200/50">
                         <button 
                             onClick={() => setSelectedBillingCycle('monthly')}
                              className={cn(
-                                "px-6 py-2.5 rounded-xl text-[15px] font-black uppercase tracking-widest transition-all",
-                                selectedBillingCycle === 'monthly' ? "bg-white text-slate-800 shadow-sm" : "text-slate-400 hover:text-slate-600"
+                                "px-7 py-3 rounded-xl text-[15px] font-black uppercase tracking-widest transition-all",
+                                selectedBillingCycle === 'monthly' ? "bg-white text-slate-800 shadow-sm" : "text-slate-500 hover:text-slate-700"
                             )}
                         >
                             月費方案
@@ -449,14 +449,14 @@ export default function UnifiedBillingView() {
                         <button 
                             onClick={() => setSelectedBillingCycle('yearly')}
                              className={cn(
-                                "px-6 py-2.5 rounded-xl text-[15px] font-black uppercase tracking-widest transition-all flex items-center gap-2",
-                                selectedBillingCycle === 'yearly' ? "bg-white text-indigo-600 shadow-sm" : "text-slate-400 hover:text-slate-600"
+                                "px-7 py-3 rounded-xl text-[15px] font-black uppercase tracking-widest transition-all flex items-center gap-2",
+                                selectedBillingCycle === 'yearly' ? "bg-white text-indigo-600 shadow-md ring-1 ring-indigo-500/10" : "text-slate-500 hover:text-slate-700"
                             )}
                         >
                             年費更划算
                              <span className={cn(
-                                "px-1.5 py-0.5 rounded text-[10px] font-black",
-                                selectedBillingCycle === 'yearly' ? "bg-indigo-500 text-white" : "bg-slate-200 text-slate-500"
+                                "px-2 py-0.5 rounded-lg text-[10px] font-black",
+                                selectedBillingCycle === 'yearly' ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/20" : "bg-slate-200 text-slate-500"
                             )}>
                                 贈送一個月
                             </span>
@@ -607,7 +607,7 @@ export default function UnifiedBillingView() {
 
             {/* 📑 Invoice Settings Section */}
             <section>
-                 <h2 className="text-sm font-black text-slate-400 uppercase tracking-[0.3em] mb-4 ml-2">發票需求與設定</h2>
+                 <h2 className="text-sm font-black text-slate-600 uppercase tracking-[0.3em] mb-4 ml-2">發票需求與設定</h2>
                 <div className="bg-white rounded-[40px] p-8 border-2 border-slate-100 shadow-sm">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                         <div className="space-y-6">
@@ -715,7 +715,7 @@ export default function UnifiedBillingView() {
             {/* 📝 Billing History Section */}
             <section>
                 <div className="flex items-center justify-between mb-4 ml-2">
-                     <h2 className="text-sm font-black text-slate-400 uppercase tracking-[0.3em]">最近的收費紀錄</h2>
+                     <h2 className="text-sm font-black text-slate-600 uppercase tracking-[0.3em]">最近的收費紀錄</h2>
                     <button className="text-sm font-black text-indigo-500 uppercase tracking-widest hover:text-indigo-600 transition-all">所有帳務明細</button>
                 </div>
                 <div className="bg-white rounded-[32px] border border-slate-100 shadow-sm overflow-hidden">

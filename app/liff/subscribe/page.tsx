@@ -121,7 +121,7 @@ export default function LiffSubscribePage() {
                         icon={plan.icon}
                         color={plan.color}
                         popular={plan.popular}
-                        onSelect={() => {
+                        onSelect={async () => {
                           // 🔐 身份守衛：確認 LIFF 已取得 Profile 才允許進入付費
                           if (!profile?.userId) {
                             alert('請先完成 LINE 登入驗證，系統才能記錄您的訂閱身份。\n\n請關閉後重新從 LINE 打開此頁面。');
@@ -131,13 +131,47 @@ export default function LiffSubscribePage() {
                             setShowDowngradeAlert(true);
                             return;
                           }
-                          const linkObj = PLAN_PAYMENT_LINKS[plan.name as keyof typeof PLAN_PAYMENT_LINKS];
-                          const finalLink = linkObj ? (billingCycle === 'monthly' ? linkObj.monthly : linkObj.yearly) : null;
-                          
-                          if (finalLink) {
-                            window.location.href = finalLink;
-                          } else {
-                            alert(`即將為您開通：${plan.name}\n金額：NT$ ${plan.price}`);
+
+                          // 🚀 執行藍新金流串接
+                          try {
+                            const res = await fetch(`/api/payment/checkout?t=${Date.now()}`, {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ 
+                                planId: plan.id,
+                                cycle: billingCycle,
+                                lineUserId: profile.userId // 傳入 LIFF 取得的真實 ID
+                              })
+                            });
+                            
+                            const result = await res.json();
+                            
+                            if (!result.success) {
+                              alert(`金流初始化失敗: ${result.error}`);
+                              return;
+                            }
+
+                            const { MerchantID, TradeInfo, TradeSha, Version, TimeStamp, RespondType, TargetUrl } = result.data;
+
+                            // 動態產生 HTML Form 並提交至藍新
+                            const form = document.createElement('form');
+                            form.method = 'POST';
+                            form.action = TargetUrl;
+
+                            const fields = { MerchantID, TradeInfo, TradeSha, Version, TimeStamp, RespondType };
+                            Object.entries(fields).forEach(([key, value]) => {
+                                const input = document.createElement('input');
+                                input.type = 'hidden';
+                                input.name = key;
+                                input.value = value as string;
+                                form.appendChild(input);
+                            });
+
+                            document.body.appendChild(form);
+                            form.submit();
+                          } catch (err) {
+                            console.error("LIFF Checkout error:", err);
+                            alert("金流啟動失敗，請稍後再試。");
                           }
                         }}
                       />

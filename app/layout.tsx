@@ -8,33 +8,43 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
     metadataBase: new URL('https://bot.ycideas.com'),
+    alternates: {
+        canonical: '/',
+    },
     title: {
-        default: "LINE 智能店長 Pro | 專為【官方帳號】設計的 24H 自動銷售助手",
+        default: "AI 智能店長 Pro | LINE 官方帳號 API 自動銷售與客服助手",
         template: "%s | LINE 智能店長 Pro"
     },
-    description: "全台灣唯一無需程式背景，一分鐘開通 AI 智能店長。專為 LINE 官方帳號打造，具備 24H 自動化銷售、客服與智庫學習能力。讓您的 LINE OA 具備自動成交能力！",
-    keywords: ['LINE AI 機器人', 'LINE 官方帳號自動化', 'AI 店長', 'LINE 客服機器人', '智能銷售助手'],
+    description: "全台灣極速開通的 AI 智能店長。專為 LINE 官方帳號打造，整合 GPT-4o 技術，具備 24H 自動銷售、智慧客服與 RAG 智庫學習。讓您的 LINE OA 轉型為自動成交中心！",
+    keywords: [
+        'LINE AI 機器人', 'LINE 官方帳號自動化', 'AI 店長', 'LINE 客服機器人', 
+        '智能銷售助手', 'LINE 數位轉型', '自動接單機器人', 'LINE CRM 系統',
+        'GPT-4o LINE 應用', '官方帳號經營工具'
+    ],
     authors: [{ name: "Ai 智能店長團隊" }],
+    verification: {
+        google: "lAhGP3I12r-WLoAUaKxHn5R2BherC51FqCKoZcMAgBA",
+    },
     openGraph: {
         type: "website",
         locale: "zh_TW",
         url: "https://bot.ycideas.com",
-        title: '【老闆專屬】立即開通 LINE 官方帳號 AI 店長 - 三分鐘極速串接',
-        description: '不必懂技術，免 API Key！為您的 LINE 官方帳號 (OA) 注入 AI 靈魂。24 小時幫您介紹商品、處理瑣碎客服。首 500 名早鳥享永久優惠，比請小編便宜 10 倍！',
-        siteName: "Ai 智能店長",
+        siteName: "AI 智能店長 Pro",
+        title: '【官方帳號老專屬】AI 智能店長 - 三分鐘極速開通，24H 自動成交',
+        description: '免 API Key，一鍵注入 AI 靈魂。24 小時幫您介紹商品、處理瑣碎客服、主動引導轉單。比請小編便宜，效率提升 300%！',
         images: [
             {
                 url: "/og-image.jpg",
                 width: 1200,
                 height: 630,
-                alt: "LINE 官方帳號 AI 店長",
+                alt: "AI 智能店長 - LINE 官方帳號最佳夥伴",
             },
         ],
     },
     twitter: {
         card: "summary_large_image",
-        title: "LINE 官方帳號 AI 店長｜LINE AI Assistant: 24/7 Automated Sales & Support",
-        description: "專為 LINE 官方帳號 (OA) 老闆打造。24 小時不打烊幫您顧 Line、接客、賣東西。",
+        title: "AI 智能店長 Pro｜LINE AI Assistant: 24/7 Automated Sales & Support",
+        description: "專為 LINE 官方帳號老闆打造。24 小時不打烊的 AI 銷售員，幫您接客、導購、成交。",
         images: ["/og-image.jpg"],
     },
     robots: {

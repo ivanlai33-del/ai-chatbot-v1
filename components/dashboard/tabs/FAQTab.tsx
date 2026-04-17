@@ -408,7 +408,8 @@ export default function FAQTab({ config, setConfig, planLevel = 0, botId }: FAQT
                         </AnimatePresence>
                     </motion.div>
                 );
-            })}
+            </div>
+            </div>
 
             {/* ── Add FAQ ── */}
             {atLimit ? (

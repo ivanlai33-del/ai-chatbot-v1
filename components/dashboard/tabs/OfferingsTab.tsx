@@ -5,7 +5,7 @@ import InputField from '@/components/ui/InputField';
 import TextareaField from '@/components/ui/TextareaField';
 import { getFeatureAccess, getPlanName, getRequiredPlanName, isAtLimit, formatLimit } from '@/lib/feature-access';
 import { useState } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface OfferingsTabProps {
     config: any;
@@ -309,6 +309,8 @@ export default function OfferingsTab({ config, setConfig, planLevel = 0, botId }
                     </motion.div>
                 );
             })}
+            </div>
+            </div>
 
             {/* ── Add button ── */}
             {atLimit ? (

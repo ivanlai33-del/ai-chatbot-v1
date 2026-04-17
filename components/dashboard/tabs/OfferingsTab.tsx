@@ -174,7 +174,7 @@ export default function OfferingsTab({ config, setConfig, planLevel = 0, botId }
                                             <InputField key={f.key} label={f.label} placeholder={f.placeholder} value={item[f.key]} onChange={v => update(i, f.key, v)} />
                                         ))}
                                     </div>
-                                    <TextareaField label="說明" value={item.description} onChange={v => update(i, 'description', v)} />
+                                    <TextareaField label="說明" placeholder="詳細介紹您的產品或服務特色..." value={item.description} onChange={v => update(i, 'description', v)} />
                                 </motion.div>
                             )}
                         </AnimatePresence>

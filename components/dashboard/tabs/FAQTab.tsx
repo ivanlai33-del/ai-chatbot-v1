@@ -139,8 +139,8 @@ export default function FAQTab({ config, setConfig, planLevel = 0, botId }: FAQT
                             {isOpen(i) && (
                                 <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} className="px-8 pb-6 space-y-4 border-t border-slate-50 overflow-hidden">
                                     <div className="mt-4 space-y-4">
-                                        <InputField label="問題" value={item.q} onChange={v => update(i, 'q', v)} />
-                                        <TextareaField label="標準回答" value={item.a} onChange={v => update(i, 'a', v)} />
+                                        <InputField label="問題" placeholder="請輸入消費者可能會問的問題" value={item.q} onChange={v => update(i, 'q', v)} />
+                                        <TextareaField label="標準回答" placeholder="您的標準答覆內容" value={item.a} onChange={v => update(i, 'a', v)} />
                                     </div>
                                 </motion.div>
                             )}

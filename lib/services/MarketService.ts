@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { CrawlerService } from './CrawlerService';
 import OpenAI from 'openai';
+import crypto from 'crypto';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -16,13 +17,14 @@ export class MarketService {
    * 執行競品對比分析
    */
   static async analyzeCompetitor(botId: string, url: string, userId: string) {
-    // 1. 執行爬蟲抓取最新內容
-    const crawlResult = await CrawlerService.crawlUrl(url);
-    if (!crawlResult.success) {
-      throw new Error(`Crawl failed: ${crawlResult.error}`);
+    // 1. 執行爬蟲抓取最新內容（回傳純 Markdown 字串）
+    const markdown = await CrawlerService.crawlUrl(url);
+    if (!markdown || markdown.length < 50) {
+      throw new Error('Crawl failed: 網頁內容過少或無法存取');
     }
 
-    const { markdown, hash } = crawlResult;
+    // 計算內容雜湊
+    const hash = crypto.createHash('sha256').update(markdown).digest('hex');
 
     // 2. 獲取上一次的分析記錄
     const { data: lastAnalysis } = await supabase

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { MarketService } from '@/lib/services/MarketService';
+import { GuardianService } from '@/lib/services/GuardianService';
 
 export async function GET(req: NextRequest) {
     try {
@@ -24,7 +25,9 @@ export async function POST(req: NextRequest) {
         const { botId } = await req.json();
         if (!botId) return NextResponse.json({ error: 'Missing botId' }, { status: 400 });
 
-        const data = await MarketService.generateDemoGuardianMetrics(botId);
+        await GuardianService.performFullScan(botId);
+        const data = await MarketService.getGuardianMetrics(botId);
+        
         return NextResponse.json({ success: true, data });
     } catch (error: any) {
         return NextResponse.json({ error: error.message }, { status: 500 });

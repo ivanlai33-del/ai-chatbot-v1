@@ -73,6 +73,8 @@ export interface PricingPlan {
     crmScheduled: boolean;      // 8c. CRM 排程推播
     crmPersonalized: boolean;   // 8d. CRM 個人化推播
     visionAI: boolean;          // 9. 圖片視覺辨識能力 (GPT-4o Vision)
+    marketPulse: boolean;       // 10. 市場脈動 (產業趨勢)
+    brandGuardian: boolean;     // 11. 品牌衛士 (輿情監控)
   };
 
   features: string[];        // 功能列表

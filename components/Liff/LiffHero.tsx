@@ -9,6 +9,7 @@ interface LiffHeroProps {
 }
 
 const LiffHero = ({ logoUrl }: LiffHeroProps) => {
+  const { profile, isLoggedIn } = useLiff();
   const contentRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: contentRef,
@@ -27,7 +28,11 @@ const LiffHero = ({ logoUrl }: LiffHeroProps) => {
           style={{ x: xLeft }}
           className="text-[29px] font-black text-slate-800 mb-[9px] tracking-tight mt-[525px]"
         >
-          老闆們最愛的 <span className="text-emerald-600">AI</span> 智能店長
+          {isLoggedIn && profile ? (
+            <>歡迎回來，<span className="text-emerald-600">{profile.displayName}</span></>
+          ) : (
+            <>老闆們最愛的 <span className="text-emerald-600">AI</span> 智能店長</>
+          )}
         </motion.h2>
 
         <motion.div 

@@ -122,9 +122,10 @@ export default function LiffSubscribePage() {
                         color={plan.color}
                         popular={plan.popular}
                         onSelect={async () => {
-                          // 🔐 身份守衛：確認 LIFF 已取得 Profile 才允許進入付費
+                          // 🔐 身份守衛：確認已同步身分
                           if (!profile?.userId) {
-                            alert('請先完成 LINE 登入驗證，系統才能記錄您的訂閱身份。\n\n請關閉後重新從 LINE 打開此頁面。');
+                            alert('正在為您導向至 LINE 登入...請稍候再試。');
+                            window.location.reload(); // 重整以觸發 Provider 的 login
                             return;
                           }
                           if (plan.name.includes('個人') && activeBotsCount > 1) {

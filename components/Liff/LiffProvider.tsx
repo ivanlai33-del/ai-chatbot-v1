@@ -61,16 +61,44 @@ export const LiffProvider = ({
         if (!liff) {
           throw new Error('LIFF SDK not found');
         }
+
+        console.log('[LIFF] Starting init...');
         await liff.init({ liffId });
         setLiffInstance(liff);
         
-        const loggedIn = liff.isLoggedIn();
-        setIsLoggedIn(loggedIn);
-
-        if (loggedIn) {
-          const userProfile = await liff.getProfile();
-          setProfile(userProfile);
+        // 1. Check Login Status
+        if (!liff.isLoggedIn()) {
+          console.log('[LIFF] Not logged in, triggering login...');
+          liff.login({ redirectUri: window.location.href });
+          return; // Redirect will happen
         }
+
+        setIsLoggedIn(true);
+        console.log('[LIFF] Logged in successfully');
+
+        // 2. Get Profile
+        const userProfile = await liff.getProfile();
+        setProfile(userProfile);
+
+        // 3. Synchronize Session with Website Backend
+        // This sets the server-side cookies so the member is recognized on both LIFF and Web
+        console.log('[LIFF] Synchronizing session with backend...');
+        const syncRes = await fetch('/api/auth/session-sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: userProfile.userId,
+            displayName: userProfile.displayName,
+            pictureUrl: userProfile.pictureUrl
+          })
+        });
+
+        const syncData = await syncRes.json();
+        if (syncData.success && syncData.member) {
+          console.log('[LIFF] Session sync successful');
+          setIsPaid(syncData.member.plan_level > 0);
+        }
+
       } catch (err: any) {
         console.error('LIFF init error', err);
         setError(err.message || 'LIFF Initialization failed');

@@ -82,7 +82,7 @@ export default function GuardianTab({ botId }: { botId: string }) {
                             disabled={isScanning}
                             className="flex items-center gap-2 px-5 py-2.5 rounded-[16px] bg-slate-900 text-white font-black text-[13px] hover:scale-105 transition-all shadow-lg active:scale-95 disabled:opacity-50"
                         >
-                            <div className={`h-2 w-2 rounded-full bg-emerald-500 ${isScanning ? 'animate-ping' : 'animate-pulse'}`} />
+                            <div className={`h-2 w-2 rounded-full bg-emerald-500 ${isScanning ? 'animate-ping' : 'animate-pulse'}`}></div>
                             {isScanning ? '掃描中...' : 'Manual Scan'}
                         </button>
                     </div>
@@ -119,6 +119,7 @@ export default function GuardianTab({ botId }: { botId: string }) {
                             ))}
                         </div>
                     </div>
+                </div>
                 </div>
 
                 <div className="p-8 rounded-[40px] bg-indigo-900 text-white shadow-xl flex flex-col justify-between">

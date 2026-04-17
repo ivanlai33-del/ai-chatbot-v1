@@ -116,6 +116,24 @@ export class MarketService {
     return { status: 'success', report };
   }
 
+  /**
+   * 獲取競品分析歷史報表
+   */
+  static async getCompetitorReports(botId: string) {
+    const { data } = await supabase
+      .from('competitor_analysis')
+      .select(`
+        *,
+        competitor_monitors (
+          brand_name,
+          url
+        )
+      `)
+      .eq('bot_id', botId)
+      .order('created_at', { ascending: false });
+    return data || [];
+  }
+
 
   /**
    * 獲取產業趨勢週報

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { PRICING_PLANS } from '@/lib/config/pricing';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * 取得訂閱歷史紀錄 API
  */

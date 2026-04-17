@@ -406,6 +406,7 @@ export class AIService {
         }
 
         return { message, metadata };
+    }
 
     /**
      * 從 Markdown 內容中提取結構化資料 (商品或 FAQ)

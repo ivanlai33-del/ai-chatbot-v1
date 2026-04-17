@@ -1,4 +1,4 @@
-import { CheerioCrawler, log } from 'crawlee';
+import { CheerioCrawler } from '@crawlee/cheerio';
 import TurndownService from 'turndown';
 import crypto from 'crypto';
 import { createClient } from '@supabase/supabase-js';
@@ -36,7 +36,7 @@ export class CrawlerService {
         let fullMarkdown = '';
         let pageTitle = '';
 
-        log.info(`[Crawler] Starting sync for ${targetUrl}`);
+        console.log(`[Crawler] Starting sync for ${targetUrl}`);
 
         const crawler = new CheerioCrawler({
             maxRequestsPerCrawl: 1, // 目前僅針對單頁，未來可擴充為多頁
@@ -82,7 +82,7 @@ export class CrawlerService {
             .maybeSingle();
 
         if (existingDoc && existingDoc.content_hash === hash) {
-            log.info('[Crawler] Content unchanged, skipping sync.');
+            console.log('[Crawler] Content unchanged, skipping sync.');
             return { skipped: true, docId: existingDoc.id };
         }
 

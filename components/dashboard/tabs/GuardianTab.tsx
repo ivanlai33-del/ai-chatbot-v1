@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ShieldAlert, AlertCircle, Star, Bell, Settings, ArrowRight, Zap } from 'lucide-react';
+import { ShieldAlert, AlertCircle, Star, Bell, Settings, ArrowRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export default function GuardianTab({ botId }: { botId: string }) {
@@ -66,10 +66,11 @@ export default function GuardianTab({ botId }: { botId: string }) {
         <div className="space-y-6">
             {/* Top Stats: Brand Health */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Left Card: Health Score */}
                 <div className="lg:col-span-2 p-8 rounded-[40px] bg-white border border-slate-100 shadow-sm relative overflow-hidden">
                     <div className="flex items-center justify-between mb-8">
                         <div className="flex items-center gap-4">
-                            <div className={`w-12 h-12 rounded-[20px] flex items-center justify-center bg-emerald-50 text-emerald-600`}>
+                            <div className="w-12 h-12 rounded-[20px] flex items-center justify-center bg-emerald-50 text-emerald-600">
                                 <ShieldAlert className="w-6 h-6" />
                             </div>
                             <div>
@@ -120,8 +121,8 @@ export default function GuardianTab({ botId }: { botId: string }) {
                         </div>
                     </div>
                 </div>
-                </div>
 
+                {/* Right Card: Alert Settings */}
                 <div className="p-8 rounded-[40px] bg-indigo-900 text-white shadow-xl flex flex-col justify-between">
                     <div>
                         <div className="flex items-center justify-between mb-6">
@@ -138,7 +139,7 @@ export default function GuardianTab({ botId }: { botId: string }) {
                                 <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${notificationsEnabled ? 'right-1' : 'left-1'}`} />
                             </button>
                         </div>
-                        <p className="text-white/60 text-[14px] font-bold leading-relaxed">
+                        <p className="text-white/60 text-[14px] font-bold leading-relaxed text-left">
                             開啟後，系統偵測到高風險或負面提及時，將立即透過 LINE 官方帳號推送警報給管理員。
                         </p>
                     </div>
@@ -146,10 +147,10 @@ export default function GuardianTab({ botId }: { botId: string }) {
                         <Settings className="w-4 h-4" /> 設定警報閾值
                     </button>
                 </div>
-            </div>
 
-            {/* Keyword Monitoring & Recent Mentions */}
+            {/* Keyword Monitoring & Recent Mentions Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Left: Keywords */}
                 <div className="p-8 rounded-[32px] bg-white border border-slate-100">
                     <div className="flex items-center justify-between mb-8">
                         <h3 className="text-[20px] font-black text-slate-900">關鍵字監控範圍</h3>
@@ -169,6 +170,7 @@ export default function GuardianTab({ botId }: { botId: string }) {
                     </div>
                 </div>
 
+                {/* Right: Mentions */}
                 <div className="p-8 rounded-[32px] bg-white border border-slate-100 max-h-[400px] overflow-hidden flex flex-col">
                     <h3 className="text-[20px] font-black text-slate-900 mb-6 shrink-0">近期重點提及</h3>
                     <div className="space-y-4 overflow-y-auto pr-2 glass-scrollbar">

@@ -132,9 +132,10 @@ interface FAQTabProps {
     config: any;
     setConfig: (fn: (c: any) => any) => void;
     planLevel?: number;
+    botId: string;
 }
 
-export default function FAQTab({ config, setConfig, planLevel = 0 }: FAQTabProps) {
+export default function FAQTab({ config, setConfig, planLevel = 0, botId }: FAQTabProps) {
     const fa = getFeatureAccess(planLevel);
     const faqLimit = fa.faq; // 0 = 關閉, -1 = 無限
     const currentCount = config.faq_base?.length ?? 0;
@@ -166,6 +167,38 @@ export default function FAQTab({ config, setConfig, planLevel = 0 }: FAQTabProps
         setConfig((c: any) => ({ ...c, faq_base: f }));
     };
 
+    const [syncUrl, setSyncUrl] = useState('');
+    const [isSyncing, setIsSyncing] = useState(false);
+
+    const handleSync = async () => {
+        if (!syncUrl) return;
+        setIsSyncing(true);
+        try {
+            const res = await fetch('/api/console/intelligence/sync-faq', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: syncUrl, botId })
+            });
+            const json = await res.json();
+            if (json.success && json.data) {
+                const newFaq = json.data.map((item: any) => ({
+                    q: item.q,
+                    a: item.a,
+                    tags: []
+                }));
+                setConfig((c: any) => ({ ...c, faq_base: [...c.faq_base, ...newFaq] }));
+                setSyncUrl('');
+            } else {
+                alert(json.error || '同步失敗');
+            }
+        } catch (err) {
+            console.error('FAQ Sync Error:', err);
+            alert('系統錯誤，請稍後再試');
+        } finally {
+            setIsSyncing(false);
+        }
+    };
+
     // 免費方案 (free/tier=0) 不開放 FAQ
     if (isLocked) {
         return (
@@ -189,7 +222,7 @@ export default function FAQTab({ config, setConfig, planLevel = 0 }: FAQTabProps
     }
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-6">
             {/* 額度指示列 */}
             <div className="flex items-center justify-between px-2">
                 <p className="text-[12px] font-black text-slate-400 uppercase tracking-widest">常見問答庫</p>
@@ -198,6 +231,43 @@ export default function FAQTab({ config, setConfig, planLevel = 0 }: FAQTabProps
                     <div className={`w-2 h-2 rounded-full ${atLimit ? 'bg-red-500' : 'bg-emerald-500'}`} />
                     {currentCount} / {formatLimit(faqLimit)} 組
                     {atLimit && <span className="ml-1">(已達上限)</span>}
+                </div>
+            </div>
+
+            {/* 智能同步區塊 */}
+            <div className="p-6 rounded-[32px] bg-gradient-to-br from-slate-900 to-slate-800 text-white shadow-xl shadow-slate-200/50 mb-2">
+                <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-[12px] bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30">
+                        <HelpCircle className="w-5 h-5 text-indigo-400" />
+                    </div>
+                    <div>
+                        <h4 className="text-[16px] font-black">官網 FAQ 自動同步</h4>
+                        <p className="text-[12px] text-slate-400 font-bold uppercase tracking-wider">AI Questions Extraction</p>
+                    </div>
+                </div>
+                
+                <div className="bg-white/5 p-4 rounded-[20px] backdrop-blur-md border border-white/10 flex gap-3">
+                    <div className="flex-1 relative">
+                        <HelpCircle className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-indigo-400" />
+                        <input
+                            type="text"
+                            placeholder="貼上官網 FAQ 頁面，AI 自動抓取常見問題..."
+                            className="w-full bg-transparent pl-11 pr-4 py-3 text-[14px] font-bold focus:outline-none placeholder:text-slate-500"
+                            value={syncUrl}
+                            onChange={(e) => setSyncUrl(e.target.value)}
+                        />
+                    </div>
+                    <button 
+                        onClick={handleSync}
+                        disabled={!syncUrl || isSyncing}
+                        className="px-6 py-2 rounded-[14px] bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-700 disabled:text-slate-500 transition-all font-black text-[14px] flex items-center gap-2"
+                    >
+                        {isSyncing ? (
+                            <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                        ) : (
+                            <>同步</>
+                        )}
+                    </button>
                 </div>
             </div>
 

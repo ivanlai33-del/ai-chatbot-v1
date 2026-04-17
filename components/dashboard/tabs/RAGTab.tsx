@@ -166,6 +166,39 @@ export default function RAGTab({ planLevel, bots, selectedBotId }: RAGTabProps) 
         );
     }
 
+    const [webUrl, setWebUrl] = useState('');
+    const [syncLoading, setSyncLoading] = useState(false);
+
+    const handleWebSync = async () => {
+        if (!webUrl || !selectedBotId) return;
+        setUploadError('');
+        setSyncLoading(true);
+
+        try {
+            const res = await fetch('/api/admin/crawler/sync', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    botId: selectedBotId,
+                    userId: userId,
+                    targetUrl: webUrl
+                })
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                setUploadError(data.error || '同步失敗');
+            } else {
+                setWebUrl('');
+                await fetchDocuments();
+                startPolling(); // 開始輪詢狀態
+            }
+        } catch {
+            setUploadError('網路錯誤，請稍後再試');
+        } finally {
+            setSyncLoading(false);
+        }
+    };
+
     const maxFiles = pdfLimit === -1 ? 9999 : pdfLimit;
     const readyCount = documents.filter(d => d.status === 'ready').length;
     const isLimitReached = documents.filter(d => d.status !== 'error').length >= maxFiles;
@@ -177,98 +210,73 @@ export default function RAGTab({ planLevel, bots, selectedBotId }: RAGTabProps) 
             <div className="flex items-start gap-4 p-5 rounded-[20px] bg-blue-50 border border-blue-200">
                 <Info className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
                 <div>
-                    <p className="text-[13px] font-black text-blue-800 mb-1">📚 PDF 知識庫 — AI 向量語意學習</p>
+                    <p className="text-[13px] font-black text-blue-800 mb-1">📚 店長智庫 — AI 向量語意學習</p>
                     <p className="text-[12px] text-blue-700 leading-relaxed">
-                        上傳文件後，AI 會將內容切分成小段落並生成向量索引。當客人發問時，AI 會自動搜尋最相關的段落作為回答參考。
-                        支援 <span className="font-black">PDF、TXT</span>，單檔上限 <span className="font-black">{MAX_SIZE_MB}MB</span>，此方案最多 <span className="font-black">{formatLimit(pdfLimit)} 份</span>。
+                        上傳文件或同步網頁後，AI 會自動學習內容。
+                        支援 <span className="font-black">PDF、TXT、網頁 URL</span>，單檔上限 <span className="font-black">{MAX_SIZE_MB}MB</span>。
                     </p>
                 </div>
             </div>
 
-            {/* 上傳錯誤提示 */}
-            <AnimatePresence>
-                {uploadError && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0 }}
-                        className="flex items-center gap-3 p-4 rounded-[16px] bg-red-50 border border-red-200"
-                    >
-                        <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
-                        <p className="text-[13px] font-black text-red-700">{uploadError}</p>
-                        <button onClick={() => setUploadError('')} className="ml-auto text-red-400 hover:text-red-600">
-                            <X className="w-4 h-4" />
-                        </button>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
+            {/* 上傳與同步區 */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                {/* 上傳區 */}
-                <div className="lg:col-span-5">
-                    <label className={`relative flex flex-col items-center justify-center gap-6 p-10 rounded-[24px] border-2 border-dashed transition-all cursor-pointer group
-                        ${isLimitReached
-                            ? 'border-slate-200 bg-slate-50 opacity-60 cursor-not-allowed'
-                            : uploading
-                                ? 'border-cyan-400 bg-cyan-50 animate-pulse'
-                                : 'border-emerald-300 bg-white/60 hover:border-emerald-400 hover:bg-white hover:shadow-lg'
-                        }`}
+                
+                <div className="lg:col-span-5 space-y-4">
+                    {/* PDF 上傳卡片 */}
+                    <label className={`relative flex flex-col items-center justify-center gap-6 p-8 rounded-[24px] border-2 border-dashed transition-all cursor-pointer group
+                        ${isLimitReached ? 'border-slate-200 bg-slate-50 opacity-60 cursor-not-allowed' : uploading ? 'border-cyan-400 bg-cyan-50 animate-pulse' : 'border-emerald-300 bg-white/60 hover:border-emerald-400 hover:bg-white hover:shadow-lg'}`}
                     >
-                        <div className={`w-20 h-20 rounded-[20px] flex items-center justify-center shadow-md transition-transform group-hover:scale-105
-                            ${uploading ? 'bg-cyan-100' : 'bg-white'}`}
-                        >
-                            {uploading
-                                ? <RefreshCw className="w-9 h-9 text-cyan-500 animate-spin" />
-                                : <Upload className="w-9 h-9 text-emerald-500" />
-                            }
+                        <div className={`w-16 h-16 rounded-[20px] flex items-center justify-center shadow-md transition-transform group-hover:scale-105 ${uploading ? 'bg-cyan-100' : 'bg-white'}`}>
+                            {uploading ? <RefreshCw className="w-8 h-8 text-cyan-500 animate-spin" /> : <Upload className="w-8 h-8 text-emerald-500" />}
                         </div>
-
                         <div className="text-center">
-                            <p className="text-[18px] font-black text-slate-900">
-                                {uploading ? 'AI 正在學習中...' : isLimitReached ? '已達文件上限' : '點擊上傳文件'}
-                            </p>
-                            <p className="text-[12px] text-slate-400 font-bold mt-1 uppercase tracking-widest">
-                                {uploading ? '分析中，請稍候' : 'PDF · TXT · DOCX · 最大 5MB'}
-                            </p>
+                            <p className="text-[16px] font-black text-slate-900">{uploading ? 'AI 正在讀書...' : '點擊上傳 PDF / TXT'}</p>
                         </div>
-
-                        {/* 配額指示 */}
-                        <div className={`flex items-center gap-2 px-4 py-2 rounded-full text-[12px] font-black
-                            ${isLimitReached ? 'bg-red-100 text-red-600' : 'bg-emerald-50 text-emerald-700'}`}
-                        >
-                            <div className={`w-2 h-2 rounded-full ${isLimitReached ? 'bg-red-500' : 'bg-emerald-500'}`} />
-                            {readyCount} / {formatLimit(pdfLimit)} 份已學習
-                        </div>
-
-                        {!isLimitReached && !uploading && (
-                            <input
-                                ref={fileInputRef}
-                                type="file"
-                                className="hidden"
-                                accept=".pdf,.txt"
-                                onChange={handleFileUpload}
-                            />
-                        )}
+                        {!isLimitReached && !uploading && <input ref={fileInputRef} type="file" className="hidden" accept=".pdf,.txt" onChange={handleFileUpload} />}
                     </label>
 
-                    {/* 格式說明 */}
-                    <div className="grid grid-cols-2 gap-2 mt-4">
-                        {[
-                            { ext: 'PDF', desc: '型錄、合約', color: 'text-red-600 bg-red-50' },
-                            { ext: 'TXT', desc: 'Q&A、說明文字', color: 'text-slate-600 bg-slate-50' },
-                        ].map(f => (
-                            <div key={f.ext} className={`p-3 rounded-[14px] border ${f.color} text-center`}>
-                                <p className="text-[13px] font-black">{f.ext}</p>
-                                <p className="text-[10px] mt-0.5 opacity-70">{f.desc}</p>
+                    {/* 網頁同步卡片 */}
+                    <div className={`p-6 rounded-[24px] border-2 transition-all ${isWebLocked ? 'bg-slate-50 border-slate-100' : 'bg-white/60 border-indigo-200 hover:shadow-lg'}`}>
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isWebLocked ? 'bg-slate-200' : 'bg-indigo-100'}`}>
+                                {isWebLocked ? <Lock className="w-5 h-5 text-slate-400" /> : <Globe className="w-5 h-5 text-indigo-600" />}
                             </div>
-                        ))}
+                            <div>
+                                <p className="text-sm font-black text-slate-900">網頁自動同步</p>
+                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">輸入官網 URL 讓 AI 學習</p>
+                            </div>
+                        </div>
+
+                        {isWebLocked ? (
+                            <button onClick={() => window.dispatchEvent(new CustomEvent('switch-tab', { detail: 'billing' }))} className="w-full py-3 rounded-xl bg-slate-200 text-slate-500 text-xs font-black hover:bg-indigo-500 hover:text-white transition-all">
+                                升級方案解鎖功能 →
+                            </button>
+                        ) : (
+                            <div className="space-y-3">
+                                <input 
+                                    type="url" 
+                                    placeholder="https://example.com"
+                                    value={webUrl}
+                                    onChange={(e) => setWebUrl(e.target.value)}
+                                    className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                                />
+                                <button 
+                                    onClick={handleWebSync}
+                                    disabled={syncLoading || !webUrl}
+                                    className="w-full py-3 rounded-xl bg-indigo-600 text-white text-xs font-black shadow-lg shadow-indigo-200 hover:bg-indigo-700 disabled:opacity-50 disabled:shadow-none transition-all flex items-center justify-center gap-2"
+                                >
+                                    {syncLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+                                    {syncLoading ? '正在巡視網頁...' : '啟動同步'}
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
 
                 {/* 文件清單 */}
                 <div className="lg:col-span-7 space-y-3">
                     <div className="flex items-center justify-between px-1 mb-2">
-                        <p className="text-[12px] font-black text-slate-400 uppercase tracking-widest">知識庫文件清單</p>
+                        <p className="text-[12px] font-black text-slate-400 uppercase tracking-widest">已學習知識列表 ({readyCount} / {formatLimit(pdfLimit)})</p>
                         <button onClick={fetchDocuments} className="text-[11px] font-black text-slate-400 hover:text-slate-600 flex items-center gap-1 transition-colors">
                             <RefreshCw className="w-3.5 h-3.5" /> 重新整理
                         </button>
@@ -279,7 +287,7 @@ export default function RAGTab({ planLevel, bots, selectedBotId }: RAGTabProps) 
                     ) : documents.length === 0 ? (
                         <div className="py-16 border-2 border-dashed border-slate-200 rounded-[24px] flex flex-col items-center justify-center text-center opacity-50">
                             <Database className="w-10 h-10 text-slate-300 mb-3" />
-                            <p className="text-[14px] font-black text-slate-400">尚無文件，請從左側上傳</p>
+                            <p className="text-[14px] font-black text-slate-400">智庫尚無知識</p>
                         </div>
                     ) : (
                         <AnimatePresence>
@@ -290,84 +298,28 @@ export default function RAGTab({ planLevel, bots, selectedBotId }: RAGTabProps) 
                                     initial={{ opacity: 0, x: 10 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     exit={{ opacity: 0, x: -10 }}
-                                    className="p-5 rounded-[20px] bg-white border border-slate-100 shadow-sm flex items-center gap-4 group hover:shadow-md transition-all"
+                                    className="p-4 rounded-[20px] bg-white border border-slate-100 shadow-sm flex items-center gap-4 group hover:shadow-md transition-all"
                                 >
-                                    {/* 檔案圖示 */}
-                                    <div className="w-12 h-12 rounded-[14px] bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0">
-                                        <FileText className="w-5 h-5 text-slate-400" />
+                                    <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0">
+                                        {doc.file_type === 'web' ? <Globe className="w-4 h-4 text-indigo-500" /> : <FileText className="w-4 h-4 text-slate-400" />}
                                     </div>
-
-                                    {/* 文件資訊 */}
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-[14px] font-black text-slate-900 truncate">{doc.file_name}</p>
-                                        <div className="flex items-center gap-3 mt-1 flex-wrap">
-                                            <span className="text-[11px] text-slate-400 font-bold uppercase">{doc.file_type}</span>
-                                            <span className="text-[11px] text-slate-400">{formatBytes(doc.file_size)}</span>
-                                            {doc.chunk_count > 0 && (
-                                                <span className="text-[11px] text-slate-400">{doc.chunk_count} 個段落</span>
-                                            )}
+                                        <p className="text-[13px] font-black text-slate-900 truncate">{doc.file_name}</p>
+                                        <div className="flex items-center gap-3 mt-0.5">
+                                            <span className="text-[10px] text-slate-400 font-bold uppercase">{doc.file_type}</span>
+                                            {doc.last_scraped_at && <span className="text-[10px] text-slate-400">同步於 {new Date(doc.last_scraped_at).toLocaleDateString()}</span>}
                                         </div>
                                     </div>
-
-                                    {/* 狀態 */}
-                                    <div className="shrink-0 mr-2">
-                                        {doc.status === 'ready' && (
-                                            <span className="flex items-center gap-1.5 text-[11px] font-black text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full">
-                                                <CheckCircle2 className="w-3.5 h-3.5" /> 學習完成
-                                            </span>
-                                        )}
-                                        {doc.status === 'processing' && (
-                                            <span className="flex items-center gap-1.5 text-[11px] font-black text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full animate-pulse">
-                                                <RefreshCw className="w-3.5 h-3.5 animate-spin" /> AI 學習中
-                                            </span>
-                                        )}
-                                        {doc.status === 'error' && (
-                                            <span className="flex items-center gap-1.5 text-[11px] font-black text-red-500 bg-red-50 px-3 py-1.5 rounded-full" title={doc.error_message}>
-                                                <AlertCircle className="w-3.5 h-3.5" /> 學習失敗
-                                            </span>
-                                        )}
+                                    <div className="shrink-0 flex items-center gap-2">
+                                        {doc.status === 'ready' ? <CheckCircle2 className="w-4 h-4 text-emerald-500" /> : doc.status === 'processing' ? <RefreshCw className="w-4 h-4 text-blue-500 animate-spin" /> : <AlertCircle className="w-4 h-4 text-red-500" />}
+                                        <button onClick={() => handleDelete(doc.id)} className="p-2 opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-500 transition-all"><X className="w-4 h-4" /></button>
                                     </div>
-
-                                    {/* 刪除 */}
-                                    <button
-                                        onClick={() => handleDelete(doc.id)}
-                                        className="p-2 rounded-[12px] opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all"
-                                        title="刪除此文件"
-                                    >
-                                        <X className="w-4 h-4" />
-                                    </button>
                                 </motion.div>
                             ))}
                         </AnimatePresence>
                     )}
                 </div>
             </div>
-
-            {/* 網頁學習封鎖提示 */}
-            <WebLearningLockedBanner planLevel={planLevel} />
-        </div>
-    );
-}
-
-// ── 網頁學習封鎖提示（未开通層級的守門員）──
-export function WebLearningLockedBanner({ planLevel }: { planLevel: number }) {
-    const fa = getFeatureAccess(planLevel);
-    if (fa.webLearning > 0) return null;
-    return (
-        <div className="mt-6 p-5 rounded-[20px] bg-indigo-50 border border-indigo-200 flex items-start gap-4">
-            <Globe className="w-5 h-5 text-indigo-500 shrink-0 mt-0.5" />
-            <div className="flex-1">
-                <p className="text-[13px] font-black text-indigo-800 mb-1">🌐 網頁學習尚未開通</p>
-                <p className="text-[12px] text-indigo-700 leading-relaxed">
-                    升級至 <span className="font-black">{getRequiredPlanName('webLearning', 1)}</span> 以上，即可指定官網 URL 讓 AI 自動爬取學習，此方案可使用 <span className="font-black">{formatLimit(fa.webLearning)} 頁</span>。
-                </p>
-            </div>
-            <button
-                onClick={() => window.dispatchEvent(new CustomEvent('switch-tab', { detail: 'billing' }))}
-                className="shrink-0 px-4 py-2 rounded-[10px] bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-[12px] font-black shadow-md hover:scale-105 transition-all"
-            >
-                升級解鎖 →
-            </button>
         </div>
     );
 }

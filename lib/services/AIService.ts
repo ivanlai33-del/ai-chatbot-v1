@@ -406,5 +406,31 @@ export class AIService {
         }
 
         return { message, metadata };
+
+    /**
+     * 從 Markdown 內容中提取結構化資料 (商品或 FAQ)
+     */
+    static async extractStructuredData(content: string, type: 'offerings' | 'faq'): Promise<any[]> {
+        const prompt = type === 'offerings' 
+            ? "請從以下網頁內容中提取商品或服務列表。輸出格式必須為 JSON 陣列，每個項目包含: name, price, description, category, size, url。如果没有價格請填 0。"
+            : "請從以下網頁內容中提取常見問題 (FAQ) 列表。輸出格式必須為 JSON 陣列，每個項目包含: q (問題), a (答案)。";
+
+        const response = await openai.chat.completions.create({
+            model: 'gpt-4o-mini',
+            messages: [
+                { role: 'system', content: `你是一個專業的資料提取專家。請輸出純 JSON 陣列，不要包含任何 Markdown 標籤或解釋文字。\n${prompt}` },
+                { role: 'user', content }
+            ],
+            response_format: { type: "json_object" },
+            temperature: 0.1,
+        });
+
+        const result = JSON.parse(response.choices[0].message.content || "{}");
+        // 如果返回的是對象而不是陣列，嘗試提取陣列
+        if (Array.isArray(result)) return result;
+        if (result.offerings) return result.offerings;
+        if (result.faq) return result.faq;
+        if (result.items) return result.items;
+        return [];
     }
 }

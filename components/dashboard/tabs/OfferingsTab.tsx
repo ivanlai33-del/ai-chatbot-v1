@@ -1,16 +1,17 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ChevronRight, Plus, Trash2, Copy, Lock, ShoppingBag } from 'lucide-react';
+import { ChevronDown, ChevronRight, Plus, Trash2, Copy, Lock, ShoppingBag, Globe, RefreshCcw, Wand2 } from 'lucide-react';
 import InputField from '@/components/ui/InputField';
 import TextareaField from '@/components/ui/TextareaField';
 import { getFeatureAccess, getPlanName, getRequiredPlanName, isAtLimit, formatLimit } from '@/lib/feature-access';
+import { useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
 
 interface OfferingsTabProps {
     config: any;
     setConfig: (fn: (c: any) => any) => void;
     planLevel?: number;
+    botId: string;
 }
 
 const EMPTY_OFFERING = {
@@ -35,15 +36,47 @@ const DETAIL_FIELDS = [
     { key: 'booking_url',          label: '預約連結',    placeholder: 'https://forms.google.com/...' },
 ];
 
-export default function OfferingsTab({ config, setConfig, planLevel = 0 }: OfferingsTabProps) {
+export default function OfferingsTab({ config, setConfig, planLevel = 0, botId }: OfferingsTabProps) {
     const fa = getFeatureAccess(planLevel);
     const productLimit = fa.products; // 0 = 關閉, -1 = 無限
     const currentCount = config.offerings?.length ?? 0;
     const atLimit = isAtLimit(currentCount, productLimit);
     const isLocked = productLimit === 0;
+    
+    const [syncUrl, setSyncUrl] = useState('');
+    const [isSyncing, setIsSyncing] = useState(false);
+
     // Track which cards are expanded
     const [expanded, setExpanded] = useState<Record<number, boolean>>({});
     const toggle = (i: number) => setExpanded(p => ({ ...p, [i]: !p[i] }));
+
+    const handleSync = async () => {
+        if (!syncUrl) return;
+        setIsSyncing(true);
+        try {
+            const res = await fetch('/api/console/intelligence/sync-offerings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: syncUrl, botId })
+            });
+            const json = await res.json();
+            if (json.success && json.data) {
+                const newOfferings = json.data.map((item: any) => ({
+                    ...EMPTY_OFFERING,
+                    ...item
+                }));
+                setConfig((c: any) => ({ ...c, offerings: [...c.offerings, ...newOfferings] }));
+                setSyncUrl('');
+            } else {
+                alert(json.error || '同步失敗');
+            }
+        } catch (err) {
+            console.error('Sync Error:', err);
+            alert('系統錯誤，請稍後再試');
+        } finally {
+            setIsSyncing(false);
+        }
+    };
 
     const update = (i: number, field: string, value: string) => {
         const o = [...config.offerings];
@@ -98,7 +131,45 @@ export default function OfferingsTab({ config, setConfig, planLevel = 0 }: Offer
     }
 
     return (
-        <div className="space-y-3">
+        <div className="space-y-6">
+            {/* 智能同步區塊 */}
+            <div className="p-6 rounded-[32px] bg-gradient-to-br from-slate-900 to-slate-800 text-white shadow-xl shadow-slate-200/50">
+                <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-[12px] bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
+                        <Wand2 className="w-5 h-5 text-emerald-400" />
+                    </div>
+                    <div>
+                        <h4 className="text-[16px] font-black">官網內容自動同步</h4>
+                        <p className="text-[12px] text-slate-400 font-bold uppercase tracking-wider">Auto-Sync via Crawler</p>
+                    </div>
+                </div>
+                
+                <div className="bg-white/5 p-4 rounded-[20px] backdrop-blur-md border border-white/10 flex gap-3">
+                    <div className="flex-1 relative">
+                        <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-400" />
+                        <input
+                            type="text"
+                            placeholder="貼上官網商品網址，AI 自動抓取資料..."
+                            className="w-full bg-transparent pl-11 pr-4 py-3 text-[14px] font-bold focus:outline-none placeholder:text-slate-500"
+                            value={syncUrl}
+                            onChange={(e) => setSyncUrl(e.target.value)}
+                        />
+                    </div>
+                    <button 
+                        onClick={handleSync}
+                        disabled={!syncUrl || isSyncing}
+                        className="px-6 py-2 rounded-[14px] bg-emerald-500 hover:bg-emerald-400 disabled:bg-slate-700 disabled:text-slate-500 transition-all font-black text-[14px] flex items-center gap-2"
+                    >
+                        {isSyncing ? (
+                            <RefreshCcw className="w-4 h-4 animate-spin" />
+                        ) : (
+                            <>同步</>
+                        )}
+                    </button>
+                </div>
+            </div>
+
+            <div className="space-y-3">
             {/* 額度指示列 */}
             <div className="flex items-center justify-between px-2 mb-1">
                 <p className="text-[12px] font-black text-slate-400 uppercase tracking-widest">商品 / 服務清單</p>

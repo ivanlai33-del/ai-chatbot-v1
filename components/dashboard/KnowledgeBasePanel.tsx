@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Save, CheckCircle2, Star, ChevronRight, AlertTriangle,
     Tag, Package, HelpCircle, GitBranch, Phone, BookOpen, Settings,
-    Trash2, X, Brain, Link2, Lock
+    Trash2, X, Brain, Link2, Lock, TrendingUp, ShieldAlert
 } from 'lucide-react';
 import { useState, useCallback } from 'react';
 import type { StoreConfig } from '@/lib/chat-types';
@@ -39,6 +39,8 @@ const TAB_META: Record<string, { Icon: React.ElementType; desc: string }> = {
     contact:   { Icon: Phone,     desc: '地址 · 社群 · 平台' },
     rag:       { Icon: BookOpen,  desc: '文件 · 網頁學習' },
     audience:  { Icon: Tag,       desc: '標籤 · 自動化分群' },
+    trends:    { Icon: TrendingUp, desc: '產業趨勢 · 市場週報' },
+    guardian:  { Icon: ShieldAlert, desc: '品牌防護 · 情緒警報' },
     billing:   { Icon: Settings,  desc: '訂閱 · 額度查閱' },
 };
 

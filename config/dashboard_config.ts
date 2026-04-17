@@ -32,7 +32,9 @@ export const DASHBOARD_TABS = [
     { id: 'logic', label: '引導規則', emoji: '🧠' },
     { id: 'contact', label: '聯絡窗口', emoji: '📞' },
     { id: 'rag', label: 'PDF / 網頁學習', emoji: '📖' },
-    { id: 'audience', label: 'CRM 分眾行銷', emoji: '👥' }
+    { id: 'audience', label: 'CRM 分眾行銷', emoji: '👥' },
+    { id: 'trends', label: '產業風向週報', emoji: '📈' },
+    { id: 'guardian', label: '品牌防護守護者', emoji: '🛡️' }
 ] as const;
 
 export type DashboardTabId = typeof DASHBOARD_TABS[number]['id'];

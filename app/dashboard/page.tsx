@@ -11,6 +11,8 @@ import LogicTab from '@/components/dashboard/tabs/LogicTab';
 import ContactTab from '@/components/dashboard/tabs/ContactTab';
 import RAGTab from '@/components/dashboard/tabs/RAGTab';
 import AudienceTab from '@/components/dashboard/tabs/AudienceTab';
+import TrendsTab from '@/components/dashboard/tabs/TrendsTab';
+import GuardianTab from '@/components/dashboard/tabs/GuardianTab';
 import KnowledgeBasePanel from '@/components/dashboard/KnowledgeBasePanel';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import ApiKeysModal from '@/components/dashboard/ApiKeysModal';
@@ -143,12 +145,14 @@ export default function DashboardPage() {
                     >
                         {activeTab === 'brand' && <BrandDNATab config={config} setConfig={setConfig} planLevel={planLevel} />}
                         {activeTab === 'dojo' && <DojoTab config={config} setConfig={setConfig} planLevel={planLevel} onSave={handleSave} isSaving={isSaving} />}
-                        {activeTab === 'offerings' && <OfferingsTab config={config} setConfig={setConfig} planLevel={planLevel} />}
-                        {activeTab === 'faq' && <FAQTab config={config} setConfig={setConfig} planLevel={planLevel} />}
+                        {activeTab === 'offerings' && <OfferingsTab config={config} setConfig={setConfig} planLevel={planLevel} botId={selectedBotId || ''} />}
+                        {activeTab === 'faq' && <FAQTab config={config} setConfig={setConfig} planLevel={planLevel} botId={selectedBotId || ''} />}
                         {activeTab === 'logic' && <LogicTab config={config} setConfig={setConfig} planLevel={planLevel} />}
                         {activeTab === 'contact' && <ContactTab config={config} setConfig={setConfig} planLevel={planLevel} />}
                         {activeTab === 'rag' && <RAGTab planLevel={planLevel} bots={bots} selectedBotId={selectedBotId} />}
                         {activeTab === 'audience' && <AudienceTab botId={selectedBotId} planLevel={planLevel} />}
+                        {activeTab === 'trends' && <TrendsTab botId={selectedBotId || ''} />}
+                        {activeTab === 'guardian' && <GuardianTab botId={selectedBotId || ''} />}
                     </motion.div>
                 </AnimatePresence>
             </KnowledgeBasePanel>

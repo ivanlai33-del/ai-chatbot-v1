@@ -134,6 +134,8 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       crmScheduled: false,
       crmPersonalized: false,
       visionAI: false,
+      marketPulse: false,
+      brandGuardian: false,
     },
     features: [
       '24H AI 全時段自動接單',
@@ -191,6 +193,8 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       crmScheduled: false,
       crmPersonalized: false,
       visionAI: false,
+      marketPulse: false,
+      brandGuardian: false,
     },
     features: [
       '24H AI 全時段自動接單',
@@ -250,6 +254,8 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       crmScheduled: false,
       crmPersonalized: false,
       visionAI: false,
+      marketPulse: false,
+      brandGuardian: false,
     },
     features: [
       '24H AI 全時段自動接單',
@@ -308,6 +314,8 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       crmScheduled: false,
       crmPersonalized: false,
       visionAI: true,
+      marketPulse: false,
+      brandGuardian: false,
     },
     features: [
       '單店主力所有功能',
@@ -365,6 +373,8 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       crmScheduled: true,
       crmPersonalized: false,
       visionAI: true,
+      marketPulse: true,
+      brandGuardian: false,
     },
     features: [
       '成長多店所有功能',
@@ -417,6 +427,8 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       crmScheduled: true,
       crmPersonalized: true,
       visionAI: true,
+      marketPulse: true,
+      brandGuardian: true,
     },
     features: [
       '連鎖專業所有功能',
@@ -474,6 +486,8 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       crmScheduled: true,
       crmPersonalized: true,
       visionAI: true,
+      marketPulse: true,
+      brandGuardian: true,
     },
     features: [
       '旗艦 Lite 所有功能',

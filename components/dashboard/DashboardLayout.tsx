@@ -34,7 +34,7 @@ export default function DashboardLayout({
             />
 
 
-            <div className="relative z-10">
+            <div className="relative z-10 min-w-[1024px] overflow-x-auto">
                 <TopNav 
                     userName={userName}
                     userPicture={userPicture}

@@ -77,14 +77,14 @@ export default function KnowledgeBasePanel({
     return (
         <div className="flex-1 flex flex-col h-full bg-white/25 backdrop-blur-3xl  rounded-[40px] overflow-hidden">
             {/* Header Area */}
-            <div className="bg-white/40 backdrop-blur-md border-b  px-8 py-4 flex items-center justify-between shrink-0">
-                <div className="flex items-center gap-6">
+            <div className="bg-white/40 backdrop-blur-md border-b px-4 md:px-8 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
+                <div className="flex items-center gap-4 md:gap-6">
                     <div>
                         <div className="flex items-center gap-2 mb-1">
-                            <h2 className="text-[20px] font-black text-slate-900 leading-none">智庫中心面板</h2>
+                            <h2 className="text-[18px] md:text-[20px] font-black text-slate-900 leading-none">智庫中心面板</h2>
                             <div className="px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-100 text-[10px] font-black text-emerald-600 uppercase tracking-wider">Live</div>
                         </div>
-                        <p className="text-[12px] text-slate-500 font-bold uppercase tracking-widest flex items-center gap-2">
+                        <p className="text-[10px] md:text-[12px] text-slate-500 font-bold uppercase tracking-widest flex items-center gap-2">
                              System Configuration <ChevronRight className="w-3 h-3" /> <span className="text-slate-900">{activeTab}</span>
                         </p>
                     </div>
@@ -136,7 +136,7 @@ export default function KnowledgeBasePanel({
 
             <div className="flex flex-1 min-h-0">
                 {/* Fixed Side Navigation */}
-                <div className="w-[300px] border-r  bg-white/10 backdrop-blur-xl p-6 overflow-y-auto shrink-0 glass-scrollbar">
+                <div className="w-[300px] border-r bg-white/10 backdrop-blur-xl p-6 overflow-y-auto shrink-0 glass-scrollbar">
                     <div className="space-y-1.5 pt-2">
                         {tabs.map((tab) => {
                             const meta = TAB_META[tab.id] || TAB_META.brand;

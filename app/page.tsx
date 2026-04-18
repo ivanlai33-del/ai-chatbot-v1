@@ -36,7 +36,7 @@ export default function Home() {
     const pricingPlans = getPricingPlans(billingCycle);
 
     return (
-        <main className="relative min-h-screen w-full bg-[#0F172A] font-sans overflow-x-hidden">
+        <main className="relative min-h-screen w-full min-w-[1024px] bg-[#0F172A] font-sans overflow-x-auto">
             <SEOMetadata jsonLd={landingJsonLd} />
             
             <LandingHeader 

@@ -13,7 +13,7 @@ interface LandingHeaderProps {
 
 export default function LandingHeader({ isLoggedIn, onAction, onOpenChat }: LandingHeaderProps) {
     return (
-        <header className="fixed top-0 left-0 right-0 z-50 px-6 py-4">
+        <header className="fixed top-0 left-0 right-0 z-50 px-6 py-4 min-w-[1024px]">
             <div className="max-w-7xl mx-auto flex items-center justify-between">
                 {/* Logo */}
                 <div className="flex items-center gap-3 group cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
@@ -36,7 +36,7 @@ export default function LandingHeader({ isLoggedIn, onAction, onOpenChat }: Land
                 <nav className="flex items-center gap-6">
                     <button 
                         onClick={onOpenChat}
-                        className="hidden md:flex items-center gap-2 text-slate-300 hover:text-white transition-colors text-sm font-medium"
+                        className="flex items-center gap-2 text-slate-300 hover:text-white transition-colors text-sm font-medium"
                     >
                         <MessageSquare className="w-4 h-4" />
                         來和 AI 店長聊聊您的需求

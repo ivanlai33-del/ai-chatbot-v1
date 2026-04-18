@@ -1,4 +1,9 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
+
+export const viewport: Viewport = {
+    width: 'device-width',
+    initialScale: 1,
+};
 
 export const metadata: Metadata = {
     title: 'LINE 智能店長 Pro | 讓您的【LINE 官方帳號】具備 24H 自動成交能力',

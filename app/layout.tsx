@@ -6,6 +6,11 @@ import CookieBanner from "@/components/CookieBanner";
 
 const inter = Inter({ subsets: ["latin"] });
 
+export const viewport = {
+    width: 1024,
+    initialScale: 1,
+};
+
 export const metadata: Metadata = {
     metadataBase: new URL('https://bot.ycideas.com'),
     alternates: {

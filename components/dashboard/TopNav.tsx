@@ -100,7 +100,7 @@ export default function TopNav({
 
     return (
         <header className="sticky top-0 z-50 bg-white/40 backdrop-blur-3xl shadow-[0_4px_30px_rgba(0,0,0,0.03)] border-b border-white/40 ring-1 ring-black/5 h-[80px]">
-            <div className="px-6 md:px-[75px] h-full flex items-center justify-between max-w-[1900px] mx-auto w-full">
+            <div className="px-[75px] h-full flex items-center justify-between max-w-[1900px] mx-auto w-full">
                 <div className="flex items-center gap-5">
                     <div className="w-[50px] h-[50px] relative drop-shadow-sm">
                         <Image src="/Lai Logo_4.svg" alt="Lai Logo" fill className="object-contain" />
@@ -145,12 +145,13 @@ export default function TopNav({
                                     </motion.button>
                                 )}
                             </div>
-                            <div className={cn(
-                                "flex items-center gap-2 px-5 py-2 rounded-full text-[15.5px] font-black uppercase tracking-wider shadow-sm border mr-3",
-                                currentPlan.badge
-                            )}>
-                                <span className={currentPlan.color}>{currentPlan.name}</span>
-                            </div>
+                                <div className={cn(
+                                    "flex items-center gap-2 px-5 py-2 rounded-full text-[15.5px] font-black uppercase tracking-wider shadow-sm border mr-3",
+                                    currentPlan.badge
+                                )}>
+                                    <span className={currentPlan.color}>{currentPlan.name}</span>
+                                </div>
+                            )}
 
                             <div className="relative">
                                 <motion.button
@@ -171,7 +172,7 @@ export default function TopNav({
                                             <span className="text-white font-black">{userName?.[0]}</span>
                                         </div>
                                     )}
-                                    <span className="text-[15.5px] text-slate-700 font-bold hidden sm:block">{userName} ▾</span>
+                                    <span className="text-[15.5px] text-slate-700 font-bold">{userName} ▾</span>
                                 </motion.button>
 
                                 <AnimatePresence>

@@ -5,6 +5,7 @@ import axios from 'axios';
 
 export async function POST(req: NextRequest) {
     try {
+        const clientEmail = process.env.GSC_CLIENT_EMAIL;
         const rawKey = process.env.GSC_PRIVATE_KEY || '';
         const privateKey = rawKey
             .replace(/\\n/g, '\n')      // 處理轉義的 \n

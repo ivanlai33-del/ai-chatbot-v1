@@ -3,11 +3,15 @@ import { supabase } from '@/lib/supabase';
 
 export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
-    const userId = searchParams.get('userId');
+    const userIdParam = searchParams.get('userId');
+    
+    // 🚀 加強版驗證：優先看傳入參數，沒有則看 Cookie
+    const cookieUserId = req.cookies.get('line_user_id')?.value;
+    const effectiveUserId = userIdParam || cookieUserId;
 
     // 🔒 安全守衛：僅限管理員查看
     const ADMIN_ID = "Ud8b8dd79162387a80b2b5a4aba20f604";
-    if (userId !== ADMIN_ID) {
+    if (effectiveUserId !== ADMIN_ID) {
         return NextResponse.json({ error: 'Unauthorized Access to Intelligence' }, { status: 403 });
     }
 

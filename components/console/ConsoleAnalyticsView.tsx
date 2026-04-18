@@ -317,6 +317,67 @@ export default function ConsoleAnalyticsView() {
     );
 };
 
+    const RawAuditTable = () => {
+        return (
+            <div className="bg-slate-900/40 rounded-3xl border border-slate-700/50 overflow-hidden">
+                <div className="p-6 border-b border-slate-700/50 flex items-center justify-between">
+                    <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">即時訪客審計 (Live Traffic)</h4>
+                    <div className="text-[10px] font-bold text-slate-500 px-2 py-1 bg-slate-800 rounded">顯示最近 10 筆</div>
+                </div>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left text-[11px]">
+                        <thead>
+                            <tr className="border-b border-slate-700/30">
+                                <th className="px-6 py-4 font-black text-slate-500 uppercase tracking-widest whitespace-nowrap">Time</th>
+                                <th className="px-6 py-4 font-black text-slate-500 uppercase tracking-widest whitespace-nowrap">Country / Region</th>
+                                <th className="px-6 py-4 font-black text-slate-500 uppercase tracking-widest whitespace-nowrap">Duration</th>
+                                <th className="px-6 py-4 font-black text-slate-500 uppercase tracking-widest whitespace-nowrap">Source</th>
+                                <th className="px-6 py-4 font-black text-slate-500 uppercase tracking-widest whitespace-nowrap">Current Page</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-700/20">
+                            {displayData.latestLogs.length > 0 ? displayData.latestLogs.map((log: any) => (
+                                <tr key={log.id} className="hover:bg-slate-800/20 transition-all">
+                                    <td className="px-6 py-4 text-slate-400 font-mono whitespace-nowrap">
+                                        {new Date(log.created_at).toLocaleTimeString()}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <div className="flex flex-col">
+                                            <span className="font-mono text-slate-200 flex items-center gap-2">
+                                                <span className="text-lg">{(log.country === 'Taiwan' || log.country === 'Taiwan, Province of China') ? '🇹🇼' : '🌍'}</span>
+                                                {log.country || 'Unknown'}
+                                            </span>
+                                            <span className="text-[10px] text-slate-500 flex items-center gap-1 mt-0.5">
+                                                <MapPin className="w-3 h-3" /> {log.city || 'Unknown'} · {log.district || ''}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <span className={`px-2 py-1 rounded font-black text-[10px] ${log.duration > 60 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-800 text-slate-500'}`}>
+                                            {log.duration ? `${log.duration}s` : '追踪中...'}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <span className="px-2 py-1 bg-indigo-500/10 text-indigo-400 rounded font-bold text-[9px] uppercase">
+                                            {log.utm_source || 'Direct'}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4 text-slate-400 max-w-[200px] truncate">
+                                        {log.page_title || log.page_url || 'Unknown'}
+                                    </td>
+                                </tr>
+                            )) : (
+                                <tr>
+                                    <td colSpan={4} className="px-6 py-8 text-center text-slate-500 font-bold">無紀錄</td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        );
+    };
+
     const SEOSearchIntelligence = () => {
         return (
             <div className="bg-slate-900/40 rounded-3xl border border-slate-700/50 p-6 h-full flex flex-col">

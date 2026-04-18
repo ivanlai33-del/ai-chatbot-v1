@@ -11,6 +11,7 @@ interface VisitorIntelligenceData {
     contentTags: { name: string; value: number }[];
     deviceMap: Record<string, number>;
     cities: { name: string; value: number }[];
+    seoData: any[]; // 🚀 關鍵字與排名數據 🚀
     latestLogs: any[];
 }
 
@@ -46,6 +47,23 @@ export default function ConsoleAnalyticsView() {
             }
         } catch (e) {
             alert('切換身份失敗，請稍後再試');
+        }
+    };
+
+    const handleSyncSEO = async () => {
+        setRefreshing(true);
+        try {
+            const res = await fetch('/api/platform/seo-sync', { method: 'POST' });
+            const json = await res.json();
+            if (json.success) {
+                await fetchAnalytics();
+            } else {
+                alert('SEO 同步失敗：' + json.error);
+            }
+        } catch (e) {
+            alert('連線失敗');
+        } finally {
+            setRefreshing(false);
         }
     };
 
@@ -96,12 +114,6 @@ export default function ConsoleAnalyticsView() {
                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-0.5">系統身份狀態</p>
                     <p className="text-base font-black text-white flex items-center gap-2">
                         {impersonationMode === 'admin' ? '🛡️ iVan 最高管理者' : '👤 模擬免費會員中'}
-                        {impersonationMode === 'free' && (
-                            <span className="flex h-2 w-2 relative">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
-                            </span>
-                        )}
                     </p>
                 </div>
                 <button
@@ -116,13 +128,22 @@ export default function ConsoleAnalyticsView() {
                 </button>
             </div>
 
-            <button 
-                onClick={() => fetchAnalytics(true)}
-                className="flex items-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-2xl transition-all text-xs font-black uppercase tracking-widest border border-slate-700 active:scale-95"
-            >
-                <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-                即時更新
-            </button>
+            <div className="flex items-center gap-3">
+                <button 
+                    onClick={handleSyncSEO}
+                    className="flex items-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-indigo-500/10 text-indigo-400 rounded-2xl transition-all text-xs font-black uppercase tracking-widest border border-indigo-500/20 active:scale-95"
+                >
+                    <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+                    同步 SEO 數據
+                </button>
+                <button 
+                    onClick={() => fetchAnalytics(true)}
+                    className="flex items-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-2xl transition-all text-xs font-black uppercase tracking-widest border border-slate-700 active:scale-95"
+                >
+                    <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+                    即時更新
+                </button>
+            </div>
         </div>
     );
 
@@ -148,6 +169,7 @@ export default function ConsoleAnalyticsView() {
         siteData: [],
         utmData: [],
         contentTags: [],
+        seoData: [],
         latestLogs: []
     };
 
@@ -295,78 +317,41 @@ export default function ConsoleAnalyticsView() {
     );
 };
 
-    const RawAuditTable = () => {
+    const SEOSearchIntelligence = () => {
         return (
-            <div className="bg-slate-900/40 rounded-3xl border border-slate-700/50 overflow-hidden">
-                <div className="p-6 border-b border-slate-700/50 flex items-center justify-between">
-                    <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">即時訪客審計 (Live Traffic)</h4>
-                    <div className="text-[10px] font-bold text-slate-500 px-2 py-1 bg-slate-800 rounded">顯示最近 10 筆</div>
+            <div className="bg-slate-900/40 rounded-3xl border border-slate-700/50 p-6 h-full flex flex-col">
+                <div className="flex items-center justify-between mb-6">
+                    <h4 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">搜尋核心關鍵字 (GSC)</h4>
+                    <Tag className="w-4 h-4 text-indigo-400" />
                 </div>
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left text-[11px]">
-                        <thead>
-                            <tr className="border-b border-slate-700/30">
-                                <th className="px-6 py-4 font-black text-slate-500 uppercase tracking-widest whitespace-nowrap">Time</th>
-                                <th className="px-6 py-4 font-black text-slate-500 uppercase tracking-widest whitespace-nowrap">Country / Region</th>
-                                <th className="px-6 py-4 font-black text-slate-500 uppercase tracking-widest whitespace-nowrap">Duration</th>
-                                <th className="px-6 py-4 font-black text-slate-500 uppercase tracking-widest whitespace-nowrap">Source</th>
-                                <th className="px-6 py-4 font-black text-slate-500 uppercase tracking-widest whitespace-nowrap">Current Page</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-700/20">
-                            {displayData.latestLogs.length > 0 ? displayData.latestLogs.map((log: any) => (
-                                <tr key={log.id} className="hover:bg-slate-800/20 transition-all">
-                                    <td className="px-6 py-4 text-slate-400 font-mono whitespace-nowrap">
-                                        {new Date(log.created_at).toLocaleTimeString()}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex flex-col">
-                                            <span className="font-mono text-slate-200 flex items-center gap-2">
-                                                <span className="text-lg">{(log.country === 'Taiwan' || log.country === 'Taiwan, Province of China') ? '🇹🇼' : '🌍'}</span>
-                                                {log.country || 'Unknown'}
-                                            </span>
-                                            <span className="text-[10px] text-slate-500 flex items-center gap-1 mt-0.5">
-                                                <MapPin className="w-3 h-3" /> {log.city || 'Unknown'} · {log.district || ''}
-                                            </span>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <span className={`px-2 py-1 rounded font-black text-[10px] ${log.duration > 60 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-800 text-slate-500'}`}>
-                                            {log.duration ? `${log.duration}s` : '追踪中...'}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <span className="px-2 py-1 bg-indigo-500/10 text-indigo-400 rounded font-bold text-[9px] uppercase">
-                                            {log.utm_source || 'Direct'}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4 text-slate-400 max-w-[200px] truncate">
-                                        {log.page_title || log.page_url || 'Unknown'}
-                                    </td>
-                                </tr>
-                            )) : (
-                                <tr>
-                                    <td colSpan={4} className="px-6 py-8 text-center text-slate-500 font-bold">無紀錄</td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+                {displayData.seoData && displayData.seoData.length > 0 ? (
+                    <div className="space-y-4 flex-1 overflow-y-auto custom-scrollbar pr-2">
+                        {displayData.seoData.map((item, i) => (
+                            <div key={item.keyword} className="flex items-center justify-between p-3 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all group">
+                                <div className="flex flex-col gap-1 min-w-0">
+                                    <span className="text-[11px] font-black text-white truncate">{item.keyword}</span>
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">排名: {Number(item.position).toFixed(1)}</span>
+                                        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">點擊: {item.clicks}</span>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col items-end shrink-0">
+                                    <span className={`text-[10px] font-black px-2 py-0.5 rounded ${item.position <= 10 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-800 text-slate-400'}`}>
+                                        #{Math.ceil(item.position)}
+                                    </span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="flex-1 flex flex-col items-center justify-center gap-3 text-slate-500">
+                        <Loader2 className="w-5 h-5 animate-spin opacity-20" />
+                        <span className="text-[11px] font-bold italic">尚無 SEO 數據，請點擊「同步」</span>
+                    </div>
+                )}
             </div>
         );
     };
-
-    if (loading) {
-        return (
-            <div className="space-y-6">
-                <RenderHeader />
-                <div className="flex flex-col items-center justify-center py-20 bg-slate-900/40 rounded-[40px] border border-slate-700/50">
-                    <Loader2 className="w-8 h-8 text-indigo-500 animate-spin mb-4" />
-                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">正在掃描全站站台監控數據...</p>
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div className="space-y-6 animate-in fade-in duration-700 pb-20">
@@ -387,24 +372,33 @@ export default function ConsoleAnalyticsView() {
                     colorClass="text-sky-500" 
                 />
                 <MetricCard 
-                    title="手機用戶" 
-                    value={`${(displayData.deviceMap as Record<string, number>)['Mobile'] || 0}`} 
-                    icon={Smartphone} 
+                    title="平均搜尋排名" 
+                    value={displayData.seoData.length > 0 ? (displayData.seoData.reduce((acc, curr) => acc + curr.position, 0) / displayData.seoData.length).toFixed(1) : '--'} 
+                    icon={Tag} 
                     colorClass="text-rose-500" 
                 />
                 <MetricCard 
-                    title="桌機用戶" 
-                    value={`${Math.max(displayData.totalVisitors - ((displayData.deviceMap as Record<string, number>)['Mobile'] || 0), 0)}`} 
-                    icon={Laptop} 
+                    title="裝置：手機" 
+                    value={`${(displayData.deviceMap as Record<string, number>)['Mobile'] || 0}`} 
+                    icon={Smartphone} 
                     colorClass="text-indigo-500" 
                 />
             </div>
 
             {/* Middle Grid: Charts */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 h-auto lg:h-[350px]">
-                <SiteDistribution />
-                <UTMPieChart />
-                <ContentHotspots />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 h-auto lg:h-[400px]">
+                <div className="lg:col-span-1">
+                    <SiteDistribution />
+                </div>
+                <div className="lg:col-span-1">
+                    <UTMPieChart />
+                </div>
+                <div className="lg:col-span-1">
+                    <ContentHotspots />
+                </div>
+                <div className="lg:col-span-1">
+                    <SEOSearchIntelligence />
+                </div>
             </div>
 
             {/* Bottom: Logs */}

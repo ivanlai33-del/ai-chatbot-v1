@@ -79,6 +79,13 @@ export async function GET(req: NextRequest) {
             .map(([name, value]) => ({ name, value }))
             .sort((a, b) => b.value - a.value);
 
+        // 4. 新增：抓取最近一次同步的 SEO 多點數據
+        const { data: seoStats } = await supabase
+            .from('seo_stats')
+            .select('*')
+            .order('synced_at', { ascending: false })
+            .limit(10);
+
         return NextResponse.json({
             success: true,
             summary: {
@@ -88,6 +95,7 @@ export async function GET(req: NextRequest) {
                 contentTags,
                 deviceMap,
                 cities,
+                seoData: seoStats || [],
                 latestLogs: rawLogs?.slice(0, 10)
             }
         });

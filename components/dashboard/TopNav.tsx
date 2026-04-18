@@ -151,9 +151,8 @@ export default function TopNav({
                                 )}>
                                     <span className={currentPlan.color}>{currentPlan.name}</span>
                                 </div>
-                            )}
 
-                            <div className="relative">
+                                <div className="relative">
                                 <motion.button
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}

@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
 
         const privateKey = `-----BEGIN PRIVATE KEY-----\n${base64Body.match(/.{1,64}/g)?.join('\n')}\n-----END PRIVATE KEY-----\n`;
 
-        const siteUrl = 'https://bot.ycideas.com';
+        const siteUrl = 'https://bot.ycideas.com/';
 
         if (!clientEmail || !privateKey || !base64Body) {
             return NextResponse.json({ 

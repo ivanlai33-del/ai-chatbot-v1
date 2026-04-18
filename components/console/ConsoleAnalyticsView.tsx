@@ -56,6 +56,7 @@ export default function ConsoleAnalyticsView() {
             const res = await fetch('/api/platform/seo-sync', { method: 'POST' });
             const json = await res.json();
             if (json.success) {
+                alert(json.message || `SEO 數據同步完成！(共 ${json.count} 筆)`);
                 await fetchAnalytics();
             } else {
                 alert('SEO 同步失敗：' + json.error);
@@ -403,9 +404,12 @@ export default function ConsoleAnalyticsView() {
                         ))}
                     </div>
                 ) : (
-                    <div className="flex-1 flex flex-col items-center justify-center gap-3 text-slate-500">
+                    <div className="flex-1 flex flex-col items-center justify-center gap-3 text-slate-500 p-4 text-center">
                         <Loader2 className="w-5 h-5 animate-spin opacity-20" />
-                        <span className="text-[11px] font-bold italic">尚無 SEO 數據，請點擊「同步」</span>
+                        <span className="text-[11px] font-bold italic leading-relaxed">
+                            Google 正在處理初始數據<br/>
+                            (通常需 1-2 天，請明天再同步一次)
+                        </span>
                     </div>
                 )}
             </div>

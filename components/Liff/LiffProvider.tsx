@@ -76,20 +76,24 @@ export const LiffProvider = ({
         setIsLoggedIn(true);
         console.log('[LIFF] Logged in successfully');
 
-        // 2. Get Profile
-        const userProfile = await liff.getProfile();
+        // 2. Get Profile & Security Token
+        const [userProfile, idToken] = await Promise.all([
+          liff.getProfile(),
+          liff.getIDToken()
+        ]);
         setProfile(userProfile);
 
         // 3. Synchronize Session with Website Backend
-        // This sets the server-side cookies so the member is recognized on both LIFF and Web
-        console.log('[LIFF] Synchronizing session with backend...');
+        // SECURITY: We send the idToken for server-side verification
+        console.log('[LIFF] Synchronizing session with secured token...');
         const syncRes = await fetch('/api/auth/session-sync', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             userId: userProfile.userId,
             displayName: userProfile.displayName,
-            pictureUrl: userProfile.pictureUrl
+            pictureUrl: userProfile.pictureUrl,
+            idToken: idToken // Pass encrypted identity token
           })
         });
 

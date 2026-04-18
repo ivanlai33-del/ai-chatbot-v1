@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { rateLimit } from '@/lib/rate-limit';
 
 const BAD_USER_AGENTS = [
     'HTTrack',
@@ -13,8 +13,10 @@ const BAD_USER_AGENTS = [
     'PostmanRuntime',
 ];
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
     const userAgent = request.headers.get('user-agent') || '';
+    const ip = request.headers.get('x-forwarded-for') || request.ip || 'anonymous';
+    const path = request.nextUrl.pathname;
     
     // 1. User-Agent Blocklist (Anti-Scraping)
     const isBadBot = BAD_USER_AGENTS.some(agent => 
@@ -28,16 +30,23 @@ export function middleware(request: NextRequest) {
         });
     }
 
+    // 2. Rate Limiting for Sensitive APIs (防範惡意刷流量或打包資料)
+    if (path.startsWith('/api/console') || path.startsWith('/api/platform')) {
+        const limiter = await rateLimit(`ip:${ip}`, 60, 60); // 60 requests per minute per IP
+        if (!limiter.success) {
+            return new NextResponse('Too Many Requests: 您操作過於頻繁，請稍候再試。', {
+                status: 429,
+                headers: { 'Content-Type': 'text/plain' },
+            });
+        }
+    }
+
     const response = NextResponse.next();
     
-    // 2. Anti-Framing (X-Frame-Options & CSP) to prevent clickjacking & fake clones
+    // 3. Anti-Framing & Security Headers
     response.headers.set('X-Frame-Options', 'DENY');
     response.headers.set('Content-Security-Policy', "frame-ancestors 'none'");
-    
-    // 3. Prevent MIME-sniffing
     response.headers.set('X-Content-Type-Options', 'nosniff');
-
-    // 4. Strict Transport Security
     response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
 
     return response;

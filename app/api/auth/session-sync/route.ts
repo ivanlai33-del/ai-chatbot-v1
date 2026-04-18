@@ -1,16 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
+import axios from 'axios';
+
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { userId, displayName, pictureUrl } = body;
+        const { userId, displayName, pictureUrl, idToken } = body;
 
-        if (!userId) {
-            return NextResponse.json({ success: false, error: 'Missing userId' }, { status: 400 });
+        if (!userId || !idToken) {
+            return NextResponse.json({ success: false, error: 'Missing userId or idToken' }, { status: 400 });
         }
 
-        console.log('[Auth Sync] Syncing session for:', userId);
+        // 🛡️ SECURITY HARDENING: Verify Identity with LINE
+        // We don't trust the client-side userId. We verify the cryptographically signed idToken.
+        try {
+            const verifyRes = await axios.post('https://api.line.me/oauth2/v2.1/verify', 
+                new URLSearchParams({
+                    id_token: idToken,
+                    client_id: process.env.LINE_LOGIN_CHANNEL_ID!,
+                }).toString(),
+                { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+            );
+
+            const verifiedData = verifyRes.data;
+            if (verifiedData.sub !== userId) {
+                console.error('[Auth Sync] Token Subject Mismatch:', { tokenSub: verifiedData.sub, providedId: userId });
+                return NextResponse.json({ success: false, error: 'Identity mismatch' }, { status: 403 });
+            }
+            console.log('[Auth Sync] Identity verified successfully for:', userId);
+        } catch (verifyErr: any) {
+            console.error('[Auth Sync] Token Verification Failed:', verifyErr.response?.data || verifyErr.message);
+            return NextResponse.json({ success: false, error: 'Invalid authentication token' }, { status: 401 });
+        }
 
         // 1. Persist to Supabase (Member Data)
         const { data: memberData, error: upsertError } = await supabase

@@ -3,6 +3,7 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { LayoutDashboard, MessageSquareText } from 'lucide-react';
+import { useLiff } from './LiffProvider';
 
 interface LiffHeroProps {
   logoUrl: string;

@@ -30,7 +30,14 @@ export async function getGoogleAccessToken(
 
     const sign = crypto.createSign('RSA-SHA256');
     sign.update(signatureInput);
-    const signature = sign.sign(privateKey, 'base64url');
+    
+    // 🚀 使用 KeyObject 以提高 PEM 格式相容性，防止 DECODER 錯誤
+    const key = crypto.createPrivateKey({
+        key: privateKey,
+        format: 'pem',
+        type: 'pkcs8'
+    });
+    const signature = sign.sign(key, 'base64url');
 
     const jwt = `${signatureInput}.${signature}`;
 

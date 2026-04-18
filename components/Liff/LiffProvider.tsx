@@ -83,6 +83,13 @@ export const LiffProvider = ({
         ]);
         setProfile(userProfile);
 
+        // 🚀 關鍵強化：將使用者資訊持久化到 localStorage，確保戰情中心能識別身份
+        if (userProfile.userId) {
+          localStorage.setItem('line_user_id', userProfile.userId);
+          localStorage.setItem('line_user_name', userProfile.displayName || '');
+          localStorage.setItem('line_user_picture', userProfile.pictureUrl || '');
+        }
+
         // 3. Synchronize Session with Website Backend
         // SECURITY: We send the idToken for server-side verification
         console.log('[LIFF] Synchronizing session with secured token...');

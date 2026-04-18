@@ -69,20 +69,18 @@ export default function ConsoleAnalyticsView() {
 
     const fetchAnalytics = async (isRefresh = false) => {
         if (isRefresh) setRefreshing(true);
-        const lineId = localStorage.getItem('line_user_id');
         
-        if (!lineId) {
-            console.warn("No line_user_id found for analytics.");
-            setLoading(false);
-            setRefreshing(false);
-            return;
-        }
-
+        // 🚀 優化：優先從 localStorage 拿，沒有則帶入空值，由後端 API 透過 Cookie 判定 Admin 身份
+        const lineId = localStorage.getItem('line_user_id') || '';
+        
         try {
             const res = await fetch(`/api/console/visitor-intelligence?userId=${lineId}`);
             const json = await res.json();
             if (json.success) {
                 setData(json.summary);
+            } else if (json.error === 'Unauthorized Access to Intelligence') {
+                // 如果後端判定無權限，才標記載入失敗
+                console.warn("Unauthorized access to dashboard intelligence.");
             }
         } catch (e) {
             console.error("Failed to fetch visitor intelligence:", e);

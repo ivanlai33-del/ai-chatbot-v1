@@ -3,13 +3,26 @@ import { getGoogleAccessToken } from '@/lib/google-jwt';
 import { supabase } from '@/lib/supabase';
 import axios from 'axios';
 
+import fs from 'fs';
+import path from 'path';
+
 export async function POST(req: NextRequest) {
     try {
-        const clientEmail = process.env.GSC_CLIENT_EMAIL;
-        const rawKey = process.env.GSC_PRIVATE_KEY || '';
+        let gscConfig: any = null;
+        try {
+            const configPath = path.join(process.cwd(), 'gsc-key.json');
+            if (fs.existsSync(configPath)) {
+                gscConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+                console.log('[GSC Sync] Using local gsc-key.json');
+            }
+        } catch (e) {
+            console.warn('[GSC Sync] Native config read failed, using env');
+        }
+
+        const clientEmail = gscConfig?.client_email || process.env.GSC_CLIENT_EMAIL;
+        const rawKey = gscConfig?.private_key || process.env.GSC_PRIVATE_KEY || '';
         
-        // 🚀 暴力標準化：移除所有現有的標籤與空白，只留下 Base64 核心
-        // 注意：不論用戶貼入的是 \\n 還是真實換行，全部過濾掉
+        // 🚀 保持最強大的金鑰解析邏輯
         const base64Body = rawKey
             .replace(/-----BEGIN PRIVATE KEY-----/g, '')
             .replace(/-----END PRIVATE KEY-----/g, '')
@@ -18,15 +31,14 @@ export async function POST(req: NextRequest) {
             .replace(/"/g, '')
             .trim();
 
-        // 重新拼接成完美的 64 字元換行 PKCS#8 格式
         const privateKey = `-----BEGIN PRIVATE KEY-----\n${base64Body.match(/.{1,64}/g)?.join('\n')}\n-----END PRIVATE KEY-----\n`;
 
         const siteUrl = 'https://bot.ycideas.com';
 
-        if (!clientEmail || !privateKey) {
+        if (!clientEmail || !privateKey || !base64Body) {
             return NextResponse.json({ 
                 success: false, 
-                error: `Missing GSC credentials in env (Email: ${!!clientEmail}, Key: ${!!privateKey})` 
+                error: `Missing GSC credentials (Email: ${!!clientEmail}, Key: ${!!privateKey})` 
             }, { status: 500 });
         }
 

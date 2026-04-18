@@ -3,20 +3,20 @@ import { getGoogleAccessToken } from '@/lib/google-jwt';
 import { supabase } from '@/lib/supabase';
 import axios from 'axios';
 
-import fs from 'fs';
-import path from 'path';
-
 export async function POST(req: NextRequest) {
     try {
         let gscConfig: any = null;
-        try {
-            const configPath = path.join(process.cwd(), 'gsc-key.json');
-            if (fs.existsSync(configPath)) {
-                gscConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-                console.log('[GSC Sync] Using local gsc-key.json');
+        const b64Config = process.env.GSC_CONFIG_B64;
+
+        if (b64Config) {
+            try {
+                // 🚀 使用 Base64 解碼 JSON，完美避開換行與格式問題
+                const decoded = Buffer.from(b64Config, 'base64').toString('utf8');
+                gscConfig = JSON.parse(decoded);
+                console.log('[GSC Sync] Successfully decoded B64 config');
+            } catch (e) {
+                console.warn('[GSC Sync] B64 decode failed, falling back to legacy env');
             }
-        } catch (e) {
-            console.warn('[GSC Sync] Native config read failed, using env');
         }
 
         const clientEmail = gscConfig?.client_email || process.env.GSC_CLIENT_EMAIL;

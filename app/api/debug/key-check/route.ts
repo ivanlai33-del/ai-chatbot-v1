@@ -2,47 +2,45 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 
 export async function GET(req: NextRequest) {
-    const rawKey = process.env.GSC_PRIVATE_KEY || '';
-    
-    // 🚀 手動模擬清理邏輯
-    const base64Body = rawKey
-        .replace(/-----BEGIN PRIVATE KEY-----/g, '')
-        .replace(/-----END PRIVATE KEY-----/g, '')
-        .replace(/\\n/g, '')
-        .replace(/\s+/g, '')
-        .replace(/"/g, '')
-        .trim();
+    const b64Config = process.env.GSC_CONFIG_B64 || '';
+    let b64Status = 'NOT_SET';
+    let b64ParseError = 'NONE';
+    let b64KeyTest = 'PENDING';
 
-    const formattedKey = `-----BEGIN PRIVATE KEY-----\n${base64Body.match(/.{1,64}/g)?.join('\n')}\n-----END PRIVATE KEY-----\n`;
+    if (b64Config) {
+        b64Status = 'SET';
+        try {
+            const decoded = Buffer.from(b64Config, 'base64').toString('utf8');
+            const gscConfig = JSON.parse(decoded);
+            const privateKey = gscConfig.private_key;
 
-    let pkcs8Error = 'NONE';
-    let autoError = 'NONE';
+            // 🚀 標準化處理
+            const base64Body = privateKey
+                .replace(/-----BEGIN PRIVATE KEY-----/g, '')
+                .replace(/-----END PRIVATE KEY-----/g, '')
+                .replace(/\\n/g, '')
+                .replace(/\s+/g, '')
+                .trim();
 
-    // 測試 1: PKCS#8
-    try {
-        crypto.createPrivateKey({
-            key: formattedKey,
-            format: 'pem',
-            type: 'pkcs8'
-        });
-    } catch (e: any) {
-        pkcs8Error = e.message;
-    }
+            const formattedKey = `-----BEGIN PRIVATE KEY-----\n${base64Body.match(/.{1,64}/g)?.join('\n')}\n-----END PRIVATE KEY-----\n`;
 
-    // 測試 2: Auto
-    try {
-        crypto.createPrivateKey(formattedKey);
-    } catch (e: any) {
-        autoError = e.message;
+            try {
+                crypto.createPrivateKey(formattedKey);
+                b64KeyTest = 'SUCCESS (Parsed OK)';
+            } catch (e: any) {
+                b64KeyTest = 'FAILED: ' + e.message;
+            }
+
+        } catch (e: any) {
+            b64ParseError = e.message;
+        }
     }
 
     return NextResponse.json({
-        rawLength: rawKey.length,
-        base64Length: base64Body.length,
-        pkcs8Error,
-        autoError,
-        firstChars: formattedKey.substring(0, 50),
-        lastChars: formattedKey.substring(formattedKey.length - 50),
+        b64Status,
+        b64ParseError,
+        b64KeyTest,
+        legacyKeyLength: (process.env.GSC_PRIVATE_KEY || '').length,
         serverTime: new Date().toISOString()
     });
 }

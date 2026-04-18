@@ -55,9 +55,9 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ success: false, error: 'Auth Failed: ' + authErr.message }, { status: 500 });
         }
 
-        // 2. Query Search Console (Top 10 Keywords - Last 30 Days)
+        // 2. Query Search Console (Top Keywords - Last 90 Days to account for lag)
         const endDate = new Date().toISOString().split('T')[0];
-        const startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+        const startDate = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
         try {
             const gscRes = await axios.post(
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
                     startDate,
                     endDate,
                     dimensions: ['query'],
-                    rowLimit: 12,
+                    rowLimit: 20,
                     aggregationType: 'auto'
                 },
                 {
@@ -103,7 +103,8 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ 
                 success: true, 
                 count: statsToInsert.length,
-                keywords: statsToInsert.slice(0, 3).map((s: any) => s.keyword)
+                dateRange: `${startDate} to ${endDate}`,
+                message: rows.length > 0 ? `成功同步 ${rows.length} 筆關鍵字` : 'Google 未回傳任何數據 (可能尚無搜尋流量或處於數據延遲期)'
             });
 
         } catch (gscErr: any) {

@@ -5,8 +5,14 @@ import axios from 'axios';
 
 export async function POST(req: NextRequest) {
     try {
-        const clientEmail = process.env.GSC_CLIENT_EMAIL;
-        const privateKey = process.env.GSC_PRIVATE_KEY?.replace(/\\n/g, '\n'); 
+        const rawKey = process.env.GSC_PRIVATE_KEY || '';
+        const privateKey = rawKey
+            .replace(/\\n/g, '\n')      // 處理轉義的 \n
+            .replace(/\n /g, '\n')      // 處理可能的縮排空白
+            .replace(/"/g, '')          // 移除誤加的引號
+            .replace(/\\r/g, '')        // 移除 Windows 式換行回車
+            .trim();                    // 移除前後多餘空格
+
         const siteUrl = 'https://bot.ycideas.com';
 
         if (!clientEmail || !privateKey) {

@@ -31,11 +31,10 @@ export async function getGoogleAccessToken(
     const sign = crypto.createSign('RSA-SHA256');
     sign.update(signatureInput);
     
-    // 🚀 使用 KeyObject 以提高 PEM 格式相容性，防止 DECODER 錯誤
+    // 🚀 使用 KeyObject 並讓 Node.js 自動偵測格式 (PKCS#1 或 PKCS#8)
     const key = crypto.createPrivateKey({
         key: privateKey,
-        format: 'pem',
-        type: 'pkcs8'
+        format: 'pem'
     });
     const signature = sign.sign(key, 'base64url');
 

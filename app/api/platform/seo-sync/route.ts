@@ -7,10 +7,19 @@ export async function POST(req: NextRequest) {
     try {
         const clientEmail = process.env.GSC_CLIENT_EMAIL;
         const rawKey = process.env.GSC_PRIVATE_KEY || '';
-        const privateKey = rawKey
-            .replace(/\\n/g, '\n')      // 處理轉義的 \n
-            .replace(/"/g, '')          // 移除誤加的引號
-            .trim();                    // 移除前後多餘空格
+        
+        // 🚀 暴力標準化：移除所有現有的標籤與空白，只留下 Base64 核心
+        // 注意：不論用戶貼入的是 \\n 還是真實換行，全部過濾掉
+        const base64Body = rawKey
+            .replace(/-----BEGIN PRIVATE KEY-----/g, '')
+            .replace(/-----END PRIVATE KEY-----/g, '')
+            .replace(/\\n/g, '')
+            .replace(/\s+/g, '')
+            .replace(/"/g, '')
+            .trim();
+
+        // 重新拼接成完美的 64 字元換行 PKCS#8 格式
+        const privateKey = `-----BEGIN PRIVATE KEY-----\n${base64Body.match(/.{1,64}/g)?.join('\n')}\n-----END PRIVATE KEY-----\n`;
 
         const siteUrl = 'https://bot.ycideas.com';
 

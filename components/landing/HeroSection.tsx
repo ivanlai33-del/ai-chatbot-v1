@@ -177,7 +177,7 @@ export default function HeroSection({
 
                      <div className="hidden md:flex items-center gap-8 text-blue-100/40 text-[11px] font-black uppercase tracking-[0.5em] mt-4">
                         <div className="flex items-center gap-2">
-                             <img src="https://bot.ycideas.com/Lai%20Logo.svg" className="w-4 h-4 grayscale opacity-50" alt="YC Ideas AI 智能店長團隊" />
+                             <img src="https://bot.ycideas.com/lai_logo.svg" className="w-4 h-4 grayscale opacity-50" alt="YC Ideas AI 智能店長團隊" />
                              <span>Powered by YC Ideas</span>
                         </div>
                         <div className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />

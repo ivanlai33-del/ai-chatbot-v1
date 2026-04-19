@@ -18,7 +18,7 @@ export default function LandingHeader({ isLoggedIn, onAction, onOpenChat }: Land
                 {/* Logo */}
                 <div className="flex items-center gap-3 group cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
                     <img 
-                        src="/Lai%20Logo_3.svg" 
+                        src="/lai_logo_3.svg" 
                         alt="Lai Logo" 
                         className="w-10 h-10 object-contain group-hover:scale-110 transition-transform drop-shadow-md"
                     />

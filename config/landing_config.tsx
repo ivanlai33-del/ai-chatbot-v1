@@ -91,7 +91,7 @@ export const landingJsonLd = [
         name: 'AI 智能店長 Pro',
         alternateName: 'AI 店長 Pro',
         url: 'https://bot.ycideas.com',
-        logo: 'https://bot.ycideas.com/Lai%20Logo.svg',
+        logo: 'https://bot.ycideas.com/lai_logo.svg',
         image: 'https://bot.ycideas.com/og-image.jpg',
         sameAs: [
             'https://www.facebook.com/ycideas',

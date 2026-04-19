@@ -929,7 +929,7 @@ export default function UnifiedBillingView() {
                                 <div className="space-y-3">
                                     <div className="flex items-center gap-3 bg-white p-3 rounded-2xl border border-slate-100 shadow-sm group hover:border-emerald-200 transition-all">
                                         <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center overflow-hidden border border-slate-100">
-                                            <img src="/Lai Logo_3.svg" alt="Lai Logo" className="w-8 h-8 object-contain" />
+                                            <img src="/lai_logo_3.svg" alt="Lai Logo" className="w-8 h-8 object-contain" />
                                         </div>
                                         <div className="flex flex-col">
                                             <span className="text-[10px] font-black text-slate-400">你的AI客服</span>

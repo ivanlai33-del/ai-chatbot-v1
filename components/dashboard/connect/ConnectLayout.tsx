@@ -36,7 +36,7 @@ export default function ConnectLayout({ onBack, title, subtitle, children, right
                     
                     <div className="flex items-center gap-4 text-slate-900">
                         <div className="w-[40px] h-[40px] relative drop-shadow-sm">
-                            <Image src="/Lai Logo_4.svg" alt="Logo" fill />
+                            <Image src="/lai_logo_4.svg" alt="Logo" fill />
                         </div>
                         <div className="flex flex-col">
                             <h1 className="font-black text-[22px] tracking-tight leading-none">{title}</h1>

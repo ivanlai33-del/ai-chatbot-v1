@@ -116,7 +116,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                 isAi ? "" : "bg-zinc-200"
             )}>
                 {isAi ? (
-                    <img src="/Lai Logo.svg" className="w-[50px] h-[50px] object-contain" alt="Lai Logo" />
+                    <img src="/lai_logo.svg" className="w-[50px] h-[50px] object-contain" alt="Lai Logo" />
                 ) : (
                     lineUserPicture ? (
                         <img src={lineUserPicture} className="w-full h-full object-cover" alt="User" />

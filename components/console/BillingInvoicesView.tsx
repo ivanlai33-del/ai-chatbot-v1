@@ -125,7 +125,7 @@ export default function BillingInvoicesView() {
                                         <td className="px-8 py-6">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 rounded-xl bg-slate-800 overflow-hidden shrink-0 border border-white/10 group-hover:scale-110 transition-transform">
-                                                    <img src={user.line_user_picture || '/Lai Logo.svg'} className="w-full h-full object-cover" alt="User" />
+                                                    <img src={user.line_user_picture || '/lai_logo.svg'} className="w-full h-full object-cover" alt="User" />
                                                 </div>
                                                 <div className="overflow-hidden">
                                                     <p className="text-sm font-black text-slate-200 truncate">{user.line_user_name}</p>

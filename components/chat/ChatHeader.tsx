@@ -58,7 +58,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
             <div className="px-6 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-[#06C755] rounded-full flex items-center justify-center shadow-lg shadow-green-500/20">
-                        <img src="/Lai Logo.svg" className="w-7 h-7" alt="Logo" />
+                        <img src="/lai_logo.svg" className="w-7 h-7" alt="Logo" />
                     </div>
                     <div>
                         <h1 className="font-black text-zinc-900 text-[17px] leading-tight text-nowrap">官方品牌專屬智能店長</h1>

@@ -103,7 +103,7 @@ export default function TopNav({
             <div className="px-[75px] h-full flex items-center justify-between max-w-[1900px] mx-auto w-full">
                 <div className="flex items-center gap-5">
                     <div className="w-[50px] h-[50px] relative drop-shadow-sm">
-                        <Image src="/Lai Logo_4.svg" alt="Lai Logo" fill className="object-contain" />
+                        <Image src="/lai_logo_4.svg" alt="Lai Logo" fill className="object-contain" />
                     </div>
                     <div className="flex flex-col">
                         <span className="font-black text-[22px] tracking-tight text-slate-900 leading-none">AI 店長智庫</span>

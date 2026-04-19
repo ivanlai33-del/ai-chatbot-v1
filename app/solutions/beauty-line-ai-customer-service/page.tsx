@@ -11,6 +11,7 @@ export default function BeautySolutionPage() {
         <IndustrySolutionLayout 
             title="美容店專用 LINE 官方帳號 AI 客服"
             subtitle="美容產業"
+            backgroundImage="/images/backgrounds/bg-beauty-service.svg"
             description="如果您的美容工作室每天都在回覆療程差異、價格、可預約時段、注意事項與地址資訊，AI 智能店長可以先替您接住這些高重複訊息。"
             painPoints={[
                 { title: '療程差異詢問', desc: '顧客常問「XX 療程跟 YY 療程差在哪？」需要詳盡解釋。' },

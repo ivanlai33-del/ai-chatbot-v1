@@ -11,6 +11,7 @@ export default function RetailSolutionPage() {
         <IndustrySolutionLayout 
             title="零售品牌專用 LINE AI 客服與導購機器人"
             subtitle="零售品牌"
+            backgroundImage="/images/backgrounds/bg-retail-service.svg"
             description="對零售品牌來說，LINE 官方帳號不只是客服工具，更是成交入口。AI 智能店長能幫您自動回覆商品規格、尺寸建議與運送規則。"
             painPoints={[
                 { title: '尺寸選購建議', desc: '顧客常問「我身高 160 體重 50 要穿幾號？」需要即時回應。' },

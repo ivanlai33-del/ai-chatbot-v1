@@ -11,6 +11,7 @@ export default function RestaurantSolutionPage() {
         <IndustrySolutionLayout 
             title="餐飲業專用 LINE AI 客服與自動接單助手"
             subtitle="餐飲業"
+            backgroundImage="/images/backgrounds/bg-restaurant-service.svg"
             description="餐飲店家最怕的不是沒客人，而是顧客想問菜單、訂位、外帶、營業時間時沒人回。AI 智能店長可讓 LINE 官方帳號 24 小時接住所有詢問。"
             painPoints={[
                 { title: '營業時間與店休查詢', desc: '今天有沒有開？最後收客到幾點？這些問題反覆詢問頻率極高。' },

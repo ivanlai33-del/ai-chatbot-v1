@@ -22,6 +22,7 @@ interface IndustrySolutionProps {
     beforeAfter: { before: string; after: string };
     faqs: FAQ[];
     ctaTitle?: string;
+    backgroundImage?: string;
 }
 
 export default function IndustrySolutionLayout({
@@ -33,13 +34,31 @@ export default function IndustrySolutionLayout({
     scenarios,
     beforeAfter,
     faqs,
-    ctaTitle = '立即預約 AI 智能店長，提升經營效率'
+    ctaTitle = '立即預約 AI 智能店長，提升經營效率',
+    backgroundImage
 }: IndustrySolutionProps) {
     return (
-        <div className="bg-[#0F172A] min-h-screen text-white font-sans selection:bg-emerald-500/30">
-            <LandingHeader isLoggedIn={false} onAction={() => window.location.href = '/api/auth/line'} onOpenChat={() => window.location.href = '/chat'} />
-            
-            <main className="pt-32 pb-20">
+        <div className="min-h-screen text-white font-sans selection:bg-emerald-500/30 relative overflow-x-hidden">
+            {/* 🌑 Solid Base Background Color */}
+            <div className="fixed inset-0 bg-[#0F172A] -z-20" />
+
+            {/* 🌌 Industry-Specific Background Overlay (Behind everything) */}
+            {backgroundImage && (
+                <div 
+                    className="fixed inset-0 z-[-10] pointer-events-none opacity-100"
+                    style={{ 
+                        backgroundImage: `url('${backgroundImage}')`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundRepeat: 'no-repeat'
+                    }}
+                />
+            )}
+
+            <div className="relative z-10">
+                <LandingHeader isLoggedIn={false} onAction={() => window.location.href = '/api/auth/line'} onOpenChat={() => window.location.href = '/chat'} />
+                
+                <main className="pt-32 pb-20">
                 {/* Hero section */}
                 <section className="px-6 mb-32">
                     <div className="max-w-5xl mx-auto text-center">
@@ -164,6 +183,7 @@ export default function IndustrySolutionLayout({
             </main>
 
             <LandingFooter variant="desktop" />
+            </div>
         </div>
     );
 }

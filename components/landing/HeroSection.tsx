@@ -14,19 +14,19 @@ const BACKGROUNDS = [
 
 const HERO_COPY_SETS = [
     {
-        title: <>LINE AI 機器人：<br />24 小時自動回覆與智慧接單助手</>,
-        subtitle: '專為實體店面與個人品牌設計，3 分鐘開通 LINE 官方帳號 AI 客服。結合最新的 AI 技術，精準回答客戶問題，減少 60% 重複諮詢，讓生意全天候不中斷。',
-        tags: ['#LINEAI機器人', '#自動回覆系統', '#AI客服', '#LINE經營工具']
+        title: <>LINE AI 機器人：<br />24 小時智慧回覆與對話助手</>,
+        subtitle: '專為實體店面與個人品牌設計，3 分鐘開通 LINE 官方帳號 AI 客服。結合最新的 AI 技術，精準回答客戶問題，有效減少大量重複諮詢，讓服務全天候不中斷。',
+        tags: ['#LINEAI機器人', '#智慧回覆系統', '#AI客服', '#LINE經營工具']
     },
     {
-        title: <>LINE 自動接單與 AI 客服系統：<br />工作室與實體店的數位店長</>,
-        subtitle: '告別漏接訊息！透過 AI 智慧引導下單，提升官方帳號轉換率。低門檻、免寫程式，讓小品牌也能擁有大企業等級的自動化銷售與售後服務。',
-        tags: ['#LINE自動接單', '#數位轉型', '#實體店面營收', '#官方帳號經營']
+        title: <>LINE 智慧導購與 AI 客服系統：<br />工作室與實體店的數位助手</>,
+        subtitle: '告別漏接訊息！透過 AI 智慧引導對話，提升官方帳號服務品質。低門檻、免寫程式，讓小品牌也能擁有專業等級的自動化服務體驗。',
+        tags: ['#LINE智慧導購', '#數位轉型', '#實體店面助攻', '#官方帳號經營']
     },
     {
-        title: <>打造頂級 LINE AI 店長：<br />全自動化客服與商品導購方案</>,
-        subtitle: '業界領先的 LINE 官方帳號 AI 解決方案。從智慧商品介紹到 24/7 自動回覆，協助您的品牌建立專業形象，節省人力成本並最大化每一筆詢問的成交率。',
-        tags: ['#AI店長', '#SaaS服務', '#LINE行銷自動化', '#智慧導購']
+        title: <>打造專業 LINE AI 客服：<br />智慧化對話與商品導購方案</>,
+        subtitle: '業界領先的 LINE 官方帳號 AI 解決方案。從智慧商品介紹到 24/7 自動回覆，協助您的品牌建立專業形象，節省人力成本並優化客戶對話體驗。',
+        tags: ['#AI客服', '#SaaS服務', '#LINE行銷輔助', '#智慧導購']
     }
 ];
 
@@ -90,7 +90,7 @@ export default function HeroSection({
                         {bgImage ? (
                             <Image
                                 src={bgImage}
-                                alt="LINE AI 助手 - 自動回覆與接單系統"
+                                alt="AI 智能店長 Pro - LINE 官方帳號 API 自動銷售與客服助手"
                                 fill
                                 className="object-cover"
                                 priority
@@ -137,7 +137,7 @@ export default function HeroSection({
                             ))}
                         </div>
                         <div className="flex flex-wrap justify-center gap-4 mt-4 opacity-70">
-                            {['評分 4.9/5', '已服務 80+ 店家', '處理 10 萬+ 則訊息'].map((badge, bi) => (
+                            {['穩定運作中', '眾多商家見證', '處理大量訊息'].map((badge, bi) => (
                                 <div key={bi} className="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-200 text-[10px] font-black tracking-wider backdrop-blur-md">
                                     ★ {badge}
                                 </div>
@@ -177,7 +177,7 @@ export default function HeroSection({
 
                      <div className="hidden md:flex items-center gap-8 text-blue-100/40 text-[11px] font-black uppercase tracking-[0.5em] mt-4">
                         <div className="flex items-center gap-2">
-                             <img src="https://bot.ycideas.com/Lai Logo.svg" className="w-4 h-4 grayscale opacity-50" alt="YC Ideas" />
+                             <img src="https://bot.ycideas.com/Lai%20Logo.svg" className="w-4 h-4 grayscale opacity-50" alt="YC Ideas AI 智能店長團隊" />
                              <span>Powered by YC Ideas</span>
                         </div>
                         <div className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />

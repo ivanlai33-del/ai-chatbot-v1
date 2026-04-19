@@ -86,7 +86,7 @@ export default function SolutionIndustryShowcase() {
                             {/* Background Image */}
                             <Image
                                 src={sol.image}
-                                alt={sol.title}
+                                alt={`AI 智能店長 ${sol.title} - ${sol.desc.slice(0, 30)}...`}
                                 fill
                                 className="object-cover group-hover:scale-110 transition-transform duration-700 brightness-[0.4] group-hover:brightness-[0.6]"
                             />

@@ -61,7 +61,7 @@ export default function ScenarioShowcase() {
                             <div className="relative aspect-[3/4] overflow-hidden">
                                 <Image
                                     src={s.image}
-                                    alt={s.title}
+                                    alt={`AI 智能店長應用情境：${s.title.replace('\n', ' ')}`}
                                     fill
                                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                                 />

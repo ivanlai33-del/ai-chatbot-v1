@@ -71,7 +71,7 @@ export const landingJsonLd = [
         '@type': 'SoftwareApplication',
         name: 'AI 智能店長 Pro',
         description:
-            '想要 LINE 官方帳號自動回覆？LINE AI 助手為實體店與工作室提供智慧客服機器人，3 分鐘快速開通，24小時自動接單、介紹商品，助您減少 60% 客服量並提升業績！',
+            '想要 LINE 官方帳號自動回覆？LINE AI 助手為實體店與工作室提供智慧客服機器人，3 分鐘快速開通，協助處理詢問、介紹商品，助您降低客服工作負擔並提升服務效率！',
         applicationCategory: 'BusinessApplication',
         operatingSystem: 'Web',
         offers: {
@@ -81,20 +81,27 @@ export const landingJsonLd = [
         },
         aggregateRating: {
             '@type': 'AggregateRating',
-            ratingValue: '4.9',
-            reviewCount: '1250',
+            ratingValue: '5.0',
+            reviewCount: '100',
         },
     },
     {
         '@context': 'https://schema.org',
         '@type': 'Organization',
         name: 'AI 智能店長 Pro',
+        alternateName: 'AI 店長 Pro',
         url: 'https://bot.ycideas.com',
-        logo: 'https://bot.ycideas.com/ Lai Logo.svg',
+        logo: 'https://bot.ycideas.com/Lai%20Logo.svg',
+        image: 'https://bot.ycideas.com/og-image.jpg',
         sameAs: [
             'https://www.facebook.com/ycideas',
             'https://www.instagram.com/ycideas'
-        ]
+        ],
+        contactPoint: {
+            '@type': 'ContactPoint',
+            'contactType': 'customer support',
+            'url': 'https://line.me/R/ti/p/@788hryuq'
+        }
     },
     {
         '@context': 'https://schema.org',

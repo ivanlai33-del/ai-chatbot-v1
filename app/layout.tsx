@@ -20,7 +20,7 @@ export const metadata: Metadata = {
         default: "AI 智能店長 Pro | LINE 官方帳號 API 自動銷售與客服助手",
         template: "%s | LINE 智能店長 Pro"
     },
-    description: "全台灣極速開通的 AI 智能店長。專為 LINE 官方帳號打造，整合 GPT-4o 技術，具備 24H 自動銷售、智慧客服與 RAG 智庫學習。讓您的 LINE OA 轉型為自動成交中心！",
+    description: "全台灣快速開通的 AI 智能店長。專為 LINE 官方帳號打造，整合 GPT-4o 技術，具備 24H 智慧客服與 RAG 智庫對話。讓您的 LINE OA 轉型為更高效的服務入口！",
     keywords: [
         'LINE AI 機器人', 'LINE 官方帳號自動化', 'AI 店長', 'LINE 客服機器人', 
         '智能銷售助手', 'LINE 數位轉型', '自動接單機器人', 'LINE CRM 系統',
@@ -30,13 +30,19 @@ export const metadata: Metadata = {
     verification: {
         google: "lAhGP3I12r-WLoAUaKxHn5R2BherC51FqCKoZcMAgBA",
     },
+    themeColor: "#020617",
+    appleWebApp: {
+        capable: true,
+        statusBarStyle: "default",
+        title: "AI 智能店長 Pro",
+    },
     openGraph: {
         type: "website",
         locale: "zh_TW",
         url: "https://bot.ycideas.com",
         siteName: "AI 智能店長 Pro",
         title: '【官方帳號老專屬】AI 智能店長 - 三分鐘極速開通，24H 自動成交',
-        description: '免 API Key，一鍵注入 AI 靈魂。24 小時幫您介紹商品、處理瑣碎客服、主動引導轉單。比請小編便宜，效率提升 300%！',
+        description: '三分鐘完成 AI 串接。24 小時幫您介紹商品、處理瑣碎客服、引導潛在客戶轉單。顯著提升回覆效率，降低人力負擔。',
         images: [
             {
                 url: "/og-image.jpg",

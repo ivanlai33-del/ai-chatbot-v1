@@ -30,6 +30,13 @@ const HERO_COPY_SETS = [
     }
 ];
 
+interface HeroSectionProps {
+    isLoggedIn: boolean;
+    onAction: () => void;
+    onOpenChat: () => void;
+    onShowPricing: () => void;
+}
+
 export default function HeroSection({ 
     isLoggedIn, 
     onAction, 

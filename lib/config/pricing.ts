@@ -511,7 +511,7 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
 
 // ─── 輔助函式（直接從定價表計算，不需要手動維護）──────────
 export const PLAN_IDS_ORDERED: PlanId[] = [
-  'free', 'starter', 'solo', 'growth', 'chain', 'flagship_lite', 'flagship_pro'
+  'starter', 'solo', 'growth', 'chain', 'flagship_lite', 'flagship_pro'
 ];
 
 /** 依 tier 數字取得方案 */

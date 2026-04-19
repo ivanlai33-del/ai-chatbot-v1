@@ -7,12 +7,12 @@ import { PRICING_PLANS } from '@/lib/config/pricing';
 
 export default function PricingComparison() {
     const plans = [
-        PRICING_PLANS.free,
         PRICING_PLANS.starter,
         PRICING_PLANS.solo,
         PRICING_PLANS.growth,
         PRICING_PLANS.chain,
-        PRICING_PLANS.flagship_lite
+        PRICING_PLANS.flagship_lite,
+        PRICING_PLANS.flagship_pro
     ];
 
     return (

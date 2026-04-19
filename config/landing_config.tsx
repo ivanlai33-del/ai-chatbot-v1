@@ -71,7 +71,7 @@ export const landingJsonLd = [
         '@type': 'SoftwareApplication',
         name: 'AI 智能店長 Pro',
         description:
-            '專為店長與企業打造的 LINE 官方帳號專用 AI 智能店長。提升 3 倍客服效率，支援商品導讀、智慧回訓、24H 自動成交，讓您的 LINE 帳號變成 24 小時不打烊的金牌銷售員。',
+            '想要 LINE 官方帳號自動回覆？LINE AI 助手為實體店與工作室提供智慧客服機器人，3 分鐘快速開通，24小時自動接單、介紹商品，助您減少 60% 客服量並提升業績！',
         applicationCategory: 'BusinessApplication',
         operatingSystem: 'Web',
         offers: {

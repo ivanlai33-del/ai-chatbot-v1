@@ -12,12 +12,23 @@ const BACKGROUNDS = [
     '/hero-bg13.jpeg', '/hero-bg14.jpeg', '/hero-bg15.jpeg', '/hero-bg16.jpeg'
 ];
 
-interface HeroSectionProps {
-    isLoggedIn: boolean;
-    onAction: () => void;
-    onOpenChat: () => void;
-    onShowPricing: () => void;
-}
+const HERO_COPY_SETS = [
+    {
+        title: <>LINE AI 機器人：<br />24 小時自動回覆與智慧接單助手</>,
+        subtitle: '專為實體店面與個人品牌設計，3 分鐘開通 LINE 官方帳號 AI 客服。結合最新的 AI 技術，精準回答客戶問題，減少 60% 重複諮詢，讓生意全天候不中斷。',
+        tags: ['#LINEAI機器人', '#自動回覆系統', '#AI客服', '#LINE經營工具']
+    },
+    {
+        title: <>LINE 自動接單與 AI 客服系統：<br />工作室與實體店的數位店長</>,
+        subtitle: '告別漏接訊息！透過 AI 智慧引導下單，提升官方帳號轉換率。低門檻、免寫程式，讓小品牌也能擁有大企業等級的自動化銷售與售後服務。',
+        tags: ['#LINE自動接單', '#數位轉型', '#實體店面營收', '#官方帳號經營']
+    },
+    {
+        title: <>打造頂級 LINE AI 店長：<br />全自動化客服與商品導購方案</>,
+        subtitle: '業界領先的 LINE 官方帳號 AI 解決方案。從智慧商品介紹到 24/7 自動回覆，協助您的品牌建立專業形象，節省人力成本並最大化每一筆詢問的成交率。',
+        tags: ['#AI店長', '#SaaS服務', '#LINE行銷自動化', '#智慧導購']
+    }
+];
 
 export default function HeroSection({ 
     isLoggedIn, 
@@ -26,13 +37,13 @@ export default function HeroSection({
     onShowPricing 
 }: HeroSectionProps) {
     const [bgImage, setBgImage] = useState<string>('');
+    const [copySet, setCopySet] = useState(HERO_COPY_SETS[0]);
     const [showContent, setShowContent] = useState(false);
     
-    // 🎭 滾動監測：隨著捲動，底稿變暗 (從 20% 變到 75% 黑)
+    // 🎭 滾動監測
     const { scrollY } = useScroll();
     const bgOverlayOpacity = useTransform(scrollY, [0, 800], [0.2, 0.75]);
 
-    // Animation Progress (0 = Expanded, 1 = Fully Collapsed)
     const rawProgress = useMotionValue(0);
     const smoothProgress = useSpring(rawProgress, {
         stiffness: 120,
@@ -40,30 +51,17 @@ export default function HeroSection({
         restDelta: 0.001
     });
 
-    // Glass Mappings
     const glassY = useTransform(smoothProgress, [0, 1], ['0%', '-100%']);
     const textY = useTransform(smoothProgress, [0.5, 1], ['0%', '-100%']);
     const glassOpacity = useTransform(smoothProgress, [0.8, 1], [1, 0]);
 
-    // 🎭 置頂召喚邏輯：維持展開狀態
     useEffect(() => {
         rawProgress.set(0); 
         setShowContent(true);
         setBgImage(BACKGROUNDS[Math.floor(Math.random() * BACKGROUNDS.length)]);
+        // 隨機選擇一組文案
+        setCopySet(HERO_COPY_SETS[Math.floor(Math.random() * HERO_COPY_SETS.length)]);
     }, [rawProgress]);
-
-    // Handle Wheel Event - Removed to keep content static as requested
-    /*
-    useEffect(() => {
-        const handleWheel = (e: WheelEvent) => {
-            const sensitivity = 0.002;
-            const delta = -e.deltaY * sensitivity; 
-            rawProgress.set(Math.min(Math.max(rawProgress.get() + delta, 0), 1));
-        };
-        window.addEventListener('wheel', handleWheel, { passive: true });
-        return () => window.removeEventListener('wheel', handleWheel);
-    }, [rawProgress]);
-    */
 
     return (
         <div className="relative z-10 min-h-screen flex flex-col overflow-hidden">
@@ -85,7 +83,7 @@ export default function HeroSection({
                         {bgImage ? (
                             <Image
                                 src={bgImage}
-                                alt="AI Background"
+                                alt="LINE AI 助手 - 自動回覆與接單系統"
                                 fill
                                 className="object-cover"
                                 priority
@@ -119,15 +117,21 @@ export default function HeroSection({
                             24/7 Automated Sales & Support
                         </div>
                          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-tight drop-shadow-[0_20px_50px_rgba(0,0,0,0.7)] animate-shimmer text-transparent bg-clip-text bg-gradient-to-b from-white to-blue-200">
-                            給實體店、工作室、小品牌的 LINE 官方帳號：<br />
-                            3 分鐘開通、客服量減半、詢問不漏接
+                            {copySet.title}
                         </h1>
                          <p className="max-w-4xl text-xl md:text-2xl text-blue-50/90 font-medium leading-relaxed drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]">
-                            專為 LINE 官方帳號打造的 AI 客服機器人，24 小時幫您自動回覆、介紹商品、引導下單，幫助中小企業減少 60% 重複客服工作並提升非營業時間的成交機會。
+                            {copySet.subtitle}
                         </p>
                         <div className="flex flex-wrap justify-center gap-4 mt-2">
+                            {copySet.tags.map((tag, ti) => (
+                                <div key={ti} className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-black tracking-wider backdrop-blur-md">
+                                    {tag}
+                                </div>
+                            ))}
+                        </div>
+                        <div className="flex flex-wrap justify-center gap-4 mt-4 opacity-70">
                             {['評分 4.9/5', '已服務 80+ 店家', '處理 10 萬+ 則訊息'].map((badge, bi) => (
-                                <div key={bi} className="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-200 text-xs font-black tracking-wider backdrop-blur-md">
+                                <div key={bi} className="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-200 text-[10px] font-black tracking-wider backdrop-blur-md">
                                     ★ {badge}
                                 </div>
                             ))}
@@ -158,7 +162,7 @@ export default function HeroSection({
                                  <button onClick={onAction}
                                     className="flex-1 flex items-center justify-center gap-3 bg-[#06C755] hover:bg-[#05b34c] text-white py-4 px-8 rounded-2xl font-black text-xl transition-all hover:scale-105 active:scale-95 shadow-[0_20px_50px_rgba(6,199,85,0.5)]"
                                 >
-                                    用 LINE 試玩 3 分鐘 (免費)
+                                    LINE賬號加入會員
                                 </button>
                             </>
                         )}

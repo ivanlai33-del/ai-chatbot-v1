@@ -37,7 +37,7 @@ const industries = [
 
 export default function IndustryFit() {
     return (
-        <section className="py-24 px-6 relative overflow-hidden bg-slate-900/40 backdrop-blur-xl border-t border-white/5">
+        <section className="py-24 px-6 relative z-30 overflow-hidden bg-slate-900/40 backdrop-blur-xl border-t border-white/5">
             <div className="max-w-7xl mx-auto">
                 <motion.div 
                     initial={{ opacity: 1, y: 0 }}

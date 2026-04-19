@@ -8,8 +8,9 @@ import LandingFeatures from '@/components/landing/LandingFeatures';
 import LandingFooter from '@/components/landing/LandingFooter';
 import FAQSection from '@/components/landing/FAQSection';
 import LandingSEOContent from '@/components/landing/LandingSEOContent';
-import TrustSignals from '@/components/landing/TrustSignals';
 import IndustryFit from '@/components/landing/IndustryFit';
+import SolutionIndustryShowcase from '@/components/landing/SolutionIndustryShowcase';
+import ScenarioShowcase from '@/components/landing/ScenarioShowcase';
 import CustomerReviews from '@/components/landing/CustomerReviews';
 import PricingComparison from '@/components/landing/PricingComparison';
 import { getPricingPlans } from '@/config/landing_config';
@@ -71,9 +72,9 @@ export default function LandingPageClient({ isLoggedInInit }: LandingPageClientP
             />
 
             {/* Downward Enhancement Layers */}
+            <SolutionIndustryShowcase />
             <IndustryFit />
-            
-            <TrustSignals />
+            <ScenarioShowcase />
 
             <LandingFeatures />
 

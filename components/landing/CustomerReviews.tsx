@@ -77,32 +77,7 @@ export default function CustomerReviews() {
                     ))}
                 </div>
 
-                {/* Simulated Screenshot Placeholder */}
-                <motion.div 
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                    className="mt-20 p-8 rounded-[48px] bg-slate-800 border border-white/10 flex flex-col items-center gap-8 shadow-2xl"
-                >
-                    <div className="text-center">
-                        <h3 className="text-2xl font-black text-white mb-2">真實對話模擬：AI 如何幫您成交？</h3>
-                        <p className="text-slate-400">透過深度智庫學習，精準回答每一個刁鑽問題</p>
-                    </div>
-                    <div className="w-full max-w-2xl aspect-[9/16] md:aspect-video rounded-3xl bg-black/40 border border-white/10 relative overflow-hidden group">
-                        <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="text-center p-10">
-                                <div className="text-slate-600 font-black text-4xl mb-4 opacity-50">真實截圖</div>
-                                <div className="text-slate-700 text-sm tracking-[0.5em] uppercase font-black opacity-30">馬賽克處理保護客戶隱私</div>
-                            </div>
-                        </div>
-                        {/* Simulated message bubbles */}
-                        <div className="absolute inset-x-8 top-12 space-y-4 opacity-20">
-                            <div className="w-2/3 h-12 bg-white/20 rounded-2xl rounded-tl-none" />
-                            <div className="w-3/4 h-16 bg-emerald-500/20 rounded-2xl rounded-tr-none ml-auto" />
-                            <div className="w-1/2 h-12 bg-white/20 rounded-2xl rounded-tl-none" />
-                        </div>
-                    </div>
-                </motion.div>
+
             </div>
         </section>
     );

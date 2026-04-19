@@ -51,23 +51,27 @@ const features = [
 
 export default function LandingFeatures() {
     return (
-        <section className="py-24 px-6 relative overflow-hidden">
-            <div className="max-w-7xl mx-auto relative z-10">
+        <section className="py-32 px-6 relative overflow-hidden z-20">
+            {/* 🌌 Background Atmosphere for the dark theme */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-emerald-500/10 rounded-full blur-[150px] -z-10" />
+            
+            <div className="max-w-7xl mx-auto relative z-30">
                 <div className="text-center mb-16">
-                    <motion.h2 
+                    <motion.div
                         initial={{ opacity: 1, y: 0 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="text-3xl md:text-5xl font-bold text-white mb-6 drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]"
+                        className="inline-block px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-[0.4em] mb-6"
+                    >
+                        Core Advantages
+                    </motion.div>
+                    <motion.h2 
+                        initial={{ opacity: 1 }}
+                        className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tighter"
                     >
                         老闆最愛的 <span className="text-emerald-400">AI 智能店長</span>
                     </motion.h2>
                     <motion.p 
-                        initial={{ opacity: 1, y: 0 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.1 }}
-                        className="text-white max-w-2xl mx-auto text-xl font-bold drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] leading-relaxed tracking-wide"
+                        initial={{ opacity: 1 }}
+                        className="text-slate-200 max-w-2xl mx-auto text-xl font-bold leading-relaxed tracking-wide"
                     >
                         不只是客服，更是您的 24 小時金牌店長。一鍵串接，讓您的 LINE 官方帳號瞬間升級。
                     </motion.p>
@@ -78,35 +82,26 @@ export default function LandingFeatures() {
                         <motion.div
                             key={i}
                             initial={{ opacity: 1, y: 0 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: i * 0.1 }}
-                            className="p-10 rounded-[40px] bg-white/5 border border-white/10 backdrop-blur-xl shadow-2xl hover:bg-white/10 transition-all group overflow-hidden relative"
+                            whileHover={{ y: -10, transition: { duration: 0.3 } }}
+                            className="p-10 rounded-[48px] bg-white/70 backdrop-blur-xl border-[3px] border-white/50 shadow-[0_25px_50px_rgba(0,0,0,0.3),0_0_20px_rgba(255,255,255,0.6)_inset] transition-all group overflow-hidden relative"
                         >
-                            {/* 💎 玻璃邊緣高光 (Static Border Highlight) */}
-                            <div className="absolute inset-0 rounded-[40px] border border-white/20 pointer-events-none" />
+                            {/* ✨ Hover Light Reflection Effect */}
+                            <div className="absolute -inset-full bg-gradient-to-r from-transparent via-white/30 to-transparent rotate-45 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none" />
                             
-                            {/* ✨ 玻璃掃光動畫 (Hover Light Scan) */}
-                            <div className="absolute -inset-full bg-gradient-to-r from-transparent via-white/20 to-transparent rotate-45 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none" />
-                            
-                            <motion.div 
-                                whileHover={{ scale: 1.15, rotate: 5 }}
-                                className={`${f.bg} w-16 h-16 rounded-[22px] flex items-center justify-center mb-8 shadow-lg ring-4 ring-white/50`}
-                            >
+                            <div className={`${f.bg} w-16 h-16 rounded-[24px] flex items-center justify-center mb-8 shadow-lg ring-4 ring-white/30`}>
                                 <f.icon className={`w-8 h-8 ${f.color}`} />
-                            </motion.div>
+                            </div>
                             
-                            <h3 className="text-[26px] font-black text-white mb-5 tracking-tight group-hover:text-emerald-400 transition-colors">{f.title}</h3>
-                            <p className="text-slate-200 leading-relaxed font-bold text-base group-hover:text-white transition-colors">
+                            <h3 className="text-[26px] font-black text-slate-900 mb-5 tracking-tight group-hover:text-emerald-700 transition-colors">
+                                {f.title}
+                            </h3>
+                            <p className="text-slate-700 leading-relaxed font-black text-base">
                                 {f.desc}
                             </p>
                         </motion.div>
                     ))}
                 </div>
             </div>
-            
-            {/* Background elements */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-emerald-500/5 rounded-full blur-[120px] -z-10" />
         </section>
     );
 }

@@ -74,9 +74,8 @@ export default function LandingPageClient({ isLoggedInInit }: LandingPageClientP
             {/* Downward Enhancement Layers */}
             <SolutionIndustryShowcase />
             <IndustryFit />
-            <ScenarioShowcase />
-
             <LandingFeatures />
+            <ScenarioShowcase />
 
             <CustomerReviews />
 

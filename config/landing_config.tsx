@@ -123,15 +123,63 @@ export const landingJsonLd = [
                 name: 'AI 智能店長需要自己申請 OpenAI API Key 嗎？',
                 acceptedAnswer: {
                     '@type': 'Answer',
-                    text: '不需要。AI 智能店長 Pro 為一站式 SaaS 服務，已內建高性能 AI 模型，老闆無需自行申請複雜的技術金鑰。'
+                    text: '不需要。AI 智能店長 Pro 採用 SaaS 模式，店家不必自行處理複雜的 API 串接或模型設定，就能快速開通 LINE 官方帳號 AI 客服。'
                 }
             },
             {
                 '@type': 'Question',
-                name: '可以教 AI 認識我的店內商品嗎？',
+                name: '可以教 AI 認識我的商品與服務內容嗎？',
                 acceptedAnswer: {
                     '@type': 'Answer',
-                    text: '可以。您可以透過後台直接貼上官網網址或上傳 PDF 文件，AI 會自動學習並轉化為智庫內容，精準回答客戶關於商品的問題。'
+                    text: '可以。您可以整理官網、商品介紹、價目表、常見問題、PDF 文件或店內說明，系統會把這些資訊轉成 AI 可使用的知識內容，讓回覆更貼近您的品牌與商品。'
+                }
+            },
+            {
+                '@type': 'Question',
+                name: 'LINE AI 客服可以回覆哪些問題？',
+                acceptedAnswer: {
+                    '@type': 'Answer',
+                    text: '常見像是價格、規格、商品差異、營業時間、地址、預約方式、運費、付款方式、活動內容與初步購買引導，都很適合交給 AI 先處理。'
+                }
+            },
+            {
+                '@type': 'Question',
+                name: '如果 AI 不會回答，可以轉給真人嗎？',
+                acceptedAnswer: {
+                    '@type': 'Answer',
+                    text: '可以。實務上最好的做法不是讓 AI 取代所有客服，而是由 AI 處理高重複問題，再把需要成交、客訴、特殊案例或人工判斷的對話交給真人。'
+                }
+            },
+            {
+                '@type': 'Question',
+                name: '適合哪些產業導入？',
+                acceptedAnswer: {
+                    '@type': 'Answer',
+                    text: '特別適合美容、零售、餐飲、預約型服務、課程顧問與其他高度依賴 LINE 官方帳號接客的中小企業。'
+                }
+            },
+            {
+                '@type': 'Question',
+                name: '導入 LINE 官方帳號 AI 客服要多久？',
+                acceptedAnswer: {
+                    '@type': 'Answer',
+                    text: '若資料齊全，導入速度通常會比傳統客製開發快很多，因為 SaaS 型工具能先從標準化功能快速上線，再逐步優化知識內容與對話流程。'
+                }
+            },
+            {
+                '@type': 'Question',
+                name: 'AI 智能店長和 LINE 內建 AI 聊天機器人有什麼不同？',
+                acceptedAnswer: {
+                    '@type': 'Answer',
+                    text: 'LINE 官方帳號近年已推出內建 AI 聊天機器人功能。若店家需要更完整的品牌語氣調整、知識庫管理、導購流程與方案彈性，通常會考慮 AI 智能店長 Pro。'
+                }
+            },
+            {
+                '@type': 'Question',
+                name: '中小企業適合先怎麼開始？',
+                acceptedAnswer: {
+                    '@type': 'Answer',
+                    text: '最好的做法是先鎖定最常見、最重複、最耗時的客服問題，先從小規模試辦開始，驗證能否減少訊息處理時間、提高回覆率，再逐步擴充。'
                 }
             }
         ]

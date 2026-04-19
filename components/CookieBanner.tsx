@@ -10,8 +10,8 @@ export default function CookieBanner() {
     useEffect(() => {
         const consent = localStorage.getItem('cookie_consent');
         if (!consent) {
-            // 延遲一點顯示，增加驚喜感
-            const timer = setTimeout(() => setIsVisible(true), 1500);
+            // 延遲顯示，減少進站時的干擾
+            const timer = setTimeout(() => setIsVisible(true), 15000);
             return () => clearTimeout(timer);
         }
     }, []);

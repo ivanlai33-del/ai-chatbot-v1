@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Mail, ShieldCheck, CreditCard, LifeBuoy, X } from 'lucide-react';
+import { Mail, ShieldCheck, CreditCard, LifeBuoy, X, Target } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 import { PRICING_PLANS } from '@/lib/config/pricing';
 
 interface LegalModalProps {
@@ -53,7 +54,7 @@ export default function LandingFooter({ isLight = false, variant = 'auto' }: Lan
     const isDesktopLayout = variant === 'desktop';
 
     const textPrimary = isLight ? 'text-slate-900' : 'text-white';
-    const textSecondary = isLight ? 'text-slate-500' : 'text-slate-400';
+    const textSecondary = isLight ? 'text-slate-500' : 'text-slate-200';
     const borderColor = isLight ? 'border-slate-800/10' : 'border-white/20';
     const brandColor = isLight ? 'text-emerald-700' : 'text-emerald-400';
     const brandBg = isLight ? 'bg-emerald-500/15' : 'bg-emerald-500/10';
@@ -112,13 +113,28 @@ export default function LandingFooter({ isLight = false, variant = 'auto' }: Lan
             )
         },
         {
+            id: 'solutions',
+            icon: Target,
+            title: '產業別解決方案',
+            content: (
+                <div className={`space-y-2 text-[15px] ${textSecondary}`}>
+                    <Link href="/solutions/beauty-line-ai-customer-service" className="block hover:text-emerald-400 transition-colors">美容產業專用 AI 客服</Link>
+                    <Link href="/solutions/retail-line-ai-customer-service" className="block hover:text-emerald-400 transition-colors">零售品牌專用 AI 導購</Link>
+                    <Link href="/solutions/restaurant-line-ai-assistant" className="block hover:text-emerald-400 transition-colors">餐飲業專用 AI 接單</Link>
+                    <p className="text-[11px] opacity-40 mt-4 uppercase font-black tracking-widest leading-loose">
+                        專為中小企業打造的<br />LINE 官方帳號數位轉型方案
+                    </p>
+                </div>
+            )
+        },
+        {
             id: 'pricing',
             icon: CreditCard,
             title: '付費方案說明',
             content: (
                 <div className={`space-y-2 text-[15px] ${textSecondary} leading-relaxed`}>
                     <p className="mb-2">本平台採「訂閱制 (SaaS)」收費模式</p>
-                    <div className="space-y-1.5 grayscale-[0.3] opacity-90">
+                    <div className="space-y-1.5 grayscale-[0.3]">
                         {[
                             PRICING_PLANS.starter, 
                             PRICING_PLANS.solo, 
@@ -135,9 +151,6 @@ export default function LandingFooter({ isLight = false, variant = 'auto' }: Lan
                             </p>
                         ))}
                     </div>
-                    <p className="text-emerald-400 font-black mt-3 text-xs uppercase tracking-widest border-t border-white/5 pt-2">
-                        💡 年費方案包含「買 11 個月送 1 個月」優惠
-                    </p>
                 </div>
             )
         },
@@ -159,7 +172,7 @@ export default function LandingFooter({ isLight = false, variant = 'auto' }: Lan
             title: '營運單位',
             content: (
                 <div className={`space-y-2 text-[15px] ${textSecondary}`}>
-                    <p className="opacity-60">© 2026 您的專屬AI智能店長</p>
+                    <p className="font-bold">© 2026 您的專屬AI智能店長</p>
                      <p className={`${textPrimary} font-black text-lg tracking-tight`}>YC Ideas 奕暢創新工作室</p>
                     <p className="text-xs uppercase font-black tracking-widest border-l border-white/20 pl-2">AI 數位服務開發 運作</p>
                 </div>
@@ -189,7 +202,7 @@ export default function LandingFooter({ isLight = false, variant = 'auto' }: Lan
 
             <div className={`mt-16 pt-10 ${isDesktopLayout ? '' : `border-t ${borderColor}`} border-white/5`}>
                 <div className="max-w-7xl mx-auto flex flex-col items-center justify-center gap-6">
-                     <p className={`text-xs font-black ${isLight ? 'text-slate-400' : 'text-slate-400'} uppercase tracking-[0.3em] text-center leading-relaxed opacity-60`}>
+                     <p className={`text-xs font-black ${isLight ? 'text-slate-400' : 'text-slate-200'} uppercase tracking-[0.3em] text-center leading-relaxed`}>
                         本網站交易資料由 藍新金流 NEWEBPAY 提供 256-BIT SSL 加密安全保護
                     </p>
                      <div className={`flex flex-row justify-center gap-10 text-[15px] font-black ${isLight ? 'text-slate-500' : 'text-slate-500/80'}`}>

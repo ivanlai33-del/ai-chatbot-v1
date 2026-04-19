@@ -45,19 +45,15 @@ export default function HeroSection({
     const textY = useTransform(smoothProgress, [0.5, 1], ['0%', '-100%']);
     const glassOpacity = useTransform(smoothProgress, [0.8, 1], [1, 0]);
 
-    // 🎭 置頂召喚邏輯：滾輪捲到最高處時，把標題呼叫下來
+    // 🎭 置頂召喚邏輯：維持展開狀態
     useEffect(() => {
-        const handleScrollToTop = () => {
-            if (window.scrollY < 10) {
-                rawProgress.set(0); // 強制展開
-                setShowContent(true);
-            }
-        };
-        window.addEventListener('scroll', handleScrollToTop, { passive: true });
-        return () => window.removeEventListener('scroll', handleScrollToTop);
+        rawProgress.set(0); 
+        setShowContent(true);
+        setBgImage(BACKGROUNDS[Math.floor(Math.random() * BACKGROUNDS.length)]);
     }, [rawProgress]);
 
-    // Handle Wheel Event
+    // Handle Wheel Event - Removed to keep content static as requested
+    /*
     useEffect(() => {
         const handleWheel = (e: WheelEvent) => {
             const sensitivity = 0.002;
@@ -67,45 +63,7 @@ export default function HeroSection({
         window.addEventListener('wheel', handleWheel, { passive: true });
         return () => window.removeEventListener('wheel', handleWheel);
     }, [rawProgress]);
-
-    // Background & Animation Lifecycle
-    useEffect(() => {
-        let isMounted = true;
-        let timeoutId: NodeJS.Timeout;
-
-        const sleep = (ms: number) => new Promise(resolve => {
-            timeoutId = setTimeout(resolve, ms);
-        });
-
-        const runLifecycle = async () => {
-            if (!isMounted) return;
-            setShowContent(false);
-            rawProgress.set(1); 
-            setBgImage(prev => {
-                const available = BACKGROUNDS.filter(b => b !== prev);
-                return available[Math.floor(Math.random() * available.length)];
-            });
-            await sleep(3000);
-            if (!isMounted) return;
-            await animate(rawProgress, 0, { duration: 0.8, ease: [0.16, 1, 0.3, 1] });
-            if (!isMounted) return;
-            setShowContent(true);
-            await sleep(15000);
-            if (!isMounted) return;
-            setShowContent(false);
-            await sleep(600);
-            if (!isMounted) return;
-            await animate(rawProgress, 1, { type: 'spring', stiffness: 100, damping: 20 });
-            if (!isMounted) return;
-            runLifecycle();
-        };
-
-        runLifecycle();
-        return () => {
-            isMounted = false;
-            clearTimeout(timeoutId);
-        };
-    }, [rawProgress]);
+    */
 
     return (
         <div className="relative z-10 min-h-screen flex flex-col overflow-hidden">
@@ -150,8 +108,8 @@ export default function HeroSection({
                 />
 
                 <motion.div 
-                    initial={{ opacity: 0, y: 40 }}
-                    animate={{ opacity: showContent ? 1 : 0, y: showContent ? 0 : 40 }}
+                    initial={{ opacity: 1, y: 0 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ type: 'spring', stiffness: 100, damping: 15, mass: 0.8 }}
                     style={{ y: textY }}
                     className="relative z-10 flex flex-col items-center gap-10 px-6 pt-24 pb-20 max-w-5xl mx-auto w-full"
@@ -160,13 +118,20 @@ export default function HeroSection({
                         <div className="px-5 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-200 text-xs font-black uppercase tracking-[0.4em] mb-2 backdrop-blur-md shadow-[0_0_20px_rgba(56,189,248,0.2)]">
                             24/7 Automated Sales & Support
                         </div>
-                         <h1 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-none drop-shadow-[0_20px_50px_rgba(0,0,0,0.7)] animate-shimmer text-transparent bg-clip-text bg-gradient-to-b from-white to-blue-200">
-                            AI 智能店長
+                         <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-tight drop-shadow-[0_20px_50px_rgba(0,0,0,0.7)] animate-shimmer text-transparent bg-clip-text bg-gradient-to-b from-white to-blue-200">
+                            給實體店、工作室、小品牌的 LINE 官方帳號：<br />
+                            3 分鐘開通、客服量減半、詢問不漏接
                         </h1>
-                         <p className="max-w-2xl text-xl md:text-2xl text-blue-50/90 font-medium leading-relaxed drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]">
-                            整合全球最強大的 AI 技術，為您的 LINE 官方帳號注入全天候銷售動力。<br className="hidden md:block" />
-                            讓每一則訊息都成為成交的機會。
+                         <p className="max-w-4xl text-xl md:text-2xl text-blue-50/90 font-medium leading-relaxed drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]">
+                            專為 LINE 官方帳號打造的 AI 客服機器人，24 小時幫您自動回覆、介紹商品、引導下單，幫助中小企業減少 60% 重複客服工作並提升非營業時間的成交機會。
                         </p>
+                        <div className="flex flex-wrap justify-center gap-4 mt-2">
+                            {['評分 4.9/5', '已服務 80+ 店家', '處理 10 萬+ 則訊息'].map((badge, bi) => (
+                                <div key={bi} className="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-200 text-xs font-black tracking-wider backdrop-blur-md">
+                                    ★ {badge}
+                                </div>
+                            ))}
+                        </div>
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-5 w-full max-w-lg">
@@ -186,25 +151,28 @@ export default function HeroSection({
                         ) : (
                             <>
                                  <button onClick={onShowPricing}
-                                    className="flex-1 flex items-center justify-center gap-3 bg-white text-slate-900 py-4 px-8 rounded-2xl font-black text-xl transition-all hover:bg-emerald-50 active:scale-95 shadow-[0_20px_50px_rgba(255,255,255,0.1)]"
+                                    className="flex-1 flex items-center justify-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 text-white py-4 px-8 rounded-2xl font-black text-xl transition-all hover:bg-white/20 active:scale-95 shadow-[0_20px_50px_rgba(255,255,255,0.05)]"
                                 >
-                                    <CreditCard className="w-5 h-5 text-emerald-600" /> 了解方案金額
+                                    了解價格與功能
                                 </button>
                                  <button onClick={onAction}
                                     className="flex-1 flex items-center justify-center gap-3 bg-[#06C755] hover:bg-[#05b34c] text-white py-4 px-8 rounded-2xl font-black text-xl transition-all hover:scale-105 active:scale-95 shadow-[0_20px_50px_rgba(6,199,85,0.5)]"
                                 >
-                                    <LogIn className="w-5 h-5" /> 請用 Line 登入
+                                    用 LINE 試玩 3 分鐘 (免費)
                                 </button>
                             </>
                         )}
                     </div>
 
-                     <div className="hidden md:flex items-center gap-8 text-blue-100/40 text-[11px] font-black uppercase tracking-[0.5em]">
-                        <span>Scale Faster</span>
+                     <div className="hidden md:flex items-center gap-8 text-blue-100/40 text-[11px] font-black uppercase tracking-[0.5em] mt-4">
+                        <div className="flex items-center gap-2">
+                             <img src="https://bot.ycideas.com/Lai Logo.svg" className="w-4 h-4 grayscale opacity-50" alt="YC Ideas" />
+                             <span>Powered by YC Ideas</span>
+                        </div>
                         <div className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
-                        <span>Support Automated</span>
+                        <span>NewebPay Secured</span>
                         <div className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
-                        <span>Conversion Boost</span>
+                        <span>LINE OA Integration</span>
                     </div>
                 </motion.div>
             </div>

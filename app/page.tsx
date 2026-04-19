@@ -1,69 +1,32 @@
-'use client';
-
-import { useState, useEffect } from 'react';
+import { Metadata } from 'next';
 import SEOMetadata from '@/components/landing/SEOMetadata';
-import HeroSection from '@/components/landing/HeroSection';
-import PricingModal from '@/components/landing/PricingModal';
-import LandingHeader from '@/components/landing/LandingHeader';
-import LandingFeatures from '@/components/landing/LandingFeatures';
-import LandingFooter from '@/components/landing/LandingFooter';
-import { getPricingPlans, landingJsonLd } from '@/config/landing_config';
+import LandingPageClient from '@/components/landing/LandingPageClient';
+import { landingJsonLd } from '@/config/landing_config';
+import { cookies } from 'next/headers';
+
+export const metadata: Metadata = {
+    title: "AI 智能店長 Pro｜3 分鐘讓 LINE 官方帳號變成 24 小時銷售員",
+    description: "不用寫程式、不用自己申請 API Key，今天開通今晚就上線。專為中小企業打造的 AI 客服機器人，支援自動回覆、商品導購、知識庫學習與自動接單。",
+    keywords: [
+        'LINE 官方帳號 AI 客服', 'LINE AI 聊天機器人', 'LINE 自動回覆', 'LINE 自動接單', 
+        'AI 客服系統', '智能店長 Pro', 'LINE 數位轉型', '商家 AI 工具'
+    ],
+    openGraph: {
+        title: "LINE 官方帳號 AI 客服機器人｜AI 智能店長 Pro",
+        description: "3 分鐘開通，24 小時幫您自動回覆、介紹商品、引導下單。",
+        images: ['/og-image.jpg'],
+    }
+};
 
 export default function Home() {
-    const [showPricing, setShowPricing] = useState(false);
-    const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    
-    // Check for login session
-    useEffect(() => {
-        const cookies = document.cookie.split('; ');
-        const lineId = cookies.find(c => c.startsWith('line_user_id='));
-        if (lineId) setIsLoggedIn(true);
-    }, []);
-
-    const handleAction = () => {
-        if (isLoggedIn) {
-            window.location.href = '/dashboard';
-        } else {
-            window.location.href = '/api/auth/line';
-        }
-    };
-
-    const handleOpenChat = () => {
-        window.location.href = '/chat';
-    };
-
-    const pricingPlans = getPricingPlans(billingCycle);
+    // Check for cookie on server side if possible
+    const cookieStore = cookies();
+    const isLoggedIn = !!cookieStore.get('line_user_id');
 
     return (
         <main className="relative min-h-screen w-full min-w-[1024px] bg-[#0F172A] font-sans overflow-x-auto">
             <SEOMetadata jsonLd={landingJsonLd} />
-            
-            <LandingHeader 
-                isLoggedIn={isLoggedIn}
-                onAction={handleAction}
-                onOpenChat={handleOpenChat}
-            />
-
-            <HeroSection 
-                isLoggedIn={isLoggedIn}
-                onAction={handleAction}
-                onOpenChat={handleOpenChat}
-                onShowPricing={() => setShowPricing(true)}
-            />
-
-            <LandingFeatures />
-
-            <PricingModal 
-                isOpen={showPricing}
-                onClose={() => setShowPricing(false)}
-                billingCycle={billingCycle}
-                setBillingCycle={setBillingCycle}
-                plans={pricingPlans}
-                onAction={handleAction}
-            />
-            
-            <LandingFooter variant="desktop" />
+            <LandingPageClient isLoggedInInit={isLoggedIn} />
         </main>
     );
 }

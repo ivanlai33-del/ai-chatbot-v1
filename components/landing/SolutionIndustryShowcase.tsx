@@ -91,15 +91,17 @@ export default function SolutionIndustryShowcase() {
                                 fill
                                 className="object-cover group-hover:scale-110 transition-transform duration-1000 brightness-75 group-hover:brightness-100"
                             />
+
+                            {/* 💎 Top-Right Tag: Bright Cyan */}
+                            <div className="absolute top-8 right-8 z-30">
+                                <span className="px-4 py-1.5 rounded-full bg-cyan-500/20 backdrop-blur-md border border-cyan-500/30 text-xs font-black text-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.25)]">
+                                    {sol.tag}
+                                </span>
+                            </div>
                             
                             {/* Glass Content Overlay */}
                             <div className="absolute inset-x-0 bottom-0 p-10 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent">
                                 <div className="space-y-6">
-                                    <div className="flex items-center justify-end">
-                                        <span className="px-3 py-1 rounded-full bg-emerald-500/20 backdrop-blur-md border border-emerald-500/30 text-xs font-black text-emerald-400">
-                                            {sol.tag}
-                                        </span>
-                                    </div>
                                     
                                     <div>
                                         <div className="text-emerald-400 text-xs font-black uppercase tracking-[0.2em] mb-2">{sol.subtitle}</div>

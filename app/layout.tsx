@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import VisitorTracker from "@/components/VisitorTracker";
@@ -6,9 +6,10 @@ import CookieBanner from "@/components/CookieBanner";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const viewport = {
+export const viewport: Viewport = {
     width: 1024,
     initialScale: 1,
+    themeColor: "#020617",
 };
 
 export const metadata: Metadata = {
@@ -30,7 +31,6 @@ export const metadata: Metadata = {
     verification: {
         google: "lAhGP3I12r-WLoAUaKxHn5R2BherC51FqCKoZcMAgBA",
     },
-    themeColor: "#020617",
     appleWebApp: {
         capable: true,
         statusBarStyle: "default",

@@ -3,6 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { MessageSquare, Layout, LogIn } from 'lucide-react';
+import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
 interface LandingHeaderProps {
@@ -16,7 +17,7 @@ export default function LandingHeader({ isLoggedIn, onAction, onOpenChat }: Land
         <header className="fixed top-0 left-0 right-0 z-50 px-6 py-4 min-w-[1024px]">
             <div className="max-w-7xl mx-auto flex items-center justify-between">
                 {/* Logo */}
-                <div className="flex items-center gap-3 group cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+                <Link href="/" className="flex items-center gap-3 group cursor-pointer">
                     <img 
                         src="/lai_logo_3.svg" 
                         alt="Lai Logo" 
@@ -30,7 +31,7 @@ export default function LandingHeader({ isLoggedIn, onAction, onOpenChat }: Land
                             您的專屬AI店長
                         </span>
                     </div>
-                </div>
+                </Link>
 
                 {/* Nav & Action */}
                 <nav className="flex items-center gap-6">

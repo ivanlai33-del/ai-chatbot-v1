@@ -162,9 +162,12 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
                 }
 
                 // 🎯 圖片專用靜默邏輯：存入日誌後直接結束該 Event 處理，不呼叫 AI，不發送回覆。
-                const logTask = supabase.from('chat_logs').insert([
-                    { config_id: configId, user_id: userId, role: 'user', content: userMessage }
-                ]);
+                const logTask = (async () => {
+                    const { error } = await supabase.from('chat_logs').insert([
+                        { config_id: configId, user_id: userId, role: 'user', content: userMessage }
+                    ]);
+                    if (error) console.error(`[TIER1:LineWebhook][${configId}] Silent image log failed:`, error.message);
+                })();
                 backgroundTasks.push(logTask);
                 continue; 
             }

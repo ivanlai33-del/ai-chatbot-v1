@@ -125,34 +125,48 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
 
             if (messageType === 'text') {
                 userMessage = (event.message as any).text || '';
+                // ⚡ 檢查是否有暫存的圖片（用於請求式辨識）
+                if (userId) {
+                    const cachedImage = await redis.get(`last_image:${userId}`) as string;
+                    if (cachedImage) {
+                        imageBase64 = cachedImage;
+                        console.log(`[TIER1:LineWebhook][${configId}] Detected cached image from Redis, attaching to text message.`);
+                    }
+                }
             } else if (messageType === 'image') {
                 userMessage = '【傳送了一張圖片】';
                 const { getFeatureAccess } = await import('@/lib/feature-access');
                 const fa = getFeatureAccess(config.selected_plan_tier || 0);
-                if (!fa.visionAI) {
-                    await client.replyMessage({
-                        replyToken: event.replyToken,
-                        messages: [{ type: 'text', text: '受限於目前的訂閱方案，本店長還沒有開通眼睛 👀。請用文字描述您的問題唷！' }]
-                    });
-                    console.log(`[TIER1:LineWebhook][${configId}] Blocked image from user without visionAI plan`);
-                    continue; // Skip further processing
-                }
                 
-                try {
-                    // Download image directly from LINE using BlobClient
-                    const blobClient = new messagingApi.MessagingApiBlobClient({
-                        channelAccessToken: config.channel_access_token
-                    });
-                    const stream = await blobClient.getMessageContent(event.message.id) as NodeJS.ReadableStream;
-                    const chunks: any[] = [];
-                    for await (const chunk of stream) chunks.push(chunk);
-                    const buffer = Buffer.concat(chunks);
-                    imageBase64 = buffer.toString('base64');
-                    console.log(`[TIER1:LineWebhook][${configId}] Successfully downloaded image: ${imageBase64.length} bytes`);
-                } catch (imgError) {
-                    console.error('[TIER1:LineWebhook] Failed to fetch image content:', imgError);
-                    imageBase64 = null;
+                // ⚡ 即使沒有方案，也不再自動回覆警告，直接保持靜默。
+                // 只有在 VisionAI 開通時，才下載圖片並存入 Redis。
+                if (fa.visionAI) {
+                    try {
+                        const blobClient = new messagingApi.MessagingApiBlobClient({
+                            channelAccessToken: config.channel_access_token
+                        });
+                        const stream = await blobClient.getMessageContent(event.message.id) as NodeJS.ReadableStream;
+                        const chunks: any[] = [];
+                        for await (const chunk of stream) chunks.push(chunk);
+                        const buffer = Buffer.concat(chunks);
+                        const base64 = buffer.toString('base64');
+                        
+                        // 暫存圖片 5 分鐘（300 秒），等待使用者發問。
+                        if (userId) {
+                            await redis.set(`last_image:${userId}`, base64, { ex: 300 });
+                            console.log(`[TIER1:LineWebhook][${configId}] Image cached to Redis for silent mode.`);
+                        }
+                    } catch (imgError) {
+                        console.error('[TIER1:LineWebhook] Failed to fetch image content:', imgError);
+                    }
                 }
+
+                // 🎯 圖片專用靜默邏輯：存入日誌後直接結束該 Event 處理，不呼叫 AI，不發送回覆。
+                const logTask = supabase.from('chat_logs').insert([
+                    { config_id: configId, user_id: userId, role: 'user', content: userMessage }
+                ]);
+                backgroundTasks.push(logTask);
+                continue; 
             }
             
             // 🛡️ 社交禮儀 (Social Protocol)：群組靜默過濾
@@ -229,6 +243,11 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
             // 🧾 計費記帳 (Usage Logic): 影像訊息加倍扣除 (折抵 3 個額度)
             const UsageService = (await import('@/lib/services/UsageService')).UsageService;
             backgroundTasks.push(UsageService.incrementUsage(config.user_id, imageBase64 ? 2 : 0));
+            
+            // ⚡ 清除圖片快取（回應文字後即視為已處理）
+            if (userId && messageType === 'text') {
+                backgroundTasks.push(redis.del(`last_image:${userId}`));
+            }
 
             // Save chat log (non-blocking but awaited at the end)
             const isLead = /09\d{2}[-\s]?\d{3}[-\s]?\d{3}|(預約|報名|想買|電話)/i.test(userMessage + aiResponse);

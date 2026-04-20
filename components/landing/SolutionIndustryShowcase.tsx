@@ -57,19 +57,20 @@ export default function SolutionIndustryShowcase() {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: 0.1 }}
-                        className="text-4xl md:text-6xl font-black text-white mb-8 tracking-tighter"
+                        className="text-4xl md:text-7xl font-black text-white mb-8 tracking-tighter leading-tight"
                     >
                         針對不同產業<br />
-                        打造 <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">專屬 AI 店長</span>
+                        讓您輕鬆打造 <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">專屬 AI 店長</span>
                     </motion.h2>
                     <motion.p 
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: 0.2 }}
-                        className="text-slate-400 text-xl font-medium max-w-2xl mx-auto"
+                        className="text-slate-300 text-xl md:text-2xl font-bold max-w-3xl mx-auto leading-relaxed"
                     >
-                        我們深入研究各行業痛點，預置專業知識庫模板，讓您的 AI 機器人一上線就具備行業專家水準。
+                        八大智庫，輕鬆上手<br />
+                        讓您的 AI 店長一上線就具備您想要的專家水準。
                     </motion.p>
                 </div>
 
@@ -81,24 +82,21 @@ export default function SolutionIndustryShowcase() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: i * 0.15 }}
-                            className="group relative h-[600px] rounded-[48px] overflow-hidden border border-white/10 hover:border-emerald-500/50 transition-all duration-500 shadow-2xl"
+                            className="group relative h-[620px] rounded-[48px] overflow-hidden border-4 border-white/5 hover:border-emerald-500/80 transition-all duration-500 shadow-2xl hover:shadow-[0_0_50px_rgba(16,185,129,0.25)]"
                         >
                             {/* Background Image */}
                             <Image
                                 src={sol.image}
                                 alt={`AI 智能店長 ${sol.title} - ${sol.desc.slice(0, 30)}...`}
                                 fill
-                                className="object-cover group-hover:scale-110 transition-transform duration-700 brightness-[0.4] group-hover:brightness-[0.6]"
+                                className="object-cover group-hover:scale-110 transition-transform duration-1000 brightness-75 group-hover:brightness-100"
                             />
                             
                             {/* Glass Content Overlay */}
                             <div className="absolute inset-x-0 bottom-0 p-10 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent">
                                 <div className="space-y-6">
-                                    <div className="flex items-center justify-between">
-                                        <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${sol.color} flex items-center justify-center backdrop-blur-xl border border-white/10 group-hover:scale-110 transition-transform`}>
-                                            <sol.icon className="w-7 h-7 text-white" />
-                                        </div>
-                                        <span className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-xs font-black text-white/70">
+                                    <div className="flex items-center justify-end">
+                                        <span className="px-3 py-1 rounded-full bg-emerald-500/20 backdrop-blur-md border border-emerald-500/30 text-xs font-black text-emerald-400">
                                             {sol.tag}
                                         </span>
                                     </div>
@@ -113,10 +111,10 @@ export default function SolutionIndustryShowcase() {
 
                                     <Link 
                                         href={sol.link}
-                                        className="inline-flex items-center gap-3 bg-white/10 hover:bg-emerald-500 text-white px-8 py-4 rounded-2xl font-black transition-all group/btn w-full justify-center backdrop-blur-xl border border-white/10 hover:border-transparent"
+                                        className="inline-flex items-center gap-3 bg-white/10 border border-white/10 text-white/50 px-8 py-5 rounded-3xl font-black text-xl transition-all duration-500 group/btn w-full justify-center group-hover:bg-gradient-to-r group-hover:from-emerald-500 group-hover:to-teal-600 group-hover:text-white group-hover:border-transparent group-hover:shadow-lg group-hover:shadow-emerald-500/30"
                                     >
                                         查看解決方案 
-                                        <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
+                                        <ArrowRight className="w-6 h-6 group-hover/btn:translate-x-2 transition-transform" />
                                     </Link>
                                 </div>
                             </div>

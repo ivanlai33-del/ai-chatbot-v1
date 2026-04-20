@@ -45,7 +45,7 @@ export default function IndustrySolutionLayout({
             {/* 🌌 Industry-Specific Background Overlay (Behind everything) */}
             {backgroundImage && (
                 <div 
-                    className="fixed inset-0 z-[-10] pointer-events-none opacity-100"
+                    className="fixed inset-0 z-[-10] pointer-events-none opacity-50"
                     style={{ 
                         backgroundImage: `url('${backgroundImage}')`,
                         backgroundSize: 'cover',

@@ -136,7 +136,7 @@ export default function KnowledgeBasePanel({
 
             <div className="flex flex-1 min-h-0">
                 {/* Fixed Side Navigation */}
-                <div className="w-[300px] border-r bg-white/10 backdrop-blur-xl p-6 overflow-y-auto shrink-0 glass-scrollbar">
+                <div className="w-[250px] border-r bg-white/10 backdrop-blur-xl p-5 overflow-y-auto shrink-0 glass-scrollbar">
                     <div className="space-y-1.5 pt-2">
                         {tabs.map((tab) => {
                             const meta = TAB_META[tab.id] || TAB_META.brand;

@@ -57,7 +57,7 @@ export default function IndustryFit() {
         <section className="py-24 px-6 relative z-30 overflow-hidden">
             {/* Main Background Image - Set to full opacity as requested */}
             <div 
-                className="absolute inset-0 z-0 opacity-100 pointer-events-none"
+                className="absolute inset-0 z-0 opacity-50 pointer-events-none"
                 style={{ 
                     backgroundImage: "url('/images/landing/industry-bg.png')",
                     backgroundSize: 'cover',
@@ -69,9 +69,10 @@ export default function IndustryFit() {
                 {/* Header with Mascot */}
                 <div className="flex flex-col md:flex-row items-center justify-center gap-12 mb-0 px-4">
                     <motion.div 
-                        initial={{ opacity: 0, x: -50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
+                        initial={{ opacity: 0, scale: 0.5, x: 300 }}
+                        whileInView={{ opacity: 1, scale: 1, x: 0 }}
                         viewport={{ once: true }}
+                        transition={{ type: 'spring', stiffness: 80, damping: 15, delay: 0.1 }}
                         // Mascot size: 640px / 511px
                         // Shifted down by 80px AND right by 130px
                         className="relative w-[511px] h-[511px] md:w-[640px] md:h-[640px] flex-shrink-0 translate-y-[80px] translate-x-[130px] z-20"
@@ -80,6 +81,7 @@ export default function IndustryFit() {
                             src="/images/landing/ai-mascot.svg" 
                             alt="AI Mascot"
                             fill
+                            sizes="(max-width: 768px) 100vw, 640px"
                             className="object-contain"
                         />
                     </motion.div>
@@ -89,7 +91,7 @@ export default function IndustryFit() {
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         // Title moved further left by 80px (Total -130px)
-                        className="text-center md:text-left flex-1 z-10 translate-x-[-130px]"
+                        className="text-center md:text-left flex-1 z-10 translate-x-[-230px]"
                     >
                         <h2 className="text-4xl md:text-6xl font-black text-white mb-6 leading-tight">
                             AI 智能店長，<br className="hidden md:block" />適不適合我的店家？
@@ -112,11 +114,11 @@ export default function IndustryFit() {
                                 viewport={{ once: true }}
                                 transition={{ delay: ind.id * 0.1 }}
                                 onClick={() => toggleCard(ind.id)}
-                                className="relative aspect-[4/5] rounded-[32px] overflow-hidden group cursor-pointer border border-white/10 select-none shadow-2xl"
+                                className="relative aspect-[4/5] rounded-[32px] overflow-hidden group cursor-pointer border border-white/10 select-none shadow-2xl transition-all"
                             >
                                 {/* Card Base Background Layer */}
                                 <div 
-                                    className="absolute inset-0 z-0"
+                                    className="absolute inset-0 z-0 opacity-70 group-hover:opacity-90 transition-opacity"
                                     style={{ 
                                         backgroundImage: "url('/images/landing/card-base.png')",
                                         backgroundSize: 'cover'
@@ -148,6 +150,7 @@ export default function IndustryFit() {
                                                 src={ind.image} 
                                                 alt={ind.title}
                                                 fill
+                                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                                                 className="object-contain"
                                             />
                                         </div>

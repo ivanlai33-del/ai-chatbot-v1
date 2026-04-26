@@ -51,7 +51,7 @@ export default function LandingSEOContent() {
                     >
                         {/* Text Content */}
                         <div className="flex-1 space-y-8 text-left">
-                            <h2 className="text-4xl md:text-6xl font-black text-white tracking-tight leading-[1.1] mb-2">
+                            <h2 className="text-[32px] md:text-[54px] font-black text-white tracking-tight leading-[1.1] mb-2">
                                 {section.title.split('\n').map((line, li) => (
                                     <React.Fragment key={li}>
                                         {line}
@@ -61,7 +61,7 @@ export default function LandingSEOContent() {
                             </h2>
                             <div className="space-y-6">
                                 {section.content.split('\n\n').map((para, pi) => (
-                                    <p key={pi} className="text-slate-100 text-lg md:text-xl leading-relaxed font-bold drop-shadow-sm opacity-90">
+                                    <p key={pi} className="text-white text-[16px] md:text-[18px] leading-relaxed font-bold drop-shadow-sm opacity-90">
                                         {para}
                                     </p>
                                 ))}
@@ -87,7 +87,7 @@ export default function LandingSEOContent() {
                                 
                                 {/* Overlay Gradient for "Industry Standard Solutions" */}
                                 <div className="absolute inset-x-0 bottom-0 p-8 pt-20 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent z-10 text-center">
-                                    <div className="text-emerald-400 font-black text-sm md:text-base tracking-[0.4em] uppercase drop-shadow-md">
+                                    <div className="text-emerald-400 font-black text-[12px] md:text-[14px] tracking-[0.4em] uppercase drop-shadow-md">
                                         Industry Standard Solutions
                                     </div>
                                 </div>

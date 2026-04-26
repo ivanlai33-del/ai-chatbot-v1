@@ -57,21 +57,19 @@ export default function TrendsTab({ botId }: { botId: string }) {
     };
 
     return (
-        <div className="space-y-6">
-            {/* Header / Summary Card */}
-            <div className="p-8 rounded-[40px] bg-gradient-to-br from-indigo-900 to-indigo-800 text-white shadow-2xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-20 -mt-20 blur-3xl" />
-                
+        <div className="space-y-5">
+            {/* Header / Summary Card - Transparent Theme */}
+            <div className="pb-4 relative overflow-hidden">
                 <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                    <div className="space-y-2">
+                    <div className="space-y-1.5">
                         <div className="flex items-center gap-3">
-                            <div className="px-3 py-1 rounded-full bg-indigo-500/30 border border-indigo-400/30 text-[12px] font-black tracking-widest uppercase">
+                            <div className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-black tracking-widest uppercase border border-emerald-100">
                                 Weekly Analysis
                             </div>
-                            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                         </div>
-                        <h2 className="text-[32px] font-black leading-tight">產業風向週報</h2>
-                        <p className="text-white/60 font-bold max-w-md">
+                        <h2 className="text-[28px] font-black leading-tight text-slate-900">產業風向週報</h2>
+                        <p className="text-slate-500 font-bold max-w-md text-[14px]">
                             AI 自動分析全球市場趨勢與在地競業情報，為您提供每週一次的經營戰略建議。
                         </p>
                     </div>
@@ -79,12 +77,12 @@ export default function TrendsTab({ botId }: { botId: string }) {
                     <button 
                         onClick={handleGenerate}
                         disabled={isAnalyzing}
-                        className="shrink-0 flex items-center gap-3 px-8 py-4 rounded-[24px] bg-white text-indigo-900 font-black text-[16px] hover:scale-105 transition-all shadow-xl active:scale-95 disabled:opacity-50"
+                        className="shrink-0 flex items-center gap-3 px-8 py-4 rounded-[20px] bg-gradient-to-r from-emerald-500 to-cyan-600 text-white font-black text-[15px] hover:scale-105 transition-all shadow-lg shadow-emerald-500/20 active:scale-95 disabled:opacity-50"
                     >
                         {isAnalyzing ? (
-                            <div className="w-5 h-5 border-2 border-indigo-900/20 border-t-indigo-900 rounded-full animate-spin" />
+                            <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
                         ) : (
-                            <Zap className="w-5 h-5" />
+                            <Zap className="w-4 h-4" />
                         )}
                         {isAnalyzing ? '分析中...' : '生成最新情報'}
                     </button>
@@ -92,10 +90,10 @@ export default function TrendsTab({ botId }: { botId: string }) {
             </div>
 
             {/* Main Content Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 {/* Visual Report Card 1 */}
-                <div className="md:col-span-2 space-y-6">
-                    <div className="p-8 rounded-[32px] bg-white/60 backdrop-blur-md border border-white shadow-sm">
+                <div className="md:col-span-2 space-y-5">
+                    <div className="p-7 rounded-[32px] bg-white border border-slate-100 shadow-sm">
                         <div className="flex items-center justify-between mb-8">
                             <div>
                                 <h3 className="text-[20px] font-black text-slate-900">市場情緒曲線</h3>
@@ -116,7 +114,7 @@ export default function TrendsTab({ botId }: { botId: string }) {
                                     initial={{ height: 0 }}
                                     animate={{ height: `${h}%` }}
                                     transition={{ duration: 1, delay: i * 0.1 }}
-                                    className={`w-full rounded-t-xl bg-gradient-to-t ${i === 6 ? 'from-indigo-600 to-indigo-400' : 'from-slate-200 to-slate-100'}`}
+                                    className={`w-full rounded-t-xl bg-gradient-to-t ${i === 6 ? 'from-emerald-600 to-cyan-400' : 'from-slate-200 to-slate-100'}`}
                                 />
                             ))}
                         </div>
@@ -128,20 +126,20 @@ export default function TrendsTab({ botId }: { botId: string }) {
                     </div>
 
                     {/* AI Strategy Insights */}
-                    <div className="p-8 rounded-[32px] bg-white shadow-sm border border-slate-100">
-                        <div className="flex items-center gap-3 mb-8">
-                            <div className="p-3 rounded-[16px] bg-indigo-50">
-                                <Globe className="w-6 h-6 text-indigo-600" />
+                    <div className="p-7 rounded-[32px] bg-white shadow-sm border border-slate-100">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="p-2.5 rounded-[14px] bg-emerald-50">
+                                <Globe className="w-6 h-6 text-emerald-600" />
                             </div>
                             <h3 className="text-[20px] font-black text-slate-900">本週 AI 經營建議</h3>
                         </div>
 
                         <div className="space-y-4">
                             {latestReport.recommendations?.map((rec: string, i: number) => (
-                                <div key={i} className="p-6 rounded-[24px] bg-slate-50 group transition-all hover:bg-indigo-50 hover:-translate-y-1">
+                                <div key={i} className="p-6 rounded-[24px] bg-slate-50 group transition-all hover:bg-emerald-50 hover:-translate-y-1">
                                     <div className="flex items-center justify-between mb-2">
-                                        <h4 className="font-black text-slate-800 group-hover:text-indigo-900">建議事項 #{i + 1}</h4>
-                                        <span className={`text-[11px] font-black px-3 py-1 rounded-full bg-white border text-indigo-500 border-slate-200`}>
+                                        <h4 className="font-black text-slate-800 group-hover:text-emerald-900">建議事項 #{i + 1}</h4>
+                                        <span className={`text-[11px] font-black px-3 py-1 rounded-full bg-white border text-emerald-500 border-slate-200`}>
                                             IMPACT: HIGH
                                         </span>
                                     </div>
@@ -155,15 +153,15 @@ export default function TrendsTab({ botId }: { botId: string }) {
                 </div>
 
                 {/* Sidebar Cards */}
-                <div className="space-y-6">
-                    <div className="p-6 rounded-[32px] bg-indigo-50 border border-indigo-100">
+                <div className="space-y-5">
+                    <div className="p-6 rounded-[32px] bg-white border border-slate-100 shadow-sm">
                         <div className="flex items-center gap-2 mb-4">
-                            <MessageSquare className="w-4 h-4 text-indigo-600" />
-                            <span className="text-[12px] font-black text-indigo-900 uppercase">熱門經營話題</span>
+                            <MessageSquare className="w-4 h-4 text-emerald-500" />
+                            <span className="text-[12px] font-black text-slate-400 uppercase">熱門經營話題</span>
                         </div>
                         <div className="flex flex-wrap gap-2">
                             {(latestReport.topKeywords || ['數據載入中']).map((tag: string, i: number) => (
-                                <span key={i} className="px-4 py-2 bg-white rounded-full text-[13px] font-bold text-slate-700 shadow-sm">
+                                <span key={i} className="px-4 py-2 bg-slate-50 rounded-full text-[13px] font-bold text-slate-600 border border-slate-100">
                                     {tag}
                                 </span>
                             ))}
@@ -177,10 +175,12 @@ export default function TrendsTab({ botId }: { botId: string }) {
                         </div>
                         <div className="space-y-3">
                             {reports.map((h, i) => (
-                                <button key={i} className="w-full flex items-center justify-between p-3 rounded-2xl hover:bg-slate-50 transition-colors">
+                                <button key={i} className="w-full flex items-center justify-between p-3 rounded-2xl hover:bg-emerald-50 transition-colors">
                                     <div className="flex flex-col text-left">
-                                        <span className="text-[11px] font-black text-slate-400">{new Date(h.created_at).toLocaleDateString()}</span>
-                                        <span className="text-[14px] font-bold text-slate-700">{h.report_title}</span>
+                                        <span className="text-[11px] font-black text-slate-400">
+                                            {h?.created_at ? new Date(h.created_at).toLocaleDateString() : '未知日期'}
+                                        </span>
+                                        <span className="text-[14px] font-bold text-slate-700">{h?.report_title || '未命名報告'}</span>
                                     </div>
                                     <ChevronRight className="w-4 h-4 text-slate-300" />
                                 </button>

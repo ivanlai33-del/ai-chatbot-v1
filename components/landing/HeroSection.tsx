@@ -12,20 +12,22 @@ const BACKGROUNDS = [
     '/hero-bg13.jpeg', '/hero-bg14.jpeg', '/hero-bg15.jpeg', '/hero-bg16.jpeg'
 ];
 
+const BOT_IMAGES = Array.from({ length: 11 }, (_, i) => `/bot_${String(i + 1).padStart(2, '0')}.svg`);
+
 const HERO_COPY_SETS = [
     {
-        title: <>LINE AI 機器人：<br />24 小時智慧回覆<br />與AI智慧助手</>,
+        title: <><span className="whitespace-nowrap">LINE AI 機器人：</span><br /><span className="whitespace-nowrap">24 小時智慧回覆與</span><br /><span className="whitespace-nowrap">AI 智慧助手</span></>,
         subtitle: '專為實體店面與個人品牌設計，3 分鐘開通 LINE 官方帳號 AI 客服。結合最新的 AI 技術，精準回答客戶問題，有效減少大量重複諮詢，讓服務全天候不中斷。',
         tags: ['#LINEAI機器人', '#智慧回覆系統', '#AI客服', '#LINE經營工具']
     },
     {
-        title: <>LINE 智慧導購與 AI 客服：<br />您的數位與實體店的<br />官方帳號 AI 店長</>,
+        title: <><span className="whitespace-nowrap">LINE 智慧導購與 AI 客服：</span><br /><span className="whitespace-nowrap">您的數位與實體店專屬</span><br /><span className="whitespace-nowrap">官方帳號 AI 店長</span></>,
         subtitle: '告別漏接訊息！透過 AI 智慧引導對話，提升官方帳號服務品質。低門檻、免寫程式，讓小品牌也能擁有專業等級的自動化服務體驗。',
         tags: ['#LINE智慧導購', '#數位轉型', '#實體店面助攻', '#官方帳號經營']
     },
     {
-        title: <>打造您的專業 AI 客服：<br />LINE 官方帳號<br />智慧對話與商品導購</>,
-        subtitle: '業界領先的 LINE 官方帳號 AI 解決方案。從智慧商品介紹到 24/7 自動回覆，協助您的品牌建立專業形象，節省人力成本並優化客戶對話體驗。',
+        title: <><span className="whitespace-nowrap">打造您的專業 AI 客服：</span><br /><span className="whitespace-nowrap">LINE 官方帳號智慧對話</span><br /><span className="whitespace-nowrap">與商品導購助手</span></>,
+        subtitle: '業界領進的 LINE 官方帳號 AI 解決方案。從智慧商品介紹到 24/7 自動回覆，協助您的品牌建立專業形象，節省人力成本並優化客戶對話體驗。',
         tags: ['#AI客服', '#SaaS服務', '#LINE行銷輔助', '#智慧導購']
     }
 ];
@@ -44,6 +46,7 @@ export default function HeroSection({
     onShowPricing 
 }: HeroSectionProps) {
     const [bgImage, setBgImage] = useState<string>('');
+    const [botImage, setBotImage] = useState<string>('');
     const [copySet, setCopySet] = useState(HERO_COPY_SETS[0]);
     const [showContent, setShowContent] = useState(false);
     
@@ -66,6 +69,7 @@ export default function HeroSection({
         rawProgress.set(0); 
         setShowContent(true);
         setBgImage(BACKGROUNDS[Math.floor(Math.random() * BACKGROUNDS.length)]);
+        setBotImage(BOT_IMAGES[Math.floor(Math.random() * BOT_IMAGES.length)]);
         // 隨機選擇一組文案
         setCopySet(HERO_COPY_SETS[Math.floor(Math.random() * HERO_COPY_SETS.length)]);
     }, [rawProgress]);
@@ -92,6 +96,7 @@ export default function HeroSection({
                                 src={bgImage}
                                 alt="AI 智能店長 Pro - LINE 官方帳號 API 自動銷售與客服助手"
                                 fill
+                                sizes="100vw"
                                 className="object-cover"
                                 priority
                             />
@@ -117,15 +122,34 @@ export default function HeroSection({
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ type: 'spring', stiffness: 100, damping: 15, mass: 0.8 }}
                     style={{ y: textY }}
-                    className="relative z-10 flex flex-col items-center gap-10 px-6 pt-24 pb-20 max-w-5xl mx-auto w-full"
+                    className="relative z-10 flex flex-col items-center gap-10 px-6 pt-24 pb-20 max-w-7xl mx-auto w-full"
                 >
-                    <div className="flex flex-col items-center gap-6 text-center">
+                    <div className="flex flex-col items-center gap-8 text-center">
                         <div className="px-5 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-200 text-xs font-black uppercase tracking-[0.4em] mb-2 backdrop-blur-md shadow-[0_0_20px_rgba(56,189,248,0.2)]">
                             24/7 Automated Sales & Support
                         </div>
-                         <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-tight drop-shadow-[0_20px_50px_rgba(0,0,0,0.7)] animate-shimmer text-transparent bg-clip-text bg-gradient-to-b from-white to-blue-200">
-                            {copySet.title}
-                        </h1>
+                        <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-20 w-full max-w-[1400px]">
+                            {botImage && (
+                                <motion.div
+                                    initial={{ opacity: 0, x: -50, scale: 0, rotate: -360 }}
+                                    animate={{ opacity: 1, x: 0, scale: 1, rotate: 0 }}
+                                    transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
+                                    className="relative w-48 h-48 md:w-64 md:h-64 lg:w-[380px] lg:h-[380px] shrink-0 drop-shadow-[0_20px_60px_rgba(37,99,235,0.4)] lg:-ml-[70px]"
+                                >
+                                    <Image
+                                        src={botImage}
+                                        alt="AI Robot Assistant"
+                                        fill
+                                        sizes="(max-width: 768px) 100vw, 380px"
+                                        className="object-contain animate-float"
+                                        priority
+                                    />
+                                </motion.div>
+                            )}
+                            <h1 className="text-4xl md:text-6xl lg:text-[80px] font-black tracking-tighter text-left leading-[1.15] drop-shadow-[0_20px_50px_rgba(0,0,0,0.7)] animate-shimmer text-transparent bg-clip-text bg-gradient-to-b from-white to-blue-200 break-keep">
+                                {copySet.title}
+                            </h1>
+                        </div>
                          <p className="max-w-4xl text-xl md:text-2xl text-blue-50/90 font-medium leading-relaxed drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]">
                             {copySet.subtitle}
                         </p>
@@ -145,16 +169,16 @@ export default function HeroSection({
                         </div>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row gap-5 w-full max-w-lg">
+                    <div className="flex flex-col sm:flex-row gap-5 w-full max-w-lg items-center justify-center mt-4">
                         {isLoggedIn ? (
                             <>
                                  <button onClick={onAction}
-                                    className="flex-1 flex items-center justify-center gap-3 bg-[#06C755] hover:bg-[#05b34c] text-white py-4 px-8 rounded-2xl font-black text-xl transition-all hover:scale-105 active:scale-95 shadow-[0_20px_50px_rgba(6,199,85,0.4)]"
+                                    className="flex-1 w-full flex items-center justify-center gap-3 bg-[#06C755] hover:bg-[#05b34c] text-white py-4 px-8 rounded-2xl font-black text-xl transition-all hover:scale-105 active:scale-95 shadow-[0_20px_50px_rgba(6,199,85,0.4)] whitespace-nowrap"
                                 >
                                     <Database className="w-5 h-5" /> 進入 AI 店長後台
                                 </button>
                                  <button onClick={onOpenChat}
-                                    className="flex-1 flex items-center justify-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 text-white py-4 px-8 rounded-2xl font-black text-xl transition-all hover:bg-white/20 active:scale-95"
+                                    className="flex-1 w-full flex items-center justify-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 text-white py-4 px-8 rounded-2xl font-black text-xl transition-all hover:bg-white/20 active:scale-95 whitespace-nowrap"
                                 >
                                     <Bot className="w-5 h-5" /> 開啟對話預覽
                                 </button>
@@ -162,12 +186,12 @@ export default function HeroSection({
                         ) : (
                             <>
                                  <button onClick={onShowPricing}
-                                    className="flex-1 flex items-center justify-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 text-white py-4 px-8 rounded-2xl font-black text-xl transition-all hover:bg-white/20 active:scale-95 shadow-[0_20px_50px_rgba(255,255,255,0.05)]"
+                                    className="flex-1 w-full flex items-center justify-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 text-white py-4 px-8 rounded-2xl font-black text-xl transition-all hover:bg-white/20 active:scale-95 shadow-[0_20px_50px_rgba(255,255,255,0.05)] whitespace-nowrap"
                                 >
                                     了解價格與功能
                                 </button>
                                  <button onClick={onAction}
-                                    className="flex-1 flex items-center justify-center gap-3 bg-[#06C755] hover:bg-[#05b34c] text-white py-4 px-8 rounded-2xl font-black text-xl transition-all hover:scale-105 active:scale-95 shadow-[0_20px_50px_rgba(6,199,85,0.5)]"
+                                    className="flex-1 w-full flex items-center justify-center gap-3 bg-[#06C755] hover:bg-[#05b34c] text-white py-4 px-8 rounded-2xl font-black text-xl transition-all hover:scale-105 active:scale-95 shadow-[0_20px_50px_rgba(6,199,85,0.5)] whitespace-nowrap"
                                 >
                                     LINE賬號加入會員
                                 </button>

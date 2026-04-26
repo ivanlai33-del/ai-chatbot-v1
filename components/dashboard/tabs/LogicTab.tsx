@@ -155,18 +155,7 @@ export default function LogicTab({ config, setConfig, planLevel = 0 }: LogicTabP
     );
 
     return (
-        <div className="space-y-5">
-            {/* 額度指示列 */}
-            <div className="flex items-center justify-between px-2">
-                <p className="text-[12px] font-black text-slate-400 uppercase tracking-widest">引導規則庫</p>
-                <div className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-[12px] font-black
-                    ${atLimit ? 'bg-red-100 text-red-600' : 'bg-emerald-50 text-emerald-700'}`}>
-                    <div className={`w-2 h-2 rounded-full ${atLimit ? 'bg-red-500' : 'bg-emerald-500'}`} />
-                    {ruleLines} / {formatLimit(ruleLimit)} 條
-                    {atLimit && <span className="ml-1">(已達上限)</span>}
-                </div>
-            </div>
-
+        <div className="space-y-4">
             {/* 額度滿時的升級提示 */}
             {atLimit && (
                 <div className="flex items-center gap-3 p-4 rounded-[16px] bg-amber-50 border border-amber-200">
@@ -183,10 +172,18 @@ export default function LogicTab({ config, setConfig, planLevel = 0 }: LogicTabP
                 </div>
             )}
 
-            <div className=" rounded-[24px] p-10  ">
-                <p className="text-[14px] font-black text-cyan-600 uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
-                    專屬行業引導標籤（{selectedIndustry || '未選擇行業'}）
-                </p>
+            <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                    <p className="text-[12px] font-black text-cyan-600 uppercase tracking-[0.2em] flex items-center gap-3">
+                        專屬行業引導標籤（{selectedIndustry || '未選擇行業'}）
+                    </p>
+                    <div className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-[12px] font-black
+                        ${atLimit ? 'bg-red-100 text-red-600' : 'bg-emerald-50 text-emerald-700'}`}>
+                        <div className={`w-2 h-2 rounded-full ${atLimit ? 'bg-red-500' : 'bg-emerald-500'}`} />
+                        {ruleLines} / {formatLimit(ruleLimit)} 條
+                        {atLimit && <span className="ml-1">(已達上限)</span>}
+                    </div>
+                </div>
                 {activeGroup ? (
                     <div className="max-w-md">
                         <IndustrySelect group={activeGroup} onAppend={append} disabled={atLimit} />
@@ -203,17 +200,17 @@ export default function LogicTab({ config, setConfig, planLevel = 0 }: LogicTabP
                 )}
             </div>
 
-            <div className=" rounded-[24px] p-10  ">
-                <p className="text-[14px] font-black text-emerald-600 uppercase tracking-[0.2em] mb-6">
+            <div className="space-y-3">
+                <p className="text-[12px] font-black text-emerald-600 uppercase tracking-[0.2em]">
                     通用引導標籤庫
                 </p>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {LOGIC_PRESETS.map(tag => (
                         <button
                             key={tag.label}
                             onClick={() => append(tag.text)}
                             disabled={atLimit}
-                            className={`py-5 px-4 rounded-[24px] bg-white border border-slate-100 text-[15px] font-black text-slate-700 transition-all text-center shadow-sm active:scale-95
+                            className={`py-3.5 px-4 rounded-[20px] bg-white border border-slate-100 text-[14px] font-black text-slate-700 transition-all text-center shadow-sm active:scale-95
                                 ${atLimit
                                     ? 'opacity-40 cursor-not-allowed'
                                     : 'hover:bg-emerald-500 hover:text-white hover:border-emerald-500'
@@ -226,8 +223,8 @@ export default function LogicTab({ config, setConfig, planLevel = 0 }: LogicTabP
             </div>
 
             {/* ── AI 引導規則自由輸入 ── */}
-            <div>
-                <p className="text-[14px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 ml-1">
+            <div className="pt-2">
+                <p className="text-[12px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">
                     AI 引導規則（自由輸入整合）
                 </p>
                 <TextareaField

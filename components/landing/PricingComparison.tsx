@@ -39,11 +39,21 @@ export default function PricingComparison() {
                     {plans.map((p, i) => (
                         <motion.div
                             key={p.id}
-                            initial={{ opacity: 1, scale: 1 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
+                            initial={{ opacity: 0, y: 50, scale: 0.95 }}
+                            whileInView={{ opacity: 1, y: 0, scale: 1 }}
                             viewport={{ once: true }}
-                            transition={{ delay: i * 0.1 }}
-                            className={`relative p-6 md:p-8 rounded-[40px] bg-white/10 border ${p.id === 'solo' ? 'border-emerald-500 shadow-[0_0_40px_rgba(16,185,129,0.2)]' : 'border-white/20'} backdrop-blur-xl hover:border-white/40 transition-all flex flex-col shadow-2xl`}
+                            transition={{ 
+                                duration: 0.8, 
+                                delay: i * 0.15, 
+                                ease: [0.16, 1, 0.3, 1] 
+                            }}
+                            whileHover={{ 
+                                y: -15, 
+                                scale: 1.02,
+                                borderColor: 'rgba(52, 211, 153, 0.6)',
+                                boxShadow: '0 30px 60px -12px rgba(0, 0, 0, 0.6), 0 0 30px rgba(52, 211, 153, 0.3)'
+                            }}
+                            className={`relative p-6 md:p-8 rounded-[40px] bg-white/10 border ${p.id === 'solo' ? 'border-emerald-500 shadow-[0_0_40px_rgba(16,185,129,0.2)]' : 'border-white/20'} backdrop-blur-xl transition-all flex flex-col`}
                         >
                             {p.id === 'solo' && (
                                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-emerald-500 text-white px-4 py-1 rounded-full text-xs font-black tracking-widest uppercase flex items-center gap-1 shadow-lg">

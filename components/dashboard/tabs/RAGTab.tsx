@@ -206,16 +206,9 @@ export default function RAGTab({ planLevel, bots, selectedBotId }: RAGTabProps) 
     return (
         <div className="space-y-6">
 
-            {/* 說明橫幅 */}
-            <div className="flex items-start gap-4 p-5 rounded-[20px] bg-blue-50 border border-blue-200">
-                <Info className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
-                <div>
-                    <p className="text-[13px] font-black text-blue-800 mb-1">📚 店長智庫 — AI 向量語意學習</p>
-                    <p className="text-[12px] text-blue-700 leading-relaxed">
-                        上傳文件或同步網頁後，AI 會自動學習內容。
-                        支援 <span className="font-black">PDF、TXT、網頁 URL</span>，單檔上限 <span className="font-black">{MAX_SIZE_MB}MB</span>。
-                    </p>
-                </div>
+            {/* 標題 */}
+            <div className="px-1">
+                <p className="text-[15px] font-black text-slate-900">📚 店長智庫 — AI 向量語意學習</p>
             </div>
 
             {/* 上傳與同步區 */}
@@ -235,11 +228,17 @@ export default function RAGTab({ planLevel, bots, selectedBotId }: RAGTabProps) 
                         {!isLimitReached && !uploading && <input ref={fileInputRef} type="file" className="hidden" accept=".pdf,.txt" onChange={handleFileUpload} />}
                     </label>
 
+                    {/* 說明文字下移 */}
+                    <p className="px-2 text-[12px] text-slate-400 font-bold leading-relaxed text-left">
+                        上傳文件或同步網頁後，AI 會自動學習內容。 
+                        支援 <span className="text-slate-500 font-black">PDF、TXT、網頁 URL</span>，單檔上限 <span className="text-slate-500 font-black">{MAX_SIZE_MB}MB</span>。
+                    </p>
+
                     {/* 網頁同步卡片 */}
-                    <div className={`p-6 rounded-[24px] border-2 transition-all ${isWebLocked ? 'bg-slate-50 border-slate-100' : 'bg-white/60 border-indigo-200 hover:shadow-lg'}`}>
+                    <div className={`p-6 rounded-[24px] border-2 transition-all ${isWebLocked ? 'bg-slate-50 border-slate-100' : 'bg-white/60 border-emerald-100 hover:border-emerald-200 hover:shadow-lg'}`}>
                         <div className="flex items-center gap-3 mb-4">
-                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isWebLocked ? 'bg-slate-200' : 'bg-indigo-100'}`}>
-                                {isWebLocked ? <Lock className="w-5 h-5 text-slate-400" /> : <Globe className="w-5 h-5 text-indigo-600" />}
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isWebLocked ? 'bg-slate-200' : 'bg-emerald-50'}`}>
+                                {isWebLocked ? <Lock className="w-5 h-5 text-slate-400" /> : <Globe className="w-5 h-5 text-emerald-600" />}
                             </div>
                             <div>
                                 <p className="text-sm font-black text-slate-900">網頁自動同步</p>
@@ -248,7 +247,7 @@ export default function RAGTab({ planLevel, bots, selectedBotId }: RAGTabProps) 
                         </div>
 
                         {isWebLocked ? (
-                            <button onClick={() => window.dispatchEvent(new CustomEvent('switch-tab', { detail: 'billing' }))} className="w-full py-3 rounded-xl bg-slate-200 text-slate-500 text-xs font-black hover:bg-indigo-500 hover:text-white transition-all">
+                            <button onClick={() => window.dispatchEvent(new CustomEvent('switch-tab', { detail: 'billing' }))} className="w-full py-3 rounded-xl bg-slate-200 text-slate-500 text-xs font-black hover:bg-emerald-500 hover:text-white transition-all">
                                 升級方案解鎖功能 →
                             </button>
                         ) : (
@@ -258,12 +257,12 @@ export default function RAGTab({ planLevel, bots, selectedBotId }: RAGTabProps) 
                                     placeholder="https://example.com"
                                     value={webUrl}
                                     onChange={(e) => setWebUrl(e.target.value)}
-                                    className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                                    className="w-full px-4 py-3 rounded-xl border border-slate-100 text-sm focus:ring-2 focus:ring-emerald-500 bg-white/50 outline-none transition-all"
                                 />
                                 <button 
                                     onClick={handleWebSync}
                                     disabled={syncLoading || !webUrl}
-                                    className="w-full py-3 rounded-xl bg-indigo-600 text-white text-xs font-black shadow-lg shadow-indigo-200 hover:bg-indigo-700 disabled:opacity-50 disabled:shadow-none transition-all flex items-center justify-center gap-2"
+                                    className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-600 text-white text-xs font-black shadow-lg shadow-emerald-500/20 hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:shadow-none transition-all flex items-center justify-center gap-2"
                                 >
                                     {syncLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
                                     {syncLoading ? '正在巡視網頁...' : '啟動同步'}
@@ -301,7 +300,7 @@ export default function RAGTab({ planLevel, bots, selectedBotId }: RAGTabProps) 
                                     className="p-4 rounded-[20px] bg-white border border-slate-100 shadow-sm flex items-center gap-4 group hover:shadow-md transition-all"
                                 >
                                     <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0">
-                                        {doc.file_type === 'web' ? <Globe className="w-4 h-4 text-indigo-500" /> : <FileText className="w-4 h-4 text-slate-400" />}
+                                        {doc.file_type === 'web' ? <Globe className="w-4 h-4 text-emerald-500" /> : <FileText className="w-4 h-4 text-slate-400" />}
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="text-[13px] font-black text-slate-900 truncate">{doc.file_name}</p>
@@ -311,7 +310,7 @@ export default function RAGTab({ planLevel, bots, selectedBotId }: RAGTabProps) 
                                         </div>
                                     </div>
                                     <div className="shrink-0 flex items-center gap-2">
-                                        {doc.status === 'ready' ? <CheckCircle2 className="w-4 h-4 text-emerald-500" /> : doc.status === 'processing' ? <RefreshCw className="w-4 h-4 text-blue-500 animate-spin" /> : <AlertCircle className="w-4 h-4 text-red-500" />}
+                                        {doc.status === 'ready' ? <CheckCircle2 className="w-4 h-4 text-emerald-500" /> : doc.status === 'processing' ? <RefreshCw className="w-4 h-4 text-cyan-500 animate-spin" /> : <AlertCircle className="w-4 h-4 text-red-500" />}
                                         <button onClick={() => handleDelete(doc.id)} className="p-2 opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-500 transition-all"><X className="w-4 h-4" /></button>
                                     </div>
                                 </motion.div>

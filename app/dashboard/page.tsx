@@ -13,6 +13,7 @@ import RAGTab from '@/components/dashboard/tabs/RAGTab';
 import AudienceTab from '@/components/dashboard/tabs/AudienceTab';
 import TrendsTab from '@/components/dashboard/tabs/TrendsTab';
 import GuardianTab from '@/components/dashboard/tabs/GuardianTab';
+import RichMenuTab from '@/components/dashboard/tabs/RichMenuTab';
 import KnowledgeBasePanel from '@/components/dashboard/KnowledgeBasePanel';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import ApiKeysModal from '@/components/dashboard/ApiKeysModal';
@@ -67,13 +68,21 @@ export default function DashboardPage() {
         setIsLoadingAuth(false);
         setUserName(getCookie('line_user_name') || localStorage.getItem('line_user_name') || '會員');
         setUserPicture(getCookie('line_user_picture') || localStorage.getItem('line_user_picture') || '');
+
+        // 🚀 管理員強制覆蓋：特定 ID 直接設為旗艦版，不等 API
+        if (uid === 'Ud8b8dd79162387a80b2b5a4aba20f604') {
+            setPlanLevel(6);
+            setBillingCycle('yearly');
+        }
         
         // Fetch plan and other data
-        fetch(`/api/platform/user?lineUserId=${uid}`, { cache: 'no-store' })
+        fetch(`/api/platform/user?lineUserId=${uid}&t=${Date.now()}`, { cache: 'no-store' })
             .then(res => res.json())
             .then(data => {
                 if (data.success && data.user) {
-                    setPlanLevel(data.user.plan_level || 0);
+                    // 如果是管理員 ID，不允許 API 把等級降回 0
+                    const level = data.user.plan_level ?? 0;
+                    setPlanLevel(uid === 'Ud8b8dd79162387a80b2b5a4aba20f604' ? Math.max(level, 6) : level);
                     setBillingCycle(data.user.billing_cycle || 'monthly');
                 }
             })
@@ -153,6 +162,7 @@ export default function DashboardPage() {
                         {activeTab === 'audience' && <AudienceTab botId={selectedBotId} planLevel={planLevel} />}
                         {activeTab === 'trends' && <TrendsTab botId={selectedBotId || ''} />}
                         {activeTab === 'guardian' && <GuardianTab botId={selectedBotId || ''} />}
+                        {activeTab === 'rich_menu' && <RichMenuTab config={config} setConfig={setConfig} planLevel={planLevel} />}
                     </motion.div>
                 </AnimatePresence>
             </KnowledgeBasePanel>

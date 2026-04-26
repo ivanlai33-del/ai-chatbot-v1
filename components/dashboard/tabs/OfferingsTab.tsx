@@ -125,25 +125,25 @@ export default function OfferingsTab({ config, setConfig, planLevel = 0, botId }
     }
 
     return (
-        <div className="space-y-6">
-            <div className="p-6 rounded-[32px] bg-gradient-to-br from-slate-900 to-slate-800 text-white shadow-xl">
+        <div className="space-y-5">
+            <div className="p-5 rounded-[24px] bg-white border border-slate-100 shadow-sm">
                 <div className="flex items-center gap-3 mb-4">
-                    <Wand2 className="w-5 h-5 text-emerald-400" />
+                    <Wand2 className="w-5 h-5 text-emerald-500" />
                     <div>
-                        <h4 className="text-[16px] font-black">官網內容自動同步</h4>
-                        <p className="text-[12px] text-slate-400 font-bold uppercase tracking-wider text-left">Auto-Sync</p>
+                        <h4 className="text-[15px] font-black text-slate-900">官網內容自動同步</h4>
+                        <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider text-left">Auto-Sync</p>
                     </div>
                 </div>
-                <div className="bg-white/5 p-4 rounded-[20px] flex gap-3">
+                <div className="bg-slate-50 border border-slate-100 p-3 rounded-[16px] flex gap-3">
                     <input 
                         type="text" 
                         placeholder="貼上網址..." 
-                        className="flex-1 bg-transparent px-4 py-2 text-white" 
+                        className="flex-1 bg-transparent px-4 py-2 text-slate-900 text-sm outline-none" 
                         value={syncUrl} 
                         onChange={e => setSyncUrl(e.target.value)} 
                     />
-                    <button onClick={handleSync} disabled={isSyncing} className="px-6 py-2 rounded-[14px] bg-emerald-500 text-white font-black">
-                        {isSyncing ? <RefreshCcw className="animate-spin" /> : '同步'}
+                    <button onClick={handleSync} disabled={isSyncing} className="px-6 py-2 rounded-[12px] bg-gradient-to-r from-emerald-500 to-cyan-600 text-white text-sm font-black shadow-md shadow-emerald-500/20 active:scale-95 transition-all">
+                        {isSyncing ? <RefreshCcw className="w-4 h-4 animate-spin" /> : '同步'}
                     </button>
                 </div>
             </div>
@@ -183,13 +183,13 @@ export default function OfferingsTab({ config, setConfig, planLevel = 0, botId }
             </div>
 
             {atLimit ? (
-                <div className="p-8 text-center bg-amber-50 text-amber-600 rounded-[24px] font-black border-2 border-dashed border-amber-200">
+                <div className="p-6 text-center bg-amber-50 text-amber-600 rounded-[24px] font-black border-2 border-dashed border-amber-200 text-sm">
                     已達上限
                 </div>
             ) : (
                 <button 
                   onClick={() => setConfig((c: any) => ({ ...c, offerings: [...c.offerings, { ...EMPTY_OFFERING }] }))}
-                  className="w-full py-6 rounded-[24px] bg-gradient-to-r from-emerald-500 to-cyan-600 text-white font-black text-[18px]"
+                  className="w-full py-4 rounded-[20px] bg-gradient-to-r from-emerald-500 to-cyan-600 text-white font-black text-[16px] shadow-lg shadow-emerald-500/20 active:scale-95 transition-all"
                 >
                     + 新增商品
                 </button>

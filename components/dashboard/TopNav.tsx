@@ -103,7 +103,7 @@ export default function TopNav({
             <div className="px-[75px] h-full flex items-center justify-between max-w-[1900px] mx-auto w-full">
                 <div className="flex items-center gap-5">
                     <div className="w-[50px] h-[50px] relative drop-shadow-sm">
-                        <Image src="/lai_logo_4.svg" alt="Lai Logo" fill className="object-contain" />
+                        <Image src="/lai_logo_4.svg" alt="Lai Logo" fill sizes="120px" className="object-contain" priority />
                     </div>
                     <div className="flex flex-col">
                         <span className="font-black text-[22px] tracking-tight text-slate-900 leading-none">AI 店長智庫</span>
@@ -136,10 +136,10 @@ export default function TopNav({
                                 </motion.button>
                                 { (planLevel > 0 || lineUserId === "Ud8b8dd79162387a80b2b5a4aba20f604") && (
                                     <motion.button
-                                        whileHover={{ scale: 1.05, backgroundColor: '#3730A3' }}
+                                        whileHover={{ scale: 1.05, boxShadow: "0 10px 20px -10px rgba(79, 70, 229, 0.5)" }}
                                         whileTap={{ scale: 0.95 }}
                                         onClick={() => window.location.href = '/console'}
-                                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white transition-all text-[13px] font-black shadow-lg shadow-indigo-500/20"
+                                        className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white transition-all text-[14px] font-black shadow-xl shadow-indigo-500/20"
                                     >
                                         營運戰情室
                                     </motion.button>

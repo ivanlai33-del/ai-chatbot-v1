@@ -58,19 +58,27 @@ export default function LandingFeatures() {
             <div className="max-w-7xl mx-auto relative z-30">
                 <div className="text-center mb-16">
                     <motion.div
-                        initial={{ opacity: 1, y: 0 }}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
                         className="inline-block px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-[0.4em] mb-6"
                     >
                         Core Advantages
                     </motion.div>
                     <motion.h2 
-                        initial={{ opacity: 1 }}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.1 }}
                         className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tighter"
                     >
                         老闆最愛的 <span className="text-emerald-400">AI 智能店長</span>
                     </motion.h2>
                     <motion.p 
-                        initial={{ opacity: 1 }}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.2 }}
                         className="text-slate-200 max-w-2xl mx-auto text-xl font-bold leading-relaxed tracking-wide"
                     >
                         不只是客服，更是您的 24 小時金牌店長。一鍵串接，讓您的 LINE 官方帳號瞬間升級。
@@ -81,9 +89,16 @@ export default function LandingFeatures() {
                     {features.map((f, i) => (
                         <motion.div
                             key={i}
-                            initial={{ opacity: 1, y: 0 }}
-                            whileHover={{ y: -10, transition: { duration: 0.3 } }}
-                            className="p-10 rounded-[48px] bg-white/70 backdrop-blur-xl border-[3px] border-white/50 shadow-[0_25px_50px_rgba(0,0,0,0.3),0_0_20px_rgba(255,255,255,0.6)_inset] transition-all group overflow-hidden relative"
+                            initial={{ opacity: 0, y: 50, scale: 0.95 }}
+                            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ 
+                                duration: 0.8, 
+                                delay: i * 0.15, 
+                                ease: [0.16, 1, 0.3, 1] 
+                            }}
+                            whileHover={{ y: -12, scale: 1.02, transition: { duration: 0.3 } }}
+                            className="p-10 rounded-[48px] bg-white/50 backdrop-blur-lg border-[3px] border-white/40 shadow-[0_25px_50px_rgba(0,0,0,0.3)] transition-all group overflow-hidden relative"
                         >
                             {/* ✨ Hover Light Reflection Effect */}
                             <div className="absolute -inset-full bg-gradient-to-r from-transparent via-white/30 to-transparent rotate-45 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none" />

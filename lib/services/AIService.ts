@@ -434,4 +434,25 @@ export class AIService {
         if (result.items) return result.items;
         return [];
     }
+    /**
+     * 優化圖文選單的 AI 生成提示詞
+     */
+    static async optimizeRichMenuPrompt(data: any) {
+        const { content, style, buttons, layout } = data;
+        
+        let prompt = `Professional LINE Rich Menu background image, 2500x1686 pixels aspect ratio. 
+        Main Theme: ${content}. 
+        Visual Style: ${style}.
+        Layout Structure: ${layout === '1-3' ? 'One large top area and three small bottom areas' : 'Six equal grid rectangles'}.
+        
+        Specific Instructions:
+        1. DO NOT include any real text, labels, logos, or numbers on the image. (The background must be clean as UI elements will be overlaid).
+        2. Design clean, distinct color blocks or visual areas for each button zone so they look like interactive slots.
+        3. High-quality, premium aesthetic, suitable for a professional business brand.
+        4. NO human faces unless explicitly requested. 
+        5. Symmetrical and balanced composition.
+        6. Vibrant and clear color palette suitable for mobile screen viewing.`;
+
+        return prompt;
+    }
 }

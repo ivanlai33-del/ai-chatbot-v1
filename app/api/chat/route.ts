@@ -190,7 +190,7 @@ export async function POST(req: NextRequest) {
                 : Promise.resolve({ data: null }),
             effectiveUserId
                 ? getCached(`web_bot_dna:${effectiveUserId}`, async () => {
-                      const { data } = await supabase.from('bots').select('brand_dna').eq('line_user_id', effectiveUserId).limit(1).maybeSingle();
+                      const { data } = await supabase.from('bots').select('brand_dna, offerings, faq_base, logic_rules, contact_info, dynamic_context, system_prompt').eq('line_user_id', effectiveUserId).limit(1).maybeSingle();
                       return { data };
                   })
                 : Promise.resolve({ data: null }),
@@ -263,15 +263,18 @@ export async function POST(req: NextRequest) {
         if (effectiveUserId) {
             const botData = (botResult as any).data;
             let identityContext = "";
-            if (botData?.brand_dna) {
-                const dna = botData.brand_dna || {};
-                const knownFields = [];
-                if (dna.industry) knownFields.push(`行業：${dna.industry}`);
-                if (dna.name) knownFields.push(`店名/公司名：${dna.name}`);
-                if (dna.services) knownFields.push(`主打服務/商品：${dna.services}`);
-                if (knownFields.length > 0) {
-                    identityContext = `\n【🧠 已知品牌設定資訊】：\n- ${knownFields.join('\n- ')}\n`;
-                }
+            if (botData) {
+                // Use the unified prompt generator from AIService to format all Knowledge Hub data
+                const knowledgePrompt = AIService.generateStoreSystemPrompt({
+                    brand_dna: botData.brand_dna,
+                    offerings: botData.offerings,
+                    faq_base: botData.faq_base,
+                    logic_rules: botData.logic_rules,
+                    contact_info: botData.contact_info,
+                    dynamic_context: botData.dynamic_context
+                }, userPlanLevel === 0);
+
+                identityContext = `\n【🧠 智庫中心連動資訊】：\n${knowledgePrompt}\n`;
             }
 
             const currentPlan = getPlanByTier(userPlanLevel);

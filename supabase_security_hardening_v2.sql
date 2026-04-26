@@ -14,6 +14,8 @@ DECLARE
         'line_channel_configs', 'stock_radar_members', 'ai_external_services', 
         'ai_service_tools', 'platform_users', 'token_usage', 
         'console_chat_logs', 'strategist_reports', 'enterprise_enquiries', 
+        'competitor_monitors', 'competitor_analysis', 'brand_sentiment_metrics', 
+        'brand_mentions', 'market_trends_reports', 'monitoring_keywords',
         'platform_visitor_logs', 'user_usage_stats', 'payment_logs', 
         'reservations', 'subscription_cancellation_reasons', 'dojo_logs'
     ];

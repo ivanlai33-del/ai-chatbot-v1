@@ -31,8 +31,10 @@ export async function middleware(request: NextRequest) {
     }
 
     // 2. Rate Limiting for Sensitive APIs (防範惡意刷流量或打包資料)
-    if (path.startsWith('/api/console') || path.startsWith('/api/platform')) {
-        const limiter = await rateLimit(`ip:${ip}`, 60, 60); // 60 requests per minute per IP
+    // 本機開發環境直接跳過，避免 Redis 計數器累積干擾
+    const isLocalhost = ip === '127.0.0.1' || ip === '::1' || ip === 'anonymous' || ip.startsWith('::ffff:127.');
+    if (!isLocalhost && (path.startsWith('/api/console') || path.startsWith('/api/platform'))) {
+        const limiter = await rateLimit(`ip:${ip}`, 300, 60);
         if (!limiter.success) {
             return new NextResponse('Too Many Requests: 您操作過於頻繁，請稍候再試。', {
                 status: 429,

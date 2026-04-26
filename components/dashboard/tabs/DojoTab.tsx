@@ -209,29 +209,29 @@ export default function DojoTab({ config, setConfig, planLevel, onSave, isSaving
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700">
 
-            {/* ── 頂部使用說明橫幅 ── */}
-            <div className="flex items-start gap-4 p-5 rounded-[20px] bg-gradient-to-r from-cyan-50 to-emerald-50 border border-cyan-200/60">
-                <div className="p-2 rounded-[12px] bg-cyan-100 shrink-0">
-                    <Zap className="w-5 h-5 text-cyan-600" />
+            {/* ── 頂部使用說明橫幅 — Transparent Style ── */}
+            <div className="flex items-start gap-4 p-5 rounded-[24px] bg-white border border-slate-100 shadow-sm relative overflow-hidden">
+                <div className="p-2.5 rounded-[14px] bg-emerald-50 shrink-0">
+                    <Zap className="w-5 h-5 text-emerald-600" />
                 </div>
-                <div>
-                    <p className="text-[14px] font-black text-slate-800 mb-1">📢 即時下指令給 AI 店長</p>
-                    <p className="text-[13px] text-slate-600 leading-relaxed">
+                <div className="relative z-10">
+                    <p className="text-[15px] font-black text-slate-900 mb-1">📢 即時下指令給 AI 店長</p>
+                    <p className="text-[13px] text-slate-500 font-bold leading-relaxed">
                         有突發狀況、新資訊或想調整 AI 的說話方式？在這裡直接告訴店長。
-                        <span className="font-black text-cyan-700"> 選積木 → 填內容 → 按儲存</span>，<span className="text-amber-600 font-bold">⚠️ 配合高效能保護機制，前線更新最多需 5 分鐘生效。</span>
+                        <span className="text-emerald-600"> 選積木 → 填內容 → 按儲存</span>，<span className="text-amber-500">⚠️ 配合高效能保護機制，前線更新最多需 5 分鐘生效。</span>
                     </p>
                 </div>
             </div>
 
             {/* ── Feature Gate ── */}
-            {getFeatureAccess(planLevel).instantCommands === 0 && (
-                <div className="relative rounded-[24px] overflow-hidden">
-                    <div className="absolute inset-0 z-10 bg-white/60 backdrop-blur-[12px] flex flex-col items-center justify-center p-10 text-center">
-                        <div className="w-16 h-16 rounded-[20px] bg-white shadow-xl flex items-center justify-center mb-5 border border-amber-100">
-                            <Lock className="w-8 h-8 text-amber-500" />
+            {(getFeatureAccess(planLevel)?.instantCommands ?? 0) === 0 && (
+                <div className="relative rounded-[24px] overflow-hidden border border-slate-100 bg-white p-12">
+                    <div className="flex flex-col items-center justify-center text-center">
+                        <div className="w-16 h-16 rounded-[20px] bg-emerald-50 flex items-center justify-center mb-5 border border-emerald-100">
+                            <Lock className="w-8 h-8 text-emerald-500" />
                         </div>
                         <h5 className="text-[22px] font-black text-slate-900 mb-3">🔒 需要升級才能使用</h5>
-                        <p className="text-[15px] text-slate-500 mb-6 max-w-md leading-relaxed">
+                        <p className="text-[15px] text-slate-500 mb-6 max-w-md leading-relaxed font-bold">
                             升級至「<span className="text-emerald-600">{getRequiredPlanName('instantCommands', 1)}</span>」以上，即可解鎖指令積木，擁有 AI 店長的最高指令優先權。
                         </p>
                         <button
@@ -241,13 +241,10 @@ export default function DojoTab({ config, setConfig, planLevel, onSave, isSaving
                             立即升級解鎖
                         </button>
                     </div>
-                    <div className="opacity-30 pointer-events-none">
-                        <div className="h-64 bg-slate-100 rounded-[24px]" />
-                    </div>
                 </div>
             )}
 
-            {getFeatureAccess(planLevel).instantCommands > 0 && (
+            {(getFeatureAccess(planLevel)?.instantCommands ?? 0) !== 0 && (
                 <div className="grid grid-cols-12 gap-6">
 
                     {/* ── 左側：積木選單 ── */}
@@ -271,13 +268,13 @@ export default function DojoTab({ config, setConfig, planLevel, onSave, isSaving
                             />
                         ))}
 
-                        {/* 安全說明 */}
-                        <div className="p-4 rounded-[16px] bg-slate-900 text-white mt-2">
+                        {/* 安全說明 — White Style */}
+                        <div className="p-4 rounded-[20px] bg-white border border-slate-100 shadow-sm">
                             <div className="flex items-center gap-2 mb-2">
-                                <Unlock className="w-4 h-4 text-emerald-400" />
-                                <span className="text-[11px] font-black text-emerald-400 tracking-widest uppercase">指令防偽保護</span>
+                                <Unlock className="w-4 h-4 text-emerald-500" />
+                                <span className="text-[11px] font-black text-emerald-600 tracking-widest uppercase">指令防偽保護</span>
                             </div>
-                            <p className="text-[12px] text-slate-400 leading-relaxed">
+                            <p className="text-[12px] text-slate-500 leading-relaxed font-bold">
                                 僅接受已綁定老闆 LINE ID 的指令。任何試圖模擬老闆身分的請求會被自動攔截。
                             </p>
                         </div>
@@ -370,15 +367,15 @@ export default function DojoTab({ config, setConfig, planLevel, onSave, isSaving
                             ))}
                         </div>
 
-                        {/* 語音聽令提示 */}
-                        <div className="flex items-center gap-4 p-4 rounded-[16px] bg-gradient-to-r from-slate-800 to-slate-900 text-white">
-                            <div className="w-12 h-12 rounded-[14px] bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center shrink-0">
-                                <Sparkles className="w-6 h-6 text-white" />
+                        {/* 語音聽令提示 — White Style */}
+                        <div className="flex items-center gap-4 p-4 rounded-[20px] bg-white border border-slate-100 shadow-sm">
+                            <div className="w-12 h-12 rounded-[14px] bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100">
+                                <Sparkles className="w-6 h-6 text-emerald-500" />
                             </div>
                             <div>
-                                <p className="text-[13px] font-black mb-0.5">🗣️ 懶人模式：語音聽令</p>
-                                <p className="text-[12px] text-slate-400 leading-relaxed">
-                                    不想打字？在 LINE 發送<span className="text-cyan-400 font-black">語音訊息</span>，AI 自動轉譯並同步到這裡。
+                                <p className="text-[13px] font-black mb-0.5 text-slate-900">🗣️ 懶人模式：語音聽令</p>
+                                <p className="text-[12px] text-slate-500 leading-relaxed font-bold">
+                                    不想打字？在 LINE 發送<span className="text-emerald-600 font-black">語音訊息</span>，AI 自動轉譯並同步到這裡。
                                 </p>
                             </div>
                         </div>

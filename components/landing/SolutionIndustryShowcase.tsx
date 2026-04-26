@@ -89,6 +89,7 @@ export default function SolutionIndustryShowcase() {
                                 src={sol.image}
                                 alt={`AI 智能店長 ${sol.title} - ${sol.desc.slice(0, 30)}...`}
                                 fill
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                 className="object-cover group-hover:scale-110 transition-transform duration-1000 brightness-75 group-hover:brightness-100"
                             />
 

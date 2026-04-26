@@ -12,8 +12,8 @@ const DELIVERY_PLATFORMS = [
 ];
 
 const SectionHeader = ({ icon: Icon, label }: { icon: any; label: string }) => (
-    <div className="flex items-center gap-4 pt-12 pb-6 px-2 first:pt-4">
-        <p className="text-[14px] font-black text-slate-400 uppercase tracking-[0.2em]">{label}</p>
+    <div className="flex items-center gap-4 pt-6 pb-2 px-2 first:pt-2">
+        <p className="text-[12px] font-black text-slate-400 uppercase tracking-[0.2em]">{label}</p>
         <div className="flex-1 h-[1px] bg-slate-100" />
     </div>
 );
@@ -58,12 +58,12 @@ export default function ContactTab({ config, setConfig, planLevel = 0 }: Contact
     return (
         <div className="space-y-5">
 
-            <div className=" rounded-[24px] p-10   space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <InputField label="LINE 客服 ID" placeholder="@your_id" value={config.contact_info.line_id} onChange={v => setConfig((c: any) => ({ ...c, contact_info: { ...c.contact_info, line_id: v } }))} />
                     <InputField label="聯絡電話" placeholder="02-1234-5678" value={config.contact_info.phone} onChange={v => setConfig((c: any) => ({ ...c, contact_info: { ...c.contact_info, phone: v } }))} />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <InputField label="營業時間" placeholder="例：週一至週五 09:00-18:00" value={config.contact_info.hours} onChange={v => setConfig((c: any) => ({ ...c, contact_info: { ...c.contact_info, hours: v } }))} />
                     <InputField label="公休日說明" placeholder="例：每週二公休、國定假日休息" value={config.contact_info.closed_days} onChange={v => setConfig((c: any) => ({ ...c, contact_info: { ...c.contact_info, closed_days: v } }))} />
                 </div>
@@ -71,7 +71,7 @@ export default function ContactTab({ config, setConfig, planLevel = 0 }: Contact
 
             {/* ── 位置資訊 ── */}
             <SectionHeader icon={MapPin} label="位置與到達資訊" />
-            <div className="space-y-3">
+            <div className="space-y-4">
                 <InputField label="Google Map 連結" placeholder="https://maps.google.com/..." value={config.contact_info.map_url} onChange={v => setConfig((c: any) => ({ ...c, contact_info: { ...c.contact_info, map_url: v } }))} />
                 <InputField label="停車資訊" placeholder="例：B1 停車場，週一免費 / 附近步行 3 分鐘" value={config.contact_info.parking_info} onChange={v => setConfig((c: any) => ({ ...c, contact_info: { ...c.contact_info, parking_info: v } }))} />
             </div>
@@ -91,15 +91,15 @@ export default function ContactTab({ config, setConfig, planLevel = 0 }: Contact
                 {SHOPPING_PLATFORMS.map(p => (
                     <label 
                         key={p} 
-                        className={`flex items-center gap-3 p-5 rounded-[24px] border transition-all cursor-pointer  ${
+                        className={`flex items-center gap-3 p-4 rounded-[20px] border transition-all cursor-pointer  ${
                             config.contact_info.platforms?.includes(p)
                                 ? 'bg-gradient-to-r from-emerald-500 to-cyan-600 border-transparent text-white shadow-emerald-500/20'
                                 : 'bg-white/60  text-slate-600 hover:bg-white'
                         }`}
                     >
                         <input type="checkbox" className="hidden" checked={config.contact_info.platforms?.includes(p)} onChange={() => togglePlatform(p)} />
-                        <span className="text-[17px] font-black">{p}</span>
-                        {config.contact_info.platforms?.includes(p) && <CheckCircle2 className="w-5 h-5 ml-auto text-emerald-400" />}
+                        <span className="text-[15px] font-black">{p}</span>
+                        {config.contact_info.platforms?.includes(p) && <CheckCircle2 className="w-4 h-4 ml-auto text-emerald-400" />}
                     </label>
                 ))}
             </div>
@@ -108,17 +108,17 @@ export default function ContactTab({ config, setConfig, planLevel = 0 }: Contact
             <SectionHeader icon={Truck} label="外送平台（餐飲業適用）" />
             <div className="space-y-4">
                 {DELIVERY_PLATFORMS.map(p => (
-                    <div key={p.name} className="flex items-center gap-6 p-6 rounded-[24px]    group hover:bg-white transition-all">
-                        <div className="w-14 h-14 rounded-[24px] bg-white shadow-sm flex items-center justify-center text-2xl border border-slate-50 group-hover:scale-110 transition-transform">
+                    <div key={p.name} className="flex items-center gap-4 p-4 rounded-[20px]    group hover:bg-white transition-all">
+                        <div className="w-12 h-12 rounded-[18px] bg-white shadow-sm flex items-center justify-center text-xl border border-slate-50 group-hover:scale-105 transition-transform">
                             {p.emoji}
                         </div>
-                        <span className="text-[18px] font-black w-24 shrink-0 text-slate-800">{p.name}</span>
+                        <span className="text-[16px] font-black w-24 shrink-0 text-slate-800">{p.name}</span>
                         <input
                             type="text"
                             placeholder={`${p.name} 店家連結...`}
                             value={config.contact_info[p.key] || ''}
                             onChange={e => setConfig((c: any) => ({ ...c, contact_info: { ...c.contact_info, [p.key]: e.target.value } }))}
-                            className="flex-1  text-[16px] font-bold text-slate-700 px-6 py-4 rounded-[24px]  focus:outline-none focus:bg-white focus:ring-4 focus:ring-emerald-500/10 transition-all placeholder:text-slate-300"
+                            className="flex-1  text-[15px] font-bold text-slate-700 px-5 py-3 rounded-[16px]  focus:outline-none focus:bg-white focus:ring-4 focus:ring-emerald-500/10 transition-all placeholder:text-slate-300"
                         />
                     </div>
                 ))}

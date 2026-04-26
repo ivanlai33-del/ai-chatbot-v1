@@ -14,8 +14,8 @@ function Field({ label, placeholder, value, onChange, hint, isLocked, onToggleLo
 }) {
     return (
         <div className="relative group/field">
-            <div className="flex items-center justify-between mb-3 px-2">
-                <label className="block text-[14px] font-black text-slate-800 tracking-[0.15em] uppercase opacity-80">{label}</label>
+            <div className="flex items-center justify-between mb-2 px-2">
+                <label className="block text-[14px] font-black text-slate-800 tracking-[0.12em] uppercase opacity-80">{label}</label>
                 <div className="flex items-center gap-2 opacity-0 group-hover/field:opacity-100 transition-all duration-300 translate-x-1 group-hover/field:translate-x-0">
                     {onGenerate && (
                         <button 
@@ -44,14 +44,14 @@ function Field({ label, placeholder, value, onChange, hint, isLocked, onToggleLo
                     value={value}
                     onChange={e => onChange(e.target.value)}
                     placeholder={placeholder}
-                    className={`w-full p-5 rounded-[24px] border-0 bg-white/70 backdrop-blur-md text-[16px] text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-[6px] transition-all shadow-sm ring-1 ring-black/[0.04] ${
+                    className={`w-full p-4 rounded-[24px] border-0 bg-white/70 backdrop-blur-md text-[16px] text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-[6px] transition-all shadow-sm ring-1 ring-black/[0.04] ${
                         isLocked 
                             ? 'bg-amber-50/50 focus:ring-amber-100/50' 
                             : 'focus:bg-white focus:ring-emerald-100/30'
                     }`}
                 />
             </div>
-            {hint && <p className="text-[11px] text-slate-500 mt-2 pl-2 font-bold italic opacity-70 tracking-tight">{hint}</p>}
+            {hint && <p className="text-[11px] text-slate-500 mt-1.5 pl-2 font-bold italic opacity-70 tracking-tight leading-snug">{hint}</p>}
         </div>
     );
 }
@@ -65,8 +65,8 @@ function Textarea({ label, placeholder, value, onChange, rows = 3, hint, isLocke
     return (
         <div className="relative group/field">
             {label && (
-                <div className="flex items-center justify-between mb-3 px-2">
-                    <label className="block text-[14px] font-black text-slate-800 tracking-[0.15em] uppercase opacity-80">{label}</label>
+                <div className="flex items-center justify-between mb-2 px-2">
+                    <label className="block text-[14px] font-black text-slate-800 tracking-[0.12em] uppercase opacity-80">{label}</label>
                     <div className="flex items-center gap-2 opacity-0 group-hover/field:opacity-100 transition-all duration-300">
                         {onGenerate && (
                             <button 
@@ -93,13 +93,13 @@ function Textarea({ label, placeholder, value, onChange, rows = 3, hint, isLocke
                 onChange={e => onChange(e.target.value)}
                 placeholder={placeholder}
                 rows={rows}
-                className={`w-full p-5 rounded-[24px] border-0 bg-white/70 backdrop-blur-md text-[16px] text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-[6px] transition-all resize-none shadow-sm ring-1 ring-black/[0.04] ${
+                className={`w-full p-4 rounded-[24px] border-0 bg-white/70 backdrop-blur-md text-[16px] text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-[6px] transition-all resize-none shadow-sm ring-1 ring-black/[0.04] ${
                     isLocked 
                         ? 'bg-amber-50/50 focus:ring-amber-100/50' 
                         : 'focus:bg-white focus:ring-emerald-100/30'
                 }`}
             />
-            {hint && <p className="text-[11px] text-slate-500 mt-2 pl-2 font-bold italic opacity-70 tracking-tight">{hint}</p>}
+            {hint && <p className="text-[11px] text-slate-500 mt-1.5 pl-2 font-bold italic opacity-70 tracking-tight leading-snug">{hint}</p>}
         </div>
     );
 }
@@ -107,10 +107,10 @@ function Textarea({ label, placeholder, value, onChange, rows = 3, hint, isLocke
 /* ── Section divider with icon + title ── */
 function Section({ Icon, title, subtitle, action }: { Icon: React.ElementType; title: string; subtitle?: string; action?: React.ReactNode }) {
     return (
-        <div className="flex items-center gap-5 pt-8 pb-4">
+        <div className="flex items-center gap-4 pt-4 pb-3">
             <div className="flex-1">
-                {title && <p className="text-[24px] font-black text-slate-900 leading-none tracking-tight mb-2">{title}</p>}
-                {subtitle && <p className="text-[14px] text-slate-500 font-black uppercase tracking-[0.2em]">{subtitle}</p>}
+                {title && <p className="text-[24px] font-black text-slate-900 leading-none tracking-tight mb-1">{title}</p>}
+                {subtitle && <p className="text-[14px] text-slate-500 font-black uppercase tracking-[0.16em]">{subtitle}</p>}
             </div>
             {action && (
                 <div className="shrink-0 flex items-center gap-4">
@@ -244,9 +244,6 @@ export default function BrandDNATab({ config, setConfig, planLevel }: BrandDNATa
                     return { ...c, brand_dna: newDna };
                 });
             }
-        } catch (err) {
-            console.error('AI Generation Error:', err);
-            alert('AI 生成失敗，請稍後再試');
         } finally {
             setIsGenerating(false);
         }
@@ -258,11 +255,11 @@ export default function BrandDNATab({ config, setConfig, planLevel }: BrandDNATa
     if (isLocked) {
         return (
             <div className="py-20 flex flex-col items-center justify-center text-center px-10 bg-white/10 backdrop-blur-md rounded-[24px] shadow-sm">
-                <div className="w-24 h-24 rounded-[24px] bg-white/60 flex items-center justify-center mb-8 shadow-2xl">
+                <div className="w-24 h-24 rounded-[24px] bg-white/60 flex items-center justify-center mb-5 shadow-2xl">
                     <ShieldCheck className="w-10 h-10 text-emerald-500" strokeWidth={2.5} />
                 </div>
-                <h3 className="text-[28px] font-black text-slate-900 mb-4">品牌 DNA 功能尚未開通</h3>
-                <p className="text-[16px] text-slate-600 max-w-lg mb-8 font-bold leading-relaxed">
+                <h3 className="text-[28px] font-black text-slate-900 mb-2">品牌 DNA 功能尚未開通</h3>
+                <p className="text-[16px] text-slate-600 max-w-lg mb-5 font-bold leading-snug">
                     升級至 <span className="text-emerald-600">{getRequiredPlanName('brandDNA')}</span> 以上方案，
                     即可設定品牌特色、對話語調、歡迎語與結語，打造具備靈魂的 AI 店長。
                 </p>
@@ -277,32 +274,32 @@ export default function BrandDNATab({ config, setConfig, planLevel }: BrandDNATa
     }
 
     return (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="space-y-[18px] animate-in fade-in slide-in-from-bottom-4 duration-700">
             
             {/* 快取延遲提示 */}
-            <div className="flex items-center gap-3 p-4 rounded-[16px] bg-amber-50 border border-amber-200/60 mt-4">
+            <div className="flex items-center gap-3 p-3.5 rounded-[16px] bg-amber-50 border border-amber-200/60 mt-3">
                 <ShieldCheck className="w-5 h-5 text-amber-500 shrink-0" />
-                <p className="text-[13px] text-amber-700 leading-relaxed font-bold">
+                <p className="text-[13px] text-amber-700 leading-snug font-bold">
                     【高效能快取防護啟用中】為了確保百萬級流量不崩潰，您在這裡與全站其他地方修改的店長設定，前線系統最長需要 5 分鐘才會重新載入最新版本（即時對話歷史不受影響）。
                 </p>
             </div>
 
             {/* ── 行業類別 (僅顯示控制項) ── */}
             {/* ── 行業類別 (左對齊且放大 20%) ── */}
-            <div className="flex items-center justify-start gap-4 pt-8 pb-10">
+            <div className="flex items-center justify-start gap-4 pt-4 pb-5">
                 {/* Industry Dropdown Selection */}
                 <div className="relative" ref={dropdownRef}>
                     <button
                         onClick={() => setIsIndustryDropdownOpen(!isIndustryDropdownOpen)}
-                        className={`h-[90px] px-10 rounded-[24px] bg-white/60 backdrop-blur-md  ring-1 ring-black/[0.03] shadow-md flex items-center gap-8 transition-all hover:bg-white/80 ${isIndustryDropdownOpen ? 'ring-emerald-500/20 shadow-emerald-500/10' : ''}`}
+                        className={`h-[70px] px-8 rounded-[24px] bg-white/60 backdrop-blur-md  ring-1 ring-black/[0.03] shadow-md flex items-center gap-6 transition-all hover:bg-white/80 ${isIndustryDropdownOpen ? 'ring-emerald-500/20 shadow-emerald-500/10' : ''}`}
                     >
                         <div className="text-left">
-                            <p className="text-[14px] font-black text-slate-400 uppercase tracking-widest leading-none mb-2">目前選擇行業</p>
-                            <p className="text-[22px] font-black text-slate-900 leading-none">
+                            <p className="text-[13px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">目前選擇行業</p>
+                            <p className="text-[20px] font-black text-slate-900 leading-none">
                                 {config.brand_dna.industry || '請選擇您的行業'}
                             </p>
                         </div>
-                        <ChevronDown className={`w-6 h-6 text-slate-400 transition-transform duration-300 ${isIndustryDropdownOpen ? 'rotate-180' : ''}`} />
+                        <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform duration-300 ${isIndustryDropdownOpen ? 'rotate-180' : ''}`} />
                     </button>
 
                     <AnimatePresence>
@@ -311,13 +308,13 @@ export default function BrandDNATab({ config, setConfig, planLevel }: BrandDNATa
                                 initial={{ opacity: 0, y: 10, scale: 0.95 }}
                                 animate={{ opacity: 1, y: 0, scale: 1 }}
                                 exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                className="absolute top-full mt-3 left-0 w-[350px] bg-white/90 backdrop-blur-2xl rounded-[24px]  shadow-2xl z-[100] py-4 overflow-hidden ring-1 ring-black/[0.05]"
+                                className="absolute top-full mt-3 left-0 w-[280px] bg-white/90 backdrop-blur-2xl rounded-[20px]  shadow-2xl z-[100] py-3.5 overflow-hidden ring-1 ring-black/[0.05]"
                             >
-                                <div className="px-6 mb-3 flex items-center justify-between">
-                                    <span className="text-[12px] font-black text-slate-400 uppercase tracking-widest">行業類別清單</span>
-                                    <span className="text-[12px] font-bold text-emerald-500 py-0.5 px-3 bg-emerald-50 rounded-full">{INDUSTRIES.length} 組預設</span>
+                                <div className="px-5 mb-2 flex items-center justify-between">
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">行業類別清單</span>
+                                    <span className="text-[10px] font-bold text-emerald-500 py-0.5 px-3 bg-emerald-50 rounded-full">{INDUSTRIES.length} 組預設</span>
                                 </div>
-                                <div className="max-h-[350px] overflow-y-auto custom-scrollbar px-3 space-y-1">
+                                <div className="max-h-[280px] overflow-y-auto custom-scrollbar px-2 space-y-1">
                                     {INDUSTRIES.map((ind) => {
                                         const isSelected = config.brand_dna.industry === ind;
                                         return (
@@ -327,7 +324,7 @@ export default function BrandDNATab({ config, setConfig, planLevel }: BrandDNATa
                                                     handleIndustrySelect(ind);
                                                     setIsIndustryDropdownOpen(false);
                                                 }}
-                                                className={`w-full flex items-center justify-between p-4 rounded-[24px] transition-all ${
+                                                className={`w-full flex items-center justify-between p-3.5 rounded-[24px] transition-all ${
                                                     isSelected 
                                                         ? 'bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 border border-emerald-500/20' 
                                                         : 'hover:bg-black/[0.03] border border-transparent'
@@ -350,16 +347,16 @@ export default function BrandDNATab({ config, setConfig, planLevel }: BrandDNATa
                 <motion.div 
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="bg-white/60 backdrop-blur-md rounded-[24px] pl-10 pr-4 py-3  flex items-center gap-10 ring-1 ring-black/[0.03] shadow-md h-[90px]"
+                    className="bg-white/60 backdrop-blur-md rounded-[24px] pl-8 pr-3 py-2.5  flex items-center gap-8 ring-1 ring-black/[0.03] shadow-md h-[70px]"
                 >
                     <div className="hidden lg:block text-right">
-                        <p className="text-[20px] font-black text-slate-800 leading-tight">AI 智庫助手</p>
+                        <p className="text-[18px] font-black text-slate-800 leading-tight">AI 智庫助手</p>
                         <p className="text-[12px] text-slate-400 font-bold uppercase tracking-widest mt-1">Auto-Magic</p>
                     </div>
                     <button
                         onClick={() => handleAIGenerate()}
                         disabled={!!isGenerating}
-                        className="h-[62px] px-10 rounded-[24px] bg-gradient-to-r from-emerald-500 to-cyan-600 text-white font-black text-[18px] transition-all flex items-center justify-center gap-3 disabled:opacity-50 hover:from-emerald-600 hover:to-cyan-700 active:scale-95 group shadow-lg shadow-emerald-500/20"
+                        className="h-[48px] px-8 rounded-[24px] bg-gradient-to-r from-emerald-500 to-cyan-600 text-white font-black text-[16px] transition-all flex items-center justify-center gap-3 disabled:opacity-50 hover:from-emerald-600 hover:to-cyan-700 active:scale-95 group shadow-lg shadow-emerald-500/20"
                     >
                         {isGenerating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Sparkles className="w-6 h-6 text-emerald-400 group-hover:rotate-12 transition-transform" />}
                         {isGenerating ? 'AI 繪製中...' : '一鍵注入 DNA'}
@@ -369,7 +366,7 @@ export default function BrandDNATab({ config, setConfig, planLevel }: BrandDNATa
 
 
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Field label="品牌正式名稱 *" placeholder="您的品牌或店家名稱" value={config.brand_dna.name} onChange={v => update('name', v)} hint="這會成為 AI 介紹自己的名稱" />
                 <Field 
                     label="品牌精神 SLOGAN" placeholder="例：連結靈魂的每一杯咖啡" value={config.brand_dna.tagline} onChange={v => update('tagline', v)} 
@@ -378,7 +375,7 @@ export default function BrandDNATab({ config, setConfig, planLevel }: BrandDNATa
                 />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Field 
                     label="主要的目標客群" placeholder="例：對生活品質有要求的粉領族" value={config.brand_dna.target_audience} onChange={v => update('target_audience', v)} hint="AI 將以此調整說話的成熟度" 
                     isLocked={locks.target_audience} onToggleLock={() => handleToggleLock('target_audience')}
@@ -409,7 +406,7 @@ export default function BrandDNATab({ config, setConfig, planLevel }: BrandDNATa
                 {Object.keys(TONE_PROMPTS).map(tone => (
                     <motion.button key={tone} whileTap={{ scale: 0.98 }}
                         onClick={() => setConfig((c: any) => ({ ...c, brand_dna: { ...c.brand_dna, tone, tone_prompt: TONE_PROMPTS[tone] } }))}
-                        className={`px-6 py-[35px] rounded-[24px] font-black border transition-all duration-300 ${
+                        className={`px-5 py-[18px] rounded-[24px] font-black border transition-all duration-300 ${
                             config.brand_dna.tone === tone
                                 ? 'bg-gradient-to-br from-emerald-500 to-cyan-600 border-transparent text-white shadow-lg text-[16.5px]'
                                 : 'bg-white border-slate-100 text-slate-600 hover:border-slate-300 text-[13px]'

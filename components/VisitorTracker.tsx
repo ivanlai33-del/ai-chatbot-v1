@@ -65,20 +65,13 @@ export default function VisitorTracker() {
             const urlParams = new URLSearchParams(window.location.search);
             const vid = getFingerprint();
             
-            // 1. Get Geo-IP data
-            const geoRes = await fetch('https://ipapi.co/json/');
-            const geo = await geoRes.json();
+            // 1. Client-side data only, IP and Geo will be detected by server
             
             // 2. Push to our platform logs
             await fetch('/api/platform/track', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    ip: geo.ip || 'Unknown',
-                    country: geo.country_name || 'Unknown', // 加入國家欄位
-                    city: geo.city || 'Unknown',
-                    district: geo.region || 'Unknown',
-                    isp: geo.org || 'Unknown',
                     referer: document.referrer || 'Direct',
                     visitor_id: vid,
                     session_id: window.name || (window.name = crypto.randomUUID()),

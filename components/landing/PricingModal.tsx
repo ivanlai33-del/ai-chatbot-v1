@@ -81,7 +81,7 @@ export default function PricingModal({
                         <div className="hidden lg:flex w-64 shrink-0 bg-gradient-to-br from-[#06C755] via-[#05b34c] to-[#04903d] p-10 flex-col justify-between border-r border-white/10">
                             <div className="space-y-6">
                                 <div className="w-14 h-14 relative">
-                                    <Image src="/lai_logo_4.svg" alt="Logo" fill className="object-contain" />
+                                    <Image src="/lai_logo_4.svg" alt="Logo" fill sizes="100px" className="object-contain" priority />
                                 </div>
                                 <div className="w-72 h-72 relative -ml-12 -mb-8 animate-float hover-bobble transition-all cursor-pointer">
                                     <Image src="/bot_06.svg" alt="Bot" fill className="object-contain" />

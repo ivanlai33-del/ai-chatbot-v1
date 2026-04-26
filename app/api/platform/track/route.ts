@@ -4,6 +4,10 @@ import { supabase } from '@/lib/supabase';
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
+        
+        // Detect IP from headers if not provided or to verify
+        const detectedIp = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || 'Unknown';
+
         const { 
             ip, country, city, district, isp, referer,
             session_id, visitor_id,
@@ -14,11 +18,18 @@ export async function POST(req: NextRequest) {
             duration
         } = body;
 
+        const finalIp = ip || detectedIp;
+
         // Use upsert to update duration if the session on the same page already exists
         await supabase
             .from('platform_visitor_logs')
             .upsert({
-                ip, country, city, district, isp, referer,
+                ip: finalIp, 
+                country: country || 'Unknown', 
+                city: city || 'Unknown', 
+                district: district || 'Unknown', 
+                isp: isp || 'Unknown', 
+                referer,
                 session_id, visitor_id,
                 utm_source, utm_medium, utm_campaign, utm_content, utm_term,
                 page_url, page_title,

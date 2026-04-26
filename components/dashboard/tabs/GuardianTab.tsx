@@ -99,9 +99,9 @@ export default function GuardianTab({ botId }: GuardianTabProps) {
                         <button 
                             onClick={handleScan}
                             disabled={isScanning}
-                            className="flex items-center gap-2 px-5 py-2.5 rounded-[16px] bg-slate-900 text-white font-black text-[13px] hover:scale-105 transition-all shadow-lg active:scale-95 disabled:opacity-50"
+                            className="flex items-center gap-2 px-5 py-2.5 rounded-[16px] bg-gradient-to-r from-emerald-500 to-cyan-600 text-white font-black text-[13px] hover:scale-105 transition-all shadow-lg shadow-emerald-500/20 active:scale-95 disabled:opacity-50"
                         >
-                            <div className={`h-2 w-2 rounded-full bg-emerald-500 ${isScanning ? 'animate-ping' : 'animate-pulse'}`}></div>
+                            <div className={`h-2 w-2 rounded-full bg-white/80 ${isScanning ? 'animate-ping' : 'animate-pulse'}`}></div>
                             {isScanning ? '掃描中...' : '立即掃描'}
                         </button>
                     </div>
@@ -142,27 +142,27 @@ export default function GuardianTab({ botId }: GuardianTabProps) {
                     </div>
                 </div>
 
-                <div className="p-8 rounded-[40px] bg-indigo-900 text-white shadow-xl flex flex-col justify-between">
+                <div className="p-8 rounded-[40px] bg-white border border-slate-100 shadow-sm flex flex-col justify-between">
                     <div>
                         <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center gap-3">
-                                <div className="p-2.5 rounded-[12px] bg-white/10">
-                                    <Bell className="w-5 h-5 text-indigo-300" />
+                                <div className="p-2.5 rounded-[12px] bg-emerald-50">
+                                    <Bell className="w-5 h-5 text-emerald-600" />
                                 </div>
-                                <h4 className="text-[18px] font-black">危機預警通知</h4>
+                                <h4 className="text-[18px] font-black text-slate-900">危機預警通知</h4>
                             </div>
                             <button 
                                 onClick={() => setNotificationsEnabled(!notificationsEnabled)}
-                                className={`w-12 h-6 rounded-full transition-all relative ${notificationsEnabled ? 'bg-emerald-500' : 'bg-white/20'}`}
+                                className={`w-12 h-6 rounded-full transition-all relative ${notificationsEnabled ? 'bg-emerald-500' : 'bg-slate-200'}`}
                             >
-                                <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${notificationsEnabled ? 'right-1' : 'left-1'}`} />
+                                <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${notificationsEnabled ? 'right-1' : 'left-1 shadow-sm'}`} />
                             </button>
                         </div>
-                        <p className="text-white/60 text-[14px] font-bold leading-relaxed text-left">
+                        <p className="text-slate-500 text-[14px] font-bold leading-relaxed text-left">
                             開啟後，系統偵測到高風險或負面提及時，將立即透過 LINE 推送警報。
                         </p>
                     </div>
-                    <button className="w-full py-4 rounded-[20px] bg-white/10 border border-white/20 text-white font-black text-[14px] hover:bg-white/20 transition-all flex items-center justify-center gap-2">
+                    <button className="w-full py-4 rounded-[20px] bg-emerald-50 border border-emerald-100 text-emerald-700 font-black text-[14px] hover:bg-emerald-100 transition-all flex items-center justify-center gap-2">
                         <Settings className="w-4 h-4" /> 設定警報閾值
                     </button>
                 </div>
@@ -172,7 +172,7 @@ export default function GuardianTab({ botId }: GuardianTabProps) {
                 <div className="p-8 rounded-[32px] bg-white border border-slate-100">
                     <div className="flex items-center justify-between mb-8">
                         <h3 className="text-[20px] font-black text-slate-900">關鍵字監控範圍</h3>
-                        <button className="text-indigo-600 font-black text-[14px] flex items-center gap-1">
+                        <button className="text-emerald-600 font-black text-[14px] flex items-center gap-1">
                             <ArrowRight className="w-4 h-4" /> 管理
                         </button>
                     </div>

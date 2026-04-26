@@ -13,6 +13,7 @@ import { ForexService } from '@/lib/services/ForexService';
 import { WeatherService } from '@/lib/services/WeatherService';
 import { StockService } from '@/lib/services/StockService';
 import { checkRateLimit } from '@/lib/middleware/rateLimit';
+import { AIService } from '@/lib/services/AIService';
 import { getRandomNagMessage } from '@/config/trial_nags';
 import { Redis } from '@upstash/redis';
 

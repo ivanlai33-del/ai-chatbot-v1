@@ -83,7 +83,9 @@ export async function POST(req: Request) {
             quality: "low",
         } as any);
 
-        // gpt-image-2 可能回傳 base64 或 URL
+        if (!response.data || response.data.length === 0) {
+            throw new Error('AI 模型未回傳任何圖片數據');
+        }
         const imgData = response.data[0];
         let imageUrl: string;
         

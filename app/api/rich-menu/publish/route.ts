@@ -150,7 +150,7 @@ export async function POST(req: Request) {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': contentType,
             },
-            body: imageBuffer,
+            body: new Uint8Array(imageBuffer),
         });
 
         if (!uploadRes.ok) {

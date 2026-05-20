@@ -532,7 +532,7 @@ async function processEvents(botId: string, events: WebhookEvent[]) {
 
                     if (geminiResponse.functionCalls && geminiResponse.functionCalls.length > 0) {
                         const toolCall = geminiResponse.functionCalls[0];
-                        const functionName = toolCall.name;
+                        const functionName = toolCall.name ?? '';
                         const args = toolCall.args;
                         
                         const functionResponse = await executeToolCall(functionName, args, botId);

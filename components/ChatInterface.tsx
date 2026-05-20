@@ -12,7 +12,7 @@ type Message = {
     id: string;
     role: 'ai' | 'user';
     content: string;
-    type?: 'text' | 'pricing' | 'checkout' | 'setup' | 'success' | 'recovery' | 'saas_partner' | 'enterprise' | 'requirement_form' | 'contact_cta';
+    type?: 'text' | 'pricing' | 'checkout' | 'setup' | 'success' | 'recovery' | 'saas_partner' | 'enterprise' | 'requirement_form' | 'contact_cta' | 'member_greeting';
 };
 
 const LINE_GREEN = "#06C755";
@@ -409,6 +409,7 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
             setMessages([]);
         }
     }, [isSaaS]);
+
     const [inputValue, setInputValue] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const [step, setStep] = useState(0);
@@ -416,26 +417,8 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
     const [selectedPlan, setSelectedPlan] = useState({ name: '', price: '' });
     const [lineSecret, setLineSecret] = useState("");
     const [lineToken, setLineToken] = useState("");
-
-    const resetChat = () => {
-        setMessages([]);
-        setInputValue('');
-        setStep(0);
-        setStoreName('');
-        setSelectedPlan({ name: '', price: '' });
-        setLineSecret("");
-        setLineToken("");
-        // Clear soul data
-        setIndustryType("");
-        setCompanyName("");
-        setMainServices("");
-        setTargetAudience("");
-        setContactInfo("");
-        ['chat_industry_type','chat_company_name','chat_main_services','chat_target_audience','chat_contact_info'].forEach(k => localStorage.removeItem(k));
-    };
     const [businessIndustry, setBusinessIndustry] = useState("");
     const [businessMission, setBusinessMission] = useState("");
-    // 🧠 Soul Data (Five-Sense Intelligence)
     const [industryType, setIndustryType] = useState("");
     const [companyName, setCompanyName] = useState("");
     const [mainServices, setMainServices] = useState("");
@@ -444,6 +427,99 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
     const [lineUserId, setLineUserId] = useState<string | null>(null);
     const [lineUserName, setLineUserName] = useState<string | null>(null);
     const [mgmtToken, setMgmtToken] = useState<string | null>(null);
+    const [pageContext, setPageContext] = useState('');
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setPageContext(window.location.search);
+        }
+    }, []);
+
+    const checkExistingBots = async (userId: string) => {
+        try {
+            const res = await fetch(`/api/bot?lineUserId=${userId}`);
+            const data = await res.json();
+            if (data.success && data.bots && data.bots.length > 0) {
+                const bot = data.bots[0]; // Take the most recent one
+                setBotId(bot.id);
+                setStoreName(bot.store_name);
+                setTimeout(() => {
+                    addAiMessage(
+                        `老闆歡迎回來！✨ 偵測到您已開通過「${bot.store_name}」的 AI 店長服務。您想直接進入管理後台進行設定嗎？`,
+                        'member_greeting'
+                    );
+                }, 1500);
+                return true;
+            }
+        } catch (error) {
+            console.error('Failed to check existing bots:', error);
+        }
+        return false;
+    };
+
+    const initiateLineLogin = () => {
+        const width = 500;
+        const height = 650;
+        const left = window.screenX + (window.outerWidth - width) / 2;
+        const top = window.screenY + (window.outerHeight - height) / 2;
+        
+        window.open(
+            '/api/auth/line?popup=true',
+            'LineLogin',
+            `width=${width},height=${height},left=${left},top=${top},status=no,resizable=yes,toolbar=no,menubar=no,scrollbars=yes`
+        );
+    };
+
+    useEffect(() => {
+        const handleMessage = (event: MessageEvent) => {
+            if (event.data?.type === 'LINE_LOGIN_SUCCESS') {
+                const { line_id, line_name } = event.data;
+                setLineUserId(line_id);
+                setLineUserName(line_name);
+                localStorage.setItem('line_user_id', line_id);
+                localStorage.setItem('line_user_name', line_name);
+
+                // 🔥 Member Recognition Check
+                checkExistingBots(line_id).then(isMember => {
+                    if (isMember) return; 
+
+                    const pendingPlanStr = localStorage.getItem('pending_plan');
+                    if (pendingPlanStr) {
+                        try {
+                            const plan = JSON.parse(pendingPlanStr);
+                            setSelectedPlan(plan);
+                            setStep(2); // Step 2 is checkout/payment
+                            setTimeout(() => {
+                                addAiMessage(`身分驗證成功！${line_name} 老闆您好。這是您選擇的方案，請完成支付以正式開通您的 AI 店長：`, "checkout");
+                            }, 700);
+                            localStorage.removeItem('pending_plan');
+                        } catch (e) {
+                            console.error('Failed to parse pending plan', e);
+                        }
+                    } else {
+                        // Standard Onboarding Flow: Trigger AI to show plans
+                        const loginSuccessMsg: Message = { 
+                            role: 'user', 
+                            content: `我已經完成 LINE 身份綁定，我是 ${line_name}。`,
+                            id: Date.now().toString()
+                        };
+                        
+                        setMessages(prev => {
+                            const next = [...prev, loginSuccessMsg];
+                            triggerAiResponse(next);
+                            return next;
+                        });
+                    }
+                });
+            } else if (event.data?.type === 'LINE_LOGIN_ERROR') {
+                addAiMessage(`登入失敗了，請再試一次看看：${event.data.error}`);
+            }
+        };
+
+        window.addEventListener('message', handleMessage);
+        return () => window.removeEventListener('message', handleMessage);
+    }, []);
+
     const [isAdminView, setIsAdminView] = useState(false);
     const [adminBotData, setAdminBotData] = useState<any>(null);
     const [isSaving, setIsSaving] = useState(false);
@@ -456,51 +532,16 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
             setTutorialStep((lastMsg as any).metadata.tutorialStep);
         }
 
-        // Check for LINE Login callback params
-        if (typeof window !== 'undefined') {
-            const params = new URLSearchParams(window.location.search);
-            const lId = params.get('line_id');
-            const lName = params.get('line_name');
-            
-            if (lId) {
-                setLineUserId(lId);
-                localStorage.setItem('line_user_id', lId);
-                if (lName) {
-                    setLineUserName(lName);
-                    localStorage.setItem('line_user_name', lName);
-                }
-                // Clean up URL to avoid re-triggering logic on refresh
-                window.history.replaceState({}, document.title, window.location.pathname);
-
-                // Check for pending plan to resume
-                const pendingPlanStr = localStorage.getItem('pending_plan');
-                if (pendingPlanStr) {
-                    try {
-                        const plan = JSON.parse(pendingPlanStr);
-                        setSelectedPlan(plan);
-                        setStep(2);
-                        setTimeout(() => {
-                            addAiMessage(`${lName || '老闆'} 您好，身份驗證已完成！這是您選擇的方案，請完成支付以正式開通您的 AI 店長：`, "checkout");
-                        }, 1200);
-                        localStorage.removeItem('pending_plan');
-                    } catch (e) {
-                        console.error('Failed to parse pending plan', e);
-                    }
-                } else {
-                    // Identity bound before plan selection
-                    setTimeout(() => {
-                        addAiMessage(`${lName || '老闆'} 您好！身份已成功綁定。前五百位加入的專屬優惠我已經幫您留好了，現在來看看最適合您的開通方案吧：`, "pricing");
-                    }, 1200);
-                }
-            } else {
-                // Try to load from localStorage
-                const savedId = localStorage.getItem('line_user_id');
-                const savedName = localStorage.getItem('line_user_name');
-                if (savedId) setLineUserId(savedId);
+        // Restore session from localStorage only (avoids duplicate UI in popups)
+        if (typeof window !== 'undefined' && !lineUserId) {
+            const savedId = localStorage.getItem('line_user_id');
+            const savedName = localStorage.getItem('line_user_name');
+            if (savedId) {
+                setLineUserId(savedId);
                 if (savedName) setLineUserName(savedName);
             }
         }
-    }, [messages]);
+    }, [messages, lineUserId]);
     const [paypalInitialized, setPaypalInitialized] = useState(false);
     const [botId, setBotId] = useState<string | null>(null);
     const [placeholder, setPlaceholder] = useState("我想找Ai官方line小幫手....");
@@ -711,7 +752,9 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                     messages: currentMessages.map(m => ({ role: m.role, content: m.content })),
                     storeName,
                     currentStep: step,
-                    isMaster: isMasterMode
+                    isMaster: isMasterMode,
+                    lineUserId,
+                    pageContext
                 })
             });
 
@@ -1062,7 +1105,7 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                 type,
             };
             setMessages(prev => [...prev, newMessage]);
-        }, 1000 + Math.random() * 500);
+        }, 700);
     };
 
     const processAiResponse = (content: string, metadata: any) => {
@@ -1084,8 +1127,41 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
             if (action === 'COLLECT_CONTACT') actionTip = 'contact_cta';
         }
 
-        // 🗑️ Frontend Safety Net: Strip any JSON-like blocks that leaked through
-        const cleanContent = content.replace(/\{[\s\S]*\}$/, '').trim();
+        // 🚀 Client-Side Keyword Interceptor (Force "Obvious Button" Card)
+        const loginKeywords = ["LINE", "一鍵登入", "身分綁定", "完成綁定", "點擊下方按鈕", "登入", "綁定帳號", "身份綁定", "聯絡我們", "驗證身分"];
+        const hasLoginKeyword = loginKeywords.some(k => content.includes(k));
+        
+        const plansKeywords = ["方案", "價格", "費用", "499", "1199", "Lite", "公司強力版", "開通方案", "適合您的方案"];
+        const hasPlansKeyword = plansKeywords.some(k => content.includes(k));
+
+        if (actionTip === 'text') {
+            if (hasLoginKeyword) {
+                actionTip = 'contact_cta';
+            } else if (hasPlansKeyword && !content.includes("支付") && !content.includes("結帳")) {
+                actionTip = 'pricing';
+            }
+        }
+
+        // 🗑️ Frontend Safety Net: Strip any JSON-like blocks that leaked through (handles trailing garbage)
+        let cleanContent = content.replace(/\{[\s\S]+?\}[^}]*$/, '').trim();
+
+        // 🗑️ Redundant Content Cleaning: Remove text buttons if the card is already visible
+        if (actionTip === 'contact_cta') {
+            cleanContent = cleanContent.replace(/\[LINE.*\]/g, '').replace(/👉/g, '').trim();
+        }
+
+        // 🛡️ User Request Safety Filter: Strip redundant sales quotes during pricing/payment phase
+        const redundantQuotes = [
+            "我不是要取代你，而是幫你先接住那些你沒空回的客人。",
+            "你可以把最重要的談價、收尾留給自己，其它 FAQ、預約、提醒都交給我。",
+            "如果你覺得這樣的分工OK，那就讓我正式成為你店裡的 AI 店長。"
+        ];
+        
+        if (actionTip === 'pricing' || actionTip === 'checkout') {
+            redundantQuotes.forEach(quote => {
+                cleanContent = cleanContent.replace(quote, '').trim();
+            });
+        }
 
         if (metadata.storeName && metadata.storeName !== "未命名") {
             setStoreName(metadata.storeName);
@@ -1240,9 +1316,7 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
             localStorage.setItem('pending_plan', JSON.stringify({ name, price }));
             // Add a small delay so user sees the "selection" before redirect
             addAiMessage("太棒了！為了確保您在開通後能直接進入管理後台，請先完成 LINE 身份驗證：");
-            setTimeout(() => {
-                window.location.href = '/api/auth/line';
-            }, 1000);
+            initiateLineLogin();
             return;
         }
 
@@ -1344,7 +1418,8 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
         }
     };
 
-    const resetFlow = () => {
+
+    const resetChat = () => {
         setMessages([]);
         setStep(0);
         setStoreName('');
@@ -1472,6 +1547,13 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                     <span>{viewMode === 'webview' ? "回到對話" : "查看我的 AI 店長"}</span>
                                 </button>
                             )}
+                            {lineUserId && (
+                                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-green-50 border border-green-100 text-[#06C755] font-bold text-sm shadow-sm">
+                                    <Check className="w-4 h-4" />
+                                    <span>{lineUserName || '已登入'}</span>
+                                </div>
+                            )}
+
                             <button
                                 onClick={resetChat}
                                 className={cn(
@@ -1550,12 +1632,38 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                                                 );
                                                             }
 
-                                                            // 3. Inline Elements (Images, Bold, Links)
-                                                            const parts = line.split(/(!\[.*?\]\(.*?\))|(\*\*.*?\*\*)|(https?:\/\/[^\s]+)/g);
+                                                            // 3. Inline Elements (Buttons, Images, Bold, Links)
+                                                            const parts = line.split(/(!\[.*?\]\(.*?\))|(\*\*.*?\*\*)|(https?:\/\/[^\s]+)|(\[.*?\])/g);
                                                             return (
                                                                 <div key={lineIdx} className="leading-relaxed">
                                                                     {parts.map((part, i) => {
                                                                         if (!part) return null;
+
+                                                                        // 🔘 Bracketed Action Buttons [Text]
+                                                                        if (part.startsWith('[') && part.endsWith(']')) {
+                                                                            const btnText = part.slice(1, -1);
+                                                                            return (
+                                                                                <button
+                                                                                    key={i}
+                                                                                    onClick={() => {
+                                                                                        if (btnText.includes('LINE') || btnText.includes('登入')) {
+                                                                                            initiateLineLogin();
+                                                                                        } else {
+                                                                                            setInputValue(btnText);
+                                                                                            // Small delay to feel natural
+                                                                                            setTimeout(() => {
+                                                                                                const sendBtn = document.querySelector('[aria-label="傳送訊息"]') as HTMLButtonElement;
+                                                                                                sendBtn?.click();
+                                                                                            }, 100);
+                                                                                        }
+                                                                                    }}
+                                                                                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-zinc-50 border border-zinc-200 rounded-lg text-sm text-zinc-700 hover:bg-zinc-100 transition-all font-bold m-1 shadow-sm active:scale-95"
+                                                                                >
+                                                                                    {btnText}
+                                                                                    <ChevronRight className="w-3 h-3 text-zinc-400" />
+                                                                                </button>
+                                                                            );
+                                                                        }
 
                                                                         // Markdown Images
                                                                         const imgMatch = part.match(/!\[(.*?)\]\((.*?)\)/);
@@ -1705,7 +1813,16 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                                         desc: '多帳號部署 / 不限流量 / 多通路整合行銷',
                                                         isRequirement: true
                                                     }
-                                                ].map((p) => (
+                                                ].filter(p => {
+                                                    if (p.isRequirement) {
+                                                        // Only show for enterprise/franchise or if explicitly requested
+                                                        const isEnterprise = (storeName || '').includes('連鎖') || (businessIndustry || '').includes('連鎖') || 
+                                                                           m.content.includes('連鎖') || m.content.includes('大量') || 
+                                                                           m.content.includes('企業');
+                                                        return m.type === 'enterprise' || m.type === 'requirement_form' || isEnterprise;
+                                                    }
+                                                    return true;
+                                                }).map((p) => (
                                                     <button
                                                         key={p.name}
                                                         onClick={() => {
@@ -1831,8 +1948,7 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                                 </p>
                                                 <button
                                                     onClick={() => {
-                                                        const redirectUrl = `${window.location.origin}/api/auth/line`;
-                                                        window.location.href = redirectUrl;
+                                                        initiateLineLogin();
                                                     }}
                                                     className="w-full py-5 text-white bg-[#06C755] rounded-2xl font-black text-[21px] hover:brightness-105 active:scale-95 transition-all shadow-xl shadow-green-500/30 flex items-center justify-center gap-3"
                                                 >
@@ -1859,22 +1975,22 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                                     <span>安全加密結帳</span>
                                                 </div>
                                                 <div className="space-y-4">
-                                                    <div className="bg-zinc-50 p-4 rounded-xl border border-zinc-100 flex justify-between items-center mb-2">
+                                                    <div className="bg-zinc-50 p-4 rounded-xl border-2 border-[#06C755] flex justify-between items-center mb-2 shadow-sm shadow-green-500/5">
                                                         <span className="text-zinc-500 font-bold text-[16px]">已選方案</span>
                                                         <span className="font-black text-zinc-900 text-[21px]">{selectedPlan.name || '標準型'} ({selectedPlan.price || '$1199'})</span>
                                                     </div>
                                                     <div className="space-y-1.5">
                                                         <p className="text-[12px] font-black text-zinc-400 uppercase tracking-widest pl-1">信用卡卡號</p>
-                                                        <input type="text" placeholder="XXXX XXXX XXXX XXXX" className="w-full p-4 rounded-xl border border-zinc-100 bg-zinc-50 text-[18.5px] focus:ring-2 focus:ring-green-500 transition-all outline-none" />
+                                                        <input type="text" placeholder="XXXX XXXX XXXX XXXX" className="w-full p-4 rounded-xl border-2 border-zinc-200 bg-zinc-50 text-[18.5px] focus:ring-2 focus:ring-green-500 transition-all outline-none" />
                                                     </div>
                                                     <div className="grid grid-cols-2 gap-4">
                                                         <div className="space-y-1.5">
                                                             <p className="text-[12px] font-black text-zinc-400 pl-1 uppercase tracking-widest">有效期</p>
-                                                            <input type="text" placeholder="MM/YY" className="w-full p-4 rounded-xl border border-zinc-100 bg-zinc-50 text-[18.5px] focus:ring-2 focus:ring-green-500 transition-all outline-none" />
+                                                            <input type="text" placeholder="MM/YY" className="w-full p-4 rounded-xl border-2 border-zinc-200 bg-zinc-50 text-[18.5px] focus:ring-2 focus:ring-green-500 transition-all outline-none" />
                                                         </div>
                                                         <div className="space-y-1.5">
-                                                            <p className="text-[2px] font-black text-zinc-400 pl-1 uppercase tracking-widest">CVC</p>
-                                                            <input type="text" placeholder="123" className="w-full p-4 rounded-xl border border-zinc-100 bg-zinc-50 text-[18.5px] focus:ring-2 focus:ring-green-500 transition-all outline-none" />
+                                                            <p className="text-[12px] font-black text-zinc-400 pl-1 uppercase tracking-widest">CVC</p>
+                                                            <input type="text" placeholder="123" className="w-full p-4 rounded-xl border-2 border-zinc-200 bg-zinc-50 text-[18.5px] focus:ring-2 focus:ring-green-500 transition-all outline-none" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1894,7 +2010,7 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                                 ) : (
                                                     <button
                                                         onClick={handlePaymentSuccess}
-                                                        className="w-full py-5 text-white rounded-2xl font-black text-[21px] hover:brightness-110 active:scale-95 transition-all shadow-xl shadow-[#06C755]"
+                                                        className="w-full py-5 text-white rounded-2xl font-black text-[21px] hover:brightness-110 active:scale-95 transition-all shadow-xl shadow-[#06C755] border-4 border-green-100"
                                                         style={{ backgroundColor: LINE_GREEN }}
                                                     >
                                                         立即付款 {selectedPlan.price || '$1199'}
@@ -1944,6 +2060,37 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                                 >
                                                     立即驗證並找回
                                                 </button>
+                                            </motion.div>
+                                        )}
+
+                                        {m.type === 'member_greeting' && (
+                                            <motion.div
+                                                initial={{ opacity: 0, scale: 0.95 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                className="ml-14 bg-white p-8 rounded-3xl border border-zinc-100 shadow-2xl space-y-6 max-w-[85%]"
+                                            >
+                                                <div className="flex items-center gap-3 font-black text-[21px] text-[#06C755]">
+                                                    <Layout className="w-7 h-7" />
+                                                    <span>歡迎回來，老闆！</span>
+                                                </div>
+                                                <div className="bg-zinc-50 p-6 rounded-2xl border border-zinc-100 text-center space-y-4">
+                                                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto shadow-sm">
+                                                        <Rocket className="w-8 h-8 text-[#06C755]" />
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-bold text-zinc-800">您的 AI 店長正隨時待命</p>
+                                                        <p className="text-xs text-zinc-400 mt-1">您可以立即查看報表、修改智庫或發送廣播</p>
+                                                    </div>
+                                                    <button
+                                                        onClick={() => {
+                                                            window.location.href = `/console?line_id=${lineUserId || ''}&line_name=${encodeURIComponent(lineUserName || '')}`;
+                                                        }}
+                                                        className="px-8 py-3 text-white rounded-full font-black text-lg hover:brightness-110 transition-all shadow-lg shadow-[#06C755]/30"
+                                                        style={{ backgroundColor: LINE_GREEN }}
+                                                    >
+                                                        立即進入管理後台
+                                                    </button>
+                                                </div>
                                             </motion.div>
                                         )}
 
@@ -2734,7 +2881,7 @@ export default function ChatInterface({ isMaster = false, isSaaS = false }: { is
                                 </div>
                                 <div className="flex flex-col w-full gap-3">
                                     <button
-                                        onClick={resetFlow}
+                                        onClick={resetChat}
                                         className="w-full py-4 bg-[#06C755] text-white rounded-2xl font-bold text-lg hover:opacity-90 transition-colors shadow-lg shadow-green-200"
                                     >
                                         確定重置

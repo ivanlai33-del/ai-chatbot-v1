@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Client, WebhookEvent } from '@line/bot-sdk';
 import OpenAI from 'openai';
+import { GoogleGenAI } from '@google/genai';
 import { supabase } from '@/lib/supabase';
 import { decrypt } from '@/lib/encryption';
 import { IntentInterceptor } from '@/lib/services/IntentInterceptor';
@@ -504,97 +505,92 @@ async function processEvents(botId: string, events: WebhookEvent[]) {
                 }
 
                 try {
-                    const response = await openai.chat.completions.create({
-                        model: "gpt-4o-mini",
-                        messages,
-                        tools,
-                        tool_choice: "auto",
+                    const gemini = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+                    
+                    const sysMsg = messages.filter((m:any) => m.role === 'system').map((m:any) => m.content).join("\n");
+                    const userModelContents = messages.filter((m:any) => m.role !== 'system').map((m: any) => ({
+                        role: m.role === 'assistant' ? 'model' : 'user',
+                        parts: [{ text: m.content }]
+                    }));
+
+                    const geminiTools = [{
+                        functionDeclarations: tools.filter(t => t.type === 'function').map(t => ({
+                            name: t.function.name,
+                            description: t.function.description || "",
+                            parameters: t.function.parameters as any
+                        }))
+                    }];
+
+                    const geminiResponse = await gemini.models.generateContent({
+                        model: 'gemini-3.1-flash',
+                        contents: userModelContents,
+                        config: {
+                            systemInstruction: sysMsg,
+                            tools: geminiTools
+                        }
                     });
 
-                    let responseMessage = response.choices[0].message;
+                    if (geminiResponse.functionCalls && geminiResponse.functionCalls.length > 0) {
+                        const toolCall = geminiResponse.functionCalls[0];
+                        const functionName = toolCall.name;
+                        const args = toolCall.args;
+                        
+                        const functionResponse = await executeToolCall(functionName, args, botId);
+                        
+                        const secondGeminiResponse = await gemini.models.generateContent({
+                            model: 'gemini-3.1-flash',
+                            contents: [
+                                ...userModelContents,
+                                { role: 'model', parts: [{ functionCall: toolCall }] },
+                                { role: 'user', parts: [{ functionResponse: { name: functionName, response: { result: functionResponse } } }] }
+                            ],
+                            config: { systemInstruction: sysMsg, tools: geminiTools }
+                        });
+                        aiResponse = secondGeminiResponse.text || "";
+                    } else {
+                        aiResponse = geminiResponse.text || "";
+                    }
+                } catch (geminiErr: any) {
+                    console.error('Gemini Error, falling back to OpenAI:', geminiErr.message);
+                    try {
+                        const response = await openai.chat.completions.create({
+                            model: "gpt-4o-mini",
+                            messages,
+                            tools,
+                            tool_choice: "auto",
+                        });
 
-                    // Handle Tool Calls
-                    if (responseMessage.tool_calls) {
-                        const toolMessages = [...messages, responseMessage];
+                        let responseMessage = response.choices[0].message;
 
-                        for (const toolCall of responseMessage.tool_calls) {
-                            const functionName = toolCall.function.name;
-                            const args = JSON.parse(toolCall.function.arguments);
-                            let functionResponse = "";
+                        // Handle Tool Calls
+                        if (responseMessage.tool_calls) {
+                            const toolMessages = [...messages, responseMessage];
 
-                            if (functionName === "query_inventory") {
-                                const { data } = await supabase
-                                    .from('products')
-                                    .select('*')
-                                    .eq('bot_id', botId)
-                                    .ilike('name', `%${args.keyword}%`);
-                                functionResponse = JSON.stringify(data || []);
-                            } else if (functionName === "query_faq") {
-                                const { data } = await supabase
-                                    .from('faq')
-                                    .select('*')
-                                    .eq('bot_id', botId)
-                                    .ilike('question', `%${args.question}%`);
-                                functionResponse = JSON.stringify(data || []);
-                            } else if (functionName === "calculate_business_metrics") {
-                                const { data: orders } = await supabase.from('orders').select('*').eq('bot_id', botId);
-                                const { data: products } = await supabase.from('products').select('*').eq('bot_id', botId);
+                            for (const toolCall of responseMessage.tool_calls) {
+                                const functionName = toolCall.function.name;
+                                const args = JSON.parse(toolCall.function.arguments);
+                                const functionResponse = await executeToolCall(functionName, args, botId);
 
-                                const productCosts = (products || []).reduce((acc: any, p: any) => {
-                                    acc[p.id] = p.cost;
-                                    return acc;
-                                }, {});
-
-                                let totalRevenue = 0;
-                                let totalCost = 0;
-
-                                (orders || []).forEach((order: any) => {
-                                    totalRevenue += Number(order.total_amount);
-                                    if (order.items && Array.isArray(order.items)) {
-                                        order.items.forEach((item: any) => {
-                                            const cost = productCosts[item.product_id] || 0;
-                                            totalCost += Number(cost) * Number(item.quantity);
-                                        });
-                                    }
+                                toolMessages.push({
+                                    tool_call_id: toolCall.id,
+                                    role: "tool",
+                                    name: functionName,
+                                    content: functionResponse,
                                 });
-
-                                functionResponse = JSON.stringify({
-                                    total_revenue: totalRevenue,
-                                    total_cost: totalCost,
-                                    gross_profit: totalRevenue - totalCost,
-                                    profit_margin: totalRevenue > 0 ? ((totalRevenue - totalCost) / totalRevenue * 100).toFixed(2) + "%" : "0%"
-                                });
-                            } else if (functionName === "analyze_stock_market") {
-                                const symbol = args.symbol.includes('.') ? args.symbol.split('.')[0] : args.symbol;
-                                const data = await IntentInterceptor.intercept(symbol);
-                                functionResponse = JSON.stringify(data.data || { error: "查無此股票數據" });
-                            } else if (functionName === "get_current_weather") {
-                                const data = await IntentInterceptor.intercept(args.location + "天氣");
-                                functionResponse = JSON.stringify(data.data || { error: "查無此天氣數據" });
-                            } else if (GenericToolsRegistry[functionName]) {
-                                // Execute any Generic Tool from the Registry dynamically
-                                functionResponse = await GenericToolsRegistry[functionName].execute(args);
                             }
 
-                            toolMessages.push({
-                                tool_call_id: toolCall.id,
-                                role: "tool",
-                                name: functionName,
-                                content: functionResponse,
+                            const secondResponse = await openai.chat.completions.create({
+                                model: "gpt-4o-mini",
+                                messages: toolMessages,
                             });
+                            aiResponse = secondResponse.choices[0].message.content || "";
+                        } else {
+                            aiResponse = responseMessage.content || "";
                         }
-
-                        const secondResponse = await openai.chat.completions.create({
-                            model: "gpt-4o-mini",
-                            messages: toolMessages,
-                        });
-                        aiResponse = secondResponse.choices[0].message.content || "";
-                    } else {
-                        aiResponse = responseMessage.content || "";
+                    } catch (e: any) {
+                        console.error('OpenAI Fallback Error:', e.message);
+                        aiResponse = "抱歉，我剛才大腦斷線了，請再說一次。";
                     }
-                } catch (e: any) {
-                    console.error('AI Error:', e.message);
-                    aiResponse = "抱歉，我剛才大腦斷線了，請再說一次。";
                 } finally {
                     releaseSlot(botId); // Always release the slot
                 }
@@ -642,4 +638,63 @@ async function processEvents(botId: string, events: WebhookEvent[]) {
     } catch (error: any) {
         console.error('[processEvents] Error:', error);
     }
+}
+
+async function executeToolCall(functionName: string, args: any, botId: string) {
+    let functionResponse = "";
+
+    if (functionName === "query_inventory") {
+        const { data } = await supabase
+            .from('products')
+            .select('*')
+            .eq('bot_id', botId)
+            .ilike('name', `%${args.keyword}%`);
+        functionResponse = JSON.stringify(data || []);
+    } else if (functionName === "query_faq") {
+        const { data } = await supabase
+            .from('faq')
+            .select('*')
+            .eq('bot_id', botId)
+            .ilike('question', `%${args.question}%`);
+        functionResponse = JSON.stringify(data || []);
+    } else if (functionName === "calculate_business_metrics") {
+        const { data: orders } = await supabase.from('orders').select('*').eq('bot_id', botId);
+        const { data: products } = await supabase.from('products').select('*').eq('bot_id', botId);
+
+        const productCosts = (products || []).reduce((acc: any, p: any) => {
+            acc[p.id] = p.cost;
+            return acc;
+        }, {});
+
+        let totalRevenue = 0;
+        let totalCost = 0;
+
+        (orders || []).forEach((order: any) => {
+            totalRevenue += Number(order.total_amount);
+            if (order.items && Array.isArray(order.items)) {
+                order.items.forEach((item: any) => {
+                    const cost = productCosts[item.product_id] || 0;
+                    totalCost += Number(cost) * Number(item.quantity);
+                });
+            }
+        });
+
+        functionResponse = JSON.stringify({
+            total_revenue: totalRevenue,
+            total_cost: totalCost,
+            gross_profit: totalRevenue - totalCost,
+            profit_margin: totalRevenue > 0 ? ((totalRevenue - totalCost) / totalRevenue * 100).toFixed(2) + "%" : "0%"
+        });
+    } else if (functionName === "analyze_stock_market") {
+        const symbol = args.symbol.includes('.') ? args.symbol.split('.')[0] : args.symbol;
+        const data = await IntentInterceptor.intercept(symbol);
+        functionResponse = JSON.stringify(data.data || { error: "查無此股票數據" });
+    } else if (functionName === "get_current_weather") {
+        const data = await IntentInterceptor.intercept(args.location + "天氣");
+        functionResponse = JSON.stringify(data.data || { error: "查無此天氣數據" });
+    } else if (GenericToolsRegistry[functionName]) {
+        functionResponse = await GenericToolsRegistry[functionName].execute(args);
+    }
+
+    return functionResponse;
 }

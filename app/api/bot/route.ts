@@ -56,11 +56,8 @@ export async function POST(req: NextRequest) {
         if (!lineToken) {
             return NextResponse.json({ error: '請填寫 Line Access Token' }, { status: 400 });
         }
-        if (!isManagedPlan && !openaiKey) {
-            return NextResponse.json({ error: '此方案需要提供 OpenAI API Key' }, { status: 400 });
-        }
 
-        // Encrypt sensitive data (OpenAI Key is optional for managed plans)
+        // Encrypt sensitive data (OpenAI Key is optional for everyone, but mainly used by SaaS)
         const encryptedSecret = encrypt(lineSecret);
         const encryptedToken = encrypt(lineToken);
         const encryptedOpenaiKey = openaiKey ? encrypt(openaiKey) : "";
@@ -74,7 +71,8 @@ export async function POST(req: NextRequest) {
                     store_name: finalStoreName,
                     line_channel_secret: encryptedSecret,
                     line_channel_access_token: encryptedToken,
-                    openai_api_key: encryptedOpenaiKey,
+                    // Only store OpenAI key for SaaS‑type plans; personal/studio users rely on the master key.
+                    ...(selectedPlan?.name?.includes('SaaS') ? { openai_api_key: encryptedOpenaiKey } : {}),
                     selected_plan: selectedPlan?.name || 'Standard',
                     mgmt_token: mgmtToken,
                     owner_line_id: ownerLineId || null,
@@ -101,6 +99,35 @@ export async function POST(req: NextRequest) {
             success: true,
             botId: data[0].id,
             mgmtToken: mgmtToken
+        });
+    } catch (error: any) {
+        console.error('API Error:', error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+}
+
+export async function GET(req: NextRequest) {
+    try {
+        const { searchParams } = new URL(req.url);
+        const lineUserId = searchParams.get('lineUserId');
+
+        if (!lineUserId) {
+            return NextResponse.json({ error: 'Missing lineUserId' }, { status: 400 });
+        }
+
+        const { data: bots, error } = await supabase
+            .from('bots')
+            .select('id, store_name, status, mgmt_token')
+            .eq('owner_line_id', lineUserId);
+
+        if (error) {
+            console.error('Supabase fetch error:', error);
+            return NextResponse.json({ error: error.message }, { status: 500 });
+        }
+
+        return NextResponse.json({
+            success: true,
+            bots: bots || []
         });
     } catch (error: any) {
         console.error('API Error:', error);

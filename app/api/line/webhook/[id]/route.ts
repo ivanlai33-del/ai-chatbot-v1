@@ -14,10 +14,12 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { WebhookEvent, messagingApi } from '@line/bot-sdk';
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@supabase/supabase-js';
+const supabaseAdmin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 import { AIService } from '@/lib/services/AIService';
 import { FreemiumGuard } from '@/lib/services/FreemiumGuard';
 import OpenAI from 'openai';
+import { GoogleGenAI } from '@google/genai';
 import { Redis } from '@upstash/redis';
 import * as crypto from 'crypto';
 
@@ -35,7 +37,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         const signature = req.headers.get('x-line-signature') || '';
 
         // ⚡ 1. 取得 Bot 設定
-        const { data: config, error: configError } = await supabase
+        const { data: config, error: configError } = await supabaseAdmin
             .from('line_channel_configs')
             .select('*')
             .eq('id', configId)
@@ -102,7 +104,7 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
         // ⚡ Check Redis cache first, only query DB on cache miss
         let storeConfig = await redis.get(`store_config:${configId}`);
         if (!storeConfig) {
-            const { data } = await supabase
+            const { data } = await supabaseAdmin
                 .from('store_configs').select('*').eq('bot_config_id', configId).maybeSingle();
             storeConfig = data;
             if (storeConfig) {
@@ -163,7 +165,7 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
 
                 // 🎯 圖片專用靜默邏輯：存入日誌後直接結束該 Event 處理，不呼叫 AI，不發送回覆。
                 const logTask = (async () => {
-                    const { error } = await supabase.from('chat_logs').insert([
+                    const { error } = await supabaseAdmin.from('chat_logs').insert([
                         { config_id: configId, user_id: userId, role: 'user', content: userMessage }
                     ]);
                     if (error) console.error(`[TIER1:LineWebhook][${configId}] Silent image log failed:`, error.message);
@@ -205,7 +207,7 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
             // ⚡ 並行處理：歷史記錄 + 意圖攔截
             const { IntentInterceptor } = await import('@/lib/services/IntentInterceptor');
             const [historyResult, intercepted] = await Promise.all([
-                supabase
+                supabaseAdmin
                     .from('chat_logs')
                     .select('role, content')
                     .eq('config_id', configId)
@@ -235,7 +237,7 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
             }
 
             // ⚡ DIRECT OpenAI call — skip AIService overhead:
-            const aiResponse = await callOpenAIDirect(dynamicPrompt, userMessage, chatHistory, imageBase64);
+            const aiResponse = await callAIDirect(dynamicPrompt, userMessage, chatHistory, imageBase64);
 
             await client.replyMessage({
                 replyToken: event.replyToken,
@@ -255,7 +257,7 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
             // Save chat log (non-blocking but awaited at the end)
             const isLead = /09\d{2}[-\s]?\d{3}[-\s]?\d{3}|(預約|報名|想買|電話)/i.test(userMessage + aiResponse);
             const logTask = (async () => {
-                const { error } = await supabase.from('chat_logs').insert([
+                const { error } = await supabaseAdmin.from('chat_logs').insert([
                     { config_id: configId, user_id: userId, role: 'user', content: userMessage },
                     { config_id: configId, user_id: userId, role: 'ai', content: aiResponse, is_lead: isLead }
                 ]);
@@ -284,7 +286,43 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
  * Skips: Moderation API, dynamic tools, member tier lookup.
  * Uses: gpt-4o-mini (fastest), max_tokens cap (prevent runaway responses).
  */
-async function callOpenAIDirect(systemPrompt: string, userMessage: string, chatHistory: any[] = [], imageBase64: string | null = null): Promise<string> {
+async function callAIDirect(systemPrompt: string, userMessage: string, chatHistory: any[] = [], imageBase64: string | null = null): Promise<string> {
+    try {
+        if (process.env.GOOGLE_API_KEY && process.env.GEMINI_API_KEY) {
+            delete process.env.GOOGLE_API_KEY;
+        }
+        const gemini = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+        
+        const contents = chatHistory.map(m => ({
+            role: m.role === 'assistant' ? 'model' : 'user',
+            parts: [{ text: m.content }]
+        }));
+        
+        const currentParts: any[] = [];
+        if (imageBase64) {
+            currentParts.push({ text: '請辨識或解析此圖片細節，並專注回答與本店商品或服務相關的內容。' });
+            currentParts.push({ inlineData: { mimeType: 'image/jpeg', data: imageBase64 } });
+        } else {
+            currentParts.push({ text: userMessage });
+        }
+        contents.push({ role: 'user', parts: currentParts });
+        
+        const res = await gemini.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents,
+            config: {
+                systemInstruction: systemPrompt,
+                temperature: 0.7
+            }
+        });
+        return res.text?.trim() || '抱歉，請再說一次。';
+    } catch (geminiErr: any) {
+        console.error('[TIER1:LineWebhook] Gemini failed, falling back to OpenAI:', geminiErr.message);
+        require('fs').appendFileSync('/tmp/gemini_error.log', new Date().toISOString() + ' ' + geminiErr.message + '\n').catch(()=>null);
+        return callOpenAIFallback(systemPrompt, userMessage, chatHistory, imageBase64);
+    }
+}
+async function callOpenAIFallback(systemPrompt: string, userMessage: string, chatHistory: any[] = [], imageBase64: string | null = null): Promise<string> {
     try {
         let userPayload: any = userMessage;
         
@@ -325,7 +363,7 @@ async function callOpenAIDirect(systemPrompt: string, userMessage: string, chatH
 async function extractCustomerProfile(botId: string, lineUserId: string, userMessage: string, aiResponse: string) {
     try {
         // ⚡ Step 1：單次 upsert 確保顧客建檔（含更新最後互動時間）
-        const { data: customer, error: upsertError } = await supabase
+        const { data: customer, error: upsertError } = await supabaseAdmin
             .from('bot_customers')
             .upsert(
                 {
@@ -369,14 +407,14 @@ async function extractCustomerProfile(botId: string, lineUserId: string, userMes
         await Promise.all([
             // 3a. 更新 AI 摘要
             summary
-                ? supabase.from('bot_customers')
+                ? supabaseAdmin.from('bot_customers')
                     .update({ ai_summary: summary })
                     .eq('id', customer.id)
                 : Promise.resolve(),
 
             // 3b. 批量寫入所有標籤（一次 DB 呼叫）
             tags.length > 0
-                ? supabase.from('bot_customer_tags').upsert(
+                ? supabaseAdmin.from('bot_customer_tags').upsert(
                     tags.map(tag => ({ customer_id: customer.id, tag_name: tag })),
                     { onConflict: 'customer_id,tag_name' }
                   )

@@ -7,33 +7,37 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
     metadataBase: new URL('https://bot.ycideas.com'),
     title: {
-        default: "Line 官方 Ai 智能店長｜24H 自動化銷售與客服助手",
-        template: "%s | Ai 智能店長"
+        default: "AI 智能店長 Pro｜3 分鐘讓 LINE 官方帳號具備 24 小時智慧客服能力",
+        template: "%s | LINE 智能店長 Pro"
     },
-    description: "專為個人與公司打造的 LINE 官方帳號專屬店長。提升 3 倍客服效率，支援商品導購、自動查庫存、即時物流追蹤，讓您的 LINE 帳號變成 24 小時不打烊的金牌銷售員。",
-    keywords: ["LINE 官方帳號", "AI 客服", "智能店長", "自動化銷售", "LINE 機器人", "SaaS", "客服系統", "網購客服"],
-    authors: [{ name: "Ai 智能店長團隊" }],
+    description: "想要 LINE 官方帳號自動回覆？LINE AI 助手為實體店與工作室提供智慧客服機器人，3 分鐘快速開通，協助自動處理詢問、介紹商品，助您減少大量重複客服工作並提升服務品質！",
+    keywords: [
+        "LINE官方帳號AI客服", "LINE AI機器人", "智能店長", "LINE自動回覆",
+        "AI客服系統", "LINE機器人", "美容LINE客服", "餐飲LINE客服",
+        "零售LINE機器人", "SaaS客服", "LINE官方帳號自動化", "AI智能店長"
+    ],
+    authors: [{ name: "AI 智能店長 Pro 團隊" }],
     openGraph: {
         type: "website",
         locale: "zh_TW",
         url: "https://bot.ycideas.com",
-        title: "Line 官方 Ai 智能店長｜24H 自動化銷售與客服助手",
-        description: "提升 3 倍客服效率！專為個人與公司打造的 LINE 官方專屬店長，支援商品導購、自動查庫存、即時物流追蹤。",
-        siteName: "Ai 智能店長",
+        title: "AI 智能店長 Pro｜3 分鐘讓 LINE 官方帳號具備 24 小時智慧客服能力",
+        description: "想要 LINE 官方帳號自動回覆？LINE AI 助手為實體店與工作室提供智慧客服機器人，3 分鐘快速開通，協助自動處理詢問、介紹商品，助您減少大量重複客服工作並提升服務品質！",
+        siteName: "AI 智能店長 Pro | LINE 智能店長 Pro",
         images: [
             {
-                url: "/og-image.jpeg",
+                url: "/og-image.jpg",
                 width: 1200,
                 height: 630,
-                alt: "Line 官方 Ai 智能店長",
+                alt: "AI 智能店長 Pro - LINE 官方帳號 AI 客服",
             },
         ],
     },
     twitter: {
         card: "summary_large_image",
-        title: "Line 官方 Ai 智能店長｜24H 自動化銷售與客服助手",
-        description: "專為個人與公司打造的 LINE 官方帳號專屬店長。24 小時不打烊的金牌銷售員。",
-        images: ["/og-image.jpeg"],
+        title: "AI 智能店長 Pro｜LINE 官方帳號 24 小時 AI 客服",
+        description: "3 分鐘開通 LINE 官方帳號 AI 客服，自動處理詢問、介紹商品，24 小時不中斷。",
+        images: ["/og-image.jpg"],
     },
     robots: {
         index: true,
@@ -45,6 +49,9 @@ export const metadata: Metadata = {
             'max-image-preview': 'large',
             'max-snippet': -1,
         },
+    },
+    alternates: {
+        canonical: 'https://bot.ycideas.com',
     },
 };
 

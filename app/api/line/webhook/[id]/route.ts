@@ -121,6 +121,30 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
             if (event.type !== 'message' || (event.message.type !== 'text' && event.message.type !== 'image')) continue;
 
             const userId = event.source.userId;
+
+            // 🛡️ 第 0 道防護：單一 LINE 客戶防刷機制 (Per-User Rate Limit)
+            if (userId) {
+                try {
+                    const minuteKey = `rl:min:${configId}:${userId}`;
+                    const dayKey = `rl:day:${configId}:${userId}`;
+                    
+                    const [minReq, dayReq] = await Promise.all([
+                        redis.incr(minuteKey),
+                        redis.incr(dayKey)
+                    ]);
+
+                    if (minReq === 1) await redis.expire(minuteKey, 60);
+                    if (dayReq === 1) await redis.expire(dayKey, 86400);
+
+                    if (minReq > 5 || dayReq > 50) {
+                        console.log(`[TIER1:LineWebhook][${configId}] 🛑 Rate Limit Blocked for ${userId} (min:${minReq}/5, day:${dayReq}/50)`);
+                        continue; // 超量直接靜默攔截（已讀不回），連 DB 都不進
+                    }
+                } catch (redisErr: any) {
+                    console.error('[TIER1:LineWebhook] Rate limit redis error:', redisErr.message);
+                }
+            }
+
             const messageType = event.message.type;
             let userMessage = '';
             let imageBase64: string | null = null;

@@ -104,7 +104,7 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
     emoji: '🎁',
     tagline: '先試試看，AI 店長適不適合你',
     targetAudience: '還沒決定要不要用的老闆',
-    monthlyInquiryRange: '終身 20 則體驗額度',
+    monthlyInquiryRange: '終身 50 則體驗額度',
     pricing: {
       monthly: 0,
       originalMonthly: 0,
@@ -114,8 +114,8 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
     },
     limits: {
       stores: 1,
-      monthlyQuota: 20,
-      dailyQuota: 5,
+      monthlyQuota: 50,
+      dailyQuota: 10,
       isLifetimeQuota: true,
       maxLineMembers: 200,
       maxLineMembersPerStore: 200,
@@ -123,8 +123,8 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
     featureAccess: {
       brandDNA: true,
       instantCommands: 0,
-      products: 0,
-      faq: 0,
+      products: 3,
+      faq: 3,
       guidanceRules: 1,
       contactPortal: true,
       pdfLearning: 0,

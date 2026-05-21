@@ -106,13 +106,27 @@ export class FreemiumGuard {
 
     // ── 第 2 道：每日速率限制（僅對低 tier 做保護）────────
     if (dailyQuota > 0) {
-      const { count: dailyCount } = await supabase
-        .from('chat_logs')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', userId)
-        .gte('created_at', todayStart.toISOString());
+      // 1. 取得老闆名下所有的店長 (bot IDs)
+      const { data: bots } = await supabase
+        .from('line_channel_configs')
+        .select('id')
+        .eq('user_id', userId);
+        
+      const botIds = bots?.map(b => b.id) || [];
+      let todayUsed = 0;
+      
+      if (botIds.length > 0) {
+        // 2. 統計這些店長今天收到幾則來自客人的訊息
+        const { count: dailyCount } = await supabase
+          .from('chat_logs')
+          .select('*', { count: 'exact', head: true })
+          .in('config_id', botIds)
+          .eq('role', 'user')
+          .gte('created_at', todayStart.toISOString());
+          
+        todayUsed = dailyCount ?? 0;
+      }
 
-      const todayUsed = dailyCount ?? 0;
       if (todayUsed >= dailyQuota) {
         console.log(`[FreemiumGuard] ⏱️ Daily limit hit: user=${userId} today=${todayUsed}/${dailyQuota}`);
         return {

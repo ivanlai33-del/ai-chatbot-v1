@@ -505,6 +505,9 @@ async function processEvents(botId: string, events: WebhookEvent[]) {
                 }
 
                 try {
+                    if (process.env.GOOGLE_API_KEY && process.env.GEMINI_API_KEY) {
+                        delete process.env.GOOGLE_API_KEY;
+                    }
                     const gemini = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
                     
                     const sysMsg = messages.filter((m:any) => m.role === 'system').map((m:any) => m.content).join("\n");
@@ -551,7 +554,7 @@ async function processEvents(botId: string, events: WebhookEvent[]) {
                         aiResponse = geminiResponse.text || "";
                     }
                 } catch (geminiErr: any) {
-                    console.error('Gemini Error, falling back to OpenAI:', geminiErr.message);
+                    console.error('Gemini Error, falling back to OpenAI:', geminiErr.message); require('fs').appendFileSync('gemini_error_log.txt', new Date().toISOString() + ' ' + geminiErr.message + '\n' + geminiErr.stack + '\n');
                     try {
                         const response = await openai.chat.completions.create({
                             model: "gpt-4o-mini",

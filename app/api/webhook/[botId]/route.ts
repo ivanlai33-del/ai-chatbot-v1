@@ -522,7 +522,7 @@ async function processEvents(botId: string, events: WebhookEvent[]) {
                     }];
 
                     const geminiResponse = await gemini.models.generateContent({
-                        model: 'gemini-3.1-flash',
+                        model: 'gemini-2.5-flash',
                         contents: userModelContents,
                         config: {
                             systemInstruction: sysMsg,
@@ -538,7 +538,7 @@ async function processEvents(botId: string, events: WebhookEvent[]) {
                         const functionResponse = await executeToolCall(functionName, args, botId);
                         
                         const secondGeminiResponse = await gemini.models.generateContent({
-                            model: 'gemini-3.1-flash',
+                            model: 'gemini-2.5-flash',
                             contents: [
                                 ...userModelContents,
                                 { role: 'model', parts: [{ functionCall: toolCall }] },

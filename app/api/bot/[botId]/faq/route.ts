@@ -26,10 +26,9 @@ export async function POST(
 
     if (!mgmtToken) return NextResponse.json({ error: 'Missing token' }, { status: 401 });
 
-    // Verify token & plan
+    // Verify token
     const { data: bot } = await supabase.from('bots').select('id, selected_plan').eq('id', params.botId).eq('mgmt_token', mgmtToken).single();
     if (!bot) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    if (bot.selected_plan?.includes('499') || bot.selected_plan?.includes('Lite')) return NextResponse.json({ error: '此方案不包含知識庫功能，請先升級至 1199 方案。' }, { status: 403 });
 
     const { data, error } = await supabase.from('faq').insert([
         {

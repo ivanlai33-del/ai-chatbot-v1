@@ -1,0 +1,68 @@
+{
+  "project": "ai-chatbot-v2",
+  "version": "2.0.0",
+  "last_scan": "2026-03-17",
+  "priority_threshold": 2.0,
+  "tasks": [
+    {
+      "id": "T001",
+      "persona": "Commander",
+      "task": "Define P0 Success Criteria (3 case sets)",
+      "impact": 10,
+      "effort": 3,
+      "priority": 3.33,
+      "metric_hint": "P0_DELIVERY_STATUS",
+      "status": "pending"
+    },
+    {
+      "id": "T002",
+      "persona": "Engineering",
+      "task": "Implement Fixed Output [Overview|Personas|Tasks] Structure",
+      "impact": 10,
+      "effort": 5,
+      "priority": 2.0,
+      "metric_hint": "REGEX_MATCH_RATE",
+      "status": "pending"
+    },
+    {
+      "id": "T003",
+      "persona": "UX_Flow",
+      "task": "Develop Three-Column Clarity Interface",
+      "impact": 9,
+      "effort": 4,
+      "priority": 2.25,
+      "metric_hint": "INPUT_FRICTION_SCORE",
+      "status": "pending"
+    },
+    {
+      "id": "T004",
+      "persona": "Research_Content",
+      "task": "Enforce Mandatory 3 KPIs in Every Overview",
+      "impact": 8,
+      "effort": 2,
+      "priority": 4.0,
+      "metric_hint": "KPI_ADHERENCE_RATE",
+      "status": "pending"
+    },
+    {
+      "id": "T005",
+      "persona": "Data_Finance",
+      "task": "Integrate metric_hint into TASKS.json schema",
+      "impact": 8,
+      "effort": 2,
+      "priority": 4.0,
+      "metric_hint": "SCHEMA_VALIDATION",
+      "status": "pending"
+    },
+    {
+      "id": "T006",
+      "persona": "Support_Ops",
+      "task": "Create 3-step Onboarding Walkthrough",
+      "impact": 9,
+      "effort": 3,
+      "priority": 3.0,
+      "metric_hint": "ONBOARDING_TIME_SEC",
+      "status": "pending"
+    }
+  ]
+}

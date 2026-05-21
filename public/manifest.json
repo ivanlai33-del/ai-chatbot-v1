@@ -1,0 +1,21 @@
+{
+  "name": "AI 智能店長 Pro | LINE 官方帳號自動銷售客服",
+  "short_name": "AI 店長 Pro",
+  "description": "專為 LINE 官方帳號打造的 AI 客服助手，具備 24H 自動銷售、智慧客服與智庫學習能力。",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/og-image.jpg",
+      "sizes": "1200x630",
+      "type": "image/jpeg"
+    }
+  ]
+}

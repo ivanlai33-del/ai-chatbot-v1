@@ -9,7 +9,7 @@ import { supabase } from '@/lib/supabase';
  * - Top 5 keywords from user messages
  * - Product mention frequency
  * 
- * Restricted to 1199 plan bots only.
+ * Restricted to Chain (Tier 4) and Flagship plans.
  */
 export async function GET(
     req: NextRequest,
@@ -37,9 +37,17 @@ export async function GET(
         }
 
         const plan = bot.selected_plan || '';
-        const is1199 = plan.includes('1199') || plan.includes('強力');
-        if (!is1199) {
-            return NextResponse.json({ error: '月報分析功能僅限 1199 方案', upgrade: true }, { status: 403 });
+        const hasReportAccess = 
+            plan.includes('連鎖') || 
+            plan.includes('專業') || 
+            plan.includes('旗艦') || 
+            plan.includes('2490') || 
+            plan.includes('4990') || 
+            plan.includes('7990') ||
+            plan.includes('1199'); // Keep for legacy
+            
+        if (!hasReportAccess) {
+            return NextResponse.json({ error: '月報分析功能僅限「連鎖專業」以上方案', upgrade: true }, { status: 403 });
         }
 
         // 2. Determine date range (default: current month)

@@ -1,0 +1,545 @@
+/**
+ * ============================================================
+ * 💎 PRICING CONFIG — 定價積木系統（唯一真實來源）
+ * ============================================================
+ *
+ * ⚠️  重要：所有與價格、方案、額度相關的數字，
+ *     全部都在這個檔案定義。
+ *
+ *     修改價格時，只需要改這一個檔案，
+ *     其餘所有頁面、守門員、報表都會自動更新。
+ *
+ * 影響範圍：
+ *   - 前端定價頁 (SaasPricingPlan.tsx)
+ *   - 定價 Modal (PricingModal.tsx)
+ *   - 守門員 (FreemiumGuard.ts)
+ *   - Webhook 額度檢查 (line/webhook/[id])
+ *   - 後台方案顯示 (Console)
+ *   - 金流連結 (NewebPay)
+ *
+ * 年付邏輯：月費 × 11（送 1 個月）
+ * 原價邏輯：優惠價 ÷ 0.8（8折優惠，原價當錨點）
+ */
+
+// ─── 方案 ID 型別（統一識別碼）────────────────────────────
+export type PlanId =
+  | 'free'
+  | 'starter'
+  | 'solo'
+  | 'growth'
+  | 'chain'
+  | 'flagship_lite'
+  | 'flagship_pro';
+
+// ─── 單一方案型別定義 ─────────────────────────────────────
+export interface PricingPlan {
+  id: PlanId;
+  tier: number;              // 0=免費, 1=入門, 2=單店主力, 3=成長多店, 4=連鎖專業, 5=旗艦Lite, 6=旗艦Pro
+  name: string;              // 方案名稱
+  emoji: string;             // 代表 Emoji
+  tagline: string;           // 一句話說明
+  targetAudience: string;    // 適合對象（用於自選引導）
+  monthlyInquiryRange: string; // 每月詢問量描述
+
+  pricing: {
+    monthly: number;         // 優惠月費（NT$）
+    originalMonthly: number; // 原價月費（NT$）
+    annual: number;          // 年付價格（月費 × 11）
+    annualSaving: number;    // 年付省多少（= monthly × 1）
+    isStartingPrice: boolean; // 是否為「起」價（旗艦方案）
+  };
+
+  limits: {
+    stores: number;                 // 店數上限（-1 = 無限）
+    monthlyQuota: number;           // 每月訊息額度（-1 = 無限）
+    dailyQuota: number;             // 每日訊息上限（防刷保護，-1 = 無限）
+    isLifetimeQuota: boolean;       // true = 終身額度（免費版），false = 每月重置
+    maxLineMembers: number;         // 全帳號 LINE 好友數上限（-1 = 無限）
+    maxLineMembersPerStore: number; // 單店 LINE 好友數上限（-1 = 無限）
+  };
+
+  // ─── 八大智庫功能開通權限 ────────────────────────────────
+  featureAccess: {
+    brandDNA: boolean;          // 1. 品牌 DNA
+    instantCommands: number;    // 2. 即時下指令（可同時啟用條數，0=關閉）
+    products: number;           // 3. 商品/服務（上限項數，-1=無限）
+    faq: number;                // 4. 常見問題（上限組數，-1=無限）
+    guidanceRules: number;      // 5. 引導規則（可同時啟用條數，-1=無限）
+    contactPortal: boolean;     // 6. 聯絡窗口
+    pdfLearning: number;        // 7a. PDF 學習（上限份數，0=關閉，-1=無限）
+    webLearning: number;        // 7b. 網頁學習（上限URL數，0=關閉，-1=無限）
+    crmTagging: boolean;        // 8a. CRM 自動打標籤
+    crmBroadcast: number;       // 8b. CRM 主動推播（每月則數，0=關閉，-1=無限）
+    crmScheduled: boolean;      // 8c. CRM 排程推播
+    crmPersonalized: boolean;   // 8d. CRM 個人化推播
+    visionAI: boolean;          // 9. 圖片視覺辨識能力 (GPT-4o Vision)
+    marketPulse: boolean;       // 10. 市場脈動 (產業趨勢)
+    brandGuardian: boolean;     // 11. 品牌衛士 (輿情監控)
+  };
+
+  features: string[];        // 功能列表
+  color: string;             // 代表色 (對齊 LINE 卡片)
+  notIncluded?: string[];    // 不包含（顯示 ✗）
+  badge?: string;            // 徽章文字（如「最受歡迎」「最划算」）
+
+  payment: {
+    newebpayMonthlyLink: string;  // 藍新月費開通連結
+    newebpayAnnualLink: string;   // 藍新年費開通連結
+  };
+
+  overage?: {
+    per1000Messages: number; // 超量每 1,000 則加收（NT$）
+    description: string;
+  };
+}
+
+// ─── 方案主資料表（修改價格就改這裡）──────────────────────
+export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
+
+  // ── 免費體驗 ──────────────────────────────────────────
+  free: {
+    id: 'free',
+    tier: 0,
+    name: '免費體驗',
+    emoji: '🎁',
+    tagline: '先試試看，AI 店長適不適合你',
+    targetAudience: '還沒決定要不要用的老闆',
+    monthlyInquiryRange: '終身 20 則體驗額度',
+    pricing: {
+      monthly: 0,
+      originalMonthly: 0,
+      annual: 0,
+      annualSaving: 0,
+      isStartingPrice: false,
+    },
+    limits: {
+      stores: 1,
+      monthlyQuota: 20,
+      dailyQuota: 5,
+      isLifetimeQuota: true,
+      maxLineMembers: 200,
+      maxLineMembersPerStore: 200,
+    },
+    featureAccess: {
+      brandDNA: true,
+      instantCommands: 0,
+      products: 0,
+      faq: 0,
+      guidanceRules: 1,
+      contactPortal: true,
+      pdfLearning: 0,
+      webLearning: 0,
+      crmTagging: false,
+      crmBroadcast: 0,
+      crmScheduled: false,
+      crmPersonalized: false,
+      visionAI: false,
+      marketPulse: false,
+      brandGuardian: false,
+    },
+    features: [
+      '24H AI 全時段自動接單',
+      '品牌性格自助設定',
+      '商家專屬智庫建置（基礎版）',
+      '對話紀錄自助查看',
+    ],
+    color: '#94A3B8',
+    notIncluded: [
+      '多店管理權限',
+      '數據看板分析',
+      '高額度訊息通道',
+    ],
+    payment: {
+      newebpayMonthlyLink: '#',
+      newebpayAnnualLink: '#',
+    },
+  },
+
+  // ── 入門嚐鮮 NT$199 ──────────────────────────────────
+  starter: {
+    id: 'starter',
+    tier: 1,
+    name: '入門嚐鮮',
+    emoji: '🌱',
+    tagline: '剛開 LINE，先讓 AI 幫你試試看',
+    targetAudience: '剛開 LINE 官方帳號，試水溫的老闆',
+    monthlyInquiryRange: '每月不超過 500 則詢問',
+    pricing: {
+      monthly: 199,
+      originalMonthly: 249,
+      annual: 2189,          // 199 × 11
+      annualSaving: 199,     // 省 1 個月
+      isStartingPrice: false,
+    },
+    limits: {
+      stores: 1,
+      monthlyQuota: 500,
+      dailyQuota: 30,
+      isLifetimeQuota: false,
+      maxLineMembers: 500,
+      maxLineMembersPerStore: 500,
+    },
+    featureAccess: {
+      brandDNA: true,
+      instantCommands: 0,
+      products: 10,
+      faq: 10,
+      guidanceRules: 3,
+      contactPortal: true,
+      pdfLearning: 0,
+      webLearning: 0,
+      crmTagging: false,
+      crmBroadcast: 0,
+      crmScheduled: false,
+      crmPersonalized: false,
+      visionAI: false,
+      marketPulse: false,
+      brandGuardian: false,
+    },
+    features: [
+      '24H AI 全時段自動接單',
+      '品牌 DNA 自助設定',
+      '商家專屬智庫建置與教學',
+      'FAQ 常見問題自動回答',
+      '對話紀錄自助查看',
+    ],
+    color: '#06C755',
+    notIncluded: [
+      '多店管理權限',
+      '數據看板分析',
+      '高額度訊息通道',
+    ],
+    payment: {
+      newebpayMonthlyLink: 'https://p.newebpay.com.tw/A06FE6B', // Placeholder for now
+      newebpayAnnualLink: 'https://p.newebpay.com.tw/723E398',  // Placeholder for now
+    },
+  },
+
+  // ── 單店主力 NT$499 ──────────────────────────────────
+  solo: {
+    id: 'solo',
+    tier: 2,
+    name: '單店主力',
+    emoji: '🏪',
+    tagline: '一間店，讓 AI 幫你接 7 成客服',
+    targetAudience: '訊息不少、常常回不完的單店老闆',
+    monthlyInquiryRange: '每月 500–1,999 則詢問',
+    badge: '最受歡迎 ⭐',
+    pricing: {
+      monthly: 499,
+      originalMonthly: 629,
+      annual: 5489,          // 499 × 11
+      annualSaving: 499,
+      isStartingPrice: false,
+    },
+    limits: {
+      stores: 1,
+      monthlyQuota: 2000,
+      dailyQuota: 100,
+      isLifetimeQuota: false,
+      maxLineMembers: 1500,
+      maxLineMembersPerStore: 1500,
+    },
+    featureAccess: {
+      brandDNA: true,
+      instantCommands: 2,
+      products: 30,
+      faq: 30,
+      guidanceRules: 5,
+      contactPortal: true,
+      pdfLearning: 3,
+      webLearning: 0,
+      crmTagging: true,
+      crmBroadcast: 0,
+      crmScheduled: false,
+      crmPersonalized: false,
+      visionAI: false,
+      marketPulse: false,
+      brandGuardian: false,
+    },
+    features: [
+      '24H AI 全時段自動接單',
+      '品牌 DNA 自助設定（語氣/口吻）',
+      '商家專屬智庫（自助管理）',
+      'FAQ 常見問題自動回答',
+      '對話紀錄自助查看',
+      '✅ 完整後台管理功能',
+    ],
+    color: '#06C755',
+    notIncluded: [
+      '多店管理權限',
+      '數據看板分析',
+    ],
+    payment: {
+      newebpayMonthlyLink: 'https://p.newebpay.com.tw/A06FE6B',
+      newebpayAnnualLink: 'https://p.newebpay.com.tw/723E398',
+    },
+  },
+
+  // ── 成長多店 NT$1,299 ─────────────────────────────────
+  growth: {
+    id: 'growth',
+    tier: 3,
+    name: '成長多店',
+    emoji: '🔗',
+    tagline: '最多 3 間店，統一管理不混亂',
+    targetAudience: '有 2–3 家分店、訊息分散各店的連鎖老闆',
+    monthlyInquiryRange: '每月額度 5,000 則',
+    pricing: {
+      monthly: 1299,
+      originalMonthly: 1649,
+      annual: 14289,         // 1299 × 11
+      annualSaving: 1299,
+      isStartingPrice: false,
+    },
+    limits: {
+      stores: 3,
+      monthlyQuota: 5000,
+      dailyQuota: 300,
+      isLifetimeQuota: false,
+      maxLineMembers: 3500,
+      maxLineMembersPerStore: 1200,
+    },
+    featureAccess: {
+      brandDNA: true,
+      instantCommands: 5,
+      products: 100,
+      faq: 80,
+      guidanceRules: 10,
+      contactPortal: true,
+      pdfLearning: 10,
+      webLearning: 0,
+      crmTagging: true,
+      crmBroadcast: 3000,
+      crmScheduled: false,
+      crmPersonalized: false,
+      visionAI: true,
+      marketPulse: false,
+      brandGuardian: false,
+    },
+    features: [
+      '單店主力所有功能',
+      '✅ 最多 3 間店系統連動',
+      '✅ 統一後台管理各店 LINE',
+      '✅ 各店獨立品牌性格設定',
+      '✅ 商家專屬智庫自助管理',
+    ],
+    color: '#4A90E2',
+    notIncluded: [
+      '系統自動化數據看板',
+      '高額度訊息通道',
+    ],
+    payment: {
+      newebpayMonthlyLink: 'https://p.newebpay.com.tw/PLACEHOLDER_1299M',
+      newebpayAnnualLink: 'https://p.newebpay.com.tw/PLACEHOLDER_1299Y',
+    },
+  },
+
+  // ── 連鎖專業 NT$2,490 ────────────────────────────────
+  chain: {
+    id: 'chain',
+    tier: 4,
+    name: '連鎖專業',
+    emoji: '👑',
+    tagline: '最多 6 間店，管好品牌、看懂數據',
+    targetAudience: '有固定客群、開始重視數據的連鎖品牌',
+    monthlyInquiryRange: '每月額度 10,000 則',
+    pricing: {
+      monthly: 2490,
+      originalMonthly: 3090,
+      annual: 27390,         // 2490 × 11
+      annualSaving: 2490,
+      isStartingPrice: false,
+    },
+    limits: {
+      stores: 6,
+      monthlyQuota: 10000,
+      dailyQuota: 500,
+      isLifetimeQuota: false,
+      maxLineMembers: 7500,
+      maxLineMembersPerStore: 1250,
+    },
+    featureAccess: {
+      brandDNA: true,
+      instantCommands: 10,
+      products: 200,
+      faq: 100,
+      guidanceRules: 20,
+      contactPortal: true,
+      pdfLearning: 15,
+      webLearning: 15,
+      crmTagging: true,
+      crmBroadcast: 7000,
+      crmScheduled: true,
+      crmPersonalized: false,
+      visionAI: true,
+      marketPulse: true,
+      brandGuardian: false,
+    },
+    features: [
+      '成長多店所有功能',
+      '✅ 最多 6 間店系統連動',
+      '✅ 系統自動化數據看板',
+      '✅ 對話數據自助匯出功能',
+    ],
+    color: '#7B61FF',
+    payment: {
+      newebpayMonthlyLink: 'https://p.newebpay.com.tw/FFD88CA',
+      newebpayAnnualLink: 'https://p.newebpay.com.tw/C1E8916',
+    },
+  },
+
+  // ── 旗艦 Lite NT$4,990 起 ────────────────────────────
+  flagship_lite: {
+    id: 'flagship_lite',
+    tier: 5,
+    name: '旗艦 Lite',
+    emoji: '🔥',
+    tagline: '最多 3 間店，大額度訊息穩定應對',
+    targetAudience: '高流量單店、連鎖品牌、自助化操作',
+    monthlyInquiryRange: '每月額度 15,000 則',
+    pricing: {
+      monthly: 4990,
+      originalMonthly: 6290,
+      annual: 54890,         // 4990 × 11
+      annualSaving: 4990,
+      isStartingPrice: true, // 顯示「NT$4,990 起」
+    },
+    limits: {
+      stores: 3,
+      monthlyQuota: 15000,
+      dailyQuota: -1,
+      isLifetimeQuota: false,
+      maxLineMembers: 12000,
+      maxLineMembersPerStore: 4000,
+    },
+    featureAccess: {
+      brandDNA: true,
+      instantCommands: 15,
+      products: 300,
+      faq: 150,
+      guidanceRules: 35,
+      contactPortal: true,
+      pdfLearning: 20,
+      webLearning: 20,
+      crmTagging: true,
+      crmBroadcast: 10000,
+      crmScheduled: true,
+      crmPersonalized: true,
+      visionAI: true,
+      marketPulse: true,
+      brandGuardian: true,
+    },
+    features: [
+      '連鎖專業所有功能',
+      '✅ 15,000 則 / 月基本額度',
+      '✅ 超量彈性加購權限',
+      '✅ 旗艦級大額度訊息通道',
+      '✅ 系統自動化數據看板',
+    ],
+    color: '#F5A623',
+    overage: {
+      per1000Messages: 150,
+      description: '超過月額度：每 1,000 則加收 NT$150',
+    },
+    payment: {
+      newebpayMonthlyLink: 'https://p.newebpay.com.tw/PLACEHOLDER_4990M',
+      newebpayAnnualLink: 'https://p.newebpay.com.tw/PLACEHOLDER_4990Y',
+    },
+  },
+
+  // ── 旗艦 Pro NT$7,990 起 ─────────────────────────────
+  flagship_pro: {
+    id: 'flagship_pro',
+    tier: 6,
+    name: '旗艦 Pro',
+    emoji: '🚀',
+    tagline: '最多 6 間店，高通量需求穩定服務',
+    targetAudience: '高流量連鎖品牌，企業級自助管理',
+    monthlyInquiryRange: '每月額度 30,000 則',
+    pricing: {
+      monthly: 7990,
+      originalMonthly: 9990,
+      annual: 87890,         // 7990 × 11
+      annualSaving: 7990,
+      isStartingPrice: true,
+    },
+    limits: {
+      stores: 6,
+      monthlyQuota: 30000,
+      dailyQuota: -1,
+      isLifetimeQuota: false,
+      maxLineMembers: 22000,
+      maxLineMembersPerStore: 5000,
+    },
+    featureAccess: {
+      brandDNA: true,
+      instantCommands: -1,
+      products: -1,
+      faq: 200,
+      guidanceRules: -1,
+      contactPortal: true,
+      pdfLearning: 30,
+      webLearning: 30,
+      crmTagging: true,
+      crmBroadcast: 15000,
+      crmScheduled: true,
+      crmPersonalized: true,
+      visionAI: true,
+      marketPulse: true,
+      brandGuardian: true,
+    },
+    features: [
+      '旗艦 Lite 所有功能',
+      '✅ 30,000 則 / 月基本額度',
+      '✅ 最多 6 間店同步管理權限',
+      '✅ 旗艦級高額度訊息專線',
+      '✅ 自助式全店數據匯出功能',
+    ],
+    color: '#FF5E00',
+    overage: {
+      per1000Messages: 200,
+      description: '超過月額度：每 1,000 則加收 NT$200（可議）',
+    },
+    payment: {
+      newebpayMonthlyLink: 'https://p.newebpay.com.tw/PLACEHOLDER_7990M',
+      newebpayAnnualLink: 'https://p.newebpay.com.tw/PLACEHOLDER_7990Y',
+    },
+  },
+
+};
+
+// ─── 輔助函式（直接從定價表計算，不需要手動維護）──────────
+export const PLAN_IDS_ORDERED: PlanId[] = [
+  'starter', 'solo', 'growth', 'chain', 'flagship_lite', 'flagship_pro'
+];
+
+/** 依 tier 數字取得方案 */
+export function getPlanByTier(tier: number): PricingPlan | undefined {
+  return Object.values(PRICING_PLANS).find(p => p.tier === tier);
+}
+
+/** 依 PlanId 取得方案 */
+export function getPlanById(id: PlanId): PricingPlan {
+  return PRICING_PLANS[id];
+}
+
+/** 取得某方案的月訊息額度 */
+export function getMonthlyQuota(tier: number): number {
+  return getPlanByTier(tier)?.limits.monthlyQuota ?? 0;
+}
+
+/** 取得某方案的店數上限 */
+export function getStoreLimit(tier: number): number {
+  return getPlanByTier(tier)?.limits.stores ?? 1;
+}
+
+/** 判斷此 tier 是否為旗艦（無每日限制）*/
+export function isFlagshipTier(tier: number): boolean {
+  return tier >= 5;
+}
+
+/** 判斷是否為免費方案 */
+export function isFreeTier(tier: number): boolean {
+  return tier === 0;
+}

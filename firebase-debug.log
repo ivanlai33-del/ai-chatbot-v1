@@ -1,0 +1,44 @@
+[debug] [2026-05-20T16:22:05.566Z] ----------------------------------------------------------------------
+[debug] [2026-05-20T16:22:05.586Z] Command:       /usr/local/Cellar/node/25.5.0/bin/node /Users/ivanlai/.npm/_npx/ba4f1959e38407b5/node_modules/.bin/firebase init ailogic --project ai-chatbot-40057 --non-interactive
+[debug] [2026-05-20T16:22:05.587Z] CLI Version:   15.18.0
+[debug] [2026-05-20T16:22:05.587Z] Platform:      darwin
+[debug] [2026-05-20T16:22:05.588Z] Node Version:  v25.5.0
+[debug] [2026-05-20T16:22:05.588Z] Time:          Thu May 21 2026 00:22:05 GMT+0800 (Taiwan Standard Time)
+[debug] [2026-05-20T16:22:05.589Z] ----------------------------------------------------------------------
+[debug] 
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  /Volumes/512M.2/.gemini/antigravity/scratch/ai-chatbot-v1
+
+Before we get started, keep in mind:
+
+  * You are currently outside your home directory
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] 
+[debug] [2026-05-20T16:22:08.883Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-05-20T16:22:08.885Z] > authorizing via signed-in user (ivanlai.33@gmail.com)
+[debug] [2026-05-20T16:22:08.888Z] Checked if tokens are valid: true, expires at: 1779297116387
+[debug] [2026-05-20T16:22:08.889Z] Checked if tokens are valid: true, expires at: 1779297116387
+[debug] [2026-05-20T16:22:08.894Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/ai-chatbot-40057 [none]
+[debug] [2026-05-20T16:22:09.535Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/ai-chatbot-40057 200
+[debug] [2026-05-20T16:22:09.542Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/ai-chatbot-40057 {"projectId":"ai-chatbot-40057","projectNumber":"459075552859","displayName":"AI-Chatbot","name":"projects/ai-chatbot-40057","resources":{"hostingSite":"ai-chatbot-40057"},"state":"ACTIVE","etag":"1_722f629d-7841-4583-9b34-04fef2946f37"}
+[info] i  Using project ai-chatbot-40057 (AI-Chatbot) . 
+[info] 
+=== Ailogic Setup
+[debug] [2026-05-20T16:22:09.578Z] Checked if tokens are valid: true, expires at: 1779297116387
+[debug] [2026-05-20T16:22:09.579Z] Checked if tokens are valid: true, expires at: 1779297116387
+[debug] [2026-05-20T16:22:09.582Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/ai-chatbot-40057:searchApps pageSize=100
+[debug] [2026-05-20T16:22:09.950Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/ai-chatbot-40057:searchApps 200
+[debug] [2026-05-20T16:22:09.950Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/ai-chatbot-40057:searchApps {"apps":[{"name":"projects/ai-chatbot-40057/webApps/1:459075552859:web:88d59a83cfa539d270617e","displayName":"ai-chatbot-web","platform":"WEB","appId":"1:459075552859:web:88d59a83cfa539d270617e","namespace":"MDBlZjkxM2MtY2QzMy00MjYzLThiMGQtYjRiNDYzOWM1MTUw","apiKeyId":"be210643-69a8-4f3d-9dc3-646d6cd031f3","state":"ACTIVE","expireTime":"1970-01-01T00:00:00Z"}]}

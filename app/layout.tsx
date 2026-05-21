@@ -1,42 +1,61 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import VisitorTracker from "@/components/VisitorTracker";
+import CookieBanner from "@/components/CookieBanner";
 
 const inter = Inter({ subsets: ["latin"] });
 
+export const viewport: Viewport = {
+    width: 1024,
+    initialScale: 1,
+    themeColor: "#020617",
+};
+
 export const metadata: Metadata = {
     metadataBase: new URL('https://bot.ycideas.com'),
+    alternates: {
+        canonical: '/',
+    },
     title: {
-        default: "AI 智能店長 Pro｜3 分鐘讓 LINE 官方帳號具備 24 小時智慧客服能力",
+        default: "AI 智能店長 Pro | LINE 官方帳號 API 自動銷售與客服助手",
         template: "%s | LINE 智能店長 Pro"
     },
-    description: "想要 LINE 官方帳號自動回覆？LINE AI 助手為實體店與工作室提供智慧客服機器人，3 分鐘快速開通，協助自動處理詢問、介紹商品，助您減少大量重複客服工作並提升服務品質！",
+    description: "全台灣快速開通的 AI 智能店長。專為 LINE 官方帳號打造，整合 GPT-4o 技術，具備 24H 智慧客服與 RAG 智庫對話。讓您的 LINE OA 轉型為更高效的服務入口！",
     keywords: [
-        "LINE官方帳號AI客服", "LINE AI機器人", "智能店長", "LINE自動回覆",
-        "AI客服系統", "LINE機器人", "美容LINE客服", "餐飲LINE客服",
-        "零售LINE機器人", "SaaS客服", "LINE官方帳號自動化", "AI智能店長"
+        'LINE AI 機器人', 'LINE 官方帳號自動化', 'AI 店長', 'LINE 客服機器人', 
+        '智能銷售助手', 'LINE 數位轉型', '自動接單機器人', 'LINE CRM 系統',
+        'GPT-4o LINE 應用', '官方帳號經營工具'
     ],
-    authors: [{ name: "AI 智能店長 Pro 團隊" }],
+    authors: [{ name: "Ai 智能店長團隊" }],
+    verification: {
+        google: "lAhGP3I12r-WLoAUaKxHn5R2BherC51FqCKoZcMAgBA",
+    },
+    appleWebApp: {
+        capable: true,
+        statusBarStyle: "default",
+        title: "AI 智能店長 Pro",
+    },
     openGraph: {
         type: "website",
         locale: "zh_TW",
         url: "https://bot.ycideas.com",
-        title: "AI 智能店長 Pro｜3 分鐘讓 LINE 官方帳號具備 24 小時智慧客服能力",
-        description: "想要 LINE 官方帳號自動回覆？LINE AI 助手為實體店與工作室提供智慧客服機器人，3 分鐘快速開通，協助自動處理詢問、介紹商品，助您減少大量重複客服工作並提升服務品質！",
-        siteName: "AI 智能店長 Pro | LINE 智能店長 Pro",
+        siteName: "AI 智能店長 Pro",
+        title: '【官方帳號老專屬】AI 智能店長 - 三分鐘極速開通，24H 自動成交',
+        description: '三分鐘完成 AI 串接。24 小時幫您介紹商品、處理瑣碎客服、引導潛在客戶轉單。顯著提升回覆效率，降低人力負擔。',
         images: [
             {
                 url: "/og-image.jpg",
                 width: 1200,
                 height: 630,
-                alt: "AI 智能店長 Pro - LINE 官方帳號 AI 客服",
+                alt: "AI 智能店長 - LINE 官方帳號最佳夥伴",
             },
         ],
     },
     twitter: {
         card: "summary_large_image",
-        title: "AI 智能店長 Pro｜LINE 官方帳號 24 小時 AI 客服",
-        description: "3 分鐘開通 LINE 官方帳號 AI 客服，自動處理詢問、介紹商品，24 小時不中斷。",
+        title: "AI 智能店長 Pro｜LINE AI Assistant: 24/7 Automated Sales & Support",
+        description: "專為 LINE 官方帳號老闆打造。24 小時不打烊的 AI 銷售員，幫您接客、導購、成交。",
         images: ["/og-image.jpg"],
     },
     robots: {
@@ -50,9 +69,6 @@ export const metadata: Metadata = {
             'max-snippet': -1,
         },
     },
-    alternates: {
-        canonical: 'https://bot.ycideas.com',
-    },
 };
 
 export default function RootLayout({
@@ -63,9 +79,12 @@ export default function RootLayout({
     return (
         <html lang="zh-TW">
             <head>
-                <script src="https://www.paypal.com/sdk/js?client-id=Aa2CoGPu323kc3ROGqYyMqTBIpx2hfbAjN2G7M7HFQbzSESPM97x4uhCQJhQlExrkhcUoLcGjsv9BuUZ&vault=true&intent=subscription" data-sdk-integration-source="button-factory" async></script>
             </head>
-            <body className={inter.className}>{children}</body>
+            <body className={inter.className}>
+                {children}
+                <VisitorTracker />
+                <CookieBanner />
+            </body>
         </html>
     );
 }

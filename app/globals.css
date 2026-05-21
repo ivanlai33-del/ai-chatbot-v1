@@ -1,34 +1,68 @@
+:root {
+    --foreground-rgb: 0, 0, 0;
+    --background-start-rgb: 255, 255, 255;
+    --background-end-rgb: 255, 255, 255;
+    /* 官方智庫品牌色定義 */
+    --brand-green: #06C755;
+    --brand-green-gradient: linear-gradient(135deg, #06C755 0%, #05A044 100%);
+    --text-main: rgba(0, 0, 0, 0.85);
+    --text-sub: rgba(0, 0, 0, 0.7);
+}
+
+/* 僅針對 SaaS 後台路徑的隔離樣式系統 */
+.saas-theme-root {
+    background-image: url('/b_01.svg') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    background-attachment: fixed !important;
+    color: var(--text-main) !important;
+}
+
+/* 確保後台內的文字遵循 85%/70% 黑 */
+.saas-theme-root h1, 
+.saas-theme-root h2, 
+.saas-theme-root h3, 
+.saas-theme-root h4, 
+.saas-theme-root h5, 
+.saas-theme-root h6 {
+    color: var(--text-main) !important;
+}
+
+.saas-theme-root p, 
+.saas-theme-root span, 
+.saas-theme-root label {
+    color: var(--text-sub) !important;
+}
+
+/* 捲軸透明化 - 僅在後台生效 */
+.saas-theme-root *::-webkit-scrollbar {
+    width: 0px !important;
+    height: 0px !important;
+}
+.saas-theme-root {
+    scrollbar-width: none !important;
+}
+
+/* 強制後台內容區域透明，讓 b_01.svg 穿透 */
+.saas-theme-root main,
+.saas-theme-root section {
+    background-color: transparent !important;
+}
+
+/* 綠色漸層按鈕標準 */
+.btn-green-gradient {
+    background: var(--brand-green-gradient) !important;
+    color: white !important;
+}
+
+/* 原始 globals.css 的其他樣式保留在下方，不影響首頁 */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-    --background: 220 33% 98%;
-    --foreground: 224 71.4% 4.1%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --radius: 0.75rem;
-}
-
 @layer base {
-    * {
-        @apply border-border;
-    }
-
     body {
-        @apply bg-background text-foreground antialiased;
+        @apply bg-[#E2E8F0] text-foreground antialiased;
     }
-}
-
-.chat-bubble-ai {
-    @apply bg-white border border-zinc-200 rounded-2xl p-4 shadow-sm max-w-[85%];
-}
-
-.chat-bubble-user {
-    @apply bg-blue-600 text-white rounded-2xl p-4 shadow-sm max-w-[85%] ml-auto;
-}
-
-.glass {
-    @apply bg-white/70 backdrop-blur-md border-b border-zinc-200;
 }

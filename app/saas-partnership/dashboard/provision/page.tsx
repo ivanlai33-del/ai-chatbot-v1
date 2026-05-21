@@ -1,21 +1,92 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Sparkles, Building2, BrainCircuit, CheckCircle2, MessageSquare, ArrowRight, Save, LayoutDashboard } from 'lucide-react';
-import Sidebar from '@/components/PartnerDashboard/Sidebar';
+import { 
+    BrainCircuit, CheckCircle2, ShieldCheck, 
+    Settings2, Zap, Link2, Copy, Eye, EyeOff,
+    RefreshCw, Server, Bot, Plus, Info
+} from 'lucide-react';
+import { supabase } from '@/lib/supabase';
+import { usePartner } from '@/context/PartnerContext';
+
+import ProvisionIdentityStep from '@/components/PartnerDashboard/Provision/ProvisionIdentityStep';
+import ProvisionBrainStep from '@/components/PartnerDashboard/Provision/ProvisionBrainStep';
+import ProvisionDeployStep from '@/components/PartnerDashboard/Provision/ProvisionDeployStep';
+import ProvisionSuccessStep from '@/components/PartnerDashboard/Provision/ProvisionSuccessStep';
+import AgenticConfigPreview from '@/components/PartnerDashboard/Provision/AgenticConfigPreview';
 import SaaSChatInterface from '@/components/SaaSChatInterface';
 
 export default function ProvisionPage() {
-    const [currentStep, setCurrentStep] = useState(0); // 0: Identity, 1: Knowledge/Personality, 2: Deploy, 3: Live Preview
-    const [botInfo, setBotInfo] = useState({
-        name: '',
-        industry: '',
-        systemPrompt: ''
+    const { activeOA } = usePartner();
+    const [activeTab, setActiveTab] = useState<'wizard' | 'connection'>('wizard');
+    const [currentStep, setCurrentStep] = useState(0); 
+    const [isSaving, setIsSaving] = useState(false);
+    const [showToken, setShowToken] = useState(false);
+    
+    // Connection Data
+    const [connectionData, setConnectionData] = useState({
+        channel_id: '',
+        channel_secret: '',
+        channel_token: '',
+        webhook_url: 'https://agi-bot-os.ycideas.com/api/webhook/line'
     });
+
+    // Wizard Data
+    const [botInfo, setBotInfo] = useState({ name: '', industry: '', systemPrompt: '' });
     const [focusedField, setFocusedField] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [deploymentData, setDeploymentData] = useState<any>(null);
+    const [mode, setMode] = useState<'wizard' | 'agentic'>('wizard');
+    const [proposedConfig, setProposedConfig] = useState<any>(null);
+
+    useEffect(() => {
+        if (activeOA) {
+            setActiveTab('connection');
+            fetchConnectionDetails();
+        }
+    }, [activeOA]);
+
+    const fetchConnectionDetails = async () => {
+        if (!activeOA) return;
+        const { data } = await supabase
+            .from('official_accounts')
+            .select('*')
+            .eq('id', activeOA.id)
+            .maybeSingle();
+        
+        if (data) {
+            setConnectionData({
+                channel_id: data.channel_id || '',
+                channel_secret: data.channel_secret || '',
+                channel_token: data.channel_token || '',
+                webhook_url: data.webhook_url || connectionData.webhook_url
+            });
+        }
+    };
+
+    const handleSaveConnection = async () => {
+        if (!activeOA) return;
+        setIsSaving(true);
+        try {
+            const { error } = await supabase
+                .from('official_accounts')
+                .update({
+                    channel_id: connectionData.channel_id,
+                    channel_secret: connectionData.channel_secret,
+                    channel_token: connectionData.channel_token,
+                    updated_at: new Date().toISOString()
+                })
+                .eq('id', activeOA.id);
+            
+            if (error) throw error;
+            alert('LINE 頻道連線設定已更新！');
+        } catch (err) {
+            console.error('Error saving connection:', err);
+        } finally {
+            setIsSaving(false);
+        }
+    };
 
     const templates = [
         { id: 'fitness', name: '健身瑜珈', desc: '強調健康、課程預約、體驗方案', prompt: '你是一個專業的瑜珈館客服，語氣溫柔寧靜，主要目標是吸引客人預約體驗課。' },
@@ -23,281 +94,170 @@ export default function ProvisionPage() {
         { id: 'fnb', name: '餐飲零售', desc: '強調菜單特色、促銷活動、訂位引導', prompt: '你是一個熱情的餐廳外場經理，說話俐落大方，熟知今日特餐並能引導客人線上訂位。' }
     ];
 
-    const handleNextStep = () => {
-        if (currentStep < 2) setCurrentStep(currentStep + 1);
-    };
-
-    const handleDeploy = async () => {
-        setIsSubmitting(true);
-        try {
-            const res = await fetch('/api/partner/provision', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(botInfo)
-            });
-            const data = await res.json();
-
-            if (data.success) {
-                setDeploymentData(data.bot);
-                setCurrentStep(3); // Go to live preview
-            } else {
-                console.error("Provisioning failed:", data.error);
-                alert("建立失敗，請查看控制台！");
-            }
-        } catch (err) {
-            console.error("Network error:", err);
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
     return (
-        <div className="min-h-screen bg-[#0f172a] text-slate-200 flex flex-col md:flex-row overflow-hidden selection:bg-indigo-500/30">
-            <Sidebar />
-
-            <main className="flex-1 h-screen overflow-y-auto custom-scrollbar relative">
-                <div className="flex h-full">
-                    {/* Left Panel: Wizard Form */}
-                    <div className="flex-1 p-6 md:p-10 lg:p-12 overflow-y-auto custom-scrollbar">
-                        <header className="mb-12">
+        <div className="min-h-full">
+            <div className="flex h-full min-h-screen">
+                <div className="flex-1 p-6 md:p-10 lg:p-12 overflow-y-auto">
+                    <header className="mb-12 flex justify-between items-start">
+                        <div>
                             <motion.div
                                 initial={{ opacity: 0, y: -20 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-[10px] font-black tracking-widest text-emerald-400 uppercase mb-4"
+                                className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 border border-emerald-100 rounded-full text-[10px] font-black tracking-widest text-[#06C755] uppercase mb-4"
                             >
-                                <BrainCircuit className="w-3 h-3" />
-                                Customer Provisioning
+                                <Zap className="w-3 h-3" />
+                                {activeTab === 'wizard' ? 'System Provisioning' : 'Channel Connectivity'}
                             </motion.div>
                             <motion.h1
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.1 }}
-                                className="text-3xl md:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight mb-4"
+                                className="text-3xl font-black text-slate-900 tracking-tight leading-tight"
                             >
-                                佈署您的第一位<br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-indigo-400">
-                                    分身店長 (AI 店員)
-                                </span>
+                                {activeTab === 'wizard' ? '開通 AI 店長分身' : '帳號與頻道設定'}
                             </motion.h1>
-                            <motion.p
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: 0.2 }}
-                                className="text-slate-400 text-sm md:text-base font-medium max-w-xl leading-relaxed"
+                        </div>
+
+                        <div className="flex bg-white/60 p-1 rounded-2xl border border-white shadow-sm">
+                            <button 
+                                onClick={() => setActiveTab('wizard')}
+                                className={`px-5 py-2 rounded-xl text-[10px] font-black transition-all ${activeTab === 'wizard' ? 'bg-[#06C755] text-white shadow-lg' : 'text-slate-400 hover:text-slate-600'}`}
                             >
-                                從您剛剛購買的AI店長席位中，快速開通一間實體門市的 AI 客服大腦。這個步驟將會扣除一個 Partner Slot。
-                            </motion.p>
-                        </header>
+                                <Plus className="w-3 h-3 inline mr-1" /> 開通精靈
+                            </button>
+                            <button 
+                                onClick={() => setActiveTab('connection')}
+                                className={`px-5 py-2 rounded-xl text-[10px] font-black transition-all ${activeTab === 'connection' ? 'bg-[#06C755] text-white shadow-lg' : 'text-slate-400 hover:text-slate-600'}`}
+                            >
+                                <Settings2 className="w-3 h-3 inline mr-1" /> 連線管理
+                            </button>
+                        </div>
+                    </header>
 
-                        <div className="max-w-3xl">
-                            {/* Visual Stepper */}
-                            <div className="flex items-center gap-4 text-sm font-bold border-b border-slate-700/50 pb-6 mb-8 overflow-x-auto">
-                                {[
-                                    { step: 0, label: '店鋪身分' },
-                                    { step: 1, label: '大腦設定' },
-                                    { step: 2, label: '佈署上線' },
-                                    { step: 3, label: '端點預覽' }
-                                ].map((s, idx) => (
-                                    <React.Fragment key={s.step}>
-                                        <div className={`flex items-center gap-2 whitespace-nowrap ${currentStep === s.step ? 'text-indigo-400' : currentStep > s.step ? 'text-emerald-400' : 'text-slate-600'}`}>
-                                            {currentStep > s.step ? (
-                                                <CheckCircle2 className="w-5 h-5" />
-                                            ) : (
-                                                <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${currentStep === s.step ? 'bg-indigo-500/20' : 'bg-slate-800'}`}>
-                                                    {s.step + 1}
-                                                </span>
-                                            )}
-                                            {s.label}
+                    <div className="max-w-4xl">
+                        <AnimatePresence mode="wait">
+                            {activeTab === 'wizard' ? (
+                                <div key="wizard" className="space-y-8">
+                                    <div className="flex gap-4 mb-8 p-1.5 bg-slate-100 rounded-2xl w-fit">
+                                        <button onClick={() => setMode('wizard')} className={`px-6 py-2.5 rounded-xl font-black text-xs transition-all ${mode === 'wizard' ? 'bg-white text-[#06C755] shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>導引模式</button>
+                                        <button onClick={() => setMode('agentic')} className={`px-6 py-2.5 rounded-xl font-black text-xs transition-all ${mode === 'agentic' ? 'bg-white text-[#06C755] shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>AI 智能模式</button>
+                                    </div>
+                                    
+                                    {mode === 'agentic' ? (
+                                        <AgenticConfigPreview config={proposedConfig} onDeploy={() => {}} isDeploying={false} />
+                                    ) : currentStep === 0 ? (
+                                        <ProvisionIdentityStep name={botInfo.name} onNameChange={(name) => setBotInfo({ ...botInfo, name })} onNext={() => setCurrentStep(1)} onFocus={setFocusedField} onBlur={() => setFocusedField(null)} />
+                                    ) : currentStep === 1 ? (
+                                        <ProvisionBrainStep templates={templates} industry={botInfo.industry} systemPrompt={botInfo.systemPrompt} onTemplateSelect={(id, prompt) => setBotInfo({ ...botInfo, industry: id, systemPrompt: prompt })} onPromptChange={(prompt) => setBotInfo({ ...botInfo, systemPrompt: prompt })} onNext={() => setCurrentStep(2)} onBack={() => setCurrentStep(0)} onFocus={setFocusedField} onBlur={() => setFocusedField(null)} />
+                                    ) : currentStep === 2 ? (
+                                        <ProvisionDeployStep botName={botInfo.name} onDeploy={() => setCurrentStep(3)} onBack={() => setCurrentStep(1)} isSubmitting={isSubmitting} />
+                                    ) : (
+                                        <ProvisionSuccessStep botName={botInfo.name} onReturnToDashboard={() => window.location.href = '/saas-partnership/dashboard'} />
+                                    )}
+                                </div>
+                            ) : (
+                                <motion.div 
+                                    key="connection"
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    className="space-y-8"
+                                >
+                                    {/* Webhook Section */}
+                                    <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-[2.5rem] p-10 text-white shadow-2xl relative overflow-hidden group">
+                                        <div className="absolute top-0 right-0 w-64 h-64 bg-[#06C755] opacity-10 blur-[100px] group-hover:opacity-20 transition-opacity" />
+                                        <div className="relative z-10 space-y-6">
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-10 h-10 rounded-xl bg-[#06C755]/20 flex items-center justify-center border border-[#06C755]/30">
+                                                        <Server className="w-5 h-5 text-[#06C755]" />
+                                                    </div>
+                                                    <div>
+                                                        <h3 className="text-lg font-black tracking-tight">Webhook 調度網址</h3>
+                                                        <p className="text-xs text-slate-400 font-bold">請將此網址貼回 LINE Developers 控制台</p>
+                                                    </div>
+                                                </div>
+                                                <button className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-[10px] font-black transition-all border border-white/10">驗證連線狀態</button>
+                                            </div>
+                                            <div className="flex items-center gap-4 bg-black/40 p-4 rounded-2xl border border-white/5 group-hover:border-[#06C755]/30 transition-all">
+                                                <code className="flex-1 font-mono text-sm text-emerald-400 truncate">{connectionData.webhook_url}</code>
+                                                <button className="p-2 hover:bg-white/10 rounded-lg text-slate-400 transition-colors"><Copy className="w-4 h-4" /></button>
+                                            </div>
                                         </div>
-                                        {idx < 3 && <div className={`w-8 h-px shrink-0 ${currentStep > s.step ? 'bg-emerald-500/50' : 'bg-slate-700'}`}></div>}
-                                    </React.Fragment>
-                                ))}
-                            </div>
+                                    </div>
 
-                            <AnimatePresence mode="wait">
-                                {/* STEP 0: Identity Setup */}
-                                {currentStep === 0 && (
-                                    <motion.div
-                                        key="step-0"
-                                        initial={{ opacity: 0, x: 20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        exit={{ opacity: 0, x: -20 }}
-                                        className="space-y-8"
-                                    >
-                                        <div className="space-y-3">
-                                            <label className="text-xs font-black text-slate-400 uppercase tracking-widest">實體分店 / 品牌名稱</label>
-                                            <div className="relative">
-                                                <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
-                                                <input
-                                                    type="text"
-                                                    placeholder="例如：Oasis Yoga 忠孝旗艦店"
-                                                    value={botInfo.name}
-                                                    onChange={(e) => setBotInfo({ ...botInfo, name: e.target.value })}
-                                                    onFocus={() => setFocusedField('botName')}
-                                                    onBlur={() => setFocusedField(null)}
-                                                    className="w-full bg-slate-800/40 border border-slate-700/50 rounded-2xl py-4 pl-12 pr-4 text-white text-sm focus:outline-none focus:border-indigo-500/50 transition-colors"
+                                    {/* API Configuration */}
+                                    <div className="bg-white/40 backdrop-blur-3xl border border-white rounded-[2.5rem] p-10 shadow-sm space-y-10">
+                                        <div className="flex justify-between items-center">
+                                            <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 flex items-center gap-3">
+                                                <Link2 className="w-5 h-5 text-[#06C755]" /> Messaging API 配置
+                                            </h3>
+                                            <button 
+                                                onClick={handleSaveConnection}
+                                                disabled={isSaving}
+                                                className="px-6 py-2.5 bg-[#06C755] text-white rounded-xl text-[11px] font-black shadow-lg shadow-[#06C755]/20 hover:scale-105 transition-all disabled:opacity-50"
+                                            >
+                                                {isSaving ? '儲存中...' : '更新金鑰設定'}
+                                            </button>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">Channel ID</label>
+                                                <input 
+                                                    type="text" 
+                                                    value={connectionData.channel_id}
+                                                    onChange={(e) => setConnectionData({...connectionData, channel_id: e.target.value})}
+                                                    placeholder="16XXXXXXXX"
+                                                    className="w-full bg-white border border-slate-100 rounded-2xl p-4 text-sm font-bold outline-none focus:ring-2 ring-[#06C755]/20 transition-all" 
                                                 />
                                             </div>
-                                            <p className="text-xs text-slate-500 mt-2">這將會是顯示在終端消費者面前的 LINE 官方帳號名稱。</p>
-                                        </div>
-
-                                        <button
-                                            onClick={handleNextStep}
-                                            disabled={!botInfo.name}
-                                            className="w-full md:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-700 text-white rounded-2xl font-black text-sm transition-all shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2"
-                                        >
-                                            下一步：大腦設定 <ArrowRight className="w-4 h-4" />
-                                        </button>
-                                    </motion.div>
-                                )}
-
-                                {/* STEP 1: Knowledge / Template Selection */}
-                                {currentStep === 1 && (
-                                    <motion.div
-                                        key="step-1"
-                                        initial={{ opacity: 0, x: 20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        exit={{ opacity: 0, x: -20 }}
-                                        className="space-y-8"
-                                    >
-                                        <div className="space-y-3">
-                                            <label className="text-xs font-black text-slate-400 uppercase tracking-widest">套用產業範本 (Master Prompt)</label>
-                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                                {templates.map(t => (
-                                                    <div
-                                                        key={t.id}
-                                                        onClick={() => setBotInfo({ ...botInfo, industry: t.id, systemPrompt: t.prompt })}
-                                                        className={`p-4 rounded-2xl border cursor-pointer transition-all ${botInfo.industry === t.id ? 'bg-indigo-500/20 border-indigo-500' : 'bg-slate-800/30 border-slate-700/50 hover:border-slate-500'}`}
-                                                    >
-                                                        <h4 className={`font-bold mb-1 ${botInfo.industry === t.id ? 'text-indigo-400' : 'text-slate-300'}`}>{t.name}</h4>
-                                                        <p className="text-xs text-slate-500">{t.desc}</p>
-                                                    </div>
-                                                ))}
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">Channel Secret</label>
+                                                <div className="relative">
+                                                    <input 
+                                                        type={showToken ? "text" : "password"} 
+                                                        value={connectionData.channel_secret}
+                                                        onChange={(e) => setConnectionData({...connectionData, channel_secret: e.target.value})}
+                                                        className="w-full bg-white border border-slate-100 rounded-2xl p-4 text-sm font-bold outline-none focus:ring-2 ring-[#06C755]/20 transition-all pr-12" 
+                                                    />
+                                                    <button onClick={() => setShowToken(!showToken)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500 transition-colors">
+                                                        {showToken ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div className="md:col-span-2 space-y-2">
+                                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">Channel Access Token (Long-lived)</label>
+                                                <textarea 
+                                                    value={connectionData.channel_token}
+                                                    onChange={(e) => setConnectionData({...connectionData, channel_token: e.target.value})}
+                                                    rows={4}
+                                                    className="w-full bg-white border border-slate-100 rounded-2xl p-4 text-xs font-mono font-bold outline-none focus:ring-2 ring-[#06C755]/20 transition-all" 
+                                                />
                                             </div>
                                         </div>
 
-                                        <div className="space-y-3">
-                                            <label className="text-xs font-black text-slate-400 uppercase tracking-widest">微調機器人核心指令 (System Prompt)</label>
-                                            <textarea
-                                                rows={5}
-                                                value={botInfo.systemPrompt}
-                                                onChange={(e) => setBotInfo({ ...botInfo, systemPrompt: e.target.value })}
-                                                onFocus={() => setFocusedField('systemPrompt')}
-                                                onBlur={() => setFocusedField(null)}
-                                                className="w-full bg-slate-800/40 border border-slate-700/50 rounded-2xl p-4 text-white text-sm focus:outline-none focus:border-indigo-500/50 transition-colors custom-scrollbar"
-                                                placeholder="請選擇範本或自行輸入指令..."
-                                            />
-                                        </div>
-
-                                        <div className="flex gap-4">
-                                            <button
-                                                onClick={() => setCurrentStep(0)}
-                                                className="px-6 py-4 bg-slate-800 hover:bg-slate-700 text-white rounded-2xl font-bold text-sm transition-all"
-                                            >
-                                                上一步
-                                            </button>
-                                            <button
-                                                onClick={handleNextStep}
-                                                disabled={!botInfo.industry || !botInfo.systemPrompt}
-                                                className="flex-1 md:flex-none px-8 py-4 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-700 text-white rounded-2xl font-black text-sm transition-all shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2"
-                                            >
-                                                下一步：佈署上線 <ArrowRight className="w-4 h-4" />
-                                            </button>
-                                        </div>
-                                    </motion.div>
-                                )}
-
-                                {/* STEP 2: Deploy */}
-                                {currentStep === 2 && (
-                                    <motion.div
-                                        key="step-2"
-                                        initial={{ opacity: 0, x: 20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        exit={{ opacity: 0, x: -20 }}
-                                        className="space-y-8"
-                                    >
-                                        <div className="p-8 rounded-[2rem] border border-indigo-500/30 bg-indigo-500/5 text-center">
-                                            <BrainCircuit className="w-16 h-16 text-indigo-400 mx-auto mb-6" />
-                                            <h2 className="text-2xl font-black text-white mb-2">準備好喚醒 {botInfo.name} 了嗎？</h2>
-                                            <p className="text-slate-400 text-sm font-medium mb-8">
-                                                點擊佈署後將扣除一個 Partner Slot，並即時寫入核心大腦資料至系統叢集。
+                                        <div className="p-6 bg-amber-50/50 border border-amber-100 rounded-2xl flex gap-4">
+                                            <Info className="w-5 h-5 text-amber-500 shrink-0" />
+                                            <p className="text-xs text-amber-700 leading-relaxed font-medium">
+                                                更新金鑰後，系統將自動重啟 AGI 監聽服務。這可能導致約 5-10 秒的 Webhook 響應延遲，請在非高峰時段進行更新。
                                             </p>
-
-                                            <div className="flex justify-center gap-4">
-                                                <button
-                                                    onClick={() => setCurrentStep(1)}
-                                                    className="px-6 py-4 bg-slate-800 hover:bg-slate-700 text-white rounded-2xl font-bold text-sm transition-all"
-                                                >
-                                                    返回修改
-                                                </button>
-                                                <button
-                                                    onClick={handleDeploy}
-                                                    disabled={isSubmitting}
-                                                    className="px-10 py-4 bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-600/50 text-white rounded-2xl font-black text-sm transition-all shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2"
-                                                >
-                                                    {isSubmitting ? (
-                                                        <>
-                                                            <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                                                            佈署中...
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <Save className="w-5 h-5" /> 正式上線
-                                                        </>
-                                                    )}
-                                                </button>
-                                            </div>
                                         </div>
-                                    </motion.div>
-                                )}
-
-                                {/* STEP 3: Live Preview */}
-                                {currentStep === 3 && (
-                                    <motion.div
-                                        key="step-3"
-                                        initial={{ opacity: 0, scale: 0.95 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        className="space-y-8"
-                                    >
-                                        <div className="p-10 rounded-[2.5rem] border border-emerald-500/30 bg-emerald-500/5 text-center relative overflow-hidden">
-                                            <div className="absolute -top-20 -right-20 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl"></div>
-                                            <div className="w-20 h-20 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6 relative z-10">
-                                                <CheckCircle2 className="w-10 h-10 text-emerald-400 outline-none" />
-                                            </div>
-                                            <h2 className="text-2xl font-black text-white mb-2 relative z-10">佈署完畢！大腦已啟動</h2>
-                                            <p className="text-slate-400 text-sm font-medium mb-8 relative z-10">
-                                                右側的對話視窗已經直接連線到 **{deploymentData?.name || botInfo.name}**。
-                                                現在，您可以扮演顧客，直接在右邊測試聊天了！
-                                            </p>
-
-                                            <button
-                                                onClick={() => window.location.href = '/saas-partnership/dashboard'}
-                                                className="px-8 py-4 bg-slate-800 hover:bg-slate-700 text-white rounded-2xl font-black text-sm transition-all flex items-center justify-center gap-2 mx-auto relative z-10"
-                                            >
-                                                <LayoutDashboard className="w-4 h-4" /> 返回合作夥伴儀表板
-                                            </button>
-                                        </div>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
-                    </div>
-
-                    {/* Right Panel: AI Consultant / Preview Identity Shift */}
-                    <div className="hidden lg:block w-[400px] xl:w-[480px]">
-                        <SaaSChatInterface
-                            storeName={botInfo.name || "未命名店鋪"}
-                            isMaster={false}
-                            isSaaS={true} // Still keeping it as part of SaaS flow
-                            focusedField={focusedField}
-                            currentStep={currentStep}
-                            isProvisioning={true} // New prop for API to know it's the provisioning flow
-                            botKnowledge={currentStep === 3 ? (deploymentData || botInfo) : undefined} // Pass specific bot knowledge when live testing
-                            pageContext="provision"
-                        />
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </div>
                 </div>
-            </main>
+
+                <div className="hidden lg:block w-[400px] xl:w-[480px] bg-transparent backdrop-blur-sm border-l border-white/20">
+                    <SaaSChatInterface
+                        storeName={activeOA?.name || botInfo.name || "未命名店鋪"}
+                        isMaster={false}
+                        isSaaS={true}
+                        focusedField={focusedField}
+                        currentStep={currentStep}
+                        isProvisioning={activeTab === 'wizard'}
+                        pageContext="provision"
+                    />
+                </div>
+            </div>
         </div>
     );
 }

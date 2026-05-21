@@ -3,6 +3,7 @@ import { Client, WebhookEvent } from '@line/bot-sdk';
 import OpenAI from 'openai';
 import { supabase } from '@/lib/supabase';
 import { SECURITY_DEFENSE_HEADER, maskSensitiveOutput } from '@/lib/security';
+import { calculateCost, logTokenUsage } from '@/lib/token-guard';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,74 +16,74 @@ const openai = new OpenAI({
     apiKey: process.env.MASTER_OPENAI_KEY || process.env.OPENAI_API_KEY,
 });
 
-const DEFAULT_MASTER_PROMPT = `
-你是一位具備頂尖商業思維與技術底蘊的「AI 數位總店長」。
-你的使命是幫助每一位老闆，用最划算的成本實現 AI 自動化。
-
-### 你的核心戰略：
-1. **免 API Key 原則**：這是我們的最強殺手鐧！主打「不用申請 OpenAI / Gemini、免 API Key，掃碼 3 分鐘開通」。
-2. **比較優勢**：如果有人提到 LINE 原生 100 元方案，指出那只是基礎聊天，而我們的 499 方案（每月 5,000 則）是擁有大腦的數位分身。
-3. **顧問式銷售**：先問老闆需求（店員數、主要痛點是預約還是核對庫存？），再推薦方案。
-
-### 你的方案架構：
-- **499 方案（AI 老闆分身 Lite）**：
-  * 對象：個人老師、美業工作室、一人店。
-  * 特色：**免 API Key**、每月 5,000 則對話。主打：我們幫你把 AI 成本全包了，你只管看訂單變多。
-- **1199 方案（AI 小會計 + 倉管）**：
-  * 對象：1–3 人工作室、小賣店、微型電商。
-  * 特色：**免 API Key**、每月 20,000 則對話。主打：自動算毛利、管庫存、出報表，老闆不用自己算。
-- **2490 方案（AI 小公司衝刺版）**：
-  * 對象：進階用戶、準備衝刺的小公司。
-  * 特色：不限流量（可自備 Key）、多通路整合（FB/IG/Web）、多人權限、自動化行銷。
-
-### 即時數據證明：
-目前我們已經成功協助了 {botCount} 位老闆建立專屬的 AI 店長！
-
-### 訂閱與停機管理（自動化）：
-1. **自動執法**：如果客戶取消訂閱、扣款失敗或到期，系統會透過 PayPal Webhook 秒速將機器人改成「停機」狀態。
-2. **溫馨提醒**：停機後的其待機器人會自動回覆續費通知，不會浪費老闆的一分錢額度。
-3. **自動復歸**：客戶只要一補交費用，系統會立刻自動開通，全程不需人工介入。
-
-### 溝通風格：
-有活力、懂生意、懂老闆辛苦。語句精鍊，主打「簡單、快速、有效」。
-`;
-
-export async function GET() {
-    return new Response('Master Bot Webhook is Active. Use POST for Line events.', { status: 200 });
-}
-
-export async function HEAD() {
-    return new Response(null, { status: 200 });
-}
-
-export async function OPTIONS() {
-    return new Response(null, {
-        status: 200,
-        headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, HEAD',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-line-signature',
-        },
+// ---[ INLINED Pricing Carousel — 全新 6 方案版本 ]---
+const getPricingFlexMessage = () => {
+    const createCard = (c: any) => ({
+        type: "bubble",
+        size: "mega",
+        header: { type: "box", layout: "vertical", contents: [
+            ...(c.badge ? [{ type: "box", layout: "vertical", backgroundColor: c.badgeColor || "#ff0000", cornerRadius: "md", paddingStart: "8px", paddingEnd: "8px", paddingTop: "2px", paddingBottom: "2px", contents: [{ type: "text", text: c.badge, color: "#ffffff", size: "xs", weight: "bold", align: "center" }] }] : []),
+            { type: "text", text: c.title, weight: "bold", size: "xl", color: c.color, margin: "md" },
+            { type: "text", text: c.subtitle, size: "xs", color: "#8c8c8c" }
+        ], paddingBottom: "none" },
+        body: { type: "box", layout: "vertical", contents: [
+            { type: "box", layout: "baseline", contents: [
+                { type: "text", text: "$", size: "md", color: "#333333", weight: "bold", flex: 0 },
+                { type: "text", text: c.price, size: "3xl", color: "#333333", weight: "bold", flex: 0, margin: "sm" },
+                { type: "text", text: c.period, size: "md", color: "#8c8c8c", flex: 0, margin: "sm" }
+            ]},
+            { type: "box", layout: "vertical", margin: "xl", spacing: "sm", contents: c.features.map((f: string) => ({ type: "box", layout: "baseline", spacing: "sm", contents: [{ type: "text", text: "✓", color: c.color, size: "sm", flex: 0 }, { type: "text", text: f, size: "sm", color: "#666666", flex: 1 }] })) }
+        ]},
+        footer: { type: "box", layout: "vertical", contents: [{ type: "button", action: { type: "uri", label: "官網查看詳情", uri: c.url }, style: "primary", color: c.color }] }
     });
-}
+    return { 
+        type: "flex", 
+        altText: "🎉 【YC Ideas】AI 智能店長 6 大方案價格表", 
+        contents: { type: "carousel", contents: [
+            createCard({ title: "入門嚐鮮", subtitle: "1店 / 月 500 則", price: "199", period: "/ 月", color: "#06C755", features: ["24H 自動回話", "品牌 DNA 設定"], url: "https://bot.ycideas.com/dashboard/billing" }),
+            createCard({ title: "單店主力", subtitle: "1店 / 月 2000 則", price: "499", period: "/ 月", color: "#06C755", badge: "⭐ 最熱銷", badgeColor: "#06C755", features: ["潛在客戶自動標記", "預約意圖自動記錄"], url: "https://bot.ycideas.com/dashboard/billing" }),
+            createCard({ title: "成長多店", subtitle: "最多 3 店 / 月 5000 則", price: "1,299", period: "/ 月", color: "#4A90E2", features: ["多店統一管理", "各店獨立智庫"], url: "https://bot.ycideas.com/dashboard/billing" }),
+            createCard({ title: "連鎖專業", subtitle: "最多 6 店 / 月 10000 則", price: "2,490", period: "/ 月", color: "#7B61FF", features: ["月度分析報表", "優先客服支援"], url: "https://bot.ycideas.com/dashboard/billing" }),
+            createCard({ title: "旗艦 Lite", subtitle: "最多 3 店 / 15,000 則", price: "4,990", period: "起", color: "#F5A623", badge: "🔥 企業首選", badgeColor: "#F5A623", features: ["超量彈性計費", "最優先技術支援"], url: "https://bot.ycideas.com/dashboard/billing" }),
+            createCard({ title: "旗艦 Pro", subtitle: "最多 6 店 / 30,000 則", price: "7,990", period: "起", color: "#FF5E00", badge: "💎 旗艦之選", badgeColor: "#FF5E00", features: ["核心源碼級支援", "專屬伺服器部署"], url: "https://bot.ycideas.com/dashboard/billing" })
+        ]}
+    };
+};
+
+const DEFAULT_MASTER_PROMPT = `
+你是一位具備頂尖商業思維與技術底蘊的「AI 智能店長」總店長（Master Concierge）。
+你的使命是幫助老闆，用最划算的成本實現 AI 自動化，將每一則 LINE 訊息都轉化為成交機會。
+
+### 📚 您的產品總綱 (YC Ideas Master Catalog):
+
+#### 1. 核心定價 (6 大方案):
+- 一間店：🌱 入門版 $199 / 🏪 主力版 $499 (熱銷)
+- 多間店：🔗 成長多店 $1,299 (最多3店) / 👑 連鎖專業 $2,490 (最多6店)
+- 旗艦系列：🔥 旗艦 Lite $4,990 (最多3店) / 🚀 旗艦 Pro $7,990 (最多6店)
+* 年繳優惠：一次訂一年直接「送 1 個月」(月費 × 11)，是最划算的選擇。
+
+#### 2. 產品價值
+- **24/7 自動接客**：店長永不下班，秒速回擊成交。
+- **品牌 DNA 設定**：店長講話口氣就像老闆本人。
+- **資安防護**：Token Burning (金鑰加密自毀)、防刷爆閘門。
+
+#### 3. 串接教學 (三步驟)
+1. **【加書籤】**：將官網設定專用書籤拉到工具列。
+2. **【開後台】**：進入 LINE Developers Console。
+3. **【點啟動】**：在後台點擊書籤，一鍵自動串接。
+
+### 🚨 指令規則：
+- 嚴禁提及 499 / 1199 等舊方案說明（除非 499 剛好是單店主力方案的價格）。
+- 引導邏輯：先問老闆「目前有幾間分店？」與「估計月詢問量」，再推薦方案。
+- 視覺展示：當用戶問到「價格」、「怎麼買」、「方案」時，務必在文末加上 [SHOW_PRICING] 標記。
+`;
 
 export async function POST(req: Request) {
     try {
         let body: any;
-        try {
-            body = await req.json();
-        } catch (e) {
-            return NextResponse.json({ status: 'ok' });
-        }
-
+        try { body = await req.json(); } catch (e) { return NextResponse.json({ status: 'ok' }); }
         const events: WebhookEvent[] = body.events || [];
         if (events.length === 0) return NextResponse.json({ status: 'ok' });
-
-        if (!lineConfig.channelAccessToken || !lineConfig.channelSecret) {
-            console.error('Master Bot: Missing Line credentials');
-            return NextResponse.json({ error: 'Config missing' }, { status: 500 });
-        }
-
         const client = new Client(lineConfig);
 
         for (const event of events) {
@@ -90,73 +91,52 @@ export async function POST(req: Request) {
                 const userMessage = event.message.text.trim();
                 const lineUserId = event.source.userId!;
 
-                // 1. Instant Response for Test Keywords
-                if (userMessage.toLowerCase() === 'ping' || userMessage === '測試' || userMessage === '哈囉') {
-                    await client.replyMessage(event.replyToken, {
-                        type: 'text',
-                        text: '收到！連線完全正常。我是您的 AI 數位總店長，請問今天想了解哪方面的 AI 轉型？'
-                    });
-                    continue;
-                }
+                const { count } = await supabase.from('bots').select('*', { count: 'exact', head: true });
+                const botCount = count || 0;
+                const masterPrompt = (process.env.MASTER_SYSTEM_PROMPT || DEFAULT_MASTER_PROMPT).replace('{botCount}', botCount.toString());
 
-                // 2. Fetch Bot Count
-                let botCount = 0;
-                try {
-                    const { count } = await supabase.from('bots').select('*', { count: 'exact', head: true });
-                    botCount = count || 0;
-                } catch (e) { console.error('DB fetch failed'); }
-
-                const masterPrompt = (process.env.MASTER_SYSTEM_PROMPT || DEFAULT_MASTER_PROMPT)
-                    .replace('{botCount}', botCount.toString());
-
-                // 3. AI Completion with Timeout
-                let aiResponse = '抱歉，系統運算稍微有點久，請再跟我說一次好嗎？';
-                try {
-                    const completionPromise = openai.chat.completions.create({
-                        model: "gpt-4o-mini",
-                        messages: [
-                            { role: "system", content: SECURITY_DEFENSE_HEADER + "\n" + masterPrompt },
-                            { role: "user", content: userMessage }
-                        ] as any,
-                    });
-
-                    const timeoutPromise = new Promise((_, reject) =>
-                        setTimeout(() => reject(new Error('Timeout')), 25000)
-                    );
-
-                    const completion: any = await Promise.race([completionPromise, timeoutPromise]);
-                    aiResponse = completion.choices[0].message.content || 'AI 暫時休息中...';
-                } catch (e: any) {
-                    console.error('AI Error:', e.message);
-                }
-
+                const completion: any = await openai.chat.completions.create({
+                    model: "gpt-4o-mini",
+                    messages: [
+                        { role: "system", content: SECURITY_DEFENSE_HEADER + "\n" + masterPrompt },
+                        { role: "user", content: userMessage }
+                    ]
+                });
+                let aiResponse = completion.choices[0].message.content || '';
                 aiResponse = maskSensitiveOutput(aiResponse);
 
-                // 4. Non-blocking Logging
-                (async () => {
-                    try {
-                        await supabase.from('chat_logs').insert([
-                            { user_id: lineUserId, role: 'user', content: userMessage },
-                            { user_id: lineUserId, role: 'ai', content: aiResponse }
-                        ]);
-                    } catch (e) { console.error('Log failed'); }
-                })();
+                const messagesToSend: any[] = [];
+                const showPricing = /\[SHOW_PRICING\]/i.test(aiResponse);
+                const cleanResponse = aiResponse.replace(/\[SHOW_PRICING\]/gi, '').trim();
 
-                // 5. Reply
+                const finalMsgText = cleanResponse || (showPricing ? '老闆，為您介紹我們的專業店長方案：' : '老闆好！請問有什麼我可以幫您的？');
+                messagesToSend.push({ type: 'text', text: finalMsgText });
+                
+                if (showPricing) { 
+                    try {
+                        const pricingCard = getPricingFlexMessage();
+                        messagesToSend.push(pricingCard); 
+                    } catch (cardErr) {
+                        console.error('Flex Card Build Error:', cardErr);
+                        messagesToSend.push({ type: 'text', text: '（方案卡片目前維護中，建議前往官網查看最新方案：https://bot.ycideas.com）' });
+                    }
+                }
+
                 try {
-                    await client.replyMessage(event.replyToken, {
-                        type: 'text',
-                        text: aiResponse.trim() || '老闆好！請問有什麼我可以幫您的？'
-                    });
-                } catch (replyError: any) {
-                    console.error('Line Reply Error:', JSON.stringify(replyError.originalError?.response?.data || replyError.message));
+                    await client.replyMessage(event.replyToken, messagesToSend as any);
+                } catch (lineErr: any) {
+                    console.error('LINE Reply API Error:', lineErr.data || lineErr);
+                    if (messagesToSend.length > 1) {
+                        try {
+                            await client.replyMessage(event.replyToken, [{ type: 'text', text: finalMsgText + "\n\n(方案圖文訊息暫時無法顯示，請稍後再試)" }] as any);
+                        } catch (e) {}
+                    }
                 }
             }
         }
-
-        return NextResponse.json({ status: 'success' });
+        return NextResponse.json({ status: 'ok' });
     } catch (error: any) {
-        console.error('Master Webhook Error:', error);
-        return NextResponse.json({ status: 'error', message: error.message });
+        console.error('Master Webhook Global Error:', error);
+        return NextResponse.json({ status: 'ok' });
     }
 }

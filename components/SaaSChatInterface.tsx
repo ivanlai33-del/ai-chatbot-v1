@@ -20,9 +20,12 @@ interface SaaSChatInterfaceProps {
     isProvisioning?: boolean;
     botKnowledge?: any;
     pageContext?: 'landing' | 'subscribe' | 'dashboard' | 'knowledge' | 'provision';
+    onProposedConfig?: (config: any) => void;
+    onProposedConnection?: (config: any) => void;
+    isLargePortal?: boolean;
 }
 
-export default function SaaSChatInterface({ storeName, isMaster, isSaaS = true, focusedField, currentStep, isActivation = false, isProvisioning = false, botKnowledge, pageContext }: SaaSChatInterfaceProps) {
+export default function SaaSChatInterface({ storeName, isMaster, isSaaS = true, focusedField, currentStep, isActivation = false, isProvisioning = false, botKnowledge, pageContext, onProposedConfig, onProposedConnection, isLargePortal = false }: SaaSChatInterfaceProps) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [inputValue, setInputValue] = useState('');
     const [isTyping, setIsTyping] = useState(false);
@@ -89,6 +92,14 @@ export default function SaaSChatInterface({ storeName, isMaster, isSaaS = true, 
                     content: data.message
                 }]);
             }
+
+            if (data.metadata?.proposedConfig && onProposedConfig) {
+                onProposedConfig(data.metadata.proposedConfig);
+            }
+
+            if (data.metadata?.action === 'CONNECT_LINE' && data.metadata?.connectionConfig && onProposedConnection) {
+                onProposedConnection(data.metadata.connectionConfig);
+            }
         } catch (error) {
             console.error("Chat error:", error);
         } finally {
@@ -97,26 +108,28 @@ export default function SaaSChatInterface({ storeName, isMaster, isSaaS = true, 
     };
 
     return (
-        <div className="flex flex-col h-full bg-[#1e293b]/30 backdrop-blur-sm border-l border-slate-700/50">
+        <div className={`flex flex-col h-full ${isLargePortal ? 'bg-transparent' : 'bg-transparent backdrop-blur-sm border-l border-white/20'}`}>
             {/* Header */}
-            <div className="pt-8 pb-6 px-6 border-b border-slate-700/50 flex items-center justify-between bg-slate-800/20">
+            <div className={`pt-8 pb-6 px-6 ${isLargePortal ? '' : 'border-b border-white/20'} flex items-center justify-between ${isLargePortal ? '' : 'bg-transparent'}`}>
                 <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center">
-                        <Bot className="w-4 h-4 text-indigo-400" />
+                    <div className="w-10 h-10 rounded-2xl bg-[#06C755] flex items-center justify-center shadow-lg shadow-[#06C755]/20">
+                        <Sparkles className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                        <h3 className="text-sm font-black text-white tracking-tight">AI Store Manager Expert</h3>
-                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.3em]">Implementation Support</p>
+                        <h3 className="text-base font-black text-slate-900 tracking-tight">SaaS AGI 顧問</h3>
+                        <p className="text-[10px] text-[#06C755] font-bold uppercase tracking-[0.3em]">Direct Orchestration</p>
                     </div>
                 </div>
-                <button
-                    onClick={resetChat}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-full font-bold text-[10px] transition-all border bg-slate-800/50 text-slate-400 border-slate-700 hover:text-white hover:bg-slate-700 hover:border-slate-500"
-                    title="重置對話至初始狀態"
-                >
-                    <RotateCcw className="w-3 h-3" />
-                    <span className="uppercase tracking-wider">Reset</span>
-                </button>
+                {!isLargePortal && (
+                    <button
+                        onClick={resetChat}
+                        className="flex items-center gap-2 px-3 py-1.5 rounded-full font-bold text-[10px] transition-all border bg-white/40 text-slate-500 border-white/60 hover:text-[#06C755] hover:bg-white"
+                        title="重置對話至初始狀態"
+                    >
+                        <RotateCcw className="w-3 h-3" />
+                        <span className="uppercase tracking-wider">Reset</span>
+                    </button>
+                )}
             </div>
 
             {/* Chat Area */}
@@ -129,9 +142,9 @@ export default function SaaSChatInterface({ storeName, isMaster, isSaaS = true, 
                             animate={{ opacity: 1, y: 0 }}
                             className={`flex ${m.role === 'ai' ? 'justify-start' : 'justify-end'}`}
                         >
-                            <div className={`max-w-[85%] rounded-2xl p-4 text-sm leading-relaxed ${m.role === 'ai'
-                                ? 'bg-slate-800/60 border border-slate-700/50 text-slate-300'
-                                : 'bg-indigo-600/20 border border-indigo-500/30 text-indigo-200'
+                            <div className={`${isLargePortal ? 'max-w-[70%]' : 'max-w-[85%]'} rounded-3xl p-6 text-xl leading-relaxed ${m.role === 'ai'
+                                ? `${isLargePortal ? 'bg-white shadow-xl shadow-slate-200/50 border border-white' : 'bg-white shadow-md border border-slate-100'} text-slate-800`
+                                : 'bg-[#06C755] text-white shadow-xl shadow-[#06C755]/20'
                                 }`}>
                                 {m.content.replace(/\*\*(.*?)\*\*/g, '$1')}
                             </div>
@@ -139,11 +152,11 @@ export default function SaaSChatInterface({ storeName, isMaster, isSaaS = true, 
                     ))}
                     {isTyping && (
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
-                            <div className="bg-slate-800/60 border border-slate-700/50 rounded-2xl p-4">
+                            <div className="bg-white/60 backdrop-blur-md border border-white rounded-2xl p-4 shadow-sm">
                                 <span className="flex gap-1">
-                                    <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce"></span>
-                                    <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce delay-150"></span>
-                                    <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce delay-300"></span>
+                                    <span className="w-1.5 h-1.5 bg-[#06C755] rounded-full animate-bounce"></span>
+                                    <span className="w-1.5 h-1.5 bg-[#06C755] rounded-full animate-bounce delay-150"></span>
+                                    <span className="w-1.5 h-1.5 bg-[#06C755] rounded-full animate-bounce delay-300"></span>
                                 </span>
                             </div>
                         </motion.div>
@@ -152,7 +165,7 @@ export default function SaaSChatInterface({ storeName, isMaster, isSaaS = true, 
             </div>
 
             {/* Input Area */}
-            <div className="p-6 pb-12 bg-slate-800/20 border-t border-slate-700/50 mt-auto">
+            <div className={`${isLargePortal ? 'max-w-4xl mx-auto w-full' : 'p-6 pb-12'} bg-transparent mt-auto`}>
                 <div className="relative group">
                     <input
                         type="text"
@@ -163,20 +176,20 @@ export default function SaaSChatInterface({ storeName, isMaster, isSaaS = true, 
                                 handleSend();
                             }
                         }}
-                        placeholder="詢問技術細節或導入流程..."
-                        className="w-full p-4 pr-12 bg-slate-900/50 border border-slate-700/50 rounded-2xl text-sm text-slate-200 outline-none focus:border-indigo-500/50 transition-all"
+                        placeholder="下達指令來建立或優化機器人..."
+                        className={`w-full ${isLargePortal ? 'p-8 text-2xl shadow-2xl' : 'p-4 text-xl'} bg-white border border-white rounded-[2.5rem] text-slate-800 outline-none focus:border-[#06C755] transition-all shadow-xl shadow-slate-200/50 placeholder:text-slate-400`}
                     />
                     <button
                         onClick={handleSend}
                         title="傳送訊息"
                         aria-label="傳送訊息"
-                        className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all"
+                        className={`absolute ${isLargePortal ? 'right-5' : 'right-3'} top-1/2 -translate-y-1/2 ${isLargePortal ? 'w-14 h-14 rounded-full' : 'w-10 h-10 rounded-full'} bg-[#06C755] text-white flex items-center justify-center hover:bg-[#05A044] transition-all shadow-lg shadow-[#06C755]/30`}
                     >
-                        <Send className="w-4 h-4" />
+                        <Send className={isLargePortal ? "w-6 h-6" : "w-4 h-4"} />
                     </button>
                 </div>
                 <p className="text-[10px] text-slate-600 text-center mt-6 font-bold uppercase tracking-[0.3em] opacity-40">
-                    B2B Technical AI Assistant
+                    {isLargePortal ? "" : "B2B Technical AI Assistant"}
                 </p>
             </div>
         </div>

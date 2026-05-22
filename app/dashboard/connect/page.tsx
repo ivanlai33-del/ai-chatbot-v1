@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Zap, RefreshCw, Star, MoveRight, Key, Bot, ShieldCheck, CheckCircle2, Sparkles, Loader2, LogIn, ArrowLeft } from 'lucide-react';
+import { Zap, RefreshCw, Star, MoveRight, Key, Bot, ShieldCheck, CheckCircle2, Sparkles, Loader2, LogIn, ArrowLeft, AlertCircle } from 'lucide-react';
 import ConnectLayout from '@/components/dashboard/connect/ConnectLayout';
 
 // Hooks
@@ -249,60 +249,82 @@ function LineConnectPageContent() {
                         </div>
 
                         <div className="flex flex-col xl:flex-row gap-5 items-start">
-                            <AIGuideChat 
-                                messages={chatMessages} 
-                                collected={collected}
-                                syncStatus={syncStatus}
-                                renderBookmarkButton={renderBookmarkletButton}
-                                botName={botInfo?.name}
-                            />
+                            {error ? (
+                                <div className="w-full bg-red-50 border border-red-200 rounded-2xl p-10 text-center flex flex-col items-center shadow-lg my-8">
+                                    <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mb-6">
+                                        <AlertCircle className="w-10 h-10 text-red-600" />
+                                    </div>
+                                    <h3 className="text-2xl font-black text-red-800 mb-3 tracking-tight">額度已達上限</h3>
+                                    <p className="text-[15px] text-red-600 font-bold mb-8 max-w-md leading-relaxed">
+                                        {error}
+                                        <br/>
+                                        若需要管理更多分店，請升級您的方案。
+                                    </p>
+                                    <button 
+                                        onClick={() => window.location.href = '/dashboard/billing'}
+                                        className="bg-red-600 text-white font-black py-3.5 px-8 rounded-full hover:bg-red-700 active:scale-95 transition-all shadow-xl shadow-red-600/20 text-[15px]"
+                                    >
+                                        🚀 前往升級方案
+                                    </button>
+                                </div>
+                            ) : (
+                                <>
+                                    <AIGuideChat 
+                                        messages={chatMessages} 
+                                        collected={collected}
+                                        syncStatus={syncStatus}
+                                        renderBookmarkButton={renderBookmarkletButton}
+                                        botName={botInfo?.name}
+                                    />
 
-                            <div className="flex-1 w-full space-y-5">
-                                <div className="bg-white p-6 pb-[20px] rounded-[5px] shadow-xl border border-slate-200">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <div className="flex flex-col">
-                                            <h3 className="text-[19px] font-black text-slate-800 tracking-tight leading-none mb-1">
-                                                Line官方帳號店長金鑰
-                                            </h3>
-                                            <div className="flex items-center gap-2 mt-3">
-                                                <button 
-                                                    onClick={() => {
-                                                        const botId = searchParams.get('botId') || botInfo?.id;
-                                                        if (botId) {
-                                                            fetch(`/api/line/keys?botId=${botId}`)
-                                                                .then(res => res.json())
-                                                                .then(data => {
-                                                                    if (data && !data.error) {
-                                                                        setManualData({
-                                                                            channelId: data.channel_id || '',
-                                                                            channelSecret: data.channel_secret || '',
-                                                                            channelAccessToken: data.channel_access_token || '',
-                                                                            botBasicId: data.bot_basic_id || '',
+                                    <div className="flex-1 w-full space-y-5">
+                                        <div className="bg-white p-6 pb-[20px] rounded-[5px] shadow-xl border border-slate-200">
+                                            <div className="flex items-center justify-between mb-4">
+                                                <div className="flex flex-col">
+                                                    <h3 className="text-[19px] font-black text-slate-800 tracking-tight leading-none mb-1">
+                                                        Line官方帳號店長金鑰
+                                                    </h3>
+                                                    <div className="flex items-center gap-2 mt-3">
+                                                        <button 
+                                                            onClick={() => {
+                                                                const botId = searchParams.get('botId') || botInfo?.id;
+                                                                if (botId) {
+                                                                    fetch(`/api/line/keys?botId=${botId}`)
+                                                                        .then(res => res.json())
+                                                                        .then(data => {
+                                                                            if (data && !data.error) {
+                                                                                setManualData({
+                                                                                    channelId: data.channel_id || '',
+                                                                                    channelSecret: data.channel_secret || '',
+                                                                                    channelAccessToken: data.channel_access_token || '',
+                                                                                    botBasicId: data.bot_basic_id || '',
+                                                                                });
+                                                                                setExtraCollected({ id: !!data.channel_id, sec: !!data.channel_secret, tok: !!data.channel_access_token, bot: !!data.bot_basic_id });
+                                                                            }
                                                                         });
-                                                                        setExtraCollected({ id: !!data.channel_id, sec: !!data.channel_secret, tok: !!data.channel_access_token, bot: !!data.bot_basic_id });
-                                                                    }
-                                                                });
-                                                        }
-                                                    }}
-                                                    className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-lg text-[10px] font-black transition-all"
-                                                >
-                                                    <RefreshCw className="w-3 h-3" />
-                                                    重新偵測同步
-                                                </button>
-                                                <p className="text-[9px] text-slate-400 font-bold leading-tight">書籤結束後按此重整 💡</p>
+                                                                }
+                                                            }}
+                                                            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-lg text-[10px] font-black transition-all"
+                                                        >
+                                                            <RefreshCw className="w-3 h-3" />
+                                                            重新偵測同步
+                                                        </button>
+                                                        <p className="text-[9px] text-slate-400 font-bold leading-tight">書籤結束後按此重整 💡</p>
+                                                    </div>
+                                                </div>
                                             </div>
+
+                                            <ManualSyncPanel 
+                                                manualData={manualData} 
+                                                webhookUrl={connectionData?.webhookUrl || (configId ? `${window.location.origin}/api/line/webhook/${configId}` : '')}
+                                                setManualData={setManualData} 
+                                                handleManualSubmit={handleManualSubmit} 
+                                                isSubmitting={isSubmitting} 
+                                            />
                                         </div>
                                     </div>
-
-                                    <ManualSyncPanel 
-                                        manualData={manualData} 
-                                        webhookUrl={connectionData?.webhookUrl || (configId ? `${window.location.origin}/api/line/webhook/${configId}` : '')}
-                                        setManualData={setManualData} 
-                                        handleManualSubmit={handleManualSubmit} 
-                                        isSubmitting={isSubmitting} 
-                                    />
-                                </div>
-                            </div>
+                                </>
+                            )}
                         </div>
                     </div>
                 ) : (

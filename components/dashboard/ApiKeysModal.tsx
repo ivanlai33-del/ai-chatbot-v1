@@ -129,6 +129,27 @@ export default function ApiKeysModal({ isOpen, onClose, botId, botName }: ApiKey
                                 )}
 
                                 <div className="space-y-5">
+                                    {/* Webhook URL Display */}
+                                    <div>
+                                        <div className="flex items-center justify-between mb-2 px-1">
+                                            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Webhook URL (必填於 LINE 後台)</label>
+                                            <button 
+                                                onClick={() => copyToClipboard(`https://bot.ycideas.com/api/line/webhook/${botId}`, 'webhook')}
+                                                className="text-[11px] font-bold text-emerald-600 flex items-center gap-1 hover:underline"
+                                            >
+                                                {showCopyMsg === 'webhook' ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                                                {showCopyMsg === 'webhook' ? '已復制' : '點此復制'}
+                                            </button>
+                                        </div>
+                                        <input
+                                            type="text"
+                                            readOnly
+                                            value={`https://bot.ycideas.com/api/line/webhook/${botId}`}
+                                            className="w-full px-4 py-3.5 rounded-2xl border border-emerald-100 bg-emerald-50/50 text-[12px] font-bold text-emerald-800 focus:outline-none transition-all font-mono"
+                                            onClick={e => (e.target as HTMLInputElement).select()}
+                                        />
+                                    </div>
+
                                     <div>
                                         <label className="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Bot Basic ID</label>
                                         <input

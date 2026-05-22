@@ -60,19 +60,27 @@ export class FreemiumGuard {
     ]);
 
     const tier = memberResult.data?.tier ?? 0;
-    const plan = getPlanByTier(tier);
+    
+    // 🚨 終極後門：如果是管理員測試帳號，直接賦予旗艦 Pro (Tier 6)
+    let effectiveTier = tier;
+    const { data: directUser } = await supabase.from('direct_users').select('line_user_id').eq('id', userId).single();
+    if (directUser?.line_user_id === 'Ud8b8dd79162387a80b2b5a4aba20f604' || userId === '47b970c5-3124-4104-ab7b-f46c5bdf74cc') {
+        effectiveTier = Math.max(tier, 6);
+    }
+
+    const plan = getPlanByTier(effectiveTier);
 
     // 找不到方案定義時，預設為免費方案規則（防禦性設計）
     if (!plan) {
-      console.error(`[FreemiumGuard] Unknown tier: ${tier}, defaulting to free restrictions`);
-      return { allowed: false, reason: 'monthly_exceeded', lifetimeUsed: 0, tier, limit: 0 };
+      console.error(`[FreemiumGuard] Unknown tier: ${effectiveTier}, defaulting to free restrictions`);
+      return { allowed: false, reason: 'monthly_exceeded', lifetimeUsed: 0, tier: effectiveTier, limit: 0 };
     }
 
     const { monthlyQuota, dailyQuota, isLifetimeQuota } = plan.limits;
 
     // ── 旗艦方案（tier ≥ 5）：直接放行，無限額度 ─────────
     if (monthlyQuota === -1) {
-      return { allowed: true, isPaid: true, lifetimeUsed: 0, tier };
+      return { allowed: true, isPaid: true, lifetimeUsed: 0, tier: effectiveTier };
     }
 
     // ── 計算累計用量 ───────────────────────────────────────
@@ -99,7 +107,7 @@ export class FreemiumGuard {
         allowed: false,
         reason: isLifetimeQuota ? 'lifetime_exceeded' : 'monthly_exceeded',
         lifetimeUsed: totalUsed,
-        tier,
+        tier: effectiveTier,
         limit: monthlyQuota,
       };
     }
@@ -133,13 +141,13 @@ export class FreemiumGuard {
           allowed: false,
           reason: 'daily_exceeded',
           lifetimeUsed: totalUsed,
-          tier,
+          tier: effectiveTier,
           limit: dailyQuota,
         };
       }
     }
 
-    return { allowed: true, isPaid: tier > 0, lifetimeUsed: totalUsed, tier };
+    return { allowed: true, isPaid: effectiveTier > 0, lifetimeUsed: totalUsed, tier: effectiveTier };
   }
 
   /**

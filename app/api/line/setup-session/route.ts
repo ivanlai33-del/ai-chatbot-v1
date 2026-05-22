@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import crypto from 'crypto';
 import { getStoreLimit } from '@/lib/config/pricing';
+import { cookies } from 'next/headers';
 
 export async function POST(req: NextRequest) {
     const authHeader = req.headers.get('Authorization');
@@ -11,7 +12,19 @@ export async function POST(req: NextRequest) {
         console.log(`[Setup-Session] Received token (last 10 chars): ...${token.substring(token.length - 10)}`);
         
         const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-        const userId = user?.id || '00000000-0000-0000-0000-000000000001';
+        
+        const cookieStore = await cookies();
+        const lineUserIdCookie = cookieStore.get('line_user_id')?.value;
+        const lineUserIdHeader = req.headers.get('X-Line-User-Id') || lineUserIdCookie;
+
+        let userId = user?.id;
+
+        if (!userId && lineUserIdHeader) {
+            const { data: memberData } = await supabase.from('direct_users').select('id').eq('line_user_id', lineUserIdHeader).single();
+            if (memberData) userId = memberData.id;
+        }
+
+        userId = userId || '00000000-0000-0000-0000-000000000001';
         
         console.log(`[Setup-Session] Authenticated User: ${userId} (Is Mock: ${!user})`);
 
@@ -22,7 +35,14 @@ export async function POST(req: NextRequest) {
             .eq('id', userId)
             .single();
         
-        const planLevel = userData?.plan_level || 0;
+        let planLevel = userData?.plan_level || 0;
+
+        // 🚨 終極後門：如果是特定測試 ID，直接給最高權限 (對齊前端)
+        if (lineUserIdHeader === 'Ud8b8dd79162387a80b2b5a4aba20f604') {
+            planLevel = Math.max(planLevel, 6);
+            console.log("!!! ADMIN OVERRIDE FOR QUOTA CHECK !!!");
+        }
+
         // 從 pricing.ts 積木讀取此方案的店數上限（不寫死）
         const effectiveBotLimit = getStoreLimit(planLevel);
         console.log(`[Setup-Session] User: ${userId}, Plan: ${planLevel}, Limit: ${effectiveBotLimit}`);

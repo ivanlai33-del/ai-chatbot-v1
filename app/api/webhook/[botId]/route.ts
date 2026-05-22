@@ -30,11 +30,13 @@ export async function POST(
     const events: WebhookEvent[] = body.events || [];
     if (events.length === 0) return NextResponse.json({ status: 'ok' });
 
-    // Reply to LINE immediately — prevents LINE retry storms
-    // Processing continues in the background via the fire-and-forget below
-    processEvents(botId, events).catch((err) =>
-        console.error(`[Webhook] Background processing error for bot ${botId}:`, err)
-    );
+    // On Serverless environments like Vercel, we must await the processing.
+    // If we return 200 immediately, the background task will be killed.
+    try {
+        await processEvents(botId, events);
+    } catch (err) {
+        console.error(`[Webhook] Processing error for bot ${botId}:`, err);
+    }
 
     return NextResponse.json({ status: 'ok' });
 }

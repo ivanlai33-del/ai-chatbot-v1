@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { cookies } from 'next/headers';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -9,7 +10,19 @@ export async function GET(req: NextRequest) {
     
     try {
         const { data: { user }, error: authErr } = await supabase.auth.getUser(authHeader?.split(' ')[1] || '');
-        const userId = user?.id || '00000000-0000-0000-0000-000000000001';
+        
+        const cookieStore = await cookies();
+        const lineUserIdCookie = cookieStore.get('line_user_id')?.value;
+        const lineUserIdHeader = req.headers.get('X-Line-User-Id') || lineUserIdCookie;
+
+        let userId = user?.id;
+
+        if (!userId && lineUserIdHeader) {
+            const { data: memberData } = await supabase.from('direct_users').select('id').eq('line_user_id', lineUserIdHeader).single();
+            if (memberData) userId = memberData.id;
+        }
+
+        userId = userId || '00000000-0000-0000-0000-000000000001';
 
         const { data: dbBots, error } = await supabase
             .from('line_channel_configs')

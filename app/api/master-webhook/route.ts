@@ -16,7 +16,7 @@ const openai = new OpenAI({
     apiKey: process.env.MASTER_OPENAI_KEY || process.env.OPENAI_API_KEY,
 });
 
-// ---[ INLINED Pricing Carousel — 全新 6 方案版本 ]---
+// ---[ INLINED Pricing Carousel — 唯一自助體驗方案 ]---
 const getPricingFlexMessage = () => {
     const createCard = (c: any) => ({
         type: "bubble",
@@ -38,43 +38,39 @@ const getPricingFlexMessage = () => {
     });
     return { 
         type: "flex", 
-        altText: "🎉 【YC Ideas】AI 智能店長 6 大方案價格表", 
+        altText: "🎉 【YC Ideas】AI 智能店長 方案價格表", 
         contents: { type: "carousel", contents: [
-            createCard({ title: "入門嚐鮮", subtitle: "1店 / 月 500 則", price: "199", period: "/ 月", color: "#06C755", features: ["24H 自動回話", "品牌 DNA 設定"], url: "https://bot.ycideas.com/dashboard/billing" }),
-            createCard({ title: "單店主力", subtitle: "1店 / 月 2000 則", price: "499", period: "/ 月", color: "#06C755", badge: "⭐ 最熱銷", badgeColor: "#06C755", features: ["潛在客戶自動標記", "預約意圖自動記錄"], url: "https://bot.ycideas.com/dashboard/billing" }),
-            createCard({ title: "成長多店", subtitle: "最多 3 店 / 月 5000 則", price: "1,299", period: "/ 月", color: "#4A90E2", features: ["多店統一管理", "各店獨立智庫"], url: "https://bot.ycideas.com/dashboard/billing" }),
-            createCard({ title: "連鎖專業", subtitle: "最多 6 店 / 月 10000 則", price: "2,490", period: "/ 月", color: "#7B61FF", features: ["月度分析報表", "優先客服支援"], url: "https://bot.ycideas.com/dashboard/billing" }),
-            createCard({ title: "旗艦 Lite", subtitle: "最多 3 店 / 15,000 則", price: "4,990", period: "起", color: "#F5A623", badge: "🔥 企業首選", badgeColor: "#F5A623", features: ["超量彈性計費", "最優先技術支援"], url: "https://bot.ycideas.com/dashboard/billing" }),
-            createCard({ title: "旗艦 Pro", subtitle: "最多 6 店 / 30,000 則", price: "7,990", period: "起", color: "#FF5E00", badge: "💎 旗艦之選", badgeColor: "#FF5E00", features: ["核心源碼級支援", "專屬伺服器部署"], url: "https://bot.ycideas.com/dashboard/billing" })
+            createCard({ 
+                title: "入門嚐鮮 (自助封測版)", 
+                subtitle: "1店 / 最多 500 則 (公測送單店主力全功能)", 
+                price: "199", 
+                period: "/ 月", 
+                color: "#06C755", 
+                badge: "🔥 公測特惠 4 折",
+                badgeColor: "#06C755",
+                features: ["24H AI 自動接單", "FAQ 常見問題自動秒回", "⚠️ 無人客服 / 自助設定"], 
+                url: "https://bot.ycideas.com/dashboard/billing" 
+            })
         ]}
     };
 };
 
 const DEFAULT_MASTER_PROMPT = `
 你是一位具備頂尖商業思維與技術底蘊的「AI 智能店長」總店長（Master Concierge）。
-你的使命是幫助老闆，用最划算的成本實現 AI 自動化，將每一則 LINE 訊息都轉化為成交機會。
+你的使命是幫助老闆，以極低的百元門檻實現 AI 自動化，幫老闆買回珍貴的下班睡眠時間。
 
-### 📚 您的產品總綱 (YC Ideas Master Catalog):
-
-#### 1. 核心定價 (6 大方案):
-- 一間店：🌱 入門版 $199 / 🏪 主力版 $499 (熱銷)
-- 多間店：🔗 成長多店 $1,299 (最多3店) / 👑 連鎖專業 $2,490 (最多6店)
-- 旗艦系列：🔥 旗艦 Lite $4,990 (最多3店) / 🚀 旗艦 Pro $7,990 (最多6店)
-* 年繳優惠：一次訂一年直接「送 1 個月」(月費 × 11)，是最划算的選擇。
-
-#### 2. 產品價值
-- **24/7 自動接客**：店長永不下班，秒速回擊成交。
-- **品牌 DNA 設定**：店長講話口氣就像老闆本人。
-- **資安防護**：Token Burning (金鑰加密自毀)、防刷爆閘門。
-
-#### 3. 串接教學 (三步驟)
-1. **【加書籤】**：將官網設定專用書籤拉到工具列。
-2. **【開後台】**：進入 LINE Developers Console。
-3. **【點啟動】**：在後台點擊書籤，一鍵自動串接。
+### 📚 您的產品方案 (YC Ideas Catalog):
+目前產品處於公測極簡改版階段，我們僅提供一個方案：
+- 🌱 **入門嚐鮮 (自助封測版)**：
+  - 價格：NT$ 199 / 月 (原價 NT$ 499/月，公測特惠 4 折)
+  - 規格：最多 1 店，對外宣傳 500 則訊息/月 (後台彩蛋免費加贈至 2000 則)。
+  - 功能：24H 自動秒回 FAQ 常見問題。
+  - 客服：為壓低成本，本方案【100% 自助操作，不提供人工客服與技術指導】。
+  - 年繳優惠：NT$ 2,189 / 年 (月費 × 11，直接送 1 個月)。
 
 ### 🚨 指令規則：
-- 嚴禁提及 499 / 1199 等舊方案說明（除非 499 剛好是單店主力方案的價格）。
-- 引導邏輯：先問老闆「目前有幾間分店？」與「估計月詢問量」，再推薦方案。
+- 嚴禁提及任何 1,299 / 2,490 等其他收費方案。
+- 明確告知用戶本系統目前僅限自助使用。
 - 視覺展示：當用戶問到「價格」、「怎麼買」、「方案」時，務必在文末加上 [SHOW_PRICING] 標記。
 `;
 

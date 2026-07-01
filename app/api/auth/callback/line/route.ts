@@ -112,13 +112,15 @@ export async function GET(req: NextRequest) {
             res.cookies.set('plan_level', String(memberData?.plan_level ?? 0), { maxAge: 3600 * 24 * 7, path: '/' });
             return res;
         }
+        // Standard redirect: go to member dashboard (if paid) or billing page (if unpaid)
+        const planLevel = memberData?.plan_level ?? 0;
+        const targetPath = planLevel > 0 ? '/dashboard' : '/dashboard/billing';
         
-        // Standard redirect: go to member dashboard
-        const response = NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard`);
+        const response = NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}${targetPath}`);
         response.cookies.set('line_user_id', userId, { maxAge: 3600 * 24 * 7, path: '/' });
         response.cookies.set('line_user_name', displayName, { maxAge: 3600 * 24 * 7, path: '/' });
         response.cookies.set('line_user_picture', pictureUrl || '', { maxAge: 3600 * 24 * 7, path: '/' });
-        response.cookies.set('plan_level', String(memberData?.plan_level ?? 0), { maxAge: 3600 * 24 * 7, path: '/' });
+        response.cookies.set('plan_level', String(planLevel), { maxAge: 3600 * 24 * 7, path: '/' });
         return response;
 
     } catch (err: any) {

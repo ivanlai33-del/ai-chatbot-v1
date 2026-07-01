@@ -36,10 +36,19 @@ const faqs = [
     {
         q: '中小企業適合先怎麼開始？',
         a: '最好的做法是先鎖定最常見、最重複、最耗時的客服問題，先從小規模試辦開始，驗證能否減少訊息處理時間、提高回覆率，再逐步擴充。'
+    },
+    {
+        q: '設定遇到問題，有客服電話或一對一專人教我安裝嗎？',
+        a: '沒有。為將企業級 AI 店長降至極限的 NT$199/月 封測體驗價，本系統採用「100% 自助式設定」。我們提供 3 分鐘超詳細圖文對照設定手冊。如果您對電腦操作極度陌生、或無法接受無人工技術支援，建議您請勿訂閱本方案。'
     }
 ];
 
-export default function FAQSection() {
+interface FAQSectionProps {
+    onAction: () => void;
+    isLoggedIn: boolean;
+}
+
+export default function FAQSection({ onAction, isLoggedIn }: FAQSectionProps) {
     const [openIndex, setOpenIndex] = useState<number | null>(0);
 
     return (
@@ -104,6 +113,44 @@ export default function FAQSection() {
                         </motion.div>
                     ))}
                 </div>
+
+                {/* 🎯 FAQ 底下的吸引人方案訂閱卡片 */}
+                <motion.div 
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="mt-16 p-8 md:p-12 rounded-[40px] bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border border-emerald-500/30 text-center shadow-2xl relative overflow-hidden"
+                >
+                    <div className="absolute top-0 right-0 p-16 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
+                    
+                    <span className="px-4 py-1.5 bg-emerald-500 text-white rounded-full text-[13px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20 inline-block mb-6">
+                        🔥 限量公測・首批特權釋出
+                    </span>
+                    
+                    <h3 className="text-3xl md:text-4xl font-black text-white mb-4 tracking-tighter">
+                        今晚開始，讓 AI 替你接管下班後的 LINE 客服！
+                    </h3>
+                    
+                    <p className="text-slate-400 text-lg font-bold max-w-2xl mx-auto mb-8 leading-relaxed">
+                        只要花 3 分鐘貼上常見問題，AI 就會 24 小時守在你的 LINE 上自動秒回。
+                        原價 NT$ 499/月 ➔ 限時封測價只要 <span className="text-emerald-400 text-2xl font-black">NT$ 199 / 月</span>！
+                    </p>
+
+                    <div className="max-w-md mx-auto space-y-4">
+                        {/* 鋼鐵免責提醒 */}
+                        <p className="text-[11px] font-black text-rose-400">
+                            ⚠️ 本方案 100% 自助操作，不提供真人電話與一對一客服指導
+                        </p>
+                        
+                        <button
+                            onClick={onAction}
+                            className="w-full py-5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl font-black text-xl transition-all shadow-xl shadow-emerald-500/25 active:scale-95"
+                        >
+                            {isLoggedIn ? '進入專屬會員後台 ➔' : '立即 1.6 折訂閱並自助開通 ➔'}
+                        </button>
+                    </div>
+                </motion.div>
+
             </div>
         </section>
     );

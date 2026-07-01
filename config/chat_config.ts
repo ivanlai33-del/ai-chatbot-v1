@@ -1,7 +1,7 @@
 export const CHAT_CONFIG = {
     // Robot positioning
     robot: {
-        desktop: "absolute bottom-[120px] left-[-290px] hidden xl:flex",
+        desktop: "absolute bottom-[120px] left-[-120px] scale-75 origin-bottom-right hidden lg:flex xl:scale-100 xl:left-[-290px] xl:origin-bottom",
         mobile: "absolute bottom-10 left-4 hidden",
         size: 230,
         offset: -290,

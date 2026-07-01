@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 import { PRICING_PLANS, getPlanByTier, PLAN_IDS_ORDERED, PlanId } from '@/lib/config/pricing';
 import LandingFooter from '@/components/landing/LandingFooter';
 
-const AVAILABLE_PLAN_IDS = PLAN_IDS_ORDERED.filter(id => id !== 'free');
+const AVAILABLE_PLAN_IDS = PLAN_IDS_ORDERED.filter(id => id === 'starter');
 
 export default function UnifiedBillingView() {
     const [planLevel, setPlanLevel] = useState<number>(0);
@@ -121,6 +121,47 @@ export default function UnifiedBillingView() {
                             </div>
                         </div>
                     </div>
+
+                    {/* 專案、訂閱內容資訊詳細展示 */}
+                    {currentPlan && (
+                        <div className="mt-8 pt-8 border-t border-slate-100 relative z-10">
+                            <h4 className="text-[13px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 ml-1">
+                                目前訂閱專案內容與額度資訊
+                            </h4>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                                <div className="bg-slate-50/80 p-5 rounded-2xl border border-slate-100/50 flex flex-col justify-between">
+                                    <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">每月詢問額度</p>
+                                    <p className="text-2xl font-black text-slate-800">
+                                        {currentPlan.limits.monthlyQuota === -1 ? '無限' : `${currentPlan.limits.monthlyQuota.toLocaleString()} 則`}
+                                    </p>
+                                </div>
+                                <div className="bg-slate-50/80 p-5 rounded-2xl border border-slate-100/50 flex flex-col justify-between">
+                                    <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">可管理店數</p>
+                                    <p className="text-2xl font-black text-slate-800">
+                                        {currentPlan.limits.stores === -1 ? '無限制' : `${currentPlan.limits.stores} 間分店`}
+                                    </p>
+                                </div>
+                                <div className="bg-slate-50/80 p-5 rounded-2xl border border-slate-100/50 flex flex-col justify-between">
+                                    <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2">LINE 好友數上限</p>
+                                    <p className="text-2xl font-black text-slate-800">
+                                        {currentPlan.limits.maxLineMembers === -1 ? '無限制' : `${currentPlan.limits.maxLineMembers.toLocaleString()} 人`}
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div className="space-y-3">
+                                <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">已開通核心功能與服務</p>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                                    {currentPlan.features.map((feature, i) => (
+                                        <div key={i} className="flex items-center gap-2.5 text-[14px] font-bold text-slate-600 bg-slate-50/40 p-2.5 rounded-xl border border-slate-100/30">
+                                            <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                                            <span>{feature}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </section>
 

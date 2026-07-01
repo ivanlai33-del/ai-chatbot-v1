@@ -1,4 +1,19 @@
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@supabase/supabase-js';
+import { supabase as supabaseAnon } from '@/lib/supabase';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+
+// 伺服器端環境下使用高權限的 Admin 客戶端，避免 RPC 權限回收後無法計數
+const supabase = supabaseServiceKey
+    ? createClient(supabaseUrl, supabaseServiceKey, {
+        auth: {
+            persistSession: false,
+            autoRefreshToken: false,
+        }
+    })
+    : supabaseAnon;
+
 
 export class UsageService {
     /**

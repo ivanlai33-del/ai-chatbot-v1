@@ -70,13 +70,13 @@ export default function LiffSubscribePage() {
           </div>
 
           <div className="text-center mb-[24px]">
-            <h2 className="text-[42px] font-black text-slate-900 mb-4 tracking-tighter">
-              立即開通您的專屬方案
+            <h2 className="text-[36px] md:text-[42px] font-black text-slate-900 mb-4 tracking-tighter leading-tight">
+              每天不到$7元，搞定 24H LINE AI 客服！
             </h2>
             <p className="text-slate-600 font-bold mb-8 text-base">
-              首 500 名早鳥永久優惠進行中
+              封測特惠每月僅需 NT$199，徹底告別下班重複回訊惡夢！
               <br />
-              目前僅剩少數席次！
+              首 500 名早鳥永久優惠，目前席次倒數中！
             </p>
 
             {/* Billing Toggle (Adaptive for light) */}

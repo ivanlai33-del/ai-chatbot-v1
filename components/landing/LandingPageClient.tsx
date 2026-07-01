@@ -81,9 +81,10 @@ export default function LandingPageClient({ isLoggedInInit }: LandingPageClientP
 
             <LandingSEOContent />
 
-            <PricingComparison />
+            {/* 隱藏多方案比較表，全面導流至單一 199 方案的 PricingModal */}
+            {/* <PricingComparison /> */}
 
-            <FAQSection />
+            <FAQSection isLoggedIn={isLoggedIn} onAction={handleAction} />
 
             <PricingModal 
                 isOpen={showPricing}
@@ -95,6 +96,29 @@ export default function LandingPageClient({ isLoggedInInit }: LandingPageClientP
             />
             
             <LandingFooter variant="desktop" />
+
+            {/* 🚀 懸浮跟隨 (Sticky Floating) 登入/訂閱按鈕 */}
+            <div className="fixed bottom-8 right-8 z-40">
+                <button
+                    onClick={handleAction}
+                    className={`flex items-center gap-2 px-6 py-4 rounded-full font-black text-base shadow-2xl transition-all hover:scale-105 active:scale-95 text-white ${
+                        isLoggedIn 
+                            ? 'bg-slate-800 border border-white/20 hover:bg-slate-700 shadow-slate-900/40' 
+                            : 'bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/30'
+                    }`}
+                >
+                    {isLoggedIn ? (
+                        <span>👤 專屬會員後台 ➔</span>
+                    ) : (
+                        <span className="flex items-center gap-1.5 animate-pulse font-black">
+                            <span className="text-yellow-300" style={{ fontSize: '2.5rem' }}>⚡️</span>
+                            <span style={{ fontSize: '1.5rem' }}>立即訂閱 NT$</span>
+                            <span className="text-yellow-300 font-extrabold" style={{ fontSize: '2.5rem' }}>199</span>
+                            <span style={{ fontSize: '1.5rem' }}> ➔</span>
+                        </span>
+                    )}
+                </button>
+            </div>
         </div>
     );
 }

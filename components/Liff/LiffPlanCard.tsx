@@ -32,7 +32,7 @@ export default function LiffPlanCard({
   return (
     <motion.div
       whileTap={{ scale: 0.98 }}
-      className="relative p-6 rounded-[2rem] border bg-white/40 backdrop-blur-xl shadow-lg mb-4 overflow-hidden group"
+      className="relative p-6 rounded-[2rem] border bg-white/95 shadow-lg mb-4 overflow-hidden group"
       style={{ borderColor: `${color}40` }}
       onClick={onSelect}
     >

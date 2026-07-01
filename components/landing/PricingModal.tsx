@@ -66,7 +66,7 @@ export default function PricingModal({
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
                         transition={{ type: 'spring', stiffness: 150, damping: 18, mass: 0.9 }}
-                        className="relative w-full max-w-6xl bg-[#0f172a]/60 border border-white/20 rounded-[40px] shadow-2xl overflow-hidden flex flex-col md:flex-row backdrop-blur-2xl max-h-[95vh]"
+                        className="relative w-full max-w-6xl bg-[#0f172a]/95 border border-white/20 rounded-[40px] shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[95vh]"
                     >
                         {/* 關閉按鈕 */}
                         <button
@@ -252,6 +252,13 @@ function PlanCard({ plan, billingCycle, onAction, flagship = false }: {
                 ))}
             </ul>
 
+            {/* 自助免責聲明 */}
+            <div className="mt-2 text-center">
+                <p className="text-[11px] font-black text-rose-400 leading-tight">
+                    ⚠️ 100% 自助方案：不提供真人客服與技術排障
+                </p>
+            </div>
+
             {/* CTA 按鈕 */}
              <button
                 onClick={onAction}
@@ -261,7 +268,7 @@ function PlanCard({ plan, billingCycle, onAction, flagship = false }: {
                     boxShadow: `0 8px 20px ${plan.color}30`
                 }}
             >
-                請用 LINE 登入
+                立即 1.6 折訂閱並自助開通
                 <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
         </div>

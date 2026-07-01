@@ -122,12 +122,7 @@ export default function LandingFooter({ isLight = false, variant = 'auto' }: Lan
                     <p className="mb-2">本平台採「訂閱制 (SaaS)」收費模式</p>
                     <div className="space-y-1">
                         {[
-                            PRICING_PLANS.starter, 
-                            PRICING_PLANS.solo, 
-                            PRICING_PLANS.growth, 
-                            PRICING_PLANS.chain, 
-                            PRICING_PLANS.flagship_lite, 
-                            PRICING_PLANS.flagship_pro
+                            PRICING_PLANS.starter
                         ].map((p) => (
                             <p key={p.id} className="flex items-center gap-2">
                                 <span className="font-bold shrink-0">{p.name} :</span>

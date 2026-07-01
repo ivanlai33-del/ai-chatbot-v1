@@ -16,19 +16,19 @@ const BOT_IMAGES = Array.from({ length: 11 }, (_, i) => `/bot_${String(i + 1).pa
 
 const HERO_COPY_SETS = [
     {
-        title: <><span className="whitespace-nowrap">LINE AI 機器人：</span><br /><span className="whitespace-nowrap">24 小時智慧回覆與</span><br /><span className="whitespace-nowrap">AI 智慧助手</span></>,
-        subtitle: '專為實體店面與個人品牌設計，3 分鐘開通 LINE 官方帳號 AI 客服。結合最新的 AI 技術，精準回答客戶問題，有效減少大量重複諮詢，讓服務全天候不中斷。',
-        tags: ['#LINEAI機器人', '#智慧回覆系統', '#AI客服', '#LINE經營工具']
+        title: <><span className="whitespace-nowrap">每天不到$7元</span><br /><span className="whitespace-nowrap">搞定24H LINE</span><br /><span className="whitespace-nowrap">官方帳號AI客服</span></>,
+        subtitle: '原價 NT$ 499/月 ➔ 封測期間 4 折！無人工客服、100% 自助操作。只需複製貼上金鑰，立刻解鎖完整 AI 智庫與人格設定，讓成交完全自動化。',
+        tags: ['#自助封測特權', '#極簡自動化', '#搶先公測199', '#無痛數位轉型']
     },
     {
-        title: <><span className="whitespace-nowrap">LINE 智慧導購與 AI 客服：</span><br /><span className="whitespace-nowrap">您的數位與實體店專屬</span><br /><span className="whitespace-nowrap">官方帳號 AI 店長</span></>,
-        subtitle: '告別漏接訊息！透過 AI 智慧引導對話，提升官方帳號服務品質。低門檻、免寫程式，讓小品牌也能擁有專業等級的自動化服務體驗。',
-        tags: ['#LINE智慧導購', '#數位轉型', '#實體店面助攻', '#官方帳號經營']
+        title: <><span className="whitespace-nowrap">把LINE官方帳號</span><br /><span className="whitespace-nowrap">交給AI店長替您守店</span><br /><span className="whitespace-nowrap">讓您安心睡覺</span></>,
+        subtitle: '下班後洗澡、陪家人、睡覺時 LINE 還一直響？讓 AI 客服做你的不眠替身，3 分鐘貼上常見問題， 24 小時全自動秒回，把下班後的完整時間還給自己。',
+        tags: ['#AI睡眠店長', '#自動秒回系統', '#小商家救星', '#被動營業中']
     },
     {
-        title: <><span className="whitespace-nowrap">打造您的專業 AI 客服：</span><br /><span className="whitespace-nowrap">LINE 官方帳號智慧對話</span><br /><span className="whitespace-nowrap">與商品導購助手</span></>,
-        subtitle: '業界領進的 LINE 官方帳號 AI 解決方案。從智慧商品介紹到 24/7 自動回覆，協助您的品牌建立專業形象，節省人力成本並優化客戶對話體驗。',
-        tags: ['#AI客服', '#SaaS服務', '#LINE行銷輔助', '#智慧導購']
+        title: <><span className="whitespace-nowrap">告別下班重複回訊惡夢</span><br /><span className="whitespace-nowrap">AI自動幫你回覆常見問題</span><br /><span className="whitespace-nowrap">提高訂單成交率</span></>,
+        subtitle: '拒絕昂貴小編，免寫程式、免下載 App。不管是營業時間、運費還是商品推薦，AI 替身 0.1 秒精準回覆，幫你守住深夜裡的每一筆潛在訂單。',
+        tags: ['#LINE自動回話', '#三分鐘極速串接', '#免小編AI接單', '#24H無間斷']
     }
 ];
 

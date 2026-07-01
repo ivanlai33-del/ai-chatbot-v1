@@ -3,6 +3,15 @@ import { Message, ChatPlan } from '@/lib/chat-types';
 import { OWNER_INSIGHTS, SOFT_GREETINGS } from '@/lib/chat-constants';
 import { globalLogout } from '@/lib/auth-utils';
 
+const safeRandomUUID = () => {
+    if (typeof window !== 'undefined' && window.crypto && window.crypto.randomUUID) {
+        try {
+            return window.crypto.randomUUID();
+        } catch (e) {}
+    }
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+};
+
 export function useChatInterface(initialType: string | null = null) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [inputValue, setInputValue] = useState('');
@@ -32,7 +41,7 @@ export function useChatInterface(initialType: string | null = null) {
 
     const addAiMessage = useCallback((content: string, type: Message['type'] = 'text', metadata?: any) => {
         const newMessage: Message = {
-            id: crypto.randomUUID(),
+            id: safeRandomUUID(),
             role: 'ai',
             content,
             type,
@@ -124,7 +133,7 @@ export function useChatInterface(initialType: string | null = null) {
     const handleSend = async () => {
         if (!inputValue.trim()) return;
         const userMsg: Message = {
-            id: crypto.randomUUID(),
+            id: safeRandomUUID(),
             role: 'user',
             content: inputValue,
             type: 'text'
@@ -208,7 +217,7 @@ export function useChatInterface(initialType: string | null = null) {
                 checkExistingBots(line_id).then(isMember => {
                     if (!isMember) {
                         const loginSuccessMsg: Message = { 
-                            id: crypto.randomUUID(),
+                            id: safeRandomUUID(),
                             role: 'user', 
                             content: `對了，我是 ${line_name}，很高興認識你！`
                         };

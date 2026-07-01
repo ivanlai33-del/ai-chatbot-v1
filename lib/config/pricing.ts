@@ -114,8 +114,8 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
     },
     limits: {
       stores: 1,
-      monthlyQuota: 50,
-      dailyQuota: 10,
+      monthlyQuota: 0,
+      dailyQuota: 0,
       isLifetimeQuota: true,
       maxLineMembers: 200,
       maxLineMembersPerStore: 200,
@@ -159,36 +159,36 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
   starter: {
     id: 'starter',
     tier: 1,
-    name: '入門嚐鮮',
+    name: '入門嚐鮮 (自助封測版)',
     emoji: '🌱',
-    tagline: '剛開 LINE，先讓 AI 幫你試試看',
-    targetAudience: '剛開 LINE 官方帳號，試水溫的老闆',
-    monthlyInquiryRange: '每月不超過 500 則詢問',
+    tagline: '把你的 LINE 丟給 AI，今晚開始安心睡覺',
+    targetAudience: '想將重複客服自動化、回歸生活的老闆',
+    monthlyInquiryRange: '每月最多 500 則訊息 (公測特權直接升級 2,000 則)',
     pricing: {
       monthly: 199,
-      originalMonthly: 249,
+      originalMonthly: 499,
       annual: 2189,          // 199 × 11
       annualSaving: 199,     // 省 1 個月
       isStartingPrice: false,
     },
     limits: {
       stores: 1,
-      monthlyQuota: 500,
-      dailyQuota: 30,
+      monthlyQuota: 2000,    // 彩蛋直升 2,000 則
+      dailyQuota: 100,       // 配合單店主力
       isLifetimeQuota: false,
-      maxLineMembers: 500,
-      maxLineMembersPerStore: 500,
+      maxLineMembers: 1500,  // 配合單店主力
+      maxLineMembersPerStore: 1500,
     },
     featureAccess: {
       brandDNA: true,
-      instantCommands: 0,
-      products: 10,
-      faq: 10,
-      guidanceRules: 3,
+      instantCommands: 2,    // 配合單店主力 (原 0)
+      products: 30,          // 配合單店主力 (原 10)
+      faq: 30,               // 配合單店主力 (原 10)
+      guidanceRules: 5,      // 配合單店主力 (原 3)
       contactPortal: true,
-      pdfLearning: 0,
+      pdfLearning: 3,        // 配合單店主力 (原 0)
       webLearning: 0,
-      crmTagging: false,
+      crmTagging: true,      // 配合單店主力 (原 false)
       crmBroadcast: 0,
       crmScheduled: false,
       crmPersonalized: false,
@@ -198,16 +198,15 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
     },
     features: [
       '24H AI 全時段自動接單',
-      '品牌 DNA 自助設定',
-      '商家專屬智庫建置與教學',
-      'FAQ 常見問題自動回答',
+      'FAQ 常見問題自動秒回',
       '對話紀錄自助查看',
+      '⚠️ 本方案無人工客服，僅限自助操作',
     ],
     color: '#06C755',
     notIncluded: [
-      '多店管理權限',
-      '數據看板分析',
-      '高額度訊息通道',
+      '人工技術排障與專人電話指導',
+      '多店連動管理權限',
+      '進階數據看板分析',
     ],
     payment: {
       newebpayMonthlyLink: 'https://p.newebpay.com.tw/A06FE6B', // Placeholder for now

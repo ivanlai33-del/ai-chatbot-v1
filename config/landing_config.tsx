@@ -16,8 +16,8 @@ const PLAN_ICONS: Record<PlanId, React.ReactNode> = {
 };
 
 export const getPricingPlans = (billingCycle: 'monthly' | 'yearly') => {
-    // 排除免費方案（不顯示在定價頁）
-    const paidPlanIds: PlanId[] = ['starter', 'solo', 'growth', 'chain', 'flagship_lite', 'flagship_pro'];
+    // 排除免費方案（不顯示在定價頁），並且只保留入門自助體驗版以實現極簡化轉型
+    const paidPlanIds: PlanId[] = ['starter'];
 
     return paidPlanIds.map((id) => {
         const plan = PRICING_PLANS[id];

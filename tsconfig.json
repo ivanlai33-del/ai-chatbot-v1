@@ -42,6 +42,7 @@
     "check_schema.ts",
     "find_tables.ts",
     "test_connection.ts",
-    "test_forex.ts"
+    "test_forex.ts",
+    "scratch/**/*"
   ]
 }

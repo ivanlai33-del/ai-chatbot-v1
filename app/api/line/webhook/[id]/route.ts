@@ -129,13 +129,15 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
             // ⚡ 追蹤第一階段流失率：加入好友與封鎖事件
             if (event.type === 'follow' && userId) {
                 backgroundTasks.push(
-                    supabaseAdmin
-                        .from('direct_users')
-                        .upsert({
-                            line_user_id: userId,
-                            subscription_status: 'followed',
-                            updated_at: new Date().toISOString()
-                        }, { onConflict: 'line_user_id' })
+                    Promise.resolve(
+                        supabaseAdmin
+                            .from('direct_users')
+                            .upsert({
+                                line_user_id: userId,
+                                subscription_status: 'followed',
+                                updated_at: new Date().toISOString()
+                            }, { onConflict: 'line_user_id' })
+                    )
                 );
                 console.log(`[TIER1:LineWebhook][${configId}] User ${userId} followed.`);
                 
@@ -153,13 +155,15 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
 
             if (event.type === 'unfollow' && userId) {
                 backgroundTasks.push(
-                    supabaseAdmin
-                        .from('direct_users')
-                        .update({
-                            subscription_status: 'blocked',
-                            updated_at: new Date().toISOString()
-                        })
-                        .eq('line_user_id', userId)
+                    Promise.resolve(
+                        supabaseAdmin
+                            .from('direct_users')
+                            .update({
+                                subscription_status: 'blocked',
+                                updated_at: new Date().toISOString()
+                            })
+                            .eq('line_user_id', userId)
+                    )
                 );
                 console.log(`[TIER1:LineWebhook][${configId}] User ${userId} unfollowed/blocked.`);
                 continue;
@@ -309,7 +313,7 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
             const aiResponse = await callAIDirect(dynamicPrompt, userMessage, chatHistory, imageBase64);
 
             // ⚡ 使用 Push API 進行非同步回覆，避免 replyToken 逾時失效
-            const targetId = event.source.groupId || event.source.roomId || event.source.userId;
+            const targetId = (event.source as any).groupId || (event.source as any).roomId || event.source.userId;
             if (targetId) {
                 await client.pushMessage({
                     to: targetId,

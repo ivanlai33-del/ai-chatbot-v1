@@ -75,6 +75,7 @@ export interface PricingPlan {
     visionAI: boolean;          // 9. 圖片視覺辨識能力 (GPT-4o Vision)
     marketPulse: boolean;       // 10. 市場脈動 (產業趨勢)
     brandGuardian: boolean;     // 11. 品牌衛士 (輿情監控)
+    flexMessageGen: boolean;    // 12. AI 自動生成 Flex Message
   };
 
   features: string[];        // 功能列表
@@ -136,6 +137,7 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       visionAI: false,
       marketPulse: false,
       brandGuardian: false,
+      flexMessageGen: false,
     },
     features: [
       '24H AI 全時段自動接單',
@@ -195,6 +197,7 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       visionAI: false,
       marketPulse: false,
       brandGuardian: false,
+      flexMessageGen: false,
     },
     features: [
       '24H AI 全時段自動接單',
@@ -255,6 +258,7 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       visionAI: false,
       marketPulse: false,
       brandGuardian: false,
+      flexMessageGen: false,
     },
     features: [
       '24H AI 全時段自動接單',
@@ -315,6 +319,7 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       visionAI: true,
       marketPulse: false,
       brandGuardian: false,
+      flexMessageGen: true,
     },
     features: [
       '單店主力所有功能',
@@ -374,6 +379,7 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       visionAI: true,
       marketPulse: true,
       brandGuardian: false,
+      flexMessageGen: true,
     },
     features: [
       '成長多店所有功能',
@@ -428,6 +434,7 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       visionAI: true,
       marketPulse: true,
       brandGuardian: true,
+      flexMessageGen: true,
     },
     features: [
       '連鎖專業所有功能',
@@ -487,6 +494,7 @@ export const PRICING_PLANS: Record<PlanId, PricingPlan> = {
       visionAI: true,
       marketPulse: true,
       brandGuardian: true,
+      flexMessageGen: true,
     },
     features: [
       '旗艦 Lite 所有功能',

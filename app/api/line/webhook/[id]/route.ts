@@ -82,11 +82,17 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
             return NextResponse.json({ status: 'ok' });
         }
 
-        console.log(`[TIER1:LineWebhook][${configId}] Processing ${events.length} event(s)`);
-        await processEvents(configId, config, events);
-        console.log(`[TIER1:LineWebhook][${configId}] Done.`);
+        console.log(`[TIER1:LineWebhook][${configId}] Spawning background event processing for ${events.length} event(s)`);
+        
+        // ⚡ 立即回覆 LINE 200 OK，避免 5 秒逾時重複傳送訊息
+        const response = NextResponse.json({ status: 'ok' });
 
-        return NextResponse.json({ status: 'ok' });
+        // 背景非同步處理
+        processEvents(configId, config, events).catch((err) => {
+            console.error(`[TIER1:LineWebhook][${configId}] Background processEvents error:`, err.message);
+        });
+
+        return response;
     } catch (error: any) {
         console.error('[TIER1:LineWebhook] Top-level error:', error.message);
         return NextResponse.json({ error: error.message }, { status: 500 });
@@ -118,9 +124,48 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
             : '你現在是 LINE 官方帳號的 AI 店長。請簡短、精確且有禮貌地回答客戶。';
 
         for (const event of events) {
-            if (event.type !== 'message' || (event.message.type !== 'text' && event.message.type !== 'image')) continue;
-
             const userId = event.source.userId;
+
+            // ⚡ 追蹤第一階段流失率：加入好友與封鎖事件
+            if (event.type === 'follow' && userId) {
+                backgroundTasks.push(
+                    supabaseAdmin
+                        .from('direct_users')
+                        .upsert({
+                            line_user_id: userId,
+                            subscription_status: 'followed',
+                            updated_at: new Date().toISOString()
+                        }, { onConflict: 'line_user_id' })
+                );
+                console.log(`[TIER1:LineWebhook][${configId}] User ${userId} followed.`);
+                
+                // 發送歡迎訊息
+                const welcomeClient = new messagingApi.MessagingApiClient({ channelAccessToken: config.channel_access_token });
+                welcomeClient.replyMessage({
+                    replyToken: (event as any).replyToken,
+                    messages: [{
+                        type: 'text',
+                        text: `哈囉老闆！歡迎加入！我是你的 AI 助理店長。我隨時在線幫你秒回顧客！您可以出個刁難問題考考我喔！`
+                    }]
+                }).catch(() => null);
+                continue;
+            }
+
+            if (event.type === 'unfollow' && userId) {
+                backgroundTasks.push(
+                    supabaseAdmin
+                        .from('direct_users')
+                        .update({
+                            subscription_status: 'blocked',
+                            updated_at: new Date().toISOString()
+                        })
+                        .eq('line_user_id', userId)
+                );
+                console.log(`[TIER1:LineWebhook][${configId}] User ${userId} unfollowed/blocked.`);
+                continue;
+            }
+
+            if (event.type !== 'message' || (event.message.type !== 'text' && event.message.type !== 'image')) continue;
 
             // 🛡️ 第 0 道防護：單一 LINE 客戶防刷機制 (Per-User Rate Limit)
             if (userId) {
@@ -263,11 +308,17 @@ async function processEvents(configId: string, config: any, events: WebhookEvent
             // ⚡ DIRECT OpenAI call — skip AIService overhead:
             const aiResponse = await callAIDirect(dynamicPrompt, userMessage, chatHistory, imageBase64);
 
-            await client.replyMessage({
-                replyToken: event.replyToken,
-                messages: [{ type: 'text', text: aiResponse }]
-            });
-            console.log(`[TIER1:LineWebhook][${configId}] Reply sent.`);
+            // ⚡ 使用 Push API 進行非同步回覆，避免 replyToken 逾時失效
+            const targetId = event.source.groupId || event.source.roomId || event.source.userId;
+            if (targetId) {
+                await client.pushMessage({
+                    to: targetId,
+                    messages: [{ type: 'text', text: aiResponse }]
+                });
+                console.log(`[TIER1:LineWebhook][${configId}] Push reply sent to ${targetId}.`);
+            } else {
+                console.warn(`[TIER1:LineWebhook][${configId}] No target destination for pushMessage.`);
+            }
 
             // 🧾 計費記帳 (Usage Logic): 影像訊息加倍扣除 (折抵 3 個額度)
             const UsageService = (await import('@/lib/services/UsageService')).UsageService;

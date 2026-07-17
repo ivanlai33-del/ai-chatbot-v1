@@ -45,6 +45,17 @@ function LineConnectPageContent() {
         collected
     } = useSyncSession();
 
+    const [isMobileOrTablet, setIsMobileOrTablet] = useState(false);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const ua = window.navigator.userAgent.toLowerCase();
+            const isMobile = /iphone|ipad|ipod|android|blackberry|mini|windows\sphone|tablet/i.test(ua);
+            const isSmallScreen = window.innerWidth < 1024;
+            setIsMobileOrTablet(isMobile || isSmallScreen);
+        }
+    }, []);
+
     useEffect(() => {
         supabase.auth.getUser()
             .then(({ data }) => {
@@ -189,7 +200,35 @@ function LineConnectPageContent() {
                                 <ArrowLeft className="w-3.5 h-3.5" />
                                 返回
                             </button>
-                        </div>
+                        {/* --- MOBILE/TABLET WARNING BANNER --- */}
+                        {isMobileOrTablet && (
+                            <div className="bg-amber-50 border border-amber-200 rounded-[5px] p-4 mb-4 shadow-sm flex items-start gap-3">
+                                <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                                <div>
+                                    <h4 className="text-[14px] font-black text-amber-850 tracking-wide">⚠️ 偵測到您目前使用行動裝置或平板</h4>
+                                    <p className="text-[12px] text-amber-700 font-medium mt-1 leading-relaxed">
+                                        LINE 官方 Developers 後台在手機/平板上極難操作，且手機瀏覽器不支援安裝我們的「自動同步書籤」小工具。
+                                        <br />
+                                        <strong>強烈建議改用電腦（桌機或筆電）瀏覽器</strong>開啟此頁面，只要 30 秒即可一鍵完成綁定！
+                                    </p>
+                                    <div className="mt-3 flex gap-2 flex-wrap">
+                                        <a 
+                                            href="https://youtube.com/watch?v=placeholder" 
+                                            target="_blank" 
+                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-[4px] text-[11px] font-black transition-all shadow-sm"
+                                        >
+                                            📺 30秒電腦同步影片教學
+                                        </a>
+                                        <button 
+                                            onClick={() => alert('已為您成功申請代設定服務！我們的技術助理將會在 10 分鐘內透過 LINE 官方帳號與您聯繫，協助您完成開通。')}
+                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-amber-300 text-amber-800 rounded-[4px] text-[11px] font-black hover:bg-amber-100 transition-all shadow-sm"
+                                        >
+                                            🛠️ 申請小幫手代設定服務
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                         
                         {/* --- TOP HEADER DASHBOARD (SLIM VERSION) --- */}
                         <div className="bg-white rounded-[5px] shadow-lg border border-slate-200 overflow-hidden mb-2">

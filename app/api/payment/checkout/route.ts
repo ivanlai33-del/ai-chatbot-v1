@@ -30,6 +30,17 @@ export async function POST(req: NextRequest) {
         const userId = user?.id || 'MOCK_USER_ID';
         const userEmail = user?.email || 'test@example.com';
 
+        // ⚡ 追蹤第三階段流失率：記錄開始結帳狀態 (checkout_started)
+        if (userId !== 'MOCK_USER_ID') {
+            await supabase
+                .from('direct_users')
+                .update({ 
+                    subscription_status: 'checkout_started',
+                    updated_at: new Date().toISOString()
+                })
+                .eq('id', userId);
+        }
+
         // 2. 解析請求參數 (新增 isPartner 判斷)
         const { planId, cycle, isPartner } = await req.json() as { planId: any; cycle: 'monthly' | 'yearly'; isPartner?: boolean };
         

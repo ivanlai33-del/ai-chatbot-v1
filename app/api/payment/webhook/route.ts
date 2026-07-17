@@ -51,6 +51,20 @@ export async function POST(req: NextRequest) {
             const tradeNo = data.TradeNo;
             const merchantOrderNo = data.MerchantOrderNo;
 
+            // ⚡ 冪等性防護：避免藍新金流重複傳送 webhook 導致重複開通/扣款
+            if (merchantOrderNo) {
+                const { data: existingSub } = await supabase
+                    .from('subscriptions')
+                    .select('id, status')
+                    .eq('payment_ref', merchantOrderNo)
+                    .maybeSingle();
+
+                if (existingSub && existingSub.status === 'active') {
+                    console.log(`[NewebPay Webhook] Order ${merchantOrderNo} already processed. Returning OK.`);
+                    return new Response('OK', { status: 200 });
+                }
+            }
+
             if (!userId) {
                 console.error('[NewebPay Webhook] Error: UserID (ExtenID) not found in result');
                 // 如果是單筆結帳 (MPG)，我們可能需要另外透過 MerchantOrderNo 去查詢暫存的訂單紀錄
@@ -127,6 +141,44 @@ export async function POST(req: NextRequest) {
                     cycle
                 }
             });
+        } else {
+            // ⚡ 付款失敗處理：更新為欠費狀態 (past_due)
+            const data = result.Result;
+            const userId = data?.ExtenID || '';
+            const merchantOrderNo = data?.MerchantOrderNo || result.MerchantOrderNo;
+
+            if (userId) {
+                console.log(`[NewebPay Webhook] Payment Failed for User: ${userId}. Status: past_due.`);
+                
+                await supabase
+                    .from('direct_users')
+                    .update({ 
+                        subscription_status: 'past_due',
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', userId);
+
+                if (merchantOrderNo) {
+                    await supabase
+                        .from('subscriptions')
+                        .update({
+                            status: 'past_due',
+                            updated_at: new Date().toISOString()
+                        })
+                        .eq('payment_ref', merchantOrderNo);
+                }
+
+                await EventBus.emit({
+                    bot_id: 'SYSTEM_SaaS',
+                    event_name: 'order.failed',
+                    actor_type: 'contact',
+                    actor_id: userId,
+                    payload: {
+                        merchantOrderNo,
+                        status: 'past_due'
+                    }
+                });
+            }
         }
 
         // 5. 藍新規範：必須回傳 "OK" 字串 (且不能有其他 HTML 標籤)

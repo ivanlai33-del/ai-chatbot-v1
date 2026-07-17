@@ -200,6 +200,7 @@ function LineConnectPageContent() {
                                 <ArrowLeft className="w-3.5 h-3.5" />
                                 返回
                             </button>
+                        </div>
                         {/* --- MOBILE/TABLET WARNING BANNER --- */}
                         {isMobileOrTablet && (
                             <div className="bg-amber-50 border border-amber-200 rounded-[5px] p-4 mb-4 shadow-sm flex items-start gap-3">

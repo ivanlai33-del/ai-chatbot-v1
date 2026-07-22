@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { LogIn, RefreshCw, Star } from 'lucide-react';
+import { LogIn, RefreshCw, Star, Tablet, Copy, CheckCircle2 } from 'lucide-react';
 import { BrowserGuide, ProjectSelector, TabSync } from './VisualGuides';
 
 interface BookmarkletZoneProps {
@@ -16,7 +16,56 @@ export const BookmarkletZone = ({
     setActiveBrowser,
     renderButton
 }: BookmarkletZoneProps) => (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-8">
+        {/* 📱 iPad / 平板電腦極簡設定指引 */}
+        <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-[32px] p-6 text-white shadow-xl space-y-4 border border-indigo-500/20">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-indigo-500/20 rounded-2xl text-indigo-300">
+                        <Tablet className="w-5 h-5" />
+                    </div>
+                    <div>
+                        <h4 className="text-base font-black text-white tracking-tight">📱 iPad / 平板電腦 Safari 極簡設定指南</h4>
+                        <p className="text-[11px] text-slate-300 font-medium">iPad Safari 不支援滑鼠拖拽，請照以下 3 步極簡完成書籤設定：</p>
+                    </div>
+                </div>
+                <span className="text-[10px] font-black bg-indigo-500/30 text-indigo-200 px-3 py-1 rounded-full border border-indigo-400/30">
+                    iPadOS 100% 相容
+                </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-medium">
+                <div className="p-4 bg-white/5 rounded-2xl border border-white/10 space-y-1.5 hover:bg-white/10 transition-all">
+                    <div className="text-amber-400 font-black text-xs flex items-center gap-2">
+                        <span className="w-5 h-5 rounded-full bg-amber-400 text-slate-900 flex items-center justify-center text-[10px] font-black">1</span>
+                        <span>任意新增一個書籤</span>
+                    </div>
+                    <p className="text-slate-300 text-[11px] leading-relaxed">
+                        在 iPad Safari 點擊分享 ➔【加入書籤】，名稱填寫「🔗 一鍵串接 LINE」。
+                    </p>
+                </div>
+
+                <div className="p-4 bg-white/5 rounded-2xl border border-white/10 space-y-1.5 hover:bg-white/10 transition-all">
+                    <div className="text-amber-400 font-black text-xs flex items-center gap-2">
+                        <span className="w-5 h-5 rounded-full bg-amber-400 text-slate-900 flex items-center justify-center text-[10px]">2</span>
+                        <span>複製專用腳本網址</span>
+                    </div>
+                    <p className="text-slate-300 text-[11px] leading-relaxed">
+                        在下方【一鍵擷取】按鈕上長按複製連結、或點擊複製腳本代碼。
+                    </p>
+                </div>
+
+                <div className="p-4 bg-white/5 rounded-2xl border border-white/10 space-y-1.5 hover:bg-white/10 transition-all">
+                    <div className="text-amber-400 font-black text-xs flex items-center gap-2">
+                        <span className="w-5 h-5 rounded-full bg-amber-400 text-slate-900 flex items-center justify-center text-[10px]">3</span>
+                        <span>貼上腳本並儲存</span>
+                    </div>
+                    <p className="text-slate-300 text-[11px] leading-relaxed">
+                        在 Safari 書籤選單點【編輯】，將剛建立書籤的 URL 全選貼上替代！
+                    </p>
+                </div>
+            </div>
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="bg-white rounded-[40px] p-8 pb-[10px] border border-slate-200/60 shadow-[0_8px_30px_rgba(0,0,0,0.04)] flex flex-col relative overflow-hidden h-[580px]">
                 <div className="absolute top-0 left-0 w-full h-1.5 bg-sky-500" />

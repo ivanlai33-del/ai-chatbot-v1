@@ -104,7 +104,7 @@ export function useChatInterface(initialType: string | null = null) {
             if (!res.ok) {
                 const errorData = await res.json();
                 console.error('Chat API Error:', errorData);
-                addAiMessage(`抱歉${lineUserName ? `${lineUserName}老闆` : '，我現在'}有點頭暈（伺服器錯誤），要求失敗，可以請您戀點再試試嗎？`);
+                addAiMessage(`抱歉${lineUserName ? `${lineUserName}老闆` : '，我現在'}有點頭暈（伺服器錯誤），要求失敗，可以請您稍後再試試嗎？`);
                 return;
             }
             const data = await res.json();

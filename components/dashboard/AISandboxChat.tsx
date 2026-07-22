@@ -196,7 +196,7 @@ export default function AISandboxChat({
                         key={i}
                         className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
-                        {msg.role === 'assistant' && (
+                        {msg.role !== 'user' && (
                             <ChatBotAvatar bot={currentBot} size="w-8 h-8 shrink-0 mt-1" />
                         )}
                         <div

@@ -114,7 +114,7 @@ export default function DashboardPage() {
             planLevel={planLevel}
             billingCycle={billingCycle}
             onLogout={logout}
-            sidebar={
+            sidebar={({ isCollapsed, onToggle }) => (
                 <AISandboxChat 
                     bots={bots} 
                     selectedBotId={selectedBotId} 
@@ -123,8 +123,10 @@ export default function DashboardPage() {
                     config={config} 
                     onOpenSettings={() => setShowApiKeysModal(true)}
                     onDeleteBot={() => setShowDeleteConfirm(true)}
+                    isCollapsed={isCollapsed}
+                    onToggleCollapse={onToggle}
                 />
-            }
+            )}
         >
             <KnowledgeBasePanel
                 config={config}

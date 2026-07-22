@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { Users, Tag, Loader2, TrendingUp, Calendar, Zap, CheckCircle2, Power, Edit3 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import SEOGEOEngineView from './SEOGEOEngineView';
+
 export default function ConsoleAnalysisPanel({ onDataUpdate }: { onDataUpdate?: (data: any) => void }) {
     const [customerStats, setCustomerStats] = useState<any[]>([]);
     const [keywords, setKeywords] = useState<any[]>([]);
@@ -100,6 +102,8 @@ export default function ConsoleAnalysisPanel({ onDataUpdate }: { onDataUpdate?: 
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
+            {/* 🚀 全自動 SEO/GEO 流量爆款飛輪引擎 🚀 */}
+            <SEOGEOEngineView storeName="專屬門市" industry="美容美睫" />
             {/* Strategist Daily Digest Section */}
             <div className="space-y-4">
                 <div className="flex items-center justify-between pl-2">

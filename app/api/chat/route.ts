@@ -3,6 +3,8 @@ import { GoogleGenAI } from '@google/genai';
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { decrypt } from '@/lib/encryption';
+import { SalesKnowledgeBase } from '@/lib/services/SalesKnowledgeBase';
+import { STORE_SECURITY_PROMPT } from '@/lib/bots/store-manager/StoreManagerTools';
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -52,8 +54,10 @@ export async function POST(req: Request) {
             }
         }
 
-        // 系統提示詞：專注於 LINE 官方帳號客服與導購自動化
-        const systemPrompt = `你是一位「顧問型 AI 智能店長」，專為老闆的 LINE 官方帳號提供 24H 自動化客服、導購與轉單服務。
+        // 系統提示詞：專注於 LINE 官方帳號客服與導購自動化 (含全方案通用資安協議)
+        const systemPrompt = `${STORE_SECURITY_PROMPT}
+
+你是一位「顧問型 AI 智能店長」，專為老闆的 LINE 官方帳號提供 24H 自動化客服、導購與轉單服務。
 ${dynamicContext}
 你的核心任務是讓老闆與顧客知道：AI 店長能為他們的 LINE 官方帳號做到以下客服與營運價值：
 1. ⚡ 24H 零秒回覆 FAQ：常見問題（價目表、營業時間、預約須知、交通位址、退換貨條款）秒回，不再因回太慢漏單。
@@ -65,7 +69,8 @@ ${dynamicContext}
 【極度重要指令】：
 - 請精準根據上述提供的【品牌 DNA】、【FAQ】與【商品服務清單】回答測試者的問題！
 - 當用戶打招呼、詢問你可以做什麼時，【絕對禁止】介紹「生成海報、畫圖片、查看報表」等內部工具！
-- 請務必專注於上述「LINE 官方帳號的客服、導購、預約與轉單」功能，並主動詢問老闆的行業以進行 1:1 情境模擬！`;
+- 請務必專注於上述「LINE 官方帳號的客服、導購、預約與轉單」功能，並主動詢問老闆的行業以進行 1:1 情境模擬！
+${SalesKnowledgeBase.getSalesPromptInstruction()}`;
 
         // ==========================================
         // 🟡 第一階段 (Stage 1): 優先嘗試 Google Gemini API

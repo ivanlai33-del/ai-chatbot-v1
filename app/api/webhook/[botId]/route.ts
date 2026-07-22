@@ -7,6 +7,9 @@ import { decrypt } from '@/lib/encryption';
 import { IntentInterceptor } from '@/lib/services/IntentInterceptor';
 import { GenericToolsRegistry, GenericToolsPayload } from '@/lib/services/tools';
 import { markAsProcessed, getIdempotencyKey } from '@/lib/middleware/idempotency';
+import { MemoryAdapter } from '@/lib/services/memory/MemoryAdapter';
+import { SalesKnowledgeBase } from '@/lib/services/SalesKnowledgeBase';
+import { STORE_SECURITY_PROMPT } from '@/lib/bots/store-manager/StoreManagerTools';
 import { acquireSlot, releaseSlot, getConcurrentLimit } from '@/lib/middleware/concurrency';
 
 export async function GET() {
@@ -367,9 +370,11 @@ async function processEvents(botId: string, events: WebhookEvent[]) {
                     .order('created_at', { ascending: false })
                     .limit(10);
 
-                const messages: any[] = [
-                    {
-                        role: "system", content: `${bot.system_prompt || "你是一個專業助手。"}
+                const graphMemoryContext = await MemoryAdapter.getCustomerMemory(activeBot, lineUserId, userMessage);
+
+                    const messages: any[] = [
+                        {
+                            role: "system", content: `${STORE_SECURITY_PROMPT}\n\n${activeBot.system_prompt || bot.system_prompt || "你是一個專業助手。"}${graphMemoryContext}\n${SalesKnowledgeBase.getSalesPromptInstruction()}
 
 你的執行原則（重要）：
 1. **價值掛帥，全速成交**：
@@ -600,13 +605,16 @@ async function processEvents(botId: string, events: WebhookEvent[]) {
                     releaseSlot(botId); // Always release the slot
                 }
 
-                // D. Log & Reply
+                // D. Log & Reply (Save to SQL Chat Logs + Cognee Async Graph Memory)
                 (async () => {
                     try {
                         await supabase.from('chat_logs').insert([
                             { bot_id: botId, user_id: lineUserId, role: 'user', content: userMessage },
                             { bot_id: botId, user_id: lineUserId, role: 'ai', content: aiResponse }
                         ]);
+
+                        // 🧠 Cognee Graph Memory async save (fire-and-forget)
+                        MemoryAdapter.saveConversationMemory(activeBot, lineUserId, userMessage, aiResponse);
                     } catch (e) {
                         console.error('Log failed:', e);
                     }

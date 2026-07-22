@@ -238,57 +238,9 @@ export class MarketService {
   }
 
   /**
-   * 模擬生成品牌護衛數據 (Demo 用)
+   * 獲取真實品牌護衛數據
    */
   static async generateDemoGuardianMetrics(botId: string) {
-    const healthScore = Math.floor(Math.random() * 20) + 75; // 75-95
-    const pos = 0.6 + Math.random() * 0.2;
-    const neg = 0.05 + Math.random() * 0.1;
-    const neu = 1 - pos - neg;
-
-    // 1. 插入情緒指標
-    await supabase.from('brand_sentiment_metrics').upsert({
-      bot_id: botId,
-      health_score: healthScore,
-      positive_ratio: pos,
-      neutral_ratio: neu,
-      negative_ratio: neg,
-      measured_at: new Date().toISOString().split('T')[0]
-    });
-
-    // 2. 插入一些模擬提及
-    const demoMentions = [
-      { source_platform: 'Google Maps', content: '這家店的服務真的很貼心，AI 回覆也很快！', sentiment: 'Positive', star_rating: 5, mentioned_at: new Date().toISOString() },
-      { source_platform: 'Facebook', content: '看到朋友推薦這款服務，感覺很有潛力。', sentiment: 'Positive', star_rating: 4, mentioned_at: new Date(Date.now() - 86400000).toISOString() },
-      { source_platform: 'Threads', content: '有人用過這家的 AI 嗎？想知道評價如何。', sentiment: 'Neutral', star_rating: 3, mentioned_at: new Date(Date.now() - 172800000).toISOString() }
-    ];
-
-    for (const m of demoMentions) {
-        await supabase.from('brand_mentions').insert({
-            bot_id: botId,
-            source_platform: m.source_platform,
-            content: m.content,
-            sentiment: m.sentiment,
-            star_rating: m.star_rating,
-            mentioned_at: m.mentioned_at
-        });
-    }
-
-    // 3. 確保有一些關鍵字
-    const demoKeywords = [
-        { keyword: 'AI 回覆', category: 'positive' },
-        { keyword: '等待時間', category: 'negative' },
-        { keyword: '價格透明', category: 'general' }
-    ];
-
-    for (const k of demoKeywords) {
-        await supabase.from('monitoring_keywords').upsert({
-            bot_id: botId,
-            keyword: k.keyword,
-            category: k.category
-        });
-    }
-
     return this.getGuardianMetrics(botId);
   }
 }

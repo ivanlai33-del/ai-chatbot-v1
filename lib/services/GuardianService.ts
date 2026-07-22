@@ -26,37 +26,19 @@ export class GuardianService {
     
     const keywordList = keywords?.map(k => k.keyword) || [];
 
-    // 2. 模擬從社群平台抓取內容 (未來對接真實 API)
-    // 這裡我們先模擬抓取到了幾條新提及
-    const mockMentions = [
-      { source: 'Threads', content: 'IVAN HQ 的 AI 店長真的很有禮貌，幫我解決了訂單問題！' },
-      { source: 'Facebook', content: '最近試用了這款服務，感覺回覆速度可以在快一點。' },
-      { source: 'Google Maps', content: '東西好用，但價格如果能在優惠一點就好了。' }
-    ];
+    // 2. 從真實資料庫檢索品牌討論與對話紀錄
+    const { data: existingMentions } = await supabase
+      .from('brand_mentions')
+      .select('*')
+      .eq('bot_id', botId)
+      .order('mentioned_at', { ascending: false });
 
-    const results = [];
-    for (const mention of mockMentions) {
-        // 3. 使用 AI 進行情緒分析
-        const analysis = await this.analyzeSentiment(mention.content);
-        
-        // 4. 存入資料庫
-        const { data } = await supabase.from('brand_mentions').insert({
-            bot_id: botId,
-            source_platform: mention.source,
-            content: mention.content,
-            sentiment: analysis.sentiment,
-            star_rating: analysis.suggestedStar,
-            is_alert: analysis.sentiment === 'Negative',
-            mentioned_at: new Date().toISOString()
-        }).select().single();
-        
-        if (data) results.push(data);
+    const results = existingMentions || [];
 
-        // 5. 如果是負評，觸發警報邏輯 (LINE Push)
-        if (analysis.sentiment === 'Negative') {
-            await this.triggerAlert(botId, mention);
-        }
-    }
+    // 3. 重新計算並更新真實健康指標
+    await this.refreshHealthMetrics(botId);
+
+    return { success: true, newMentions: results.length };
 
     // 6. 重新計算並更新健康指標
     await this.refreshHealthMetrics(botId);

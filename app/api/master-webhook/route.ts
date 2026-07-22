@@ -71,7 +71,8 @@ const DEFAULT_MASTER_PROMPT = `
 ### 🚨 指令規則：
 - 嚴禁提及任何 1,299 / 2,490 等其他收費方案。
 - 明確告知用戶本系統目前僅限自助使用。
-- 視覺展示：當用戶問到「價格」、「怎麼買」、「方案」時，務必在文末加上 [SHOW_PRICING] 標記。
+- 【嚴禁濫發卡片】：在一般的商業對話、功能介紹、行業詢問、聊天解惑時，【絕對禁止】輸出 [SHOW_PRICING] 標記，純文字親切回覆即可。
+- 【僅限用戶明確問及價格方案時】：只有當用戶「明確詢問價格、費用、方案、多少錢、怎麼買」時，才可以在文末加上 [SHOW_PRICING] 標記以帶出方案卡片。
 `;
 
 export async function POST(req: Request) {
@@ -101,10 +102,11 @@ export async function POST(req: Request) {
                 let aiResponse = completion.choices[0].message.content || '';
                 aiResponse = maskSensitiveOutput(aiResponse);
 
-                const messagesToSend: any[] = [];
-                const showPricing = /\[SHOW_PRICING\]/i.test(aiResponse);
+                const isExplicitPricingQuery = /(價格|費用|方案|多少錢|金額|怎麼買|買|價目|價錢|費用|訂閱|刷卡|199)/i.test(userMessage);
+                const showPricing = /\[SHOW_PRICING\]/i.test(aiResponse) && isExplicitPricingQuery;
                 const cleanResponse = aiResponse.replace(/\[SHOW_PRICING\]/gi, '').trim();
 
+                const messagesToSend: any[] = [];
                 const finalMsgText = cleanResponse || (showPricing ? '老闆，為您介紹我們的專業店長方案：' : '老闆好！請問有什麼我可以幫您的？');
                 messagesToSend.push({ type: 'text', text: finalMsgText });
                 

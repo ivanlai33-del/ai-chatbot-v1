@@ -12,8 +12,12 @@ export function useBotList() {
         setIsLoadingBots(true);
         try {
             const { data: { session } } = await supabase.auth.getSession();
-            const authHeader = session?.access_token ? { 'Authorization': `Bearer ${session.access_token}` } : {};
-            const res = await fetch('/api/line/list', { headers: { ...authHeader } as any });
+            const lineUserId = typeof window !== 'undefined' ? localStorage.getItem('line_user_id') : null;
+            const authHeader: Record<string, string> = session?.access_token ? { 'Authorization': `Bearer ${session.access_token}` } : {};
+            if (lineUserId) {
+                authHeader['X-Line-User-Id'] = lineUserId;
+            }
+            const res = await fetch('/api/line/list', { headers: authHeader });
             const data = await res.json();
             
             if (data.success && data.bots.length > 0) {

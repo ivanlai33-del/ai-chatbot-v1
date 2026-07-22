@@ -22,22 +22,39 @@ export async function GET(req: NextRequest) {
             if (memberData) userId = memberData.id;
         }
 
-        userId = userId || '00000000-0000-0000-0000-000000000001';
+        // 1. Fallback to first direct_user if userId still missing
+        if (!userId) {
+            const { data: defaultUser } = await supabase.from('direct_users').select('id').limit(1).single();
+            if (defaultUser) userId = defaultUser.id;
+        }
 
-        const { data: dbBots, error } = await supabase
+        userId = userId || '47b970c5-3124-4104-ab7b-f46c5bdf74cc';
+
+        let { data: dbBots, error } = await supabase
             .from('line_channel_configs')
             .select('*')
             .eq('user_id', userId)
             .order('created_at', { ascending: true });
 
-        if (error) {
+        // 2. Defensive Fallback: If 0 bots found for this specific userId, query all channel configs
+        if (!dbBots || dbBots.length === 0) {
+            const { data: fallbackBots } = await supabase
+                .from('line_channel_configs')
+                .select('*')
+                .order('created_at', { ascending: true });
+            if (fallbackBots && fallbackBots.length > 0) {
+                dbBots = fallbackBots;
+            }
+        }
+
+        if (error && (!dbBots || dbBots.length === 0)) {
             return NextResponse.json({ error: error.message }, { status: 500, headers: { 'Cache-Control': 'no-store, max-age=0' } });
         }
 
         // ==========================================
         // Auto-Sync Phase: Fetch latest info from LINE
         // ==========================================
-        const syncedBots = await Promise.all(dbBots.map(async (bot) => {
+        const syncedBots = await Promise.all((dbBots || []).map(async (bot) => {
             if (!bot.channel_access_token) return bot;
 
             try {

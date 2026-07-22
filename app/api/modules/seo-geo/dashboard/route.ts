@@ -8,6 +8,15 @@ export async function GET(req: Request) {
         const industry = searchParams.get('industry') || '美容美睫';
         const storeName = searchParams.get('storeName') || '我的專屬門市';
 
+        // 0. 查詢當前店家的真實名稱
+        const { data: botConfig } = await supabase
+            .from('line_channel_configs')
+            .select('channel_name')
+            .eq('id', botId)
+            .maybeSingle();
+
+        const realStoreName = botConfig?.channel_name || storeName;
+
         // 1. 查詢 Threads 授權 Token 紀錄
         const { data: tokenData } = await supabase
             .from('threads_tokens')
@@ -46,7 +55,7 @@ export async function GET(req: Request) {
             success: true,
             botId,
             industry,
-            storeName,
+            storeName: realStoreName,
             threadsConnected,
             threadsUsername,
             metrics: {

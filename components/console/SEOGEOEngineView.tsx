@@ -259,20 +259,31 @@ export default function SEOGEOEngineView({ botId = 'default-bot', storeName = '�
                         </div>
 
                         <div className="space-y-2">
-                            {(metrics?.rankings || []).map((item: any, idx: number) => (
-                                <div key={idx} className="flex items-center justify-between p-3 bg-slate-50 hover:bg-slate-100/80 rounded-2xl transition-all">
-                                    <div className="flex items-center gap-3">
-                                        <span className={`w-7 h-7 rounded-xl flex items-center justify-center font-black text-xs ${item.rank ? 'bg-amber-400 text-white shadow-md' : 'bg-slate-200 text-slate-500'}`}>
-                                            {item.rank ? `#${item.rank}` : '-'}
-                                        </span>
-                                        <span className="text-xs font-bold text-slate-800">{item.keyword}</span>
-                                    </div>
-                                    <a href={item.pageUrl} target="_blank" rel="noreferrer" className="text-[11px] font-bold text-emerald-600 hover:underline flex items-center gap-1">
-                                        <span>查看落地頁</span>
-                                        <ExternalLink className="w-3 h-3" />
-                                    </a>
+                            {metrics?.totalArticlesGenerated === 0 ? (
+                                <div className="p-5 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-200 space-y-2">
+                                    <p className="text-xs font-bold text-slate-500">
+                                        尚無發布文章與爆款貼文紀錄
+                                    </p>
+                                    <p className="text-[11px] text-slate-400">
+                                        點擊右上角【🚀 手動觸發全自動飛輪】按鈕，AI 將自動為您產出第一篇爆款網頁與 Threads 短文！
+                                    </p>
                                 </div>
-                            ))}
+                            ) : (
+                                (metrics?.rankings || []).map((item: any, idx: number) => (
+                                    <div key={idx} className="flex items-center justify-between p-3 bg-slate-50 hover:bg-slate-100/80 rounded-2xl transition-all">
+                                        <div className="flex items-center gap-3">
+                                            <span className={`w-7 h-7 rounded-xl flex items-center justify-center font-black text-xs ${item.rank ? 'bg-amber-400 text-white shadow-md' : 'bg-slate-200 text-slate-500'}`}>
+                                                {item.rank ? `#${item.rank}` : '-'}
+                                            </span>
+                                            <span className="text-xs font-bold text-slate-800">{item.keyword}</span>
+                                        </div>
+                                        <a href={item.pageUrl} target="_blank" rel="noreferrer" className="text-[11px] font-bold text-emerald-600 hover:underline flex items-center gap-1">
+                                            <span>查看落地頁</span>
+                                            <ExternalLink className="w-3 h-3" />
+                                        </a>
+                                    </div>
+                                ))
+                            )}
                         </div>
                     </div>
 

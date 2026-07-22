@@ -108,7 +108,7 @@ export function useChatInterface(initialType: string | null = null) {
                 return;
             }
             const data = await res.json();
-            const reply = data.reply !== undefined ? data.reply : data.message;
+            const reply = data.reply ?? data.message ?? data.content;
             if (reply !== undefined && reply !== null) {
                 let finalType = data.type || 'text';
                 if (data.metadata?.action === 'VIEW_HUB') {

@@ -92,7 +92,6 @@ export async function POST(req: Request) {
                     const args = (toolCall.args || {}) as any;
 
                     if (functionName === 'generate_image') {
-                        // 產圖功能嘗試用 OpenAI DALL-E 3 處理
                         const openaiKey = process.env.MASTER_OPENAI_KEY || process.env.OPENAI_API_KEY;
                         if (openaiKey) {
                             const openai = new OpenAI({ apiKey: openaiKey });
@@ -103,9 +102,12 @@ export async function POST(req: Request) {
                                 size: "1024x1024",
                             });
                             const generatedUrl = imageResponse.data?.[0]?.url || '';
+                            const replyText = `我已經根據您的需求，透過 DALL-E 3 繪製了這張素材。提示詞為：「${args.prompt}」。`;
                             return NextResponse.json({
                                 role: 'agi',
-                                content: `我已經根據您的需求，透過 DALL-E 3 繪製了這張素材。提示詞為：「${args.prompt}」。`,
+                                reply: replyText,
+                                message: replyText,
+                                content: replyText,
                                 projectionType: 'studio',
                                 projectionData: { imageUrl: generatedUrl, prompt: args.prompt }
                             });
@@ -113,9 +115,12 @@ export async function POST(req: Request) {
                     }
 
                     if (functionName === 'project_tool') {
+                        const replyText = `收到指令。我正為您調度「${args.type}」功能積木至目前的指揮視窗...`;
                         return NextResponse.json({
                             role: 'agi',
-                            content: `收到指令。我正為您調度「${args.type}」功能積木至目前的指揮視窗...`,
+                            reply: replyText,
+                            message: replyText,
+                            content: replyText,
                             projectionType: args.type,
                             projectionData: { reason: args.reason }
                         });
@@ -126,6 +131,8 @@ export async function POST(req: Request) {
                     console.log('[AGI Brain] Stage 1 (Gemini) Success!');
                     return NextResponse.json({
                         role: 'agi',
+                        reply: geminiResponse.text,
+                        message: geminiResponse.text,
                         content: geminiResponse.text
                     });
                 }
@@ -140,7 +147,6 @@ export async function POST(req: Request) {
         console.log('[AGI Brain] Executing Stage 2: OpenAI API Fallback...');
         let dynamicKey = process.env.MASTER_OPENAI_KEY || process.env.OPENAI_API_KEY;
 
-        // 若有店家 ID，嘗試從資料庫撈取金鑰並解密
         if (targetBotId || targetPartnerId) {
             const { data: botData, error: botError } = await supabase
                 .from('bots')
@@ -232,9 +238,12 @@ export async function POST(req: Request) {
                     });
                 }
 
+                const replyText = `我已經根據您的需求，透過 DALL-E 3 繪製了這張素材。提示詞為：「${args.prompt}」。`;
                 return NextResponse.json({
                     role: 'agi',
-                    content: `我已經根據您的需求，透過 DALL-E 3 繪製了這張素材。提示詞為：「${args.prompt}」。`,
+                    reply: replyText,
+                    message: replyText,
+                    content: replyText,
                     projectionType: 'studio',
                     projectionData: { 
                         imageUrl: generatedUrl,
@@ -244,18 +253,24 @@ export async function POST(req: Request) {
             }
 
             if (functionName === 'project_tool') {
+                const replyText = `收到指令。我正為您調度「${args.type}」功能積木至目前的指揮視窗...`;
                 return NextResponse.json({
                     role: 'agi',
-                    content: `收到指令。我正為您調度「${args.type}」功能積木至目前的指揮視窗...`,
+                    reply: replyText,
+                    message: replyText,
+                    content: replyText,
                     projectionType: args.type,
                     projectionData: { reason: args.reason }
                 });
             }
         }
 
+        const replyText = message.content || '';
         return NextResponse.json({
             role: 'agi',
-            content: message.content
+            reply: replyText,
+            message: replyText,
+            content: replyText
         });
 
     } catch (error: any) {

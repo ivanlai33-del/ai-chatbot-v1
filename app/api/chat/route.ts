@@ -16,10 +16,46 @@ export async function POST(req: Request) {
         const targetBotId = oaId || body.botId || context?.botId;
         const targetPartnerId = partnerId || context?.partnerId;
 
+        // 查詢該店家的真實智庫與品牌 DNA
+        let dynamicContext = '';
+        if (targetBotId) {
+            try {
+                const [configRes, faqsRes, offeringsRes, contactRes] = await Promise.all([
+                    supabase.from('line_channel_configs').select('*').eq('id', targetBotId).maybeSingle(),
+                    supabase.from('faqs').select('question, answer').eq('bot_id', targetBotId).limit(20),
+                    supabase.from('offerings').select('title, price, description').eq('bot_id', targetBotId).limit(20),
+                    supabase.from('contact_info').select('*').eq('bot_id', targetBotId).maybeSingle()
+                ]);
+
+                const config = configRes.data;
+                const faqs = faqsRes.data || [];
+                const offerings = offeringsRes.data || [];
+                const contact = contactRes.data;
+
+                if (config?.channel_name) {
+                    dynamicContext += `\n【目前代表店家/品牌名稱】：${config.channel_name}\n`;
+                }
+                if (config?.system_prompt) {
+                    dynamicContext += `\n【店家專屬品牌 DNA & 語調】：\n${config.system_prompt}\n`;
+                }
+                if (faqs.length > 0) {
+                    dynamicContext += `\n【店家常見問題 FAQ】：\n` + faqs.map(f => `Q: ${f.question}\nA: ${f.answer}`).join('\n\n') + '\n';
+                }
+                if (offerings.length > 0) {
+                    dynamicContext += `\n【店家商品與服務清單】：\n` + offerings.map(o => `- ${o.title} (NT$ ${o.price}): ${o.description}`).join('\n') + '\n';
+                }
+                if (contact) {
+                    dynamicContext += `\n【店家聯絡資訊與導航】：地址: ${contact.address || '無'} | 電話: ${contact.phone || '無'} | 地圖: ${contact.google_maps_url || '無'}\n`;
+                }
+            } catch (e) {
+                console.error('Error fetching dynamic bot context:', e);
+            }
+        }
+
         // 系統提示詞：專注於 LINE 官方帳號客服與導購自動化
         const systemPrompt = `你是一位「顧問型 AI 智能店長」，專為老闆的 LINE 官方帳號提供 24H 自動化客服、導購與轉單服務。
-
-你的核心任務是讓老闆知道：AI 店長能為他們的 LINE 官方帳號做到以下客服與營運價值：
+${dynamicContext}
+你的核心任務是讓老闆與顧客知道：AI 店長能為他們的 LINE 官方帳號做到以下客服與營運價值：
 1. ⚡ 24H 零秒回覆 FAQ：常見問題（價目表、營業時間、預約須知、交通位址、退換貨條款）秒回，不再因回太慢漏單。
 2. 🎯 智慧導購與轉單：當顧客猶豫時，根據品牌語調主動推薦熱門商品與活動，把「問一問就消失的客人」變成真正訂單。
 3. 📅 自動預約與過濾：引導美業、餐飲、課程顧問等顧客留下資料並預約空檔，省去人工敲時間的麻煩。
@@ -27,6 +63,7 @@ export async function POST(req: Request) {
 5. 🛡️ 真人接管與過濾：遇到複雜客訴或需要特殊處理時，自動標記並提醒真人客服接管。
 
 【極度重要指令】：
+- 請精準根據上述提供的【品牌 DNA】、【FAQ】與【商品服務清單】回答測試者的問題！
 - 當用戶打招呼、詢問你可以做什麼時，【絕對禁止】介紹「生成海報、畫圖片、查看報表」等內部工具！
 - 請務必專注於上述「LINE 官方帳號的客服、導購、預約與轉單」功能，並主動詢問老闆的行業以進行 1:1 情境模擬！`;
 

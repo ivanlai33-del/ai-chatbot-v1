@@ -4,6 +4,8 @@ import { motion } from 'framer-motion';
 import { TrendingUp, Globe, ArrowUpRight, MessageSquare, History, Zap, ChevronRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
+import SEOGEOEngineView from '@/components/console/SEOGEOEngineView';
+
 export default function TrendsTab({ botId }: { botId: string }) {
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [reports, setReports] = useState<any[]>([]);
@@ -58,6 +60,8 @@ export default function TrendsTab({ botId }: { botId: string }) {
 
     return (
         <div className="space-y-5">
+            {/* 🚀 產業風向與全自動 SEO/GEO 流量爆款飛輪引擎 🚀 */}
+            <SEOGEOEngineView botId={botId} storeName="品牌店家" industry="美容美睫" />
             {/* Header / Summary Card - Transparent Theme */}
             <div className="pb-4 relative overflow-hidden">
                 <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">

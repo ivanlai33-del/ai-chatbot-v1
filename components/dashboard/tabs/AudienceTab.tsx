@@ -61,23 +61,23 @@ export default function AudienceTab({ botId, planLevel }: AudienceTabProps) {
 
     return (
         <div className="space-y-6">
-            {/* 👑 1299 旗艦版專屬：AI 語意圖譜精準分眾推播 (Cognee Feature Upgrade Banner) */}
-            <div className="relative overflow-hidden rounded-[28px] bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-indigo-500/30 p-8 shadow-2xl text-white">
-                <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-                <div className="absolute right-20 top-0 w-40 h-40 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
+            {/* 👑 1299 旗艦版專屬：AI 語意圖譜精準分眾推播 (Cognee Feature Upgrade Banner - Light Emerald Glass Theme) */}
+            <div className="relative overflow-hidden rounded-[28px] bg-white/80 backdrop-blur-xl border border-emerald-500/20 p-8 shadow-xl shadow-emerald-500/5 text-slate-800">
+                <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-emerald-400/15 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute right-20 top-0 w-40 h-40 bg-cyan-400/15 rounded-full blur-2xl pointer-events-none" />
                 
                 <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
                     <div className="space-y-3 max-w-2xl">
-                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-amber-500/20 to-indigo-500/20 border border-amber-400/40 text-amber-300 text-[12px] font-black tracking-wider uppercase">
-                            <Crown className="w-4 h-4 text-amber-400" />
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[12px] font-black tracking-wider uppercase">
+                            <Crown className="w-4 h-4 text-amber-500" />
                             👑 $1,299 旗艦版 / Enterprise 專屬大腦功能
                         </div>
-                        <h2 className="text-2xl lg:text-3xl font-black tracking-tight text-white flex items-center gap-3">
-                            <BrainCircuit className="w-8 h-8 text-indigo-400" />
+                        <h2 className="text-2xl lg:text-3xl font-black tracking-tight text-slate-900 flex items-center gap-3">
+                            <BrainCircuit className="w-8 h-8 text-emerald-500" />
                             Cognee AI 語意圖譜分眾推播
                         </h2>
-                        <p className="text-slate-300 text-sm font-medium leading-relaxed">
-                            無需手動勾選標籤！直接輸入自然語言（例：<span className="text-emerald-300 italic">「找出關注低糖產品且詢問過宅配的顧客」</span>），AI 圖譜大腦將為您秒級精準撈取客群並自動生成轉化率最高文案。
+                        <p className="text-slate-600 text-sm font-bold leading-relaxed">
+                            無需手動勾選標籤！直接輸入自然語言（例：<span className="text-emerald-600 font-black italic">「找出關注低糖產品且詢問過宅配的顧客」</span>），AI 圖譜大腦將為您秒級精準撈取客群並自動生成轉化率最高文案。
                         </p>
                     </div>
 
@@ -85,18 +85,18 @@ export default function AudienceTab({ botId, planLevel }: AudienceTabProps) {
                         {!isFlagship1299 ? (
                             <button
                                 onClick={() => window.dispatchEvent(new CustomEvent('switch-tab', { detail: 'billing' }))}
-                                className="w-full lg:w-auto flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 text-slate-950 font-black rounded-2xl text-[15px] shadow-lg shadow-amber-500/20 hover:scale-105 active:scale-95 transition-all"
+                                className="w-full lg:w-auto flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-emerald-500 via-teal-600 to-cyan-600 text-white font-black rounded-2xl text-[15px] shadow-xl shadow-emerald-500/25 hover:scale-105 active:scale-95 transition-all"
                             >
-                                <Sparkles className="w-5 h-5 text-slate-950" />
+                                <Sparkles className="w-5 h-5 text-amber-300" />
                                 解鎖 $1,299 旗艦版 AI 語意圖譜推播
                                 <ArrowRight className="w-4 h-4" />
                             </button>
                         ) : (
                             <button
                                 onClick={() => setIsModalOpen(true)}
-                                className="w-full lg:w-auto flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-emerald-400 to-cyan-500 text-slate-950 font-black rounded-2xl text-[15px] shadow-lg shadow-emerald-500/20 hover:scale-105 active:scale-95 transition-all"
+                                className="w-full lg:w-auto flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-emerald-500 to-cyan-600 text-white font-black rounded-2xl text-[15px] shadow-xl shadow-emerald-500/25 hover:scale-105 active:scale-95 transition-all"
                             >
-                                <BrainCircuit className="w-5 h-5 text-slate-950" />
+                                <BrainCircuit className="w-5 h-5 text-emerald-200" />
                                 🧠 啟動 Cognee 語意圖譜推播
                             </button>
                         )}

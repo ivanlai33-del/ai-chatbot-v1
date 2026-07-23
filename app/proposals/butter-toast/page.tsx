@@ -243,7 +243,7 @@ export default function ButterToastProposalPage() {
     );
   }
 
-  // Interactive Tailor-made Slides
+  // Interactive Tailor-made Slides (Scrubbed of technical jargon)
   const slides = [
     // Slide 1: Tailored Cover
     {
@@ -285,7 +285,7 @@ export default function ButterToastProposalPage() {
             <div className="text-2xl mb-1">🧸</div>
             <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">需求 1：品牌娃娃人設口吻與商店介紹</h3>
             <p className="text-sm text-[#7C6E62] leading-relaxed">
-              注入「品牌吉祥物娃娃」親切可愛語氣作為 AI 店長靈魂！24hr 自動介紹品牌故事、✨營業時間 (18:00-售完為止)、面交地點地圖，並一鍵跳轉官方 IG / FB 專頁。
+              注入「品牌吉祥物娃娃」親切可愛語氣作為 AI 店長靈魂！24hr 自動介紹品牌故事、✨營業時間 (18:00-售完為止)、面交地點地圖，並一鍵跳轉官方社群專頁。
             </p>
           </div>
 
@@ -301,7 +301,7 @@ export default function ButterToastProposalPage() {
             <div className="text-2xl mb-1">🤖</div>
             <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">需求 3：AI 自動發送「預約完成✔️」與雙向通知</h3>
             <p className="text-sm text-[#7C6E62] leading-relaxed">
-              目前無專職 LINE 小編。當顧客確認訂購後，AI 自動發送「預約完成✔️」Flex 卡片與廚房 Notify 推播；廚房做完點擊「完成備貨」，AI 自動推播「餐點已備妥，請至指定地點取餐」給顧客！
+              目前無專職小編。當顧客確認訂購後，AI 自動發送「預約完成✔️」憑證卡片與廚房提示；廚房做完點擊「完成備貨」，AI 自動推播「餐點已備妥，請至指定地點取餐」給顧客！
             </p>
           </div>
 
@@ -309,48 +309,48 @@ export default function ButterToastProposalPage() {
             <div className="text-2xl mb-1">🧠</div>
             <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">需求 4：AI 歷史訂單記憶 ✕ 溫暖交流與新品推薦</h3>
             <p className="text-sm text-[#382D24] leading-relaxed">
-              <b>【超強 killer 功能】</b>AI 自動牢記顧客歷史訂單與喜好口味（如：抹茶/OREO）。再次對話時進行溫暖交流：<b>「上次買的抹茶奶霜還喜歡嗎？今天有新出夏日限定芒果口味，要不要順便帶一份試試看？」</b>，貼心推薦、拉近距離！
+              <b>【獨家專利特色】</b>AI 自動牢記顧客歷史訂單與喜好口味（如：抹茶/OREO）。再次對話時進行溫暖交流：<b>「上次買的抹茶奶霜還喜歡嗎？今天有新出夏日限定芒果口味，要不要順便帶一份試試看？」</b>，貼心推薦、拉近距離！
             </p>
           </div>
         </div>
       ),
     },
-    // Slide 3: Complete Front-end & Back-end LIFF Architecture & LINE Whitelist Security
+    // Slide 3: Complete Front-end & Back-end Architecture (Scrubbed of jargon like LIFF, Redis, Queue)
     {
-      badge: "前後台 LIFF 網頁與 AI 溫暖互動大腦",
-      title: "前後台 LINE LIFF 網頁 ✕ AI 顧客訂單記憶與溫暖推薦",
+      badge: "專屬前後台系統與安全權限防護",
+      title: "顧客專屬一鍵點餐介面 ✕ 店家員工安全權限鎖",
       content: (
         <div className="space-y-3">
           {/* Front-end & Back-end Dual System Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {/* Front-end LIFF App & Customer Auth & AI Memory */}
+            {/* Front-end Customer Interface */}
             <div className="bg-white border-2 border-[#D6A86E] p-3.5 rounded-xl shadow-xs">
               <div className="flex items-center gap-1.5 mb-1.5">
-                <span className="text-base">🧠</span>
+                <span className="text-base">📱</span>
                 <h4 className="font-serif font-bold text-sm text-[#B26A27]">
-                  前台：LINE LIFF 點餐與 AI 訂單記憶溫暖推薦
+                  前台：顧客專屬一鍵點餐介面（免登入免帳密）
                 </h4>
               </div>
               <ul className="text-xs text-[#382D24] space-y-1">
                 <li>• <b>顧客歷史訂單記憶</b>：AI 自動記錄買過品項與口味，進行溫暖對話交流與新品推薦。</li>
                 <li>• <b>品牌娃娃親切口吻</b>：AI 設定為品牌吉祥物口頭禪與溫暖互動，擬真活潑。</li>
-                <li>• <b>免記憶密碼點餐</b>：顧客點擊「🍞線上點餐」彈出 LIFF 頁面，自動帶入 LINE 身份。</li>
-                <li>• <b>預約憑證卡片</b>：送出訂單即刻於 LINE 對話生成格式化「預約完成✔️」Flex 卡片。</li>
+                <li>• <b>免記憶密碼點餐</b>：顧客點擊「🍞線上點餐」彈出專屬介面，自動識別顧客身份。</li>
+                <li>• <b>預約憑證卡片</b>：送出訂單即刻於聊天對話生成格式化「預約完成✔️」憑證卡片。</li>
               </ul>
             </div>
 
-            {/* Back-end Merchant Dashboard & RATE LIMIT & WHITELIST AUTH */}
+            {/* Back-end Merchant Dashboard */}
             <div className="bg-white border-2 border-[#B26A27] p-3.5 rounded-xl shadow-xs">
               <div className="flex items-center gap-1.5 mb-1.5">
                 <span className="text-base">🔑</span>
                 <h4 className="font-serif font-bold text-[#B26A27] text-sm">
-                  後台：店長與員工 LINE ID 白名單權限鎖
+                  後台：店家員工安全權限鎖（防非授權人員進入）
                 </h4>
               </div>
               <ul className="text-xs text-[#382D24] space-y-1">
-                <li>• <b>員工 LINE ID 白名單</b>：僅授權之店長與廚房師傅 LINE 帳號可存取後台。</li>
-                <li>• <b>非授權人員自動封鎖</b>：外人或顧客開網址會顯示 `⛔ 權限不足`，防護 100% 嚴密。</li>
-                <li>• <b>Redis 佇列防爆機制</b>：遵循 LINE API 速率規範，同時 100+ 人順暢點餐 0 掉單。</li>
+                <li>• <b>店家專屬員工權限鎖</b>：僅授權之店長與廚房師傅帳號可開啟管理後台。</li>
+                <li>• <b>非授權人員自動封鎖</b>：外人或顧客點開會顯示 `⛔ 權限不足`，防護 100% 嚴密。</li>
+                <li>• <b>流量平滑防爆機制</b>：獨家系統防爆大腦，同時 100+ 人順暢點餐 0 掉單。</li>
               </ul>
             </div>
           </div>
@@ -362,16 +362,16 @@ export default function ButterToastProposalPage() {
               <p className="text-[10px] text-[#7C6E62]">反問上次口味喜歡嗎？溫暖交流並介紹熱銷新品</p>
             </div>
             <div className="bg-[#FFFDF9] border border-[#E6DDCF] p-2 rounded-lg">
-              <b className="text-[#B26A27]">2. Redis 佇列平滑緩衝</b>
-              <p className="text-[10px] text-[#7C6E62]">自動消化高併發流量，符合 LINE API 速率 0 掉單</p>
+              <b className="text-[#B26A27]">2. 流量平滑防爆保護</b>
+              <p className="text-[10px] text-[#7C6E62]">自動消化高併發流量，確保訊息順暢 0 掉單</p>
             </div>
             <div className="bg-[#FFFDF9] border border-[#E6DDCF] p-2 rounded-lg">
-              <b className="text-[#B26A27]">3. 員工 LINE 白名單驗證</b>
-              <p className="text-[10px] text-[#7C6E62]">自動比對 LINE ID，僅授權員工可看備貨單</p>
+              <b className="text-[#B26A27]">3. 店家員工白名單驗證</b>
+              <p className="text-[10px] text-[#7C6E62]">自動驗證員工身份，僅授權人員可看備貨單</p>
             </div>
             <div className="bg-emerald-50 border border-emerald-300 p-2 rounded-lg text-emerald-900">
               <b className="text-emerald-700">4. AI 自動推播取餐</b>
-              <p className="text-[10px] text-emerald-800">AI 身分發送 LINE 提醒顧客取貨（含地圖/剛好金額）</p>
+              <p className="text-[10px] text-emerald-800">AI 身分發送提醒顧客取貨（含地圖/剛好金額）</p>
             </div>
           </div>
         </div>
@@ -405,9 +405,9 @@ export default function ButterToastProposalPage() {
                 <ul className="text-xs text-[#382D24] space-y-0.5 mb-1.5">
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 100% 線上全遠端建置，免到店干擾營運</li>
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> <b>AI 歷史訂單記憶大腦 (口味記憶・溫暖交流・貼心新品推薦)</b></li>
-                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 前後台 LINE 身份原生認證與員工 LINE ID 白名單權限鎖</li>
+                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 前後台原生身份認證與店家員工專屬權限鎖</li>
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 品牌吉祥物/娃娃專屬 AI 人設口吻微調</li>
-                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 前後台 LINE LIFF 網頁與 3/5入優惠組算錢大腦</li>
+                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 專屬點餐介面與 3/5入優惠組算錢大腦</li>
                 </ul>
               </div>
               <div className="text-[11px] text-[#7C6E62] bg-[#FFF8F0] p-1.5 rounded-xl border border-[#D6A86E] font-medium text-center">
@@ -433,13 +433,13 @@ export default function ButterToastProposalPage() {
                   🧾 加上 5% 營業稅 ($240) ＝ <b>含稅 NT$ 5,040 / 月</b>
                 </div>
                 <div className="text-[10px] bg-amber-50 border border-[#D6A86E] p-1.5 rounded-lg mb-2 text-[#382D24]">
-                  💡 <b>對標真人小編效益：</b>真人小編每天最多處理 <b>30~50 筆訂單</b>；AI 店長具備 <b>LINE 防爆隊列與資安過濾</b>，同時 100+ 人順暢點餐 0 掉單，每年直接為店家省下 <b>NT$ 28 萬薪資！</b>
+                  💡 <b>對標真人小編效益：</b>真人小編每天最多處理 <b>30~50 筆訂單</b>；AI 店長具備 <b>防爆佇列與資安過濾</b>，同時 100+ 人順暢點餐 0 掉單，每年直接為店家省下 <b>NT$ 28 萬薪資！</b>
                 </div>
                 <ul className="text-xs text-[#382D24] space-y-0.5 mb-2">
                   <li className="flex items-center gap-1.5"><span className="text-emerald-700 font-bold">★</span> <b>首月 30 天線上免費維護保障 (依需求彈性調整對話語氣與菜單)</b></li>
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 5,000 會員容量 AI 流量 (20,000則/月)</li>
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 每月 2 次夏日限定與優惠組 Banner 全自動推播</li>
-                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 每週 AI 對話巡檢、菜單維護與會員 CSV 資料匯出</li>
+                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 每週 AI 對話巡檢、菜單維護與會員訂購名單匯出</li>
                 </ul>
               </div>
 
@@ -629,15 +629,15 @@ export default function ButterToastProposalPage() {
             <h4 className="font-serif font-bold text-[#B26A27] mb-2">遠端權限交接與雲端打單預設</h4>
             <ul className="text-xs text-[#7C6E62] space-y-1.5">
               <li>✓ 簽訂合約並<b>轉帳付訂金 $24,000 (含稅$25,200)</b></li>
-              <li>✓ 線上邀請授權 API 權限、提供員工 LINE ID 白名單、品牌簡介與菜單</li>
+              <li>✓ 線上邀請授權、提供員工名單白名單、品牌簡介與菜單</li>
               <li>✓ 預先綁定雲端打單機設定，開箱插電即用</li>
             </ul>
           </div>
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm">
             <span className="inline-block px-2.5 py-0.5 bg-[#B26A27] text-[#FFFDF9] rounded-full text-xs font-bold mb-2">PHASE 2 (Week 2)</span>
-            <h4 className="font-serif font-bold text-[#B26A27] mb-2">Staging 測試與線上視訊演練</h4>
+            <h4 className="font-serif font-bold text-[#B26A27] mb-2">測試環境與線上視訊演練</h4>
             <ul className="text-xs text-[#7C6E62] space-y-1.5">
-              <li>✓ 前後台 LIFF 免登入點餐與 AI 口味歷史記憶對話測試</li>
+              <li>✓ 專屬點餐介面免登入與 AI 口味歷史記憶對話測試</li>
               <li>✓ 掃測試碼進行 3入/5入折價與雙向取貨測試</li>
               <li>✓ 雙方進行 30 分鐘線上視訊會審，微調娃娃回應語氣細節</li>
             </ul>
@@ -646,7 +646,7 @@ export default function ButterToastProposalPage() {
             <span className="inline-block px-2.5 py-0.5 bg-[#B26A27] text-[#FFFDF9] rounded-full text-xs font-bold mb-2">PHASE 3 (Week 3 遠端驗收)</span>
             <h4 className="font-serif font-bold text-[#B26A27] mb-2">無縫切換 ➔ 驗收開通 ➔ 保固</h4>
             <ul className="text-xs text-[#382D24] space-y-1.5 font-medium">
-              <li>✓ 5 分鐘遠端切換正式 Webhook，原 LINE 零停機升級</li>
+              <li>✓ 5 分鐘遠端無縫切換連線，原官方帳號零停機升級</li>
               <li>✓ 線上通過驗收並<b>轉帳付尾款 $24,000 (含稅$25,200)</b></li>
               <li>✓ 點擊按鈕<b>線上綁定藍新信用卡 ($5,040/月含稅)，正式開通！</b></li>
               <li>✓ 享【首月 30 天線上維護保障】，對話與菜單依需求免費微調！</li>
@@ -666,11 +666,11 @@ export default function ButterToastProposalPage() {
             <ul className="text-[11px] text-[#382D24] space-y-1">
               <li>✓ 100% 全遠端雲端建置與線上指導驗收</li>
               <li>✓ <b>AI 歷史訂單記憶大腦 (口味記憶・溫暖交流・貼心新品推薦)</b></li>
-              <li>✓ 前後台 LINE 身份原生認證與員工 LINE ID 白名單權限鎖</li>
+              <li>✓ 前後台原生身份認證與店家員工專屬權限鎖</li>
               <li>✓ 品牌吉祥物/娃娃專屬 AI 人設口吻微調</li>
               <li>✓ 商店介紹/產品圖文介紹/品牌故事建置</li>
               <li>✓ 官方 IG / FB / 社群專頁連結導流選單</li>
-              <li>✓ 前後台 LINE LIFF 網頁開發 (點餐/備貨)</li>
+              <li>✓ 前後台專屬一鍵點餐與備貨介面開發</li>
             </ul>
           </div>
 
@@ -681,17 +681,17 @@ export default function ButterToastProposalPage() {
               <li>✓ 每月 2 次限量預購 Banner 設計全自動推播</li>
               <li>✓ 每週巡檢 AI 未解答對話與補充知識庫</li>
               <li>✓ 季節限定甜點 (夏日芒果/秋冬新品) 上架</li>
-              <li>✓ 5,000 會員偏好標籤維護與 CSV 導出</li>
+              <li>✓ 5,000 會員偏好標籤維護與會員訂購名單匯出</li>
             </ul>
           </div>
 
           <div className="feature-card" style={{ padding: "0.9rem 1.1rem", border: "2px solid #059669", background: "#ECFDF5" }}>
             <b style={{ color: "#047857", fontSize: "0.85rem" }}>🔒 企業級 AI 資安防護 4 大防線</b>
             <ul className="bullet-list" style={{ marginTop: "0.4rem", fontSize: "0.75rem", color: "#065F46" }}>
-              <li><b>SSL/TLS 加密傳輸</b>：全站與金流 AES-256 加密</li>
-              <li><b>AI 越獄與算錢防護</b>：防 Prompt Injection 騙價</li>
-              <li><b>LINE 員工白名單鎖</b>：非授權 LINE 絕對無法存取</li>
-              <li><b>個資隔離與 CSV 導出</b>：符合個人資料保護法</li>
+              <li><b>金融級資安加密傳輸</b>：全站與金流高強度防護</li>
+              <li><b>AI 價格防詐欺大腦</b>：防惡意誘導改價騙價</li>
+              <li><b>店家員工專屬權限鎖</b>：非授權帳號絕對無法存取</li>
+              <li><b>個資隔離與名單導出</b>：符合個人資料保護法</li>
             </ul>
           </div>
         </div>
@@ -716,7 +716,7 @@ export default function ButterToastProposalPage() {
               <tbody className="divide-y divide-[#E6DDCF] text-[#382D24]">
                 <tr>
                   <td className="p-2 font-bold">顧客歷史記憶與互動</td>
-                  <td className="p-2 text-gray-600">記不住買家口味，只能冰冷回答</td>
+                  <td className="p-2 text-gray-600">記不住歷史訂單與口味，只能冰冷回答</td>
                   <td className="p-2 font-bold text-emerald-700 bg-[#FFF8F0]"><b>牢記顧客歷史訂單，進行溫暖交流與貼心新品推薦</b></td>
                 </tr>
                 <tr>
@@ -725,16 +725,16 @@ export default function ButterToastProposalPage() {
                   <td className="p-2 font-black text-emerald-700 bg-[#FFF8F0]">單日可精確處理 1,000+ 筆點餐訂單</td>
                 </tr>
                 <tr>
-                  <td className="p-2 font-bold">高併發處理與防爆隊列機制</td>
+                  <td className="p-2 font-bold">高併發處理與防爆機制</td>
                   <td className="p-2 text-gray-600">同時只能回 1 人 (多視窗易出錯)</td>
                   <td className="p-2 font-bold text-emerald-700 bg-[#FFF8F0]">
-                    <b>Redis 佇列平滑緩衝保護</b> (同時 100+ 人順暢點餐 0 掉單)
+                    <b>獨家流量平滑防爆保護</b> (同時 100+ 人順暢點餐 0 掉單)
                   </td>
                 </tr>
                 <tr>
                   <td className="p-2 font-bold">後台權限防護與品牌人設</td>
                   <td className="p-2 text-gray-600">人工易洩漏帳密給員工</td>
-                  <td className="p-2 font-bold text-emerald-700 bg-[#FFF8F0]"><b>LINE 員工白名單權限鎖</b> (0 密碼外洩，外人無法進入)</td>
+                  <td className="p-2 font-bold text-emerald-700 bg-[#FFF8F0]"><b>店家員工專屬權限鎖</b> (0 密碼外洩，外人無法進入)</td>
                 </tr>
                 <tr>
                   <td className="p-2 font-bold">每月固定費用成本</td>

@@ -258,7 +258,7 @@ export default function ButterToastProposalPage() {
             <span className="text-[#B26A27]">奶霜炸吐司 AI 點餐算錢與自動化專案</span>
           </h1>
           <p className="text-base md:text-lg text-[#7C6E62] max-w-2xl mx-auto mb-6 leading-relaxed">
-            專為「奶霜炸吐司 (原味/抹茶/巧克力)、OREO系列、夏日限定芒果系列與 3入$270/5入$400自由配」量身打造 24hr 自動算錢、不找零提醒、廚房打單/出貨單與「預約完成✔️」雙向通知
+            專為「奶霜炸吐司 (原味/抹茶/巧克力)、OREO系列、夏日限定芒果系列與 3入$270/5入$400自由配」量身打造 前後台 LIFF 網頁架構、24hr 自動算錢、廚房印單/POS對接與雙向取貨通知
           </p>
           <span className="inline-block px-6 py-2 bg-[#B26A27] text-[#FFFDF9] rounded-full text-sm font-bold shadow-md">
             營業時間 18:00 - 售完為止 / 現金面交恕不找零 / 0 小編自動化
@@ -306,65 +306,62 @@ export default function ButterToastProposalPage() {
         </div>
       ),
     },
-    // Slide 3: Kitchen Workflow, Receipt/Delivery Slip Printing & POS Integration
+    // Slide 3: Complete Front-end & Back-end LIFF Architecture & Kitchen Printing Workflow
     {
-      badge: "廚房印單備貨與 POS 對接模式",
-      title: "廚房熱感應打單機 / 送貨單 / POS 串接說明",
+      badge: "前後台 LIFF 網頁與廚房串接架構",
+      title: "前後台 LINE LIFF 網頁 ✕ 廚房打單/POS 完整流程",
       content: (
         <div className="space-y-3">
-          {/* 4-Step Process Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-2.5">
-            <div className="bg-white border border-[#E6DDCF] p-2.5 rounded-xl shadow-xs">
-              <span className="text-[10px] font-bold text-[#B26A27] bg-[#EFE7DA] px-2 py-0.5 rounded-full">STEP 1</span>
-              <h4 className="font-bold text-xs text-[#382D24] mt-1 mb-0.5">顧客 LINE 下單算錢</h4>
-              <p className="text-[10px] text-[#7C6E62] leading-snug">
-                AI 精確算清金額（如 $475），確認姓名電話取餐時間，傳送 Flex 卡片憑證。
-              </p>
+          {/* Front-end & Back-end Dual System Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {/* Front-end LIFF App */}
+            <div className="bg-white border-2 border-[#D6A86E] p-3.5 rounded-xl shadow-xs">
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <span className="text-base">📱</span>
+                <h4 className="font-serif font-bold text-sm text-[#B26A27]">
+                  前台：LINE LIFF 顧客免登入點餐體驗
+                </h4>
+              </div>
+              <ul className="text-xs text-[#382D24] space-y-1">
+                <li>• <b>免記憶密碼</b>：顧客點擊「🍞線上點餐」彈出 LIFF 頁面，自動帶入 LINE 身份。</li>
+                <li>• <b>點餐算錢大腦</b>：直覺選擇奶霜炸吐司口味、3入$270 / 5入$400自由配，AI 自動折價。</li>
+                <li>• <b>預約憑證卡片</b>：送出訂單即刻於 LINE 對話生成格式化「預約完成✔️」Flex 卡片。</li>
+              </ul>
             </div>
 
-            <div className="bg-white border border-[#E6DDCF] p-2.5 rounded-xl shadow-xs">
-              <span className="text-[10px] font-bold text-[#B26A27] bg-[#EFE7DA] px-2 py-0.5 rounded-full">STEP 2</span>
-              <h4 className="font-bold text-xs text-[#382D24] mt-1 mb-0.5">廚房打單機 / POS 自動印單</h4>
-              <p className="text-[10px] text-[#7C6E62] leading-snug">
-                雲端打單機或 POS 機自動「啵」出<b>廚房備貨單與送貨/面交聯</b>（含品項、金額 $475 與取餐時間）。
-              </p>
-            </div>
-
-            <div className="bg-white border border-[#E6DDCF] p-2.5 rounded-xl shadow-xs">
-              <span className="text-[10px] font-bold text-[#B26A27] bg-[#EFE7DA] px-2 py-0.5 rounded-full">STEP 3</span>
-              <h4 className="font-bold text-xs text-[#382D24] mt-1 mb-0.5">現點現做 ➔ 點擊完成備貨</h4>
-              <p className="text-[10px] text-[#7C6E62] leading-snug">
-                廚房依單製作完畢，小編在 LINE Notify 訊息或平板點擊<b>【✅ 製作完成 / 通知取貨】</b>。
-              </p>
-            </div>
-
-            <div className="bg-emerald-50 border border-emerald-300 p-2.5 rounded-xl shadow-xs">
-              <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">STEP 4</span>
-              <h4 className="font-bold text-xs text-emerald-900 mt-1 mb-0.5">AI 自動通知顧客前來取餐</h4>
-              <p className="text-[10px] text-emerald-800 leading-snug">
-                AI 身分自動推播 LINE：「您的吐司已熱騰騰做好囉！請至指定地點取餐 (含地圖與剛好金額提醒)」。
-              </p>
+            {/* Back-end Merchant Dashboard */}
+            <div className="bg-white border-2 border-[#B26A27] p-3.5 rounded-xl shadow-xs">
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <span className="text-base">👨‍🍳</span>
+                <h4 className="font-serif font-bold text-sm text-[#B26A27]">
+                  後台：LINE LIFF 廚房看板 ✕ 電腦數據後台
+                </h4>
+              </div>
+              <ul className="text-xs text-[#382D24] space-y-1">
+                <li>• <b>手機 LIFF 廚房看板</b>：廚房手機點開 LINE 即可看單，按 `[✅完成備貨]` 觸發取貨推播。</li>
+                <li>• <b>電腦端 RWD 後台</b>：電腦大螢幕登入，即時查看營運數據與<b>一鍵匯出會員 CSV/Excel</b>。</li>
+                <li>• <b>自動打單 / POS 拋轉</b>：支援雲端打單機（自動印小白單/送貨聯）或拋轉既有 POS 機。</li>
+              </ul>
             </div>
           </div>
 
-          {/* Kitchen Printer Hardware & POS System Integration Options */}
-          <div className="bg-[#FFFDF9] border-2 border-[#D6A86E] p-3 rounded-xl space-y-1.5 shadow-xs">
-            <h4 className="font-serif font-bold text-xs text-[#B26A27] flex items-center gap-1.5">
-              <span>🖨️</span> 廚房出單機、送貨單與現有 POS 系統彈性對接三方案：
-            </h4>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-[11px] text-[#382D24]">
-              <div className="bg-white p-2 rounded-lg border border-[#E6DDCF]">
-                <strong className="text-[#B26A27] block mb-0.5">方案 A：Wi-Fi 雲端打單機 (最推薦)</strong>
-                放置一台獨立雲端打單機（約 $2,000），無須電腦或 POS，顧客下單立刻自動印出<b>廚房備貨單與面交送貨聯</b>。
-              </div>
-              <div className="bg-white p-2 rounded-lg border border-[#E6DDCF]">
-                <strong className="text-[#B26A27] block mb-0.5">方案 B：現有 POS 系統 API 串接</strong>
-                若店家現有 iChef、肚肚等主流 POS，AI 訂單可透過 API 直接抛轉進 POS，由現有 POS 出單機統一打單扣庫存。
-              </div>
-              <div className="bg-white p-2 rounded-lg border border-[#E6DDCF]">
-                <strong className="text-[#B26A27] block mb-0.5">方案 C：LINE Notify 藍牙行動印單</strong>
-                手機 Notify 收到訂單，點擊「印單」按鈕，即可連線隨身藍牙小印單機印出貼紙或送貨憑證。
-              </div>
+          {/* 4-Step Process Bar */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-2 text-xs">
+            <div className="bg-[#FFFDF9] border border-[#E6DDCF] p-2 rounded-lg">
+              <b className="text-[#B26A27]">1. LIFF 免登入點餐</b>
+              <p className="text-[10px] text-[#7C6E62]">顧客開 LIFF 選吐司與優惠組，AI 精確算金額 $475</p>
+            </div>
+            <div className="bg-[#FFFDF9] border border-[#E6DDCF] p-2 rounded-lg">
+              <b className="text-[#B26A27]">2. 出單機/POS自動打單</b>
+              <p className="text-[10px] text-[#7C6E62]">廚房印出備貨單與送貨聯，Notify 群組即時通知</p>
+            </div>
+            <div className="bg-[#FFFDF9] border border-[#E6DDCF] p-2 rounded-lg">
+              <b className="text-[#B26A27]">3. LIFF 完成備貨按鈕</b>
+              <p className="text-[10px] text-[#7C6E62]">廚房點擊 LIFF 備貨看板 `[✅製作完成]`</p>
+            </div>
+            <div className="bg-emerald-50 border border-emerald-300 p-2 rounded-lg text-emerald-900">
+              <b className="text-emerald-700">4. AI 自動推播取餐</b>
+              <p className="text-[10px] text-emerald-800">AI 身分發送 LINE 提醒顧客取貨（含地圖/剛好金額）</p>
             </div>
           </div>
         </div>
@@ -396,7 +393,7 @@ export default function ButterToastProposalPage() {
                   🧾 加上 5% 營業稅 ($1,400) ＝ <b>含稅總額 NT$ 29,400</b>
                 </div>
                 <ul className="text-xs text-[#382D24] space-y-0.5 mb-1.5">
-                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> Messaging API 串接與 6格選單適配</li>
+                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 前後台 LINE LIFF 網頁建置 (免登入點餐/廚房看板)</li>
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 奶霜炸吐司與 3/5入優惠組 AI 算錢引擎</li>
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 廚房自動打單機/POS對接、發送「預約完成✔️」與雙向取貨推播</li>
                 </ul>
@@ -426,7 +423,7 @@ export default function ButterToastProposalPage() {
                 <ul className="text-xs text-[#382D24] space-y-0.5 mb-2">
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 5,000 會員容量 AI 流量 (20,000則/月)</li>
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 每月 2 次夏日限定與優惠組 Banner 全自動推播</li>
-                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 每週 AI 對話巡檢、菜單維護與會員資料匯出</li>
+                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 每週 AI 對話巡檢、菜單維護與會員 CSV 資料匯出</li>
                 </ul>
               </div>
 
@@ -622,9 +619,9 @@ export default function ButterToastProposalPage() {
           </div>
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm">
             <span className="inline-block px-2.5 py-0.5 bg-[#B26A27] text-[#FFFDF9] rounded-full text-xs font-bold mb-2">PHASE 2 (Week 2)</span>
-            <h4 className="font-serif font-bold text-[#B26A27] mb-2">AI 算錢引擎與知識庫訓練</h4>
+            <h4 className="font-serif font-bold text-[#B26A27] mb-2">AI 算錢引擎與前後台 LIFF 建置</h4>
             <ul className="text-xs text-[#7C6E62] space-y-1.5">
-              <li>✓ 6格 Rich Menu 圖文選單適配 AI 店長</li>
+              <li>✓ 前台 LIFF 免登入點餐與後台 LIFF 廚房看板建置</li>
               <li>✓ 自動計算金額、提示自備零錢與「預約完成✔️」卡片</li>
               <li>✓ 串接廚房打單機/POS對接、Notify 推播與雙向取貨通知</li>
             </ul>
@@ -651,7 +648,7 @@ export default function ButterToastProposalPage() {
             <h4 className="font-bold text-[#B26A27] mb-2">📌 AI 店長建置交付項目 (一次性)</h4>
             <ul className="text-xs text-[#382D24] space-y-1.5">
               <li>✓ 現有 LINE 官方帳號 Messaging API 權限串接</li>
-              <li>✓ 6格 Rich Menu (點餐算錢/夏日限定/取餐導航/營業須知/重烤教學/轉接客服)</li>
+              <li>✓ 前後台 LINE LIFF 網頁介面開發 (顧客點餐 / 廚房備貨看板)</li>
               <li>✓ 奶霜炸吐司、芒果限定與 3入/5入優惠組合 AI 算錢邏輯</li>
               <li>✓ 廚房自動出單機 / POS 機 API / 送貨單列印整合</li>
               <li>✓ 「預約完成✔️」 Flex Card 與雙向【完成備貨推播顧客】</li>

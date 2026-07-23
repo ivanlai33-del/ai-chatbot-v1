@@ -12,7 +12,8 @@ import {
     ShoppingBag, 
     Globe, 
     RefreshCcw, 
-    Wand2 
+    Wand2,
+    Sparkles
 } from 'lucide-react';
 import InputField from '@/components/ui/InputField';
 import TextareaField from '@/components/ui/TextareaField';
@@ -149,6 +150,19 @@ export default function OfferingsTab({ config, setConfig, planLevel = 0, botId }
                     <button onClick={handleSync} disabled={isSyncing} className="px-6 py-2 rounded-[12px] bg-gradient-to-r from-emerald-500 to-cyan-600 text-white text-sm font-black shadow-md shadow-emerald-500/20 active:scale-95 transition-all">
                         {isSyncing ? <RefreshCcw className="w-4 h-4 animate-spin" /> : '同步'}
                     </button>
+                </div>
+
+                {/* 💡 完成設定後效果說明 */}
+                <div className="mt-4 p-4 rounded-2xl bg-emerald-50/80 border border-emerald-200/80 text-emerald-900 text-xs font-bold space-y-1.5 leading-relaxed">
+                    <div className="font-black text-emerald-950 flex items-center gap-1.5 text-xs">
+                        <Sparkles className="w-4 h-4 text-emerald-600 shrink-0" />
+                        🎉 完成設定後，您的 LINE 官方帳號將自動具備以下能力：
+                    </div>
+                    <ul className="pl-5 list-disc space-y-1 text-emerald-800 text-[11px]">
+                        <li><strong>AI 對話秒推導流：</strong>當顧客在 LINE 詢問商品或服務時，AI 店長會自動推薦介紹，並直接附上您專屬賣場的購買連結。</li>
+                        <li><strong>圖文選單直接喚起：</strong>顧客在 LINE 點擊選單上的「看商品 / 看菜單」按鈕，將瞬間彈出極致質感的微型 DM 目錄卡片！</li>
+                        <li><strong>0 金流過手風險：</strong>顧客點擊直接跳轉至您自己的 7-11 賣場、蝦皮、inline 或官網完成交易，資金 100% 直達您的銀行帳戶。</li>
+                    </ul>
                 </div>
             </div>
 

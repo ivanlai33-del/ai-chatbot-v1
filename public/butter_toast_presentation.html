@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>【奶油吐司】LINE AI 店長全包服務提案</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;700;900&family=Noto+Sans+TC:wght@400;500;700&family=Outfit:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main: #F7F3ED;          /* 燕麥奶油色背景 */
+      --card-bg: rgba(255, 253, 249, 0.88); /* 鮮奶油白微透明卡片 */
+      --card-border: #E6DDCF;      /* 淡雅木質質感邊框 */
+      --accent-caramel: #B26A27;   /* 烤吐司焦糖金棕色 */
+      --accent-butter: #D6A86E;    /* 溫暖奶油木質調 */
+      --accent-light: #EFE7DA;     /* 柔和燕麥襯底色 */
+      --text-main: #382D24;        /* 深焙咖啡木炭棕主文字 */
+      --text-muted: #7C6E62;       /* 日式亞麻灰棕次要文字 */
+      --radius: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Noto Sans TC', 'Outfit', sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      background-image: 
+        radial-gradient(circle at 10% 10%, rgba(214, 168, 110, 0.18) 0%, transparent 45%),
+        radial-gradient(circle at 90% 90%, rgba(178, 106, 39, 0.12) 0%, transparent 50%);
+    }
+
+    /* Presentation Container */
+    .deck-container {
+      width: 90vw;
+      max-width: 1180px;
+      height: 85vh;
+      max-height: 700px;
+      position: relative;
+      perspective: 1000px;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      background: var(--card-bg);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 3rem 4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(15px) scale(0.99);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 20px 40px -15px rgba(90, 70, 50, 0.08),
+                  0 0 25px rgba(214, 168, 110, 0.15);
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+    }
+
+    /* Slide Header */
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 1.2rem;
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--accent-light);
+      border: 1px solid var(--accent-butter);
+      color: var(--accent-caramel);
+      padding: 0.35rem 1rem;
+      border-radius: 50px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .slide-title {
+      font-family: 'Noto Serif TC', serif;
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.5px;
+    }
+
+    /* Slide Content Area */
+    .slide-body {
+      flex: 1;
+      padding: 1.2rem 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* Cover Slide Specific */
+    .cover-body {
+      text-align: center;
+      align-items: center;
+    }
+
+    .cover-title {
+      font-family: 'Noto Serif TC', serif;
+      font-size: 3.1rem;
+      font-weight: 900;
+      line-height: 1.25;
+      margin-bottom: 1.2rem;
+      color: var(--text-main);
+      letter-spacing: -0.5px;
+    }
+
+    .cover-title span {
+      color: var(--accent-caramel);
+    }
+
+    .cover-subtitle {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      max-width: 680px;
+      line-height: 1.7;
+      font-weight: 500;
+    }
+
+    .cover-tag {
+      margin-top: 2rem;
+      display: inline-block;
+      padding: 0.65rem 1.8rem;
+      background: var(--accent-caramel);
+      color: #FFFDF9;
+      font-weight: 700;
+      border-radius: 50px;
+      box-shadow: 0 10px 20px rgba(178, 106, 39, 0.25);
+      letter-spacing: 1px;
+    }
+
+    /* Grid Layouts */
+    .grid-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+    }
+
+    .grid-3col {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1.2rem;
+    }
+
+    .feature-card {
+      background: #FFFFFF;
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.3rem 1.6rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(80, 60, 40, 0.03);
+    }
+
+    .feature-card:hover {
+      border-color: var(--accent-butter);
+      box-shadow: 0 8px 24px rgba(178, 106, 39, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .card-icon {
+      font-size: 1.6rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .card-title {
+      font-family: 'Noto Serif TC', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--accent-caramel);
+      margin-bottom: 0.4rem;
+    }
+
+    .card-desc {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* Timeline Cards */
+    .timeline-card {
+      background: #FFFFFF;
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      position: relative;
+      box-shadow: 0 4px 12px rgba(80, 60, 40, 0.03);
+    }
+
+    .step-number {
+      display: inline-block;
+      background: var(--accent-caramel);
+      color: #FFFDF9;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 50px;
+      margin-bottom: 0.6rem;
+    }
+
+    /* Pricing Box */
+    .pricing-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.4rem;
+    }
+
+    .pricing-card {
+      background: #FFFFFF;
+      border: 2px solid var(--accent-butter);
+      border-radius: 18px;
+      padding: 1.4rem 1.8rem;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(178, 106, 39, 0.06);
+    }
+
+    .price-tag {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.1rem;
+      font-weight: 700;
+      color: var(--accent-caramel);
+      margin: 0.3rem 0 0.1rem 0;
+    }
+
+    .price-tax-info {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.6rem;
+    }
+
+    .price-period {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      font-weight: normal;
+    }
+
+    .bullet-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .bullet-list li {
+      position: relative;
+      padding-left: 1.3rem;
+      font-size: 0.9rem;
+      color: var(--text-main);
+    }
+
+    .bullet-list li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: var(--accent-caramel);
+      font-weight: bold;
+    }
+
+    /* Payment Terms Box */
+    .payment-box {
+      margin-top: 0.7rem;
+      background: var(--accent-light);
+      border: 1px dashed var(--accent-butter);
+      border-radius: 12px;
+      padding: 0.7rem 1.1rem;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .payment-item {
+      text-align: center;
+    }
+
+    .payment-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.1rem;
+    }
+
+    .payment-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--accent-caramel);
+    }
+
+    .payment-tax-note {
+      font-size: 0.73rem;
+      color: var(--text-muted);
+    }
+
+    .payment-badge {
+      display: inline-block;
+      font-size: 0.73rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      margin-top: 0.15rem;
+      background: rgba(178, 106, 39, 0.12);
+      color: var(--accent-caramel);
+      font-weight: 600;
+    }
+
+    .security-notice-box {
+      margin-top: 0.7rem;
+      background: #FFFFFF;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 0.7rem 1rem;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+    }
+
+    /* Footer & Controls */
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.4rem;
+      width: 90vw;
+      max-width: 1180px;
+    }
+
+    .slide-indicator {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 2px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .nav-btn {
+      background: #FFFFFF;
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 0.65rem 1.5rem;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+    }
+
+    .nav-btn:hover {
+      background: var(--accent-caramel);
+      color: #FFFDF9;
+      border-color: var(--accent-caramel);
+      box-shadow: 0 6px 16px rgba(178, 106, 39, 0.25);
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* Print Styles for Slide PDF Export */
+    @media print {
+      body {
+        background: #FFF !important;
+        color: #000 !important;
+        overflow: visible;
+      }
+
+      .deck-container {
+        width: 100%;
+        height: auto;
+        max-width: none;
+        max-height: none;
+      }
+
+      .slide {
+        position: relative;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+        page-break-after: always;
+        background: #FFF !important;
+        color: #000 !important;
+        border: 1px solid #E0E0E0 !important;
+        margin-bottom: 20px;
+        box-shadow: none !important;
+      }
+
+      .slide-title, .cover-title, .card-title, .price-tag {
+        color: #000 !important;
+      }
+
+      .controls {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="deck-container">
+    
+    <!-- Slide 1: Cover -->
+    <div class="slide active" id="slide-1">
+      <div class="slide-header">
+        <span class="brand-badge">🍞 奶油吐司 AI 店長提案</span>
+        <span style="color: var(--text-muted); font-size: 0.9rem;">2026 專案計畫</span>
+      </div>
+      <div class="slide-body cover-body">
+        <h1 class="cover-title">LINE 官方帳號全包建置<br><span>✕ AI 智慧店長服務</span></h1>
+        <p class="cover-subtitle">0 到 1 打造 5,000 會員自動化點餐算錢與全代營運閉環</p>
+        <div class="cover-tag">工作室模式 / 現金面交 / 無小編最佳解答</div>
+      </div>
+      <div style="text-align: right; color: var(--text-muted); font-size: 0.85rem;">
+        簡報單位：AI 店長服務團隊
+      </div>
+    </div>
+
+    <!-- Slide 2: Challenges -->
+    <div class="slide" id="slide-2">
+      <div class="slide-header">
+        <h2 class="slide-title">工作室現況與核心痛點</h2>
+        <span class="brand-badge">5,000人規模規劃</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2x2">
+          <div class="feature-card">
+            <div class="card-icon">🏠</div>
+            <div class="card-title">痛點 1：無實體內用店面</div>
+            <div class="card-desc">中央廚房工作室模式，缺乏門市接待。需 24hr 自動指引「指定地址面交」與「取餐導航」。</div>
+          </div>
+          <div class="feature-card">
+            <div class="card-icon">🧮</div>
+            <div class="card-title">痛點 2：現金面交，人工算錢耗時</div>
+            <div class="card-desc">無線上刷卡，需人工計算多品項數量金額。AI 店長需具備精確自動算錢與生成訂單明細能力。</div>
+          </div>
+          <div class="feature-card">
+            <div class="card-icon">👥</div>
+            <div class="card-title">痛點 3：團隊內部無 LINE 小編</div>
+            <div class="card-desc">缺乏視覺設計與運營人力。需要全權委外進行 0 到 1 官方帳號視覺包裝與每月代營運。</div>
+          </div>
+          <div class="feature-card">
+            <div class="card-icon">📈</div>
+            <div class="card-title">痛點 4：5,000 會員流量負擔</div>
+            <div class="card-desc">每日約 50 人對話詢問。需要高容量 AI 大腦穩定接單與限量預購推播導購。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 3: Core Modules -->
+    <div class="slide" id="slide-3">
+      <div class="slide-header">
+        <h2 class="slide-title">四大專屬 AI 服務模組</h2>
+        <span class="brand-badge">奶油吐司客製化</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2x2">
+          <div class="feature-card">
+            <div class="card-icon">🎨</div>
+            <div class="card-title">01. LINE 0 到 1 品牌視覺包裝</div>
+            <div class="card-desc">官方帳號申請、品牌 Banner 設計，以及專屬 **6 格高質感圖文選單 (Rich Menu)**。</div>
+          </div>
+          <div class="feature-card">
+            <div class="card-icon">🤖</div>
+            <div class="card-title">02. AI 點餐與金額試算系統</div>
+            <div class="card-desc">辨識品項與數量（生吐司x2+布丁x3）➔ 自動試算總金額 ➔ 產出現金面交訂單明細 ＋ Notify 通知。</div>
+          </div>
+          <div class="feature-card">
+            <div class="card-icon">📚</div>
+            <div class="card-title">03. 無內用導覽與 FAQ 知識庫</div>
+            <div class="card-desc">24/7 自動解答無內用說明、面交地址導航，以及生吐司/甜點冷凍重烤教學。</div>
+          </div>
+          <div class="feature-card">
+            <div class="card-icon">🚀</div>
+            <div class="card-title">04. 5,000 會員 CRM 與代營運</div>
+            <div class="card-desc">每月 **2 次限量預購圖文推播** 設計與發送 ＋ 每週 AI 菜單優化與未解答巡檢。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 4: Pricing & Tax Terms -->
+    <div class="slide" id="slide-4">
+      <div class="slide-header">
+        <h2 class="slide-title">專案報價與發票稅金</h2>
+        <span class="brand-badge">5% 營業稅標註</span>
+      </div>
+      <div class="slide-body">
+        <div class="pricing-container">
+          <div class="pricing-card">
+            <div style="font-weight: 700; color: var(--accent-caramel);">🛠️ 【一次性】建置與開發費</div>
+            <div class="price-tag">NT$ 28,000 <span style="font-size:1rem; color:var(--text-muted); font-weight:normal;">(未稅)</span></div>
+            <div class="price-tax-info">🧾 加上 5% 營業稅 ($1,400) ＝ <b>含稅總額 NT$ 29,400</b></div>
+            <ul class="bullet-list">
+              <li>LINE 官方帳號 0 到 1 品牌視覺設計</li>
+              <li>專屬 6 格圖文選單 (Rich Menu) 開發</li>
+              <li>AI 多品項點餐算錢引擎與 Notify 串接</li>
+              <li>奶油吐司專屬 RAG 知識庫深度訓練</li>
+            </ul>
+          </div>
+          <div class="pricing-card">
+            <div style="font-weight: 700; color: var(--accent-caramel);">💳 【每月】代營運與 AI 系統費</div>
+            <div class="price-tag">NT$ 4,800 <span class="price-period">/ 月 (未稅)</span></div>
+            <div class="price-tax-info">🧾 加上 5% 營業稅 ($240) ＝ <b>含稅 NT$ 5,040 /月</b></div>
+            <ul class="bullet-list">
+              <li>5,000 會員 AI 流量 (上限 20,000 則/月)</li>
+              <li>每月 2 次限量預購圖文推播設計與發送</li>
+              <li>每週 AI 菜單更新與未解答對話優化</li>
+              <li>每月對話與點餐數據戰情月報</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Payment Breakdown Box with Tax -->
+        <div class="payment-box">
+          <div class="payment-item">
+            <div class="payment-label">第一期：簽約訂金 (50%)</div>
+            <div class="payment-val">NT$ 14,000 <span class="payment-tax-note">(含稅 $14,700)</span></div>
+            <div class="payment-badge">銀行轉帳 / 匯款</div>
+          </div>
+          <div style="color: var(--accent-butter); font-size: 1.2rem;">➔</div>
+          <div class="payment-item">
+            <div class="payment-label">第二期：交案尾款 (50%)</div>
+            <div class="payment-val">NT$ 14,000 <span class="payment-tax-note">(含稅 $14,700)</span></div>
+            <div class="payment-badge">銀行轉帳 / 匯款</div>
+          </div>
+          <div style="color: var(--accent-butter); font-size: 1.2rem;">➔</div>
+          <div class="payment-item">
+            <div class="payment-label">每月代營運系統費</div>
+            <div class="payment-val">NT$ 4,800 <span class="payment-tax-note">(含稅 $5,040/月)</span></div>
+            <div class="payment-badge" style="background: rgba(245, 158, 11, 0.2); color: var(--accent-caramel);">藍新定期定額扣款</div>
+          </div>
+        </div>
+
+        <!-- Security Notice Box -->
+        <div class="security-notice-box">
+          <span style="font-size: 1.2rem; color: var(--accent-caramel);">🛡️</span>
+          <div>
+            <strong style="color: var(--accent-caramel);">藍新金流 (NewebPay) 安全防護與定期定額宣告：</strong><br>
+            本公司採用『藍新金流 (NewebPay) 第三方支付平台』辦理信用卡定期定額交易，全站傳輸採用最高等級 256-bit SSL 加密安全防護，並通過 PCI-DSS 國際卡隊安全認證。本公司絕不會儲存您的完整信用卡號碼。每月扣款完成後將由藍新金流系統自動開立電子發票發送至您的 Email，提供您最安全、透明、無虞的交易環境。
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Slide 5: Timeline & Delivery Flow -->
+    <div class="slide" id="slide-5">
+      <div class="slide-header">
+        <h2 class="slide-title">專案製作時間與交案流程</h2>
+        <span class="brand-badge">共計 3 週上線</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-3col">
+          <div class="timeline-card">
+            <span class="step-number">PHASE 1 (Week 1)</span>
+            <div class="card-title">素材收集與啟動</div>
+            <ul class="bullet-list" style="margin-top: 0.6rem;">
+              <li>簽訂合約並<b>轉帳付訂金 $14,000 (含稅 $14,700)</b></li>
+              <li>收集菜單品項、價格、面交地址與門檻</li>
+              <li>開通 LINE 官方帳號管理權限并開立發票</li>
+            </ul>
+          </div>
+          <div class="timeline-card">
+            <span class="step-number">PHASE 2 (Week 2)</span>
+            <div class="card-title">視覺設計與 AI 開發</div>
+            <ul class="bullet-list" style="margin-top: 0.6rem;">
+              <li>6格 Rich Menu 圖文選單視覺設計</li>
+              <li>AI 點餐算錢引擎與 Notify 通知串接</li>
+              <li>載入 50+ 題問答與保存重烤知識庫</li>
+            </ul>
+          </div>
+          <div class="timeline-card">
+            <span class="step-number">PHASE 3 (Week 3)</span>
+            <div class="card-title">測試驗收與正式交案</div>
+            <ul class="bullet-list" style="margin-top: 0.6rem;">
+              <li>雙方進行點餐算錢與接管流程實測</li>
+              <li>驗收通過<b>轉帳付尾款 $14,000 (含稅 $14,700)</b></li>
+              <li>設定藍新定期定額 ($5,040/月含稅)，正式上線！</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 6: Feature Checklist -->
+    <div class="slide" id="slide-6">
+      <div class="slide-header">
+        <h2 class="slide-title">詳細服務與交付對照表</h2>
+        <span class="brand-badge">完整項目</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2x2">
+          <div class="feature-card">
+            <div class="card-title">📌 建置期交付項目 (一次性)</div>
+            <ul class="bullet-list" style="margin-top: 0.6rem;">
+              <li>LINE 帳號權限與主頁 Banner 包裝</li>
+              <li>6格 Rich Menu (點餐/面交/保存/預購/小編/會員)</li>
+              <li>AI 語意點餐算錢與單價加總邏輯</li>
+              <li>現金面交訂單明細 Flex Message 生成</li>
+              <li>備貨小編 LINE Notify 訊息推播串接</li>
+            </ul>
+          </div>
+          <div class="feature-card">
+            <div class="card-title">🔄 代營運交付項目 (每月持續)</div>
+            <ul class="bullet-list" style="margin-top: 0.6rem;">
+              <li>每月 2 次限量預購 Banner 設計與推播</li>
+              <li>每週巡檢 AI 未解答對話並補充知識庫</li>
+              <li>季節甜點上架與價格即時調整</li>
+              <li>5,000 會員偏好標籤維護與數據月報</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 7: ROI & Summary -->
+    <div class="slide" id="slide-7">
+      <div class="slide-header">
+        <h2 class="slide-title">核心效益與 ROI 評估</h2>
+        <span class="brand-badge">商業價值總結</span>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2x2">
+          <div class="feature-card">
+            <div class="card-icon">💰</div>
+            <div class="card-title">節省 85% 人力費用</div>
+            <div class="card-desc">聘請專職小編月薪至少 NT$ 30,000+；全包方案每月僅 **$4,800 (含稅$5,040)**，省下龐大固定成本。</div>
+          </div>
+          <div class="feature-card">
+            <div class="card-icon">⏱️</div>
+            <div class="card-title">每日省 3.3 小時接單時間</div>
+            <div class="card-desc">AI 24 小時精確算錢與出單，每天處理 50 人對話，讓老闆專心做甜點。</div>
+          </div>
+          <div class="feature-card">
+            <div class="card-icon">📈</div>
+            <div class="card-title">推播輕鬆賺回月費</div>
+            <div class="card-desc">每月 2 次限量預購推播帶動 10 筆生吐司訂單，即可完全覆蓋每月營運費用。</div>
+          </div>
+          <div class="feature-card">
+            <div class="card-icon">🤝</div>
+            <div class="card-title">開箱即用，零學習負擔</div>
+            <div class="card-desc">完全不需要學習複雜的後台操作，從視覺設計到 AI 維護全包服務。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Controls Bar -->
+  <div class="controls">
+    <div class="slide-indicator">
+      SLIDE <span id="current-slide">1</span> / <span id="total-slides">7</span>
+    </div>
+    <div class="btn-group">
+      <button class="nav-btn" id="btn-prev" onclick="changeSlide(-1)">← 上一頁</button>
+      <button class="nav-btn" id="btn-next" onclick="changeSlide(1)">下一頁 →</button>
+      <button class="nav-btn" onclick="window.print()">🖨️ 列印 / 轉成 PDF</button>
+    </div>
+  </div>
+
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+
+    document.getElementById('total-slides').innerText = totalSlides;
+
+    function updateSlides() {
+      slides.forEach((slide, index) => {
+        if (index === currentSlide) {
+          slide.classList.add('active');
+        } else {
+          slide.classList.remove('active');
+        }
+      });
+
+      document.getElementById('current-slide').innerText = currentSlide + 1;
+      document.getElementById('btn-prev').disabled = currentSlide === 0;
+      document.getElementById('btn-next').disabled = currentSlide === totalSlides - 1;
+    }
+
+    function changeSlide(direction) {
+      currentSlide += direction;
+      if (currentSlide < 0) currentSlide = 0;
+      if (currentSlide >= totalSlides) currentSlide = totalSlides - 1;
+      updateSlides();
+    }
+
+    // Keyboard Navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'Space') {
+        changeSlide(1);
+      } else if (e.key === 'ArrowLeft') {
+        changeSlide(-1);
+      }
+    });
+
+    updateSlides();
+  </script>
+</body>
+</html>

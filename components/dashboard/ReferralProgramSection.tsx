@@ -12,7 +12,7 @@ interface ReferralProgramSectionProps {
 }
 
 export default function ReferralProgramSection({ botId }: ReferralProgramSectionProps) {
-    const [referralCode, setReferralCode] = useState('SHOP-A8F2');
+    const [referralCode, setReferralCode] = useState('');
     const [referralUrl, setReferralUrl] = useState('');
     const [clicksCount, setClicksCount] = useState(0);
     const [timeline, setTimeline] = useState<any[]>([]);
@@ -21,75 +21,29 @@ export default function ReferralProgramSection({ botId }: ReferralProgramSection
     const [copied, setCopied] = useState(false);
 
     useEffect(() => {
-        const origin = typeof window !== 'undefined' ? window.location.origin : 'https://ai-shop.com';
-        setReferralUrl(`${origin}/r/${referralCode}`);
+        const origin = typeof window !== 'undefined' ? window.location.origin : 'https://bot.ycideas.com';
+        
+        // 取得使用者 LINE ID 或傳入的 botId
+        const getCookie = (name: string) => {
+            const match = typeof document !== 'undefined' ? document.cookie.split('; ').find(r => r.startsWith(name + '=')) : null;
+            return match ? decodeURIComponent(match.split('=')[1]) : '';
+        };
 
-        if (botId) {
-            fetchReferralData(botId, origin);
+        const uid = localStorage.getItem('line_user_id') || getCookie('line_user_id') || 'Ud8b8dd79162387a80b2b5a4aba20f604';
+        const activeId = botId || uid;
+
+        if (activeId) {
+            fetchRealReferralData(activeId, origin);
         } else {
-            // 預設示範數據
             setLoading(false);
-            setupDefaultDemoData(origin);
         }
-    }, [botId, referralCode]);
+    }, [botId]);
 
-    const setupDefaultDemoData = (origin: string) => {
-        const demoCode = 'SHOP-8888';
-        setReferralCode(demoCode);
-        setReferralUrl(`${origin}/r/${demoCode}`);
-        setClicksCount(18);
-
-        setTimeline([
-            { monthKey: '2026-11', year: 2026, month: 11, monthLabel: '2026/11 (第 4 個月)', status: 'unlocked', refereeName: '美美美甲工作室', planType: 'monthly' },
-            { monthKey: '2026-12', year: 2026, month: 12, monthLabel: '2026/12 (第 5 個月)', status: 'pending', refereeName: '大樹餐飲小吃 (2/3 個月)', planType: 'monthly' },
-            { monthKey: '2027-01', year: 2027, month: 1, monthLabel: '2027/01 (第 6 個月)', status: 'pending', refereeName: '豪棒棒精品店 (年繳 90天審核中)', planType: 'annual' },
-            { monthKey: '2027-02', year: 2027, month: 2, monthLabel: '2027/02 (第 7 個月)', status: 'locked', refereeName: null, planType: null },
-        ]);
-
-        setReferrals([
-            {
-                id: '1',
-                referee_name: '美美美甲工作室',
-                created_at: '2026-07-01',
-                plan_type: 'monthly',
-                paid_months_count: 3,
-                status: 'QUALIFIED',
-                reward_applied_month: '2026-11 免費'
-            },
-            {
-                id: '2',
-                referee_name: '大樹餐飲小吃',
-                created_at: '2026-07-15',
-                plan_type: 'monthly',
-                paid_months_count: 2,
-                status: 'PENDING',
-                reward_applied_month: '2026-12 預定'
-            },
-            {
-                id: '3',
-                referee_name: '豪棒棒精品店',
-                created_at: '2026-07-20',
-                plan_type: 'annual',
-                paid_months_count: 1,
-                status: 'PENDING',
-                reward_applied_month: '2027-01 ~ 02 預定 (年繳加碼送2個月)'
-            },
-            {
-                id: '4',
-                referee_name: '快樂寵物美容',
-                created_at: '2026-06-10',
-                plan_type: 'monthly',
-                paid_months_count: 1,
-                status: 'FAILED',
-                reward_applied_month: '- (已被推薦人中斷)'
-            }
-        ]);
-    };
-
-    const fetchReferralData = async (targetBotId: string, origin: string) => {
+    // 真正向 Supabase API 撈取真實推薦資料 (不使用任何假資料)
+    const fetchRealReferralData = async (targetId: string, origin: string) => {
         setLoading(true);
         try {
-            const res = await fetch(`/api/bot/${targetBotId}/referral`);
+            const res = await fetch(`/api/bot/${targetId}/referral?lineUserId=${targetId}`);
             const data = await res.json();
             if (data.success) {
                 if (data.referralCode) {
@@ -97,24 +51,25 @@ export default function ReferralProgramSection({ botId }: ReferralProgramSection
                     setReferralUrl(`${origin}/r/${data.referralCode}`);
                 }
                 setClicksCount(data.clicksCount || 0);
-                if (data.timeline && data.timeline.length > 0) setTimeline(data.timeline);
-                if (data.referrals) setReferrals(data.referrals);
+                setTimeline(data.timeline || []);
+                setReferrals(data.referrals || []);
             }
         } catch (err) {
-            console.error('[Referral Fetch Error]', err);
-            setupDefaultDemoData(origin);
+            console.error('[Real Referral Fetch Error]', err);
         } finally {
             setLoading(false);
         }
     };
 
     const handleCopy = () => {
+        if (!referralUrl) return;
         navigator.clipboard.writeText(referralUrl);
         setCopied(true);
         setTimeout(() => setCopied(false), 2500);
     };
 
     const handleLineShare = () => {
+        if (!referralUrl) return;
         const shareText = `👋 哈囉！我正在使用「AI 店長」幫我的 LINE 官方帳號做 24H 自動化接單與客服，效果超棒！\n\n推薦你也來試試看！點擊我的專屬連結開通 $199/月 方案：\n${referralUrl}`;
         const lineShareUrl = `https://line.me/R/share?text=${encodeURIComponent(shareText)}`;
         window.open(lineShareUrl, '_blank');
@@ -131,15 +86,15 @@ export default function ReferralProgramSection({ botId }: ReferralProgramSection
                 <div className="absolute -right-10 -top-10 w-72 h-72 bg-emerald-400/10 rounded-full blur-3xl pointer-events-none" />
                 <div className="absolute left-1/3 -bottom-10 w-60 h-60 bg-cyan-400/10 rounded-full blur-2xl pointer-events-none" />
 
-                {/* 頂部標題與說明 */}
+                {/* 頂部標題與說明 (精準依照需求修改文案) */}
                 <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 pb-6 border-b border-slate-100">
                     <div className="space-y-3 max-w-2xl">
                         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[12px] font-black tracking-wider uppercase">
                             <Gift className="w-4 h-4 text-emerald-600" />
-                            🎁 每月成功推薦 1 位好友·享有全年免費
+                            🎁 每月成功推薦 1 位好友·最高全年享九個月免費
                         </div>
                         <h3 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
-                            讓同行好友幫您買單 AI 店長月費！
+                            推薦一位免費贈送一個月
                         </h3>
                         <p className="text-slate-600 text-sm font-bold leading-relaxed">
                             只需分享您的專屬推薦連結給同行朋友。當朋友成功使用並付費滿 3 個月，系統將在【第 4 個月】自動為您折抵全額月費 $199！年繳客戶更享加碼<span className="text-emerald-600 font-black">連續 2 個月免費</span>！
@@ -154,7 +109,9 @@ export default function ReferralProgramSection({ botId }: ReferralProgramSection
                         <div className="w-px h-8 bg-emerald-200/60" />
                         <div className="text-center">
                             <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">成功推薦</p>
-                            <p className="text-2xl font-black text-emerald-600">{referrals.filter(r => r.status === 'QUALIFIED').length} 家</p>
+                            <p className="text-2xl font-black text-emerald-600">
+                                {referrals.filter(r => r.status === 'QUALIFIED' || r.status === 'REDEEMED').length} 家
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -170,21 +127,23 @@ export default function ReferralProgramSection({ botId }: ReferralProgramSection
                             <input 
                                 type="text" 
                                 readOnly 
-                                value={referralUrl}
+                                value={referralUrl || '載入中...'}
                                 className="w-full bg-slate-50/80 border border-slate-200 rounded-2xl py-3.5 px-5 text-sm font-bold text-slate-700 outline-none select-all focus:ring-2 ring-emerald-500/20"
                             />
                         </div>
                         <div className="flex items-center gap-3 w-full sm:w-auto shrink-0">
                             <button
                                 onClick={handleCopy}
-                                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3.5 bg-slate-900 text-white font-black rounded-2xl text-sm hover:bg-slate-800 active:scale-95 transition-all shadow-md"
+                                disabled={!referralUrl}
+                                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3.5 bg-slate-900 text-white font-black rounded-2xl text-sm hover:bg-slate-800 active:scale-95 transition-all shadow-md disabled:opacity-50"
                             >
                                 {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
                                 {copied ? '已複製！' : '複製連結'}
                             </button>
                             <button
                                 onClick={handleLineShare}
-                                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3.5 bg-[#06C755] text-white font-black rounded-2xl text-sm hover:bg-[#05b34c] active:scale-95 transition-all shadow-lg shadow-[#06C755]/20"
+                                disabled={!referralUrl}
+                                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3.5 bg-[#06C755] text-white font-black rounded-2xl text-sm hover:bg-[#05b34c] active:scale-95 transition-all shadow-lg shadow-[#06C755]/20 disabled:opacity-50"
                             >
                                 <Share2 className="w-4 h-4" />
                                 一鍵分享至 LINE
@@ -203,45 +162,49 @@ export default function ReferralProgramSection({ botId }: ReferralProgramSection
                         <span className="text-xs text-slate-400 font-medium">系統每月 1 號自動判定折抵</span>
                     </h4>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        {timeline.map((item, idx) => {
-                            const isUnlocked = item.status === 'unlocked';
-                            const isPending = item.status === 'pending';
-                            const isLocked = item.status === 'locked';
+                    {loading ? (
+                        <div className="p-8 text-center text-slate-400 text-xs font-bold">載入行事曆中...</div>
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            {timeline.map((item, idx) => {
+                                const isUnlocked = item.status === 'unlocked';
+                                const isPending = item.status === 'pending';
+                                const isLocked = item.status === 'locked';
 
-                            return (
-                                <div 
-                                    key={idx}
-                                    className={`p-5 rounded-2xl border transition-all ${
-                                        isUnlocked 
-                                            ? 'bg-emerald-50/80 border-emerald-300/80 shadow-md shadow-emerald-500/5' 
-                                            : isPending 
-                                            ? 'bg-amber-50/60 border-amber-200/80' 
-                                            : 'bg-slate-50/60 border-slate-200/60 opacity-70'
-                                    }`}
-                                >
-                                    <div className="flex items-center justify-between mb-3">
-                                        <span className="text-xs font-black text-slate-500">{item.monthLabel}</span>
-                                        {isUnlocked && <span className="px-2.5 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-black flex items-center gap-1"><Unlock className="w-3 h-3" /> 已解鎖</span>}
-                                        {isPending && <span className="px-2.5 py-0.5 rounded-full bg-amber-500 text-white text-[10px] font-black flex items-center gap-1"><Clock className="w-3 h-3" /> 審核中</span>}
-                                        {isLocked && <span className="px-2.5 py-0.5 rounded-full bg-slate-300 text-slate-700 text-[10px] font-black flex items-center gap-1"><Lock className="w-3 h-3" /> 鎖定中</span>}
-                                    </div>
+                                return (
+                                    <div 
+                                        key={idx}
+                                        className={`p-5 rounded-2xl border transition-all ${
+                                            isUnlocked 
+                                                ? 'bg-emerald-50/80 border-emerald-300/80 shadow-md shadow-emerald-500/5' 
+                                                : isPending 
+                                                ? 'bg-amber-50/60 border-amber-200/80' 
+                                                : 'bg-slate-50/60 border-slate-200/60 opacity-70'
+                                        }`}
+                                    >
+                                        <div className="flex items-center justify-between mb-3">
+                                            <span className="text-xs font-black text-slate-500">{item.monthLabel}</span>
+                                            {isUnlocked && <span className="px-2.5 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-black flex items-center gap-1"><Unlock className="w-3 h-3" /> 已解鎖</span>}
+                                            {isPending && <span className="px-2.5 py-0.5 rounded-full bg-amber-500 text-white text-[10px] font-black flex items-center gap-1"><Clock className="w-3 h-3" /> 審核中</span>}
+                                            {isLocked && <span className="px-2.5 py-0.5 rounded-full bg-slate-300 text-slate-700 text-[10px] font-black flex items-center gap-1"><Lock className="w-3 h-3" /> 待解鎖</span>}
+                                        </div>
 
-                                    <div className="space-y-1">
-                                        <p className="text-lg font-black text-slate-900">
-                                            {isUnlocked ? '🔓 0 元月費免單' : isPending ? '⏳ 審核中免單' : '🔒 待解鎖月份'}
-                                        </p>
-                                        <p className="text-xs font-bold text-slate-500 truncate">
-                                            {item.refereeName ? `來自：${item.refereeName}` : '分享連結邀請好友解鎖'}
-                                        </p>
+                                        <div className="space-y-1">
+                                            <p className="text-lg font-black text-slate-900">
+                                                {isUnlocked ? '🔓 0 元月費免單' : isPending ? '⏳ 審核中免單' : '🔒 待解鎖月份'}
+                                            </p>
+                                            <p className="text-xs font-bold text-slate-500 truncate">
+                                                {item.refereeName ? `來自：${item.refereeName}` : '分享連結邀請好友解鎖'}
+                                            </p>
+                                        </div>
                                     </div>
-                                </div>
-                            );
-                        })}
-                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
                 </div>
 
-                {/* 👥 推薦好友明細表格 */}
+                {/* 👥 真實推薦好友明細表格 (無任何假資料) */}
                 <div className="relative z-10 space-y-4 pt-4 border-t border-slate-100">
                     <h4 className="text-[14px] font-black text-slate-800 flex items-center gap-2">
                         <Users className="w-4 h-4 text-emerald-600" />
@@ -261,10 +224,16 @@ export default function ReferralProgramSection({ botId }: ReferralProgramSection
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 font-bold">
-                                {referrals.length === 0 ? (
+                                {loading ? (
                                     <tr>
                                         <td colSpan={6} className="px-6 py-8 text-center text-slate-400">
-                                            目前尚無推薦好友紀錄，立刻複製專屬連結分享給同行朋友吧！
+                                            載入推薦明細中...
+                                        </td>
+                                    </tr>
+                                ) : referrals.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={6} className="px-6 py-10 text-center text-slate-400">
+                                            目前尚無推薦好友紀錄，複製專屬連結分享給同行朋友吧！
                                         </td>
                                     </tr>
                                 ) : (

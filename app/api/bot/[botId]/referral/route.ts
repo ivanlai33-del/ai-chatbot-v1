@@ -3,51 +3,72 @@ import { supabase } from '@/lib/supabase';
 import crypto from 'crypto';
 
 // 產生 6 碼大寫獨特推薦碼
-function generateUniqueCode(botId: string): string {
-    const hash = crypto.createHash('md5').update(botId + Date.now().toString()).digest('hex').toUpperCase();
+function generateUniqueCode(seedId: string): string {
+    const hash = crypto.createHash('md5').update(seedId + 'SALT_2026').digest('hex').toUpperCase();
     return `SHOP-${hash.substring(0, 4)}`;
 }
 
 /**
  * GET /api/bot/[botId]/referral
- * 取得 Bot 的專屬推薦碼、連結、歷史進度與免費月份行事曆
+ * 取得 Bot 或 LINE User 的專屬真實推薦碼、連結、歷史進度與免費月份行事曆
  */
 export async function GET(
     req: NextRequest,
     { params }: { params: { botId: string } }
 ) {
     try {
-        const { botId } = params;
+        let rawId = params.botId;
 
-        if (!botId) {
-            return NextResponse.json({ error: 'Missing botId' }, { status: 400 });
+        if (!rawId || rawId === 'undefined' || rawId === 'null') {
+            // 從 URL query parameter 嘗試抓取 lineUserId
+            rawId = req.nextUrl.searchParams.get('lineUserId') || '';
         }
 
-        // 1. 取得或自動建立推薦碼
+        if (!rawId) {
+            return NextResponse.json({ error: 'Missing botId or lineUserId' }, { status: 400 });
+        }
+
+        let targetBotId = rawId;
+
+        // 1. 若傳入的是 LINE User ID (以 U 開頭 33 碼)，先查出屬性的 bot_id
+        if (rawId.startsWith('U') && rawId.length >= 32) {
+            const { data: bot } = await supabase
+                .from('bots')
+                .select('id')
+                .eq('owner_line_id', rawId)
+                .order('created_at', { ascending: false })
+                .limit(1)
+                .maybeSingle();
+
+            if (bot?.id) {
+                targetBotId = bot.id;
+            }
+        }
+
+        // 2. 查詢或自動創建推薦碼 (完全持久化寫入 Supabase)
         let { data: codeData } = await supabase
             .from('referral_codes')
             .select('*')
-            .eq('bot_id', botId)
-            .single();
+            .eq('bot_id', targetBotId)
+            .maybeSingle();
 
         if (!codeData) {
-            const newCode = generateUniqueCode(botId);
+            const newCode = generateUniqueCode(targetBotId);
             const { data: inserted, error: insertErr } = await supabase
                 .from('referral_codes')
-                .insert({ bot_id: botId, code: newCode, clicks_count: 0 })
+                .insert({ bot_id: targetBotId, code: newCode, clicks_count: 0 })
                 .select('*')
                 .single();
 
             if (insertErr || !inserted) {
-                // 回退預設值避免阻斷 UI
-                codeData = { bot_id: botId, code: `SHOP-${botId.slice(0, 4).toUpperCase()}`, clicks_count: 0 };
+                codeData = { bot_id: targetBotId, code: newCode, clicks_count: 0 };
             } else {
                 codeData = inserted;
             }
         }
 
-        // 2. 撈取該 Bot 推薦的所有好友紀錄
-        const { data: referrals } = await supabase
+        // 3. 從資料庫真實撈取該 Bot 推薦的所有好友紀錄 (不使用任何假資料)
+        const { data: rawReferrals } = await supabase
             .from('referrals')
             .select(`
                 id,
@@ -60,34 +81,23 @@ export async function GET(
                 created_at,
                 referee_bot:bots!referrals_referee_bot_id_fkey(store_name, selected_plan, owner_line_id)
             `)
-            .eq('referrer_bot_id', botId)
+            .eq('referrer_bot_id', targetBotId)
             .order('created_at', { ascending: false });
 
-        // 若無外鍵連結退回基礎讀取
-        let rawReferrals = referrals;
-        if (!referrals) {
-            const { data: fallback } = await supabase
-                .from('referrals')
-                .select('*')
-                .eq('referrer_bot_id', botId)
-                .order('created_at', { ascending: false });
-            rawReferrals = fallback || [];
-        }
+        const actualReferrals = rawReferrals || [];
 
-        // 3. 計算免費月份行事曆
+        // 4. 計算免費月份行事曆 (根據真實推薦紀錄動態算繪)
         const currentYear = new Date().getFullYear();
         const currentMonth = new Date().getMonth() + 1;
 
-        // 計算接下來 6 個月的動態狀態
         const timeline = [];
-        for (let i = 1; i <= 6; i++) {
+        for (let i = 1; i <= 4; i++) {
             const targetDate = new Date(currentYear, currentMonth - 1 + i, 1);
             const yearStr = targetDate.getFullYear();
             const monthStr = String(targetDate.getMonth() + 1).padStart(2, '0');
             const monthKey = `${yearStr}-${monthStr}`;
 
-            // 尋找符合該月份的推薦獎勵
-            const matchedRef = (rawReferrals || []).find((r: any) => r.reward_applied_month === monthKey && r.status !== 'FAILED');
+            const matchedRef = actualReferrals.find((r: any) => r.reward_applied_month === monthKey && r.status !== 'FAILED');
 
             timeline.push({
                 monthKey,
@@ -98,7 +108,7 @@ export async function GET(
                     ? (matchedRef.status === 'REDEEMED' || matchedRef.status === 'QUALIFIED' ? 'unlocked' : 'pending')
                     : 'locked',
                 refereeName: (matchedRef as any)?.referee_bot?.store_name || (matchedRef as any)?.referee_name || (matchedRef ? '推薦好友店面' : null),
-                planType: matchedRef?.plan_type || 'monthly'
+                planType: (matchedRef as any)?.plan_type || 'monthly'
             });
         }
 
@@ -107,7 +117,7 @@ export async function GET(
             referralCode: codeData.code,
             clicksCount: codeData.clicks_count || 0,
             timeline,
-            referrals: rawReferrals || []
+            referrals: actualReferrals
         });
 
     } catch (err: any) {

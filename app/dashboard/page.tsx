@@ -13,6 +13,7 @@ import RAGTab from '@/components/dashboard/tabs/RAGTab';
 import AudienceTab from '@/components/dashboard/tabs/AudienceTab';
 import TrendsTab from '@/components/dashboard/tabs/TrendsTab';
 import GuardianTab from '@/components/dashboard/tabs/GuardianTab';
+import BookingTab from '@/components/dashboard/tabs/BookingTab';
 import RichMenuTab from '@/components/dashboard/tabs/RichMenuTab';
 import KnowledgeBasePanel from '@/components/dashboard/KnowledgeBasePanel';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
@@ -164,6 +165,7 @@ export default function DashboardPage() {
                         {activeTab === 'audience' && <AudienceTab botId={selectedBotId} planLevel={planLevel} />}
                         {activeTab === 'trends' && <TrendsTab botId={selectedBotId || ''} />}
                         {activeTab === 'guardian' && <GuardianTab botId={selectedBotId || ''} />}
+                        {activeTab === 'booking' && <BookingTab botId={selectedBotId || ''} userPlanLevel={planLevel} />}
                         {activeTab === 'rich_menu' && <RichMenuTab config={config} setConfig={setConfig} planLevel={planLevel} />}
                     </motion.div>
                 </AnimatePresence>

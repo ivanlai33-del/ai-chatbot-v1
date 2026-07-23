@@ -35,6 +35,7 @@ export const DASHBOARD_TABS = [
     { id: 'audience', label: 'CRM 分眾行銷', emoji: '👥' },
     { id: 'trends', label: '產業風向週報', emoji: '📈' },
     { id: 'guardian', label: '品牌防護守護者', emoji: '🛡️' },
+    { id: 'booking', label: '預約排班管理', emoji: '📅' },
     { id: 'rich_menu', label: '圖文選單中心', emoji: '📱' }
 ] as const;
 

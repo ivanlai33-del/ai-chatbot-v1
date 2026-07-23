@@ -421,7 +421,7 @@ export default function ButterToastProposalPage() {
                   🧾 加上 5% 營業稅 ($240) ＝ <b>含稅 NT$ 5,040 / 月</b>
                 </div>
                 <div className="text-[10px] bg-amber-50 border border-[#D6A86E] p-1.5 rounded-lg mb-2 text-[#382D24]">
-                  💡 <b>對標真人小編效益：</b>真人小編月薪至少 $30,000 且無法 24hr 秒回；AI 全包方案月費僅 <b>$4,800</b>，每年直接為店家省下 <b>NT$ 28 萬薪資支出！</b>
+                  💡 <b>對標真人小編效益：</b>真人小編每天最多處理 <b>30~50 筆訂單</b>；AI 店長可<b>「同時無上限併發處理無限筆訂單 (0.1秒秒回)」</b>，每年直接為店家省下 <b>NT$ 28 萬薪資支出！</b>
                 </div>
                 <ul className="text-xs text-[#382D24] space-y-0.5 mb-2">
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 5,000 會員容量 AI 流量 (20,000則/月)</li>
@@ -641,7 +641,7 @@ export default function ButterToastProposalPage() {
         </div>
       ),
     },
-    // Slide 6: Tailored Feature Checklist
+    // Slide 6: Feature Checklist
     {
       badge: "生乳/奶霜專賣店 交付清單",
       title: "詳細服務與交付對照表",
@@ -670,10 +670,10 @@ export default function ButterToastProposalPage() {
         </div>
       ),
     },
-    // Slide 7: ROI BENCHMARKED DIRECTLY AGAINST HUMAN EDITOR
+    // Slide 7: ROI BENCHMARKED DIRECTLY AGAINST HUMAN EDITOR WITH ORDER CAPACITY METRICS
     {
       badge: "商業價值總結",
-      title: "真人小編 ✕ AI 店長效益與成本對比",
+      title: "真人小編 ✕ AI 店長效益與單量對比",
       content: (
         <div className="space-y-3">
           {/* Comparison Table */}
@@ -688,19 +688,24 @@ export default function ButterToastProposalPage() {
               </thead>
               <tbody className="divide-y divide-[#E6DDCF] text-[#382D24]">
                 <tr>
+                  <td className="p-2.5 font-bold">單日點餐對話處理容量</td>
+                  <td className="p-2.5 text-red-600 font-bold">每天最多 30 ~ 50 筆對話 (易超載)</td>
+                  <td className="p-2.5 font-black text-emerald-700 bg-[#FFF8F0]">單日可精確處理 10,000+ 筆點餐訂單</td>
+                </tr>
+                <tr>
+                  <td className="p-2.5 font-bold">同時多人群發併發處理</td>
+                  <td className="p-2.5 text-gray-600">同時只能回 1 人 (多視窗易出錯)</td>
+                  <td className="p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]">同時無上限併發處理 (1,000人同時下單)</td>
+                </tr>
+                <tr>
+                  <td className="p-2.5 font-bold">平均回覆與試算速度</td>
+                  <td className="p-2.5 text-gray-600">約 3 ~ 15 分鐘 (忙碌時需數小時)</td>
+                  <td className="p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]">0.1 秒極速回覆與多品項自動折價算錢</td>
+                </tr>
+                <tr>
                   <td className="p-2.5 font-bold">每月固定費用成本</td>
                   <td className="p-2.5 text-red-600 font-mono font-bold">NT$ 30,000 ~ 35,000 / 月</td>
                   <td className="p-2.5 text-emerald-700 font-mono font-black bg-[#FFF8F0]">NT$ 4,800 / 月 (含稅 $5,040)</td>
-                </tr>
-                <tr>
-                  <td className="p-2.5 font-bold">服務時間與回應速度</td>
-                  <td className="p-2.5 text-gray-600">每天 8 小時 (下班時間無法回覆)</td>
-                  <td className="p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]">24 小時 365 天不間斷 0.1 秒回覆</td>
-                </tr>
-                <tr>
-                  <td className="p-2.5 font-bold">點餐算錢與廚房打單</td>
-                  <td className="p-2.5 text-gray-600">人工計算易算錯，需手動打單</td>
-                  <td className="p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]">0 算錯率，自動打單與推播取貨</td>
                 </tr>
                 <tr>
                   <td className="p-2.5 font-bold">行銷推播與 Banner 設計</td>
@@ -712,7 +717,7 @@ export default function ButterToastProposalPage() {
           </div>
 
           <div className="bg-emerald-50 border border-emerald-300 p-2.5 rounded-xl text-center text-xs text-emerald-900 font-bold">
-            🎉 結論：採用 AI 店長代營運方案，<b>每年直接為【生乳/奶霜專賣店】節省超過 NT$ 280,000 元</b> 的龐大薪資開銷，同時提升 3 倍接單效率！
+            🎉 結論：AI 店長處理單量能力是真人小編的 <b>200 倍以上</b>，且月費僅真人小編的 <b>15%</b>，每年直接為店家節省超過 <b>NT$ 280,000 元</b> 人力成本！
           </div>
         </div>
       ),

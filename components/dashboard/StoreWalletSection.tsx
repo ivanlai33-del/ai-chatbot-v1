@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Wallet, CreditCard, Sparkles, PlusCircle, ArrowUpRight, ArrowDownRight, 
-    ShieldCheck, Zap, RefreshCw, CheckCircle2, AlertCircle, FileText, Check
+    ShieldCheck, Zap, RefreshCw, CheckCircle2, AlertCircle, FileText, Check, Settings, ToggleLeft, ToggleRight
 } from 'lucide-react';
 
 interface StoreWalletSectionProps {
@@ -15,11 +15,12 @@ export default function StoreWalletSection({ ownerLineId }: StoreWalletSectionPr
     const [balanceCredits, setBalanceCredits] = useState<number>(0);
     const [totalEarned, setTotalEarned] = useState<number>(0);
     const [totalSpent, setTotalSpent] = useState<number>(0);
+    const [deductionMode, setDeductionMode] = useState<'AUTO_ALL' | 'OVERAGE_ONLY'>('AUTO_ALL');
     const [transactions, setTransactions] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
-    const [selectedPackage, setSelectedPackage] = useState<number>(5000);
     const [processing, setProcessing] = useState(false);
+    const [modeUpdating, setModeUpdating] = useState(false);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     const topUpPackages = [
@@ -47,12 +48,46 @@ export default function StoreWalletSection({ ownerLineId }: StoreWalletSectionPr
                 setBalanceCredits(data.balanceCredits || 0);
                 setTotalEarned(data.totalEarned || 0);
                 setTotalSpent(data.totalSpent || 0);
+                setDeductionMode(data.deductionMode || 'AUTO_ALL');
                 setTransactions(data.transactions || []);
             }
         } catch (err) {
             console.error('[Wallet Fetch Error]', err);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleDeductionModeSwitch = async (newMode: 'AUTO_ALL' | 'OVERAGE_ONLY') => {
+        if (newMode === deductionMode) return;
+        setModeUpdating(true);
+        const getCookie = (name: string) => {
+            const match = typeof document !== 'undefined' ? document.cookie.split('; ').find(r => r.startsWith(name + '=')) : null;
+            return match ? decodeURIComponent(match.split('=')[1]) : '';
+        };
+        const uid = ownerLineId || localStorage.getItem('line_user_id') || getCookie('line_user_id') || 'Ud8b8dd79162387a80b2b5a4aba20f604';
+
+        try {
+            const res = await fetch(`/api/wallet/${uid}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'UPDATE_DEDUCTION_MODE',
+                    deductionMode: newMode
+                })
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                setDeductionMode(newMode);
+                const modeLabel = newMode === 'AUTO_ALL' ? '模式 A【全自動抵扣月費與超額】' : '模式 B【專屬防護罩：信用卡定額扣月費，點數僅抵超額】';
+                setSuccessMessage(`⚙️ 已成功切換為：${modeLabel}`);
+                setTimeout(() => setSuccessMessage(null), 4000);
+            }
+        } catch (err) {
+            console.error('[Update Deduction Mode Error]', err);
+        } finally {
+            setModeUpdating(false);
         }
     };
 
@@ -152,6 +187,59 @@ export default function StoreWalletSection({ ownerLineId }: StoreWalletSectionPr
                         >
                             <PlusCircle className="w-5 h-5 text-amber-300" />
                             儲值大小月爆量專用金
+                        </button>
+                    </div>
+                </div>
+
+                {/* ⚙️ 錢包扣抵偏好設定卡片 (Deduction Mode Switcher) */}
+                <div className="relative z-10 bg-slate-50/80 border border-slate-200/80 rounded-2xl p-6 space-y-4">
+                    <div className="flex items-center justify-between">
+                        <h4 className="text-[14px] font-black text-slate-900 flex items-center gap-2">
+                            <Settings className="w-4 h-4 text-emerald-600" />
+                            ⚙️ 錢包扣抵偏好設定 (Deduction Mode)
+                        </h4>
+                        <span className="text-xs text-slate-400 font-bold">可依會計報帳需求隨時切換</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button
+                            onClick={() => handleDeductionModeSwitch('AUTO_ALL')}
+                            disabled={modeUpdating}
+                            className={`p-5 rounded-2xl border text-left transition-all ${
+                                deductionMode === 'AUTO_ALL'
+                                    ? 'bg-emerald-50/90 border-emerald-500 shadow-md ring-2 ring-emerald-500/20'
+                                    : 'bg-white border-slate-200 hover:border-slate-300'
+                            }`}
+                        >
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="font-black text-slate-900 text-sm flex items-center gap-2">
+                                    ◉ 模式 A【全自動預設】
+                                </span>
+                                {deductionMode === 'AUTO_ALL' && <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />}
+                            </div>
+                            <p className="text-xs font-bold text-slate-500 leading-relaxed">
+                                點數優先自動抵扣「月費」與「超量費」。最省錢！錢包有點數就優先全額免單。
+                            </p>
+                        </button>
+
+                        <button
+                            onClick={() => handleDeductionModeSwitch('OVERAGE_ONLY')}
+                            disabled={modeUpdating}
+                            className={`p-5 rounded-2xl border text-left transition-all ${
+                                deductionMode === 'OVERAGE_ONLY'
+                                    ? 'bg-emerald-50/90 border-emerald-500 shadow-md ring-2 ring-emerald-500/20'
+                                    : 'bg-white border-slate-200 hover:border-slate-300'
+                            }`}
+                        >
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="font-black text-slate-900 text-sm flex items-center gap-2">
+                                    ◎ 模式 B【專屬爆量防護罩】(會計最愛)
+                                </span>
+                                {deductionMode === 'OVERAGE_ONLY' && <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />}
+                            </div>
+                            <p className="text-xs font-bold text-slate-500 leading-relaxed">
+                                信用卡每月固定扣 $199 月費 (會計方便報帳)，錢包點數專門在爆量月份自動救援抵扣超額費。
+                            </p>
                         </button>
                     </div>
                 </div>

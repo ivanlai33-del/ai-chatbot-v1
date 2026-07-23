@@ -1,13 +1,14 @@
 -- ============================================================
--- 💰 店長購物金錢包與交易明細對帳單 (Store Wallet & Transactions Schema)
+-- 💰 店長購物金錢包與交易明細對帳表 (Store Wallet Schema v2)
 -- ============================================================
 
--- 1. 店長錢包主表 (以老闆 LINE User ID 劃分)
+-- 1. 店長錢包主表 (含扣款偏好設定 deduction_mode)
 CREATE TABLE IF NOT EXISTS public.store_wallets (
     owner_line_id TEXT PRIMARY KEY,
     balance_credits NUMERIC DEFAULT 0 CHECK (balance_credits >= 0),
     total_earned NUMERIC DEFAULT 0,
     total_spent NUMERIC DEFAULT 0,
+    deduction_mode TEXT DEFAULT 'AUTO_ALL' CHECK (deduction_mode IN ('AUTO_ALL', 'OVERAGE_ONLY')),
     created_at TIMESTAMPTZ DEFAULT now(),
     updated_at TIMESTAMPTZ DEFAULT now()
 );

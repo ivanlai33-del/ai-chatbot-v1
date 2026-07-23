@@ -3,7 +3,7 @@ import { supabase } from '@/lib/supabase';
 
 /**
  * GET /api/wallet/[ownerId]
- * 取得老闆的錢包總餘額、異動紀錄明細與儲值方案
+ * 取得老闆的錢包總餘額、扣抵偏好 (deductionMode)、對帳單與明細
  */
 export async function GET(
     req: NextRequest,
@@ -16,7 +16,7 @@ export async function GET(
             ownerLineId = req.nextUrl.searchParams.get('lineUserId') || 'Ud8b8dd79162387a80b2b5a4aba20f604';
         }
 
-        // 1. 查詢或初始化錢包
+        // 1. 查詢或初始化錢包 (含 deduction_mode 偏好)
         let { data: wallet } = await supabase
             .from('store_wallets')
             .select('*')
@@ -30,13 +30,14 @@ export async function GET(
                     owner_line_id: ownerLineId,
                     balance_credits: 0,
                     total_earned: 0,
-                    total_spent: 0
+                    total_spent: 0,
+                    deduction_mode: 'AUTO_ALL'
                 })
                 .select('*')
                 .single();
 
             if (createErr || !created) {
-                wallet = { owner_line_id: ownerLineId, balance_credits: 0, total_earned: 0, total_spent: 0 };
+                wallet = { owner_line_id: ownerLineId, balance_credits: 0, total_earned: 0, total_spent: 0, deduction_mode: 'AUTO_ALL' };
             } else {
                 wallet = created;
             }
@@ -54,6 +55,7 @@ export async function GET(
             balanceCredits: Number(wallet.balance_credits) || 0,
             totalEarned: Number(wallet.total_earned) || 0,
             totalSpent: Number(wallet.total_spent) || 0,
+            deductionMode: wallet.deduction_mode || 'AUTO_ALL',
             transactions: transactions || []
         });
 
@@ -65,7 +67,7 @@ export async function GET(
 
 /**
  * POST /api/wallet/[ownerId]
- * 儲值購物金點數 (Top-up simulation / Payment Integration)
+ * 儲值購物金點數或切換扣款偏好設定 (deductionMode)
  */
 export async function POST(
     req: NextRequest,
@@ -74,6 +76,29 @@ export async function POST(
     try {
         let ownerLineId = params.ownerId;
         const body = await req.json();
+
+        // 情境 A：切換扣款偏好模式 (AUTO_ALL vs OVERAGE_ONLY)
+        if (body.action === 'UPDATE_DEDUCTION_MODE') {
+            const { deductionMode } = body;
+            if (!['AUTO_ALL', 'OVERAGE_ONLY'].includes(deductionMode)) {
+                return NextResponse.json({ error: 'Invalid deductionMode' }, { status: 400 });
+            }
+
+            await supabase
+                .from('store_wallets')
+                .upsert({
+                    owner_line_id: ownerLineId,
+                    deduction_mode: deductionMode,
+                    updated_at: new Date().toISOString()
+                });
+
+            return NextResponse.json({
+                success: true,
+                deductionMode
+            });
+        }
+
+        // 情境 B：線上儲值購物金點數
         const { amount, bonusCredits = 0, description = '線上儲值購物金' } = body;
 
         if (!amount || amount <= 0) {
@@ -82,7 +107,6 @@ export async function POST(
 
         const totalAdd = Number(amount) + Number(bonusCredits);
 
-        // 1. 取得當前錢包
         let { data: wallet } = await supabase
             .from('store_wallets')
             .select('*')
@@ -93,7 +117,6 @@ export async function POST(
         const newBalance = currentBalance + totalAdd;
         const newTotalEarned = Number(wallet?.total_earned || 0) + totalAdd;
 
-        // 2. 更新錢包餘額
         await supabase
             .from('store_wallets')
             .upsert({
@@ -103,7 +126,6 @@ export async function POST(
                 updated_at: new Date().toISOString()
             });
 
-        // 3. 寫入對帳單交易紀錄
         const { data: tx } = await supabase
             .from('wallet_transactions')
             .insert({

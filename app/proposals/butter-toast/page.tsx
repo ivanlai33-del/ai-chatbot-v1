@@ -368,7 +368,7 @@ export default function ButterToastProposalPage() {
         </div>
       ),
     },
-    // Slide 4: PRICING CARDS WITH HUMAN EDITOR VS AI MANAGER COST COMPARISON
+    // Slide 4: PRICING CARDS WITH HUMAN EDITOR VS AI MANAGER COST COMPARISON + 30-DAY WARRANTY
     {
       badge: "生乳/奶霜專案報價",
       title: "專案報價金額、對標真人小編成本與發票填寫",
@@ -406,7 +406,7 @@ export default function ButterToastProposalPage() {
               </div>
             </div>
 
-            {/* Card 2: Monthly Recurring ($4,800/月) - BENCHMARKED AGAINST HUMAN EDITOR */}
+            {/* Card 2: Monthly Recurring ($4,800/月) - BENCHMARKED AGAINST HUMAN EDITOR + 30-DAY WARRANTY */}
             <div className="bg-white border-2 border-[#B26A27] rounded-2xl p-3.5 shadow-md relative flex flex-col justify-between ring-2 ring-[#B26A27]/20">
               <div>
                 <div className="flex justify-between items-center mb-1">
@@ -427,6 +427,7 @@ export default function ButterToastProposalPage() {
                   💡 <b>對標真人小編效益：</b>真人小編每天最多處理 <b>30~50 筆訂單</b>；AI 店長具備 <b>LINE 防爆隊列與資安過濾</b>，同時 100+ 人順暢點餐 0 掉單，每年直接為店家省下 <b>NT$ 28 萬薪資！</b>
                 </div>
                 <ul className="text-xs text-[#382D24] space-y-0.5 mb-2">
+                  <li className="flex items-center gap-1.5"><span className="text-emerald-700 font-bold">★</span> <b>首月 30 天線上免費維護保障 (依需求彈性調整對話語氣與菜單)</b></li>
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 5,000 會員容量 AI 流量 (20,000則/月)</li>
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 每月 2 次夏日限定與優惠組 Banner 全自動推播</li>
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 每週 AI 對話巡檢、菜單維護與會員 CSV 資料匯出</li>
@@ -608,7 +609,7 @@ export default function ButterToastProposalPage() {
         </div>
       ),
     },
-    // Slide 5: 100% FULLY REMOTE TIMELINE & ONBOARDING SOP
+    // Slide 5: 100% FULLY REMOTE TIMELINE & ONBOARDING SOP WITH 30-DAY WARRANTY
     {
       badge: "100% 全遠端無縫導入",
       title: "全遠端零干擾建置、線上測試與交案流程",
@@ -634,17 +635,18 @@ export default function ButterToastProposalPage() {
           </div>
           <div className="bg-white border-2 border-[#B26A27] rounded-2xl p-5 shadow-md bg-amber-50/30">
             <span className="inline-block px-2.5 py-0.5 bg-[#B26A27] text-[#FFFDF9] rounded-full text-xs font-bold mb-2">PHASE 3 (Week 3 遠端驗收)</span>
-            <h4 className="font-serif font-bold text-[#B26A27] mb-2">雲端無縫切換 ➔ 驗收 ➔ 開通</h4>
+            <h4 className="font-serif font-bold text-[#B26A27] mb-2">無縫切換 ➔ 驗收開通 ➔ 保固</h4>
             <ul className="text-xs text-[#382D24] space-y-1.5 font-medium">
               <li>✓ 5 分鐘遠端切換正式 Webhook，原 LINE 零停機升級</li>
               <li>✓ 線上通過驗收並<b>轉帳付尾款 $24,000 (含稅$25,200)</b></li>
               <li>✓ 點擊按鈕<b>線上綁定藍新信用卡 ($5,040/月含稅)，正式開通！</b></li>
+              <li>✓ 享【首月 30 天線上維護保障】，對話與菜單依需求免費微調！</li>
             </ul>
           </div>
         </div>
       ),
     },
-    // Slide 6: Feature Checklist WITH MASCOT PERSONA, BRAND INTRO & CYBERSECURITY SAFEGUARDS
+    // Slide 6: Feature Checklist WITH MASCOT PERSONA, BRAND INTRO, 30-DAY WARRANTY & CYBERSECURITY SAFEGUARDS
     {
       badge: "生乳/奶霜專賣店 交付清單",
       title: "詳細服務交付 ✕ 吉祥物 AI 人設 ✕ 資安防護清單",
@@ -664,8 +666,9 @@ export default function ButterToastProposalPage() {
           </div>
 
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-3.5 shadow-sm">
-            <h4 className="font-bold text-[#B26A27] text-xs mb-1.5">🔄 代營運交付 (每月持續)</h4>
+            <h4 className="font-bold text-[#B26A27] text-xs mb-1.5">🔄 代營運與保固交付 (每月持續)</h4>
             <ul className="text-[11px] text-[#382D24] space-y-1">
+              <li>✓ <b>首月 30 天線上免費微調保障 (語氣與菜單彈性調整)</b></li>
               <li>✓ 每月 2 次限量預購 Banner 設計全自動推播</li>
               <li>✓ 每週巡檢 AI 未解答對話與補充知識庫</li>
               <li>✓ 季節限定甜點 (夏日芒果/秋冬新品) 上架</li>
@@ -716,9 +719,9 @@ export default function ButterToastProposalPage() {
                   </td>
                 </tr>
                 <tr>
-                  <td className="p-2.5 font-bold">品牌娃娃人設與產品介紹</td>
-                  <td className="p-2.5 text-gray-600">語氣不固定，需手動回覆</td>
-                  <td className="p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]">融入品牌娃娃專屬親切口吻，24hr 自動展演與導流 IG</td>
+                  <td className="p-2.5 font-bold">品牌娃娃人設與售後保障</td>
+                  <td className="p-2.5 text-gray-600">語氣不固定，無維護保固概念</td>
+                  <td className="p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]">融入吉祥物親切口吻，開通享<b>首月 30 天免費維護微調</b>！</td>
                 </tr>
                 <tr>
                   <td className="p-2.5 font-bold">每月固定費用成本</td>

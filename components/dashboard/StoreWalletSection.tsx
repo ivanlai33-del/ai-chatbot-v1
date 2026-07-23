@@ -274,9 +274,9 @@ export default function StoreWalletSection({ ownerLineId }: StoreWalletSectionPr
                                 <button
                                     onClick={() => handleTopUpSubmit(pkg)}
                                     disabled={processing}
-                                    className="w-full py-3 bg-slate-900 group-hover:bg-emerald-600 text-white font-black rounded-xl text-xs transition-all shadow-md flex items-center justify-center gap-2"
+                                    className="w-full py-3 bg-gradient-to-r from-emerald-500 via-teal-600 to-cyan-600 text-white font-black rounded-xl text-xs transition-all shadow-lg shadow-emerald-500/20 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2"
                                 >
-                                    <Zap className="w-4 h-4" />
+                                    <Zap className="w-4 h-4 text-amber-300" />
                                     立刻儲值此方案
                                 </button>
                             </div>
@@ -405,7 +405,7 @@ export default function StoreWalletSection({ ownerLineId }: StoreWalletSectionPr
                                             <p className="font-black text-slate-900 text-lg">${pkg.amount.toLocaleString()} 元</p>
                                             <p className="text-xs text-slate-500 font-bold">獲得 {pkg.amount + pkg.bonus} 點數 (+{pkg.bonus}點優惠)</p>
                                         </div>
-                                        <span className="px-4 py-2 bg-slate-900 group-hover:bg-emerald-600 text-white rounded-xl text-xs font-black transition-all">
+                                        <span className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl text-xs font-black transition-all shadow-md shadow-emerald-500/20 group-hover:scale-105">
                                             選擇儲值
                                         </span>
                                     </button>

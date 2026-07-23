@@ -135,7 +135,7 @@ export default function ReferralProgramSection({ botId }: ReferralProgramSection
                             <button
                                 onClick={handleCopy}
                                 disabled={!referralUrl}
-                                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3.5 bg-slate-900 text-white font-black rounded-2xl text-sm hover:bg-slate-800 active:scale-95 transition-all shadow-md disabled:opacity-50"
+                                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-emerald-600 to-teal-700 text-white font-black rounded-2xl text-sm hover:scale-105 active:scale-95 transition-all shadow-lg shadow-emerald-500/20 disabled:opacity-50"
                             >
                                 {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
                                 {copied ? '已複製！' : '複製連結'}

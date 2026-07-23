@@ -270,19 +270,72 @@ export default function ButterToastProposalPage() {
         </div>
       ),
     },
-    // Slide 4: Pricing & Bank & Invoice
+    // Slide 4: Pricing Cards + Bank Transfer + Invoice Form
     {
       badge: "報價與金流資訊",
-      title: "專案報價、匯款帳號與發票填寫",
+      title: "專案報價金額、匯款帳號與發票填寫",
       content: (
-        <div className="space-y-4">
+        <div className="space-y-3.5">
+          {/* Top Two Main Pricing Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+            {/* Card 1: One-time Setup */}
+            <div className="bg-white border-2 border-[#D6A86E] rounded-2xl p-4 shadow-sm relative flex flex-col justify-between">
+              <div>
+                <div className="flex justify-between items-center mb-1">
+                  <span className="font-bold text-sm text-[#B26A27] flex items-center gap-1">
+                    🛠️ 【一次性】AI 店長系統建置費
+                  </span>
+                  <span className="text-[10px] bg-[#EFE7DA] text-[#B26A27] px-2 py-0.5 rounded-full font-bold">
+                    一次付清 / 分兩期
+                  </span>
+                </div>
+                <div className="text-2xl font-black font-mono text-[#B26A27] my-1">
+                  NT$ 28,000 <span className="text-xs font-normal text-[#7C6E62]">(未稅)</span>
+                </div>
+                <div className="text-xs text-[#7C6E62] mb-2 bg-[#F7F3ED] p-1.5 rounded-lg border border-[#E6DDCF]">
+                  🧾 加上 5% 營業稅 ($1,400) ＝ <b>含稅總額 NT$ 29,400</b>
+                </div>
+                <ul className="text-xs text-[#382D24] space-y-1">
+                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 現有 LINE 官方帳號 API 串接與選單適配</li>
+                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> AI 自動點餐算錢與 Flex 訂單明細生成</li>
+                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 奶油吐司專屬知識庫 50+ 題問答深度訓練</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Card 2: Monthly Recurring */}
+            <div className="bg-white border-2 border-[#D6A86E] rounded-2xl p-4 shadow-sm relative flex flex-col justify-between">
+              <div>
+                <div className="flex justify-between items-center mb-1">
+                  <span className="font-bold text-sm text-[#B26A27] flex items-center gap-1">
+                    💳 【每月】代營運與 AI 系統費
+                  </span>
+                  <span className="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-bold">
+                    每月信用卡自動扣款
+                  </span>
+                </div>
+                <div className="text-2xl font-black font-mono text-[#B26A27] my-1">
+                  NT$ 4,800 <span className="text-xs font-normal text-[#7C6E62]">/ 月 (未稅)</span>
+                </div>
+                <div className="text-xs text-[#7C6E62] mb-2 bg-[#F7F3ED] p-1.5 rounded-lg border border-[#E6DDCF]">
+                  🧾 加上 5% 營業稅 ($240) ＝ <b>含稅 NT$ 5,040 / 月</b>
+                </div>
+                <ul className="text-xs text-[#382D24] space-y-1">
+                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 5,000 會員容量 AI 流量 (20,000則/月)</li>
+                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 每月 2 次限量預購 Banner 設計與全自動推播</li>
+                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 每週 AI 對話巡檢、菜單維護與月數據簡報</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
           {/* Bank Transfer Card */}
-          <div className="bg-gradient-to-br from-[#FFFDF9] to-[#FCEFDC] border-2 border-[#B26A27] rounded-2xl p-4 shadow-md relative">
-            <div className="flex justify-between items-center mb-2">
+          <div className="bg-gradient-to-br from-[#FFFDF9] to-[#FCEFDC] border-2 border-[#B26A27] rounded-2xl p-3.5 shadow-md relative">
+            <div className="flex justify-between items-center mb-1.5">
               <div className="flex items-center gap-2">
-                <span className="text-xl">🏦</span>
-                <h4 className="font-serif font-bold text-lg text-[#B26A27]">
-                  建置訂金與尾款 — 現金匯款指定帳號
+                <span className="text-lg">🏦</span>
+                <h4 className="font-serif font-bold text-[#B26A27] text-sm md:text-base">
+                  建置費訂金與尾款 — 現金匯款指定帳號
                 </h4>
               </div>
               <button
@@ -293,48 +346,48 @@ export default function ButterToastProposalPage() {
               </button>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs bg-white/80 p-3 rounded-xl border border-[#D6A86E]">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 text-xs bg-white/80 p-2.5 rounded-xl border border-[#D6A86E]">
               <div>
-                <span className="text-[#7C6E62] block">匯款銀行</span>
+                <span className="text-[#7C6E62] block text-[11px]">匯款銀行</span>
                 <span className="font-bold text-[#382D24]">中國信託</span>
               </div>
               <div>
-                <span className="text-[#7C6E62] block">銀行代碼 / 分行</span>
+                <span className="text-[#7C6E62] block text-[11px]">銀行代碼 / 分行</span>
                 <span className="font-bold text-[#382D24]">（822）內壢簡易型分行</span>
               </div>
               <div>
-                <span className="text-[#7C6E62] block">戶名</span>
+                <span className="text-[#7C6E62] block text-[11px]">戶名</span>
                 <span className="font-bold text-[#382D24]">賴奕暢</span>
               </div>
               <div>
-                <span className="text-[#7C6E62] block">帳號</span>
+                <span className="text-[#7C6E62] block text-[11px]">帳號</span>
                 <span className="font-mono font-extrabold text-[#B26A27] text-sm">
                   131540035543
                 </span>
               </div>
             </div>
 
-            <div className="flex justify-between items-center text-[11px] text-[#7C6E62] mt-2 px-1">
-              <span>● 第一期簽約訂金 (50%)：<b>NT$ 14,000</b> (含稅 $14,700)</span>
-              <span>● 第二期交案尾款 (50%)：<b>NT$ 14,000</b> (含稅 $14,700)</span>
+            <div className="flex justify-between items-center text-[11px] text-[#7C6E62] mt-1.5 px-1 font-medium">
+              <span>● 第一期簽約訂金 (50%)：<b className="text-[#B26A27]">NT$ 14,000</b> (含稅 $14,700)</span>
+              <span>● 第二期交案尾款 (50%)：<b className="text-[#B26A27]">NT$ 14,000</b> (含稅 $14,700)</span>
             </div>
           </div>
 
           {/* Invoice Info Form Card */}
-          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-4 shadow-sm">
-            <div className="flex justify-between items-center mb-3">
-              <h4 className="font-serif font-bold text-sm text-[#B26A27] flex items-center gap-1.5">
-                <span>🧾</span> 客戶公司發票資料填寫 (線上同步傳送給團隊)
+          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-3.5 shadow-sm">
+            <div className="flex justify-between items-center mb-2">
+              <h4 className="font-serif font-bold text-xs text-[#B26A27] flex items-center gap-1.5">
+                <span>🧾</span> 客戶公司發票資料填寫 (線上同步傳送給團隊開立三聯式發票)
               </h4>
               <div className="flex items-center gap-2">
                 {isSaved && (
-                  <span className="text-xs text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                  <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
                     ✓ 發票資料已同步傳送
                   </span>
                 )}
                 <button
                   onClick={toggleAdminView}
-                  className="text-[11px] text-[#B26A27] underline hover:text-[#8F521B]"
+                  className="text-[10px] text-[#B26A27] underline hover:text-[#8F521B]"
                 >
                   {isAdminView ? "返回提案頁" : "🔍 老闆檢視收到的發票紀錄"}
                 </button>
@@ -342,7 +395,7 @@ export default function ButterToastProposalPage() {
             </div>
 
             {isAdminView ? (
-              <div className="bg-[#F7F3ED] p-3 rounded-xl border border-[#E6DDCF] max-h-48 overflow-y-auto space-y-2 text-xs">
+              <div className="bg-[#F7F3ED] p-2.5 rounded-xl border border-[#E6DDCF] max-h-40 overflow-y-auto space-y-2 text-xs">
                 <div className="font-bold text-[#B26A27] border-b pb-1 flex justify-between">
                   <span>所有已填寫發票清單</span>
                   <span>狀態: 已同步至雲端</span>
@@ -351,7 +404,7 @@ export default function ButterToastProposalPage() {
                   <p className="text-xs text-[#7C6E62] py-2 text-center">目前尚無已填寫之發票資料紀錄</p>
                 ) : (
                   invoiceRecords.map((r) => (
-                    <div key={r.id} className="bg-white p-2.5 rounded-lg border border-[#E6DDCF] space-y-1">
+                    <div key={r.id} className="bg-white p-2 rounded-lg border border-[#E6DDCF] space-y-1">
                       <div className="flex justify-between font-bold text-[#382D24]">
                         <span>🏢 {r.company_name}</span>
                         <span className="font-mono text-[#B26A27]">統編: {r.tax_id}</span>
@@ -367,54 +420,54 @@ export default function ButterToastProposalPage() {
                 )}
               </div>
             ) : (
-              <form onSubmit={handleSaveInvoiceInfo} className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+              <form onSubmit={handleSaveInvoiceInfo} className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
                 <div>
-                  <label className="block text-[#7C6E62] mb-1 font-medium">公司全銜 / 買受人抬頭</label>
+                  <label className="block text-[#7C6E62] mb-0.5 text-[11px]">公司全銜 / 買受人抬頭</label>
                   <input
                     type="text"
                     placeholder="例如: 奶油吐司甜點工作室"
                     value={companyName}
                     onChange={(e) => setCompanyName(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#F7F3ED] border border-[#E6DDCF] rounded-lg focus:outline-none focus:border-[#B26A27] text-[#382D24]"
+                    className="w-full px-2.5 py-1.5 bg-[#F7F3ED] border border-[#E6DDCF] rounded-lg focus:outline-none focus:border-[#B26A27] text-[#382D24]"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-[#7C6E62] mb-1 font-medium">統一編號 (統編)</label>
+                  <label className="block text-[#7C6E62] mb-0.5 text-[11px]">統一編號 (統編)</label>
                   <input
                     type="text"
                     placeholder="例如: 88888888"
                     value={taxId}
                     onChange={(e) => setTaxId(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#F7F3ED] border border-[#E6DDCF] rounded-lg focus:outline-none focus:border-[#B26A27] text-[#382D24]"
+                    className="w-full px-2.5 py-1.5 bg-[#F7F3ED] border border-[#E6DDCF] rounded-lg focus:outline-none focus:border-[#B26A27] text-[#382D24]"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-[#7C6E62] mb-1 font-medium">發票寄送地址</label>
+                  <label className="block text-[#7C6E62] mb-0.5 text-[11px]">發票寄送地址</label>
                   <input
                     type="text"
                     placeholder="請輸入紙本發票寄送地址"
                     value={invoiceAddress}
                     onChange={(e) => setInvoiceAddress(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#F7F3ED] border border-[#E6DDCF] rounded-lg focus:outline-none focus:border-[#B26A27] text-[#382D24]"
+                    className="w-full px-2.5 py-1.5 bg-[#F7F3ED] border border-[#E6DDCF] rounded-lg focus:outline-none focus:border-[#B26A27] text-[#382D24]"
                   />
                 </div>
                 <div>
-                  <label className="block text-[#7C6E62] mb-1 font-medium">電子發票通知 Email</label>
+                  <label className="block text-[#7C6E62] mb-0.5 text-[11px]">電子發票通知 Email</label>
                   <input
                     type="email"
                     placeholder="請輸入收到發票通知的 Email"
                     value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#F7F3ED] border border-[#E6DDCF] rounded-lg focus:outline-none focus:border-[#B26A27] text-[#382D24]"
+                    className="w-full px-2.5 py-1.5 bg-[#F7F3ED] border border-[#E6DDCF] rounded-lg focus:outline-none focus:border-[#B26A27] text-[#382D24]"
                   />
                 </div>
                 <div className="md:col-span-2 text-right">
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="px-5 py-2 bg-[#B26A27] hover:bg-[#8F521B] text-white font-bold rounded-lg shadow-sm transition text-xs disabled:opacity-50"
+                    className="px-4 py-1.5 bg-[#B26A27] hover:bg-[#8F521B] text-white font-bold rounded-lg shadow-sm transition text-xs disabled:opacity-50"
                   >
                     {isSubmitting ? "傳送中..." : "💾 儲存並同步傳送發票資料"}
                   </button>
@@ -424,8 +477,8 @@ export default function ButterToastProposalPage() {
           </div>
 
           {/* NewebPay Monthly Subscription Security Box */}
-          <div className="bg-[#FFFDF9] border border-[#D6A86E] rounded-xl p-3 text-[11px] text-[#7C6E62] leading-relaxed flex items-start gap-2 shadow-xs">
-            <span className="text-base text-[#B26A27]">💳</span>
+          <div className="bg-[#FFFDF9] border border-[#D6A86E] rounded-xl p-2.5 text-[10px] text-[#7C6E62] leading-relaxed flex items-start gap-2 shadow-xs">
+            <span className="text-sm text-[#B26A27]">💳</span>
             <div>
               <strong className="text-[#B26A27] block mb-0.5">每月代營運系統費 ($4,800/月未稅，含稅 $5,040/月) 藍新扣款說明：</strong>
               交案正式上線時，將透過『藍新金流 (NewebPay) 第三方支付平台』設定信用卡定期定額每月自動扣款。全站採用 256-bit SSL 加密與 PCI-DSS 安全認證，每月扣款將自動寄送電子發票至您的 Email。

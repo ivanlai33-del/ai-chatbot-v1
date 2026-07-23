@@ -167,6 +167,9 @@
       border-radius: 14px;
       padding: 1rem 1.2rem;
       position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
     .price-num {
@@ -184,6 +187,32 @@
       padding: 0.3rem 0.6rem;
       border-radius: 6px;
       margin-bottom: 0.5rem;
+    }
+
+    /* Prominent Credit Card Button */
+    .card-checkout-btn {
+      width: 100%;
+      margin-top: 0.6rem;
+      padding: 0.65rem 1rem;
+      background: linear-gradient(90deg, #B26A27 0%, #D6A86E 50%, #B26A27 100%);
+      color: #FFFDF9;
+      font-weight: 800;
+      font-size: 0.82rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(178, 106, 39, 0.3);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+
+    .card-checkout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(178, 106, 39, 0.4);
+      background: #8F521B;
     }
 
     /* Bank Card Box */
@@ -494,7 +523,7 @@
       </div>
     </div>
 
-    <!-- Slide 4: Pricing Cards + Bank Transfer + Invoice Form -->
+    <!-- Slide 4: Pricing Cards + Bank Transfer + Invoice Form + PROMINENT CREDIT CARD BUTTON -->
     <div class="slide" id="slide-4">
       <div class="slide-header">
         <h2 class="slide-title">專案報價金額、匯款帳號與發票填寫</h2>
@@ -505,24 +534,35 @@
         <!-- Top Two Pricing Cards -->
         <div class="pricing-grid">
           <div class="pricing-card">
-            <div style="font-weight:700; font-size:0.85rem; color:var(--accent-caramel);">🛠️ 【一次性】AI 店長系統建置費</div>
-            <div class="price-num">NT$ 28,000 <span style="font-size:0.8rem; font-weight:normal; color:var(--text-muted);">(未稅)</span></div>
-            <div class="price-tax-box">🧾 加上 5% 營業稅 ($1,400) ＝ <b>含稅 NT$ 29,400</b></div>
-            <ul class="bullet-list">
-              <li>現有 Messaging API 串接與選單適配</li>
-              <li>奶霜炸吐司、芒果限定與 3入/5入優惠組合 AI 算錢引擎</li>
-              <li>自動發送「預約完成✔️」Flex 憑證與 Notify 備貨通知</li>
-            </ul>
+            <div>
+              <div style="font-weight:700; font-size:0.85rem; color:var(--accent-caramel);">🛠️ 【一次性】AI 店長系統建置費</div>
+              <div class="price-num">NT$ 28,000 <span style="font-size:0.8rem; font-weight:normal; color:var(--text-muted);">(未稅)</span></div>
+              <div class="price-tax-box">🧾 加上 5% 營業稅 ($1,400) ＝ <b>含稅 NT$ 29,400</b></div>
+              <ul class="bullet-list">
+                <li>現有 Messaging API 串接與 6格選單適配</li>
+                <li>奶霜炸吐司與 3/5入優惠組 AI 算錢引擎</li>
+                <li>自動發送「預約完成✔️」與 Notify 備貨推播</li>
+              </ul>
+            </div>
+            <div style="font-size:0.75rem; color:var(--text-muted); text-align:center; margin-top:0.4rem; background:#FFF8F0; padding:0.3rem; border-radius:6px; border:1px solid var(--accent-butter);">
+              👇 請參考下方<b>「中國信託轉帳卡片」</b>付第一期訂金 $14,700 (含稅)
+            </div>
           </div>
-          <div class="pricing-card">
-            <div style="font-weight:700; font-size:0.85rem; color:var(--accent-caramel);">💳 【每月】代營運與 AI 系統費</div>
-            <div class="price-num">NT$ 4,800 <span style="font-size:0.8rem; font-weight:normal; color:var(--text-muted);">/ 月 (未稅)</span></div>
-            <div class="price-tax-box">🧾 加上 5% 營業稅 ($240) ＝ <b>含稅 NT$ 5,040 /月</b></div>
-            <ul class="bullet-list">
-              <li>5,000 會員容量 AI 流量 (20,000則/月)</li>
-              <li>每月 2 次夏日限定與優惠組 Banner 設計與全自動推播</li>
-              <li>每週 AI 對話巡檢與月數據戰情簡報</li>
-            </ul>
+
+          <div class="pricing-card" style="border-color:var(--accent-caramel); box-shadow:0 6px 16px rgba(178,106,39,0.15);">
+            <div>
+              <div style="font-weight:700; font-size:0.85rem; color:var(--accent-caramel);">💳 【每月】代營運與 AI 系統費</div>
+              <div class="price-num">NT$ 4,800 <span style="font-size:0.8rem; font-weight:normal; color:var(--text-muted);">/ 月 (未稅)</span></div>
+              <div class="price-tax-box">🧾 加上 5% 營業稅 ($240) ＝ <b>含稅 NT$ 5,040 /月</b></div>
+              <ul class="bullet-list">
+                <li>5,000 會員容量 AI 流量 (20,000則/月)</li>
+                <li>每月 2 次夏日限定與優惠組 Banner 全自動推播</li>
+                <li>每週 AI 對話巡檢、菜單維護與月數據簡報</li>
+              </ul>
+            </div>
+            <button class="card-checkout-btn" onclick="triggerCheckout()">
+              💳 點此線上綁定【藍新信用卡定期扣款】(NT$ 5,040/月) ➔
+            </button>
           </div>
         </div>
 
@@ -628,7 +668,7 @@
             <ul class="bullet-list" style="margin-top: 0.6rem;">
               <li>雙方進行多品項點餐算錢與接管流程實測</li>
               <li>驗收通過<b>轉帳付尾款 $14,000 (含稅 $14,700)</b></li>
-              <li>設定藍新定期定額 ($5,040/月含稅)，正式上線！</li>
+              <li>點擊上方按鈕線上設定藍新定期定額 ($5,040/月含稅)，正式上線！</li>
             </ul>
           </div>
         </div>
@@ -739,6 +779,37 @@
       if (currentSlide < 0) currentSlide = 0;
       if (currentSlide >= totalSlides) currentSlide = totalSlides - 1;
       updateSlides();
+    }
+
+    async function triggerCheckout() {
+      try {
+        const res = await fetch('/api/payment/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ planId: 'butter_toast_managed', cycle: 'monthly', isPartner: false })
+        });
+        const result = await res.json();
+        if (!result.success) {
+          alert('藍新金流連線失敗: ' + result.error);
+          return;
+        }
+        const { MerchantID, TradeInfo, TradeSha, Version, TargetUrl } = result.data;
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = TargetUrl;
+        const params = { MerchantID, TradeInfo, TradeSha, Version, RespondType: 'JSON' };
+        Object.entries(params).forEach(([k, v]) => {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = k;
+          input.value = v;
+          form.appendChild(input);
+        });
+        document.body.appendChild(form);
+        form.submit();
+      } catch (err) {
+        alert('連線藍新定期定額失敗，請稍後再試。');
+      }
     }
 
     function saveInvoice(e) {

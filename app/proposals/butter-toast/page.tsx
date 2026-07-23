@@ -26,6 +26,7 @@ export default function ButterToastProposalPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   // Admin View State
   const [isAdminView, setIsAdminView] = useState(false);
@@ -62,6 +63,56 @@ export default function ButterToastProposalPage() {
       setErrorMsg("");
     } else {
       setErrorMsg("密碼不正確，請重新輸入（提示：本日日期 8 碼或 4 碼）");
+    }
+  };
+
+  const handleMonthlyCheckout = async () => {
+    setCheckoutLoading(true);
+    try {
+      const res = await fetch("/api/payment/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          planId: "butter_toast_managed",
+          cycle: "monthly",
+          isPartner: false,
+        }),
+      });
+
+      const result = await res.json();
+      if (!result.success) {
+        alert(`藍新金流連線錯誤: ${result.error}`);
+        return;
+      }
+
+      const { MerchantID, TradeInfo, TradeSha, Version, TargetUrl } = result.data;
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = TargetUrl;
+
+      const params: Record<string, string> = {
+        MerchantID,
+        TradeInfo,
+        TradeSha,
+        Version,
+        RespondType: "JSON",
+      };
+
+      Object.entries(params).forEach(([key, value]) => {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = key;
+        input.value = value;
+        form.appendChild(input);
+      });
+
+      document.body.appendChild(form);
+      form.submit();
+    } catch (err: any) {
+      console.error(err);
+      alert("啟動藍新定期定額刷卡失敗，請稍後再試。");
+    } finally {
+      setCheckoutLoading(false);
     }
   };
 
@@ -192,7 +243,7 @@ export default function ButterToastProposalPage() {
     );
   }
 
-  // Interactive Tailor-made Slides explicitly built for 「生乳/奶霜專賣店」 (cream_specialty_store)
+  // Interactive Tailor-made Slides
   const slides = [
     // Slide 1: Tailored Cover
     {
@@ -215,7 +266,7 @@ export default function ButterToastProposalPage() {
         </div>
       ),
     },
-    // Slide 2: Tailored Pain Points & Real Operational Needs (Strictly customized for cream_specialty_store)
+    // Slide 2: Tailored Pain Points & Real Operational Needs
     {
       badge: "5,000人規模規劃",
       title: "【生乳/奶霜專賣店】現況與核心需求拆解",
@@ -225,7 +276,7 @@ export default function ButterToastProposalPage() {
             <div className="text-2xl mb-1">🏠</div>
             <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">需求 1：取餐導引與現點現做說明</h3>
             <p className="text-sm text-[#7C6E62] leading-relaxed">
-              「生乳/奶霜專賣店」無實體內用門市。AI 24hr 自動說明「✨營業時間 18:00 - 售完為止 (餐點現點現做)」、指引取餐地點與地圖導航，避免耽誤顧客時間。
+              「生乳/奶霜專賣店」無實體內用門市。AI 24hr 自動說明「✨營業時間 18:00 - 售完為止 (餐點現點現做)」、指引取餐地點與地圖導航，避免耽誤顧客寶貴時間。
             </p>
           </div>
 
@@ -255,7 +306,7 @@ export default function ButterToastProposalPage() {
         </div>
       ),
     },
-    // Slide 3: Tailored Menu & System Integration (Using exact product names from menu card)
+    // Slide 3: Tailored Menu
     {
       badge: "專屬菜單與季節新品適配",
       title: "【生乳/奶霜專賣店】真實菜單與 AI 計算適配",
@@ -293,7 +344,7 @@ export default function ButterToastProposalPage() {
         </div>
       ),
     },
-    // Slide 4: Pricing Cards + Bank Details + Invoice Form
+    // Slide 4: Pricing Cards + Bank Details + Invoice Form + PROMINENT CREDIT CARD CHECKOUT BUTTON
     {
       badge: "生乳/奶霜專賣店 專案報價",
       title: "專案報價金額、匯款帳號與發票填寫",
@@ -309,7 +360,7 @@ export default function ButterToastProposalPage() {
                     🛠️ 【一次性】AI 店長系統建置費
                   </span>
                   <span className="text-[10px] bg-[#EFE7DA] text-[#B26A27] px-2 py-0.5 rounded-full font-bold">
-                    分兩期 (訂金/尾款)
+                    分兩期 (轉帳付訂/尾款)
                   </span>
                 </div>
                 <div className="text-2xl font-black font-mono text-[#B26A27] my-1">
@@ -318,23 +369,26 @@ export default function ButterToastProposalPage() {
                 <div className="text-xs text-[#7C6E62] mb-2 bg-[#F7F3ED] p-1.5 rounded-lg border border-[#E6DDCF]">
                   🧾 加上 5% 營業稅 ($1,400) ＝ <b>含稅總額 NT$ 29,400</b>
                 </div>
-                <ul className="text-xs text-[#382D24] space-y-1">
-                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 現有 LINE 官方帳號 Messaging API 權限串接</li>
-                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 奶霜炸吐司全菜單與 3入/5入優惠組合 AI 算錢引擎</li>
-                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 自動發送「預約完成✔️」Flex 憑證與 Notify 備貨通知</li>
+                <ul className="text-xs text-[#382D24] space-y-1 mb-2">
+                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 現有 Messaging API 串接與 6格選單適配</li>
+                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 奶霜炸吐司全菜單與 3/5入組合 AI 算錢引擎</li>
+                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 發送「預約完成✔️」與 Notify 備貨推播</li>
                 </ul>
+              </div>
+              <div className="text-[11px] text-[#7C6E62] bg-[#FFF8F0] p-2 rounded-xl border border-[#D6A86E] font-medium text-center">
+                👇 請參考下方<b>「中國信託銀行轉帳卡片」</b>支付第一期訂金 $14,700 (含稅)
               </div>
             </div>
 
-            {/* Card 2: Monthly Recurring */}
-            <div className="bg-white border-2 border-[#D6A86E] rounded-2xl p-4 shadow-sm relative flex flex-col justify-between">
+            {/* Card 2: Monthly Recurring with PROMINENT CHECKOUT BUTTON */}
+            <div className="bg-white border-2 border-[#B26A27] rounded-2xl p-4 shadow-md relative flex flex-col justify-between ring-2 ring-[#B26A27]/20">
               <div>
                 <div className="flex justify-between items-center mb-1">
                   <span className="font-bold text-sm text-[#B26A27] flex items-center gap-1">
                     💳 【每月】代營運與 AI 系統費
                   </span>
-                  <span className="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-bold">
-                    每月信用卡自動扣款
+                  <span className="text-[10px] bg-amber-500 text-white px-2 py-0.5 rounded-full font-bold shadow-xs">
+                    藍新信用卡定期定額
                   </span>
                 </div>
                 <div className="text-2xl font-black font-mono text-[#B26A27] my-1">
@@ -343,12 +397,23 @@ export default function ButterToastProposalPage() {
                 <div className="text-xs text-[#7C6E62] mb-2 bg-[#F7F3ED] p-1.5 rounded-lg border border-[#E6DDCF]">
                   🧾 加上 5% 營業稅 ($240) ＝ <b>含稅 NT$ 5,040 / 月</b>
                 </div>
-                <ul className="text-xs text-[#382D24] space-y-1">
+                <ul className="text-xs text-[#382D24] space-y-1 mb-3">
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 5,000 會員容量 AI 流量 (20,000則/月)</li>
-                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 每月 2 次夏日限定與優惠組 Banner 設計與發送</li>
+                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 每月 2 次夏日限定與優惠組 Banner 全自動推播</li>
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 每週 AI 對話巡檢、菜單維護與月數據簡報</li>
                 </ul>
               </div>
+
+              {/* PROMINENT HIGHLY VISIBLE CHECKOUT BUTTON */}
+              <button
+                onClick={handleMonthlyCheckout}
+                disabled={checkoutLoading}
+                className="w-full py-2.5 px-3 bg-gradient-to-r from-[#B26A27] via-[#D6A86E] to-[#B26A27] hover:from-[#8F521B] hover:to-[#8F521B] text-white font-extrabold rounded-xl shadow-lg shadow-[#B26A27]/30 transition-all duration-200 transform hover:scale-[1.02] flex items-center justify-center gap-2 text-xs md:text-sm cursor-pointer disabled:opacity-50 active:scale-95"
+              >
+                <span>💳</span>
+                <span>{checkoutLoading ? "正在連接藍新金流..." : "點此線上綁定【藍新信用卡定期扣款】(NT$ 5,040/月)"}</span>
+                <span>➔</span>
+              </button>
             </div>
           </div>
 
@@ -504,7 +569,7 @@ export default function ButterToastProposalPage() {
             <span className="text-sm text-[#B26A27]">💳</span>
             <div>
               <strong className="text-[#B26A27] block mb-0.5">每月代營運系統費 ($4,800/月未稅，含稅 $5,040/月) 藍新扣款說明：</strong>
-              交案正式上線時，將透過『藍新金流 (NewebPay) 第三方支付平台』設定信用卡定期定額每月自動扣款。全站採用 256-bit SSL 加密與 PCI-DSS 安全認證，每月扣款將自動寄送電子發票至您的 Email。
+              交案正式上線時，點擊上方按鈕即可透過『藍新金流 (NewebPay) 第三方支付平台』設定信用卡定期定額每月自動扣款。全站採用 256-bit SSL 加密與 PCI-DSS 安全認證，每月扣款將自動寄送電子發票至您的 Email。
             </div>
           </div>
         </div>
@@ -540,7 +605,7 @@ export default function ButterToastProposalPage() {
             <ul className="text-xs text-[#7C6E62] space-y-1.5">
               <li>✓ 雙方進行多品項點餐算錢與接管流程實測</li>
               <li>✓ 驗收通過<b>轉帳付尾款 $14,000 (含稅$14,700)</b></li>
-              <li>✓ 綁定藍新定期定額 ($5,040/月含稅)，正式上線！</li>
+              <li>✓ 點擊按鈕線上設定藍新定期定額 ($5,040/月含稅)，正式上線！</li>
             </ul>
           </div>
         </div>

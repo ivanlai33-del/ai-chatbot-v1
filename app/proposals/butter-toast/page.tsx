@@ -217,7 +217,7 @@ export default function ButterToastProposalPage() {
     } catch (err: any) {
       console.error(err);
       alert("啟動藍新定期定額刷卡失敗，請稍後再試。");
-    } fontally {
+    } finally {
       setCheckoutLoading(false);
     }
   };

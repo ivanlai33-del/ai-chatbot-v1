@@ -59,7 +59,7 @@
       -webkit-backdrop-filter: blur(25px);
       border: 1px solid var(--card-border);
       border-radius: var(--radius);
-      padding: 3rem 4rem;
+      padding: 2.5rem 3.5rem;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -83,7 +83,7 @@
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid var(--card-border);
-      padding-bottom: 1.2rem;
+      padding-bottom: 1rem;
     }
 
     .brand-badge {
@@ -102,7 +102,7 @@
 
     .slide-title {
       font-family: 'Noto Serif TC', serif;
-      font-size: 1.9rem;
+      font-size: 1.8rem;
       font-weight: 700;
       color: var(--text-main);
       letter-spacing: -0.5px;
@@ -111,7 +111,7 @@
     /* Slide Content Area */
     .slide-body {
       flex: 1;
-      padding: 1.2rem 0;
+      padding: 1rem 0;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -155,6 +155,110 @@
       border-radius: 50px;
       box-shadow: 0 10px 20px rgba(178, 106, 39, 0.25);
       letter-spacing: 1px;
+    }
+
+    /* Bank Card Box */
+    .bank-card {
+      background: linear-gradient(135deg, #FFFDF9 0%, #FCEFDC 100%);
+      border: 2px solid var(--accent-caramel);
+      border-radius: 16px;
+      padding: 1rem 1.4rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 8px 20px rgba(178, 106, 39, 0.08);
+    }
+
+    .bank-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.6rem;
+    }
+
+    .bank-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.8rem;
+      background: rgba(255, 255, 255, 0.85);
+      padding: 0.8rem 1rem;
+      border-radius: 12px;
+      border: 1px solid var(--accent-butter);
+      font-size: 0.85rem;
+    }
+
+    .bank-item-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.2rem;
+    }
+
+    .bank-item-val {
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .bank-account-num {
+      font-family: 'Outfit', monospace;
+      font-weight: 800;
+      color: var(--accent-caramel);
+      font-size: 1rem;
+    }
+
+    /* Invoice Form Card */
+    .invoice-card {
+      background: #FFFFFF;
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1rem 1.4rem;
+    }
+
+    .invoice-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+      margin-top: 0.6rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .form-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.5rem 0.8rem;
+      background: var(--bg-main);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      font-size: 0.82rem;
+      color: var(--text-main);
+      outline: none;
+    }
+
+    .form-input:focus {
+      border-color: var(--accent-caramel);
+    }
+
+    .copy-btn {
+      background: var(--accent-caramel);
+      color: #FFFDF9;
+      border: none;
+      padding: 0.3rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .copy-btn:hover {
+      background: #8F521B;
     }
 
     /* Grid Layouts */
@@ -226,42 +330,6 @@
       margin-bottom: 0.6rem;
     }
 
-    /* Pricing Box */
-    .pricing-container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.4rem;
-    }
-
-    .pricing-card {
-      background: #FFFFFF;
-      border: 2px solid var(--accent-butter);
-      border-radius: 18px;
-      padding: 1.4rem 1.8rem;
-      position: relative;
-      box-shadow: 0 10px 30px rgba(178, 106, 39, 0.06);
-    }
-
-    .price-tag {
-      font-family: 'Outfit', sans-serif;
-      font-size: 2.1rem;
-      font-weight: 700;
-      color: var(--accent-caramel);
-      margin: 0.3rem 0 0.1rem 0;
-    }
-
-    .price-tax-info {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-bottom: 0.6rem;
-    }
-
-    .price-period {
-      font-size: 0.95rem;
-      color: var(--text-muted);
-      font-weight: normal;
-    }
-
     .bullet-list {
       list-style: none;
       display: flex;
@@ -282,65 +350,6 @@
       left: 0;
       color: var(--accent-caramel);
       font-weight: bold;
-    }
-
-    /* Payment Terms Box */
-    .payment-box {
-      margin-top: 0.7rem;
-      background: var(--accent-light);
-      border: 1px dashed var(--accent-butter);
-      border-radius: 12px;
-      padding: 0.7rem 1.1rem;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-    }
-
-    .payment-item {
-      text-align: center;
-    }
-
-    .payment-label {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-bottom: 0.1rem;
-    }
-
-    .payment-val {
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: var(--accent-caramel);
-    }
-
-    .payment-tax-note {
-      font-size: 0.73rem;
-      color: var(--text-muted);
-    }
-
-    .payment-badge {
-      display: inline-block;
-      font-size: 0.73rem;
-      padding: 0.15rem 0.5rem;
-      border-radius: 4px;
-      margin-top: 0.15rem;
-      background: rgba(178, 106, 39, 0.12);
-      color: var(--accent-caramel);
-      font-weight: 600;
-    }
-
-    .security-notice-box {
-      margin-top: 0.7rem;
-      background: #FFFFFF;
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      padding: 0.7rem 1rem;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-      display: flex;
-      align-items: flex-start;
-      gap: 0.6rem;
     }
 
     /* Footer & Controls */
@@ -511,66 +520,79 @@
       </div>
     </div>
 
-    <!-- Slide 4: Pricing & Tax Terms -->
+    <!-- Slide 4: Bank Transfer & Invoice Form -->
     <div class="slide" id="slide-4">
       <div class="slide-header">
-        <h2 class="slide-title">專案報價與發票稅金</h2>
-        <span class="brand-badge">5% 營業稅標註</span>
+        <h2 class="slide-title">專案報價、匯款帳號與發票填寫</h2>
+        <span class="brand-badge">匯款與發票資訊</span>
       </div>
       <div class="slide-body">
-        <div class="pricing-container">
-          <div class="pricing-card">
-            <div style="font-weight: 700; color: var(--accent-caramel);">🛠️ 【一次性】建置與開發費</div>
-            <div class="price-tag">NT$ 28,000 <span style="font-size:1rem; color:var(--text-muted); font-weight:normal;">(未稅)</span></div>
-            <div class="price-tax-info">🧾 加上 5% 營業稅 ($1,400) ＝ <b>含稅總額 NT$ 29,400</b></div>
-            <ul class="bullet-list">
-              <li>LINE 官方帳號 0 到 1 品牌視覺設計</li>
-              <li>專屬 6 格圖文選單 (Rich Menu) 開發</li>
-              <li>AI 多品項點餐算錢引擎與 Notify 串接</li>
-              <li>奶油吐司專屬 RAG 知識庫深度訓練</li>
-            </ul>
+
+        <!-- Bank Transfer Card -->
+        <div class="bank-card">
+          <div class="bank-header">
+            <div style="font-weight: 700; font-family: 'Noto Serif TC', serif; color: var(--accent-caramel);">
+              🏦 建置訂金與尾款 — 指定現金匯款帳號
+            </div>
+            <button class="copy-btn" onclick="navigator.clipboard.writeText('131540035543'); alert('已複製帳號：131540035543')">
+              📋 複製帳號
+            </button>
           </div>
-          <div class="pricing-card">
-            <div style="font-weight: 700; color: var(--accent-caramel);">💳 【每月】代營運與 AI 系統費</div>
-            <div class="price-tag">NT$ 4,800 <span class="price-period">/ 月 (未稅)</span></div>
-            <div class="price-tax-info">🧾 加上 5% 營業稅 ($240) ＝ <b>含稅 NT$ 5,040 /月</b></div>
-            <ul class="bullet-list">
-              <li>5,000 會員 AI 流量 (上限 20,000 則/月)</li>
-              <li>每月 2 次限量預購圖文推播設計與發送</li>
-              <li>每週 AI 菜單更新與未解答對話優化</li>
-              <li>每月對話與點餐數據戰情月報</li>
-            </ul>
+
+          <div class="bank-grid">
+            <div>
+              <div class="bank-item-label">匯款銀行</div>
+              <div class="bank-item-val">中國信託</div>
+            </div>
+            <div>
+              <div class="bank-item-label">銀行代碼 / 分行</div>
+              <div class="bank-item-val">（822）內壢簡易型分行</div>
+            </div>
+            <div>
+              <div class="bank-item-label">戶名</div>
+              <div class="bank-item-val">賴奕暢</div>
+            </div>
+            <div>
+              <div class="bank-item-label">帳號</div>
+              <div class="bank-account-num">131540035543</div>
+            </div>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-muted); margin-top:0.4rem;">
+            <span>● 訂金 50%：NT$ 14,000 (含稅 $14,700)</span>
+            <span>● 尾款 50%：NT$ 14,000 (含稅 $14,700)</span>
           </div>
         </div>
 
-        <!-- Payment Breakdown Box with Tax -->
-        <div class="payment-box">
-          <div class="payment-item">
-            <div class="payment-label">第一期：簽約訂金 (50%)</div>
-            <div class="payment-val">NT$ 14,000 <span class="payment-tax-note">(含稅 $14,700)</span></div>
-            <div class="payment-badge">銀行轉帳 / 匯款</div>
+        <!-- Invoice Form Card -->
+        <div class="invoice-card">
+          <div style="font-weight: 700; font-size: 0.88rem; color: var(--accent-caramel); display:flex; justify-content:space-between; align-items:center;">
+            <span>🧾 客戶公司發票資料填寫 (開立三聯式發票)</span>
+            <span id="saved-badge" style="font-size:0.75rem; color:#059669; display:none;">✓ 資料已儲存</span>
           </div>
-          <div style="color: var(--accent-butter); font-size: 1.2rem;">➔</div>
-          <div class="payment-item">
-            <div class="payment-label">第二期：交案尾款 (50%)</div>
-            <div class="payment-val">NT$ 14,000 <span class="payment-tax-note">(含稅 $14,700)</span></div>
-            <div class="payment-badge">銀行轉帳 / 匯款</div>
-          </div>
-          <div style="color: var(--accent-butter); font-size: 1.2rem;">➔</div>
-          <div class="payment-item">
-            <div class="payment-label">每月代營運系統費</div>
-            <div class="payment-val">NT$ 4,800 <span class="payment-tax-note">(含稅 $5,040/月)</span></div>
-            <div class="payment-badge" style="background: rgba(245, 158, 11, 0.2); color: var(--accent-caramel);">藍新定期定額扣款</div>
-          </div>
-        </div>
 
-        <!-- Security Notice Box -->
-        <div class="security-notice-box">
-          <span style="font-size: 1.2rem; color: var(--accent-caramel);">🛡️</span>
-          <div>
-            <strong style="color: var(--accent-caramel);">藍新金流 (NewebPay) 安全防護與定期定額宣告：</strong><br>
-            本公司採用『藍新金流 (NewebPay) 第三方支付平台』辦理信用卡定期定額交易，全站傳輸採用最高等級 256-bit SSL 加密安全防護，並通過 PCI-DSS 國際卡隊安全認證。本公司絕不會儲存您的完整信用卡號碼。每月扣款完成後將由藍新金流系統自動開立電子發票發送至您的 Email，提供您最安全、透明、無虞的交易環境。
-          </div>
+          <form id="invoice-form" onsubmit="saveInvoice(event)">
+            <div class="invoice-grid">
+              <div class="form-group">
+                <label class="form-label">公司全銜 / 買受人抬頭</label>
+                <input type="text" id="compName" class="form-input" placeholder="例: 奶油吐司甜點工作室">
+              </div>
+              <div class="form-group">
+                <label class="form-label font-mono">統一編號 (統編)</label>
+                <input type="text" id="taxIdInput" class="form-input" placeholder="例: 88888888">
+              </div>
+              <div class="form-group">
+                <label class="form-label">發票寄送地址</label>
+                <input type="text" id="invAddr" class="form-input" placeholder="請輸入發票收件地址">
+              </div>
+              <div class="form-group">
+                <label class="form-label font-mono">電子發票通知 Email</label>
+                <input type="email" id="invEmail" class="form-input" placeholder="例: service@buttertoast.com">
+              </div>
+            </div>
+            <div style="text-align: right; margin-top: 0.6rem;">
+              <button type="submit" class="copy-btn" style="padding: 0.4rem 1.2rem;">💾 儲存發票資料</button>
+            </div>
+          </form>
         </div>
 
       </div>
@@ -719,6 +741,31 @@
       if (currentSlide >= totalSlides) currentSlide = totalSlides - 1;
       updateSlides();
     }
+
+    function saveInvoice(e) {
+      e.preventDefault();
+      const comp = document.getElementById('compName').value;
+      const tax = document.getElementById('taxIdInput').value;
+      const addr = document.getElementById('invAddr').value;
+      const email = document.getElementById('invEmail').value;
+      localStorage.setItem('butter_toast_invoice_info', JSON.stringify({ companyName: comp, taxId: tax, invoiceAddress: addr, contactEmail: email }));
+      document.getElementById('saved-badge').style.display = 'inline';
+    }
+
+    // Load invoice info
+    window.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('butter_toast_invoice_info');
+      if (saved) {
+        try {
+          const p = JSON.parse(saved);
+          if (p.companyName) document.getElementById('compName').value = p.companyName;
+          if (p.taxId) document.getElementById('taxIdInput').value = p.taxId;
+          if (p.invoiceAddress) document.getElementById('invAddr').value = p.invoiceAddress;
+          if (p.contactEmail) document.getElementById('invEmail').value = p.contactEmail;
+          document.getElementById('saved-badge').style.display = 'inline';
+        } catch(e) {}
+      }
+    });
 
     // Keyboard Navigation
     document.addEventListener('keydown', (e) => {

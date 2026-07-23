@@ -8,14 +8,36 @@ export default function ButterToastProposalPage() {
   const [errorMsg, setErrorMsg] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
 
+  // Invoice Form State
+  const [companyName, setCompanyName] = useState("");
+  const [taxId, setTaxId] = useState("");
+  const [invoiceAddress, setInvoiceAddress] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [isSaved, setIsSaved] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false);
+
   // Today's date password (e.g., 20260723 or 0723)
   const VALID_PASSWORDS = ["20260723", "0723"];
 
   useEffect(() => {
-    // Check if previously unlocked in this session
+    // Check session unlock
     const unlocked = sessionStorage.getItem("proposal_unlocked_butter_toast");
     if (unlocked === "true") {
       setIsUnlocked(true);
+    }
+    // Load saved invoice info if present
+    const savedInfo = localStorage.getItem("butter_toast_invoice_info");
+    if (savedInfo) {
+      try {
+        const parsed = JSON.parse(savedInfo);
+        setCompanyName(parsed.companyName || "");
+        setTaxId(parsed.taxId || "");
+        setInvoiceAddress(parsed.invoiceAddress || "");
+        setContactEmail(parsed.contactEmail || "");
+        setIsSaved(true);
+      } catch (e) {
+        console.error(e);
+      }
     }
   }, []);
 
@@ -28,6 +50,19 @@ export default function ButterToastProposalPage() {
     } else {
       setErrorMsg("密碼不正確，請重新輸入（提示：本日日期 8 碼或 4 碼）");
     }
+  };
+
+  const handleSaveInvoiceInfo = (e: React.FormEvent) => {
+    e.preventDefault();
+    const info = { companyName, taxId, invoiceAddress, contactEmail };
+    localStorage.setItem("butter_toast_invoice_info", JSON.stringify(info));
+    setIsSaved(true);
+  };
+
+  const handleCopyAccount = () => {
+    navigator.clipboard.writeText("131540035543");
+    setCopySuccess(true);
+    setTimeout(() => setCopySuccess(false), 2500);
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
@@ -169,68 +204,127 @@ export default function ButterToastProposalPage() {
         </div>
       ),
     },
-    // Slide 4: Pricing & Payment
+    // Slide 4: Pricing & Bank Transfer & Invoice
     {
-      badge: "5% 營業稅標註",
-      title: "專案報價與發票稅金明細",
+      badge: "報價與金流資訊",
+      title: "專案報價、銀行匯款帳號與發票填寫",
       content: (
-        <div className="space-y-3">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-white border-2 border-[#D6A86E] rounded-2xl p-4 shadow-sm">
-              <h4 className="font-bold text-[#B26A27]">🛠️ 【一次性】建置與開發費</h4>
-              <div className="text-2xl font-extrabold text-[#B26A27] my-1">
-                NT$ 28,000 <span className="text-xs text-[#7C6E62] font-normal">(未稅)</span>
+        <div className="space-y-4">
+          {/* Bank Transfer Card */}
+          <div className="bg-gradient-to-br from-[#FFFDF9] to-[#FCEFDC] border-2 border-[#B26A27] rounded-2xl p-4 shadow-md relative">
+            <div className="flex justify-between items-center mb-2">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🏦</span>
+                <h4 className="font-serif font-bold text-lg text-[#B26A27]">
+                  建置訂金與尾款 — 現金匯款指定帳號
+                </h4>
               </div>
-              <p className="text-xs text-[#7C6E62] mb-2">🧾 加 5% 營業稅 ($1,400) ＝ <b>含稅總額 NT$ 29,400</b></p>
-              <ul className="text-xs text-[#382D24] space-y-1">
-                <li>✓ LINE 官方帳號 0 到 1 品牌視覺設計</li>
-                <li>✓ 專屬 6 格圖文選單 (Rich Menu) 開發</li>
-                <li>✓ AI 多品項點餐算錢引擎與 Notify 串接</li>
-                <li>✓ 奶油吐司專屬 RAG 知識庫深度訓練</li>
-              </ul>
+              <button
+                onClick={handleCopyAccount}
+                className="px-3 py-1 bg-[#B26A27] text-white text-xs font-bold rounded-lg hover:bg-[#8F521B] transition shadow-sm"
+              >
+                {copySuccess ? "✓ 已複製帳號" : "📋 複製帳號"}
+              </button>
             </div>
 
-            <div className="bg-white border-2 border-[#D6A86E] rounded-2xl p-4 shadow-sm">
-              <h4 className="font-bold text-[#B26A27]">💳 【每月】代營運與 AI 系統費</h4>
-              <div className="text-2xl font-extrabold text-[#B26A27] my-1">
-                NT$ 4,800 <span className="text-xs text-[#7C6E62] font-normal">/ 月 (未稅)</span>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs bg-white/80 p-3 rounded-xl border border-[#D6A86E]">
+              <div>
+                <span className="text-[#7C6E62] block">匯款銀行</span>
+                <span className="font-bold text-[#382D24]">中國信託</span>
               </div>
-              <p className="text-xs text-[#7C6E62] mb-2">🧾 加 5% 營業稅 ($240) ＝ <b>含稅 NT$ 5,040 /月</b></p>
-              <ul className="text-xs text-[#382D24] space-y-1">
-                <li>✓ 5,000 會員 AI 流量 (上限 20,000 則/月)</li>
-                <li>✓ 每月 2 次限量預購圖文推播設計發送</li>
-                <li>✓ 每週 AI 菜單更新與未解答對話優化</li>
-                <li>✓ 每月對話與點餐數據戰情月報</li>
-              </ul>
+              <div>
+                <span className="text-[#7C6E62] block">銀行代碼 / 分行</span>
+                <span className="font-bold text-[#382D24]">（822）內壢簡易型分行</span>
+              </div>
+              <div>
+                <span className="text-[#7C6E62] block">戶名</span>
+                <span className="font-bold text-[#382D24]">賴奕暢</span>
+              </div>
+              <div>
+                <span className="text-[#7C6E62] block">帳號</span>
+                <span className="font-mono font-extrabold text-[#B26A27] text-sm">
+                  131540035543
+                </span>
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center text-[11px] text-[#7C6E62] mt-2 px-1">
+              <span>● 第一期簽約訂金 (50%)：<b>NT$ 14,000</b> (含稅 $14,700)</span>
+              <span>● 第二期交案尾款 (50%)：<b>NT$ 14,000</b> (含稅 $14,700)</span>
             </div>
           </div>
 
-          <div className="bg-[#EFE7DA] border border-dashed border-[#D6A86E] rounded-xl p-3 flex flex-wrap justify-around text-center text-xs">
-            <div>
-              <span className="text-[#7C6E62] block">第一期：簽約訂金 (50%)</span>
-              <span className="font-bold text-[#B26A27] text-sm">NT$ 14,000 (含稅$14,700)</span>
-              <span className="block text-[10px] text-[#B26A27] font-semibold bg-[#FFFDF9] px-2 py-0.5 rounded mt-0.5">🏦 銀行轉帳/匯款</span>
+          {/* Invoice Info Form Card */}
+          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-4 shadow-sm">
+            <div className="flex justify-between items-center mb-3">
+              <h4 className="font-serif font-bold text-sm text-[#B26A27] flex items-center gap-1.5">
+                <span>🧾</span> 客戶公司發票資料填寫 (開立三聯式發票)
+              </h4>
+              {isSaved && (
+                <span className="text-xs text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                  ✓ 發票資料已儲存
+                </span>
+              )}
             </div>
-            <div className="self-center text-[#D6A86E] font-bold text-base">➔</div>
-            <div>
-              <span className="text-[#7C6E62] block">第二期：交案尾款 (50%)</span>
-              <span className="font-bold text-[#B26A27] text-sm">NT$ 14,000 (含稅$14,700)</span>
-              <span className="block text-[10px] text-[#B26A27] font-semibold bg-[#FFFDF9] px-2 py-0.5 rounded mt-0.5">🏦 銀行轉帳/匯款</span>
-            </div>
-            <div className="self-center text-[#D6A86E] font-bold text-base">➔</div>
-            <div>
-              <span className="text-[#7C6E62] block">每月代營運系統費</span>
-              <span className="font-bold text-[#B26A27] text-sm">NT$ 4,800 (含稅$5,040/月)</span>
-              <span className="block text-[10px] text-[#B26A27] font-semibold bg-[#FFFDF9] px-2 py-0.5 rounded mt-0.5">💳 藍新定期定額扣款</span>
-            </div>
+
+            <form onSubmit={handleSaveInvoiceInfo} className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+              <div>
+                <label className="block text-[#7C6E62] mb-1 font-medium">公司全銜 / 買受人抬頭</label>
+                <input
+                  type="text"
+                  placeholder="例如: 奶油吐司甜點工作室"
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#F7F3ED] border border-[#E6DDCF] rounded-lg focus:outline-none focus:border-[#B26A27] text-[#382D24]"
+                />
+              </div>
+              <div>
+                <label className="block text-[#7C6E62] mb-1 font-medium">統一編號 (統編)</label>
+                <input
+                  type="text"
+                  placeholder="例如: 88888888"
+                  value={taxId}
+                  onChange={(e) => setTaxId(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#F7F3ED] border border-[#E6DDCF] rounded-lg focus:outline-none focus:border-[#B26A27] text-[#382D24]"
+                />
+              </div>
+              <div>
+                <label className="block text-[#7C6E62] mb-1 font-medium">發票寄送地址</label>
+                <input
+                  type="text"
+                  placeholder="請輸入紙本發票寄送地址"
+                  value={invoiceAddress}
+                  onChange={(e) => setInvoiceAddress(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#F7F3ED] border border-[#E6DDCF] rounded-lg focus:outline-none focus:border-[#B26A27] text-[#382D24]"
+                />
+              </div>
+              <div>
+                <label className="block text-[#7C6E62] mb-1 font-medium">電子發票通知 Email</label>
+                <input
+                  type="email"
+                  placeholder="請輸入收到發票通知的 Email"
+                  value={contactEmail}
+                  onChange={(e) => setContactEmail(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#F7F3ED] border border-[#E6DDCF] rounded-lg focus:outline-none focus:border-[#B26A27] text-[#382D24]"
+                />
+              </div>
+              <div className="md:col-span-2 text-right">
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-[#B26A27] hover:bg-[#8F521B] text-white font-bold rounded-lg shadow-sm transition text-xs"
+                >
+                  💾 儲存發票資料
+                </button>
+              </div>
+            </form>
           </div>
 
-          {/* NewebPay Security Disclaimer Box */}
-          <div className="bg-white border border-[#E6DDCF] rounded-xl p-3 text-[11px] text-[#7C6E62] leading-relaxed flex items-start gap-2">
-            <span className="text-base text-[#B26A27]">🛡️</span>
+          {/* NewebPay Monthly Subscription Security Box */}
+          <div className="bg-[#FFFDF9] border border-[#D6A86E] rounded-xl p-3 text-[11px] text-[#7C6E62] leading-relaxed flex items-start gap-2 shadow-xs">
+            <span className="text-base text-[#B26A27]">💳</span>
             <div>
-              <strong className="text-[#B26A27] block mb-0.5">藍新金流 (NewebPay) 安全防護與定期定額宣告：</strong>
-              本公司採用『藍新金流 (NewebPay) 第三方支付平台』辦理信用卡定期定額交易，全站傳輸採用最高等級 256-bit SSL 加密安全防護，並通過 PCI-DSS 國際卡隊安全認證。本公司絕不會儲存您的完整信用卡號碼。每月扣款完成後將由藍新金流系統自動開立電子發票發送至您的 Email，提供您最安全、透明、無虞的交易環境。
+              <strong className="text-[#B26A27] block mb-0.5">每月代營運系統費 ($4,800/月未稅，含稅 $5,040/月) 藍新扣款說明：</strong>
+              交案正式上線時，將透過『藍新金流 (NewebPay) 第三方支付平台』設定信用卡定期定額每月自動扣款。全站採用 256-bit SSL 加密與 PCI-DSS 安全認證，每月扣款將自動寄送電子發票至您的 Email。
             </div>
           </div>
         </div>
@@ -266,7 +360,7 @@ export default function ButterToastProposalPage() {
             <ul className="text-xs text-[#7C6E62] space-y-1.5">
               <li>✓ 雙方進行點餐算錢與接管流程實測</li>
               <li>✓ 驗收通過<b>轉帳付尾款 $14,000 (含稅$14,700)</b></li>
-              <li>✓ 設定藍新定期定額 ($5,040/月含稅)，正式上線！</li>
+              <li>✓ 綁定藍新定期定額 ($5,040/月含稅)，正式上線！</li>
             </ul>
           </div>
         </div>
@@ -291,7 +385,7 @@ export default function ButterToastProposalPage() {
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm">
             <h4 className="font-bold text-[#B26A27] mb-2">🔄 代營運交付項目 (每月持續)</h4>
             <ul className="text-xs text-[#382D24] space-y-1.5">
-              <li>✓ 每月 2 次限量預購 Banner 設計與發送</li>
+              <li>✓ 每月 2 次限量預購 Banner 設計與推播</li>
               <li>✓ 每週巡檢 AI 未解答對話並補充知識庫</li>
               <li>✓ 季節甜點上架與價格即時調整</li>
               <li>✓ 5,000 會員偏好標籤維護與數據月報</li>

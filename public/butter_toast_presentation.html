@@ -26,6 +26,10 @@
       margin: 0;
       padding: 0;
       -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
     }
 
     body {
@@ -306,6 +310,8 @@
       font-size: 0.7rem;
       color: var(--text-main);
       outline: none;
+      user-select: text;
+      -webkit-user-select: text;
     }
 
     .copy-btn {
@@ -420,7 +426,7 @@
       color: #FFFDF9;
     }
 
-    /* Responsive Mobile Media Queries for LINE LIFF Mobile Screens */
+    /* Responsive Mobile Media Queries */
     @media (max-width: 768px) {
       .slide { padding: 1rem 1.2rem; }
       .grid-2x2, .grid-3col, .grid-4col, .pricing-grid { grid-template-columns: 1fr; }
@@ -778,7 +784,7 @@
               <tr style="border-bottom:1px solid var(--card-border);">
                 <td style="padding:0.35rem 0.6rem; font-weight:bold;">完售與原物料缺料監控</td>
                 <td style="padding:0.35rem 0.6rem; color:#6B7280;">忘記手動改菜單易引發顧客消費糾紛</td>
-                <td style="padding:0.35rem 0.6rem; color:#047857; font-weight:bold; background:#FFF8F0;"><b>完售/缺料秒級主動推播警報給老闆，後台直覺管控庫存</b></td>
+                <td style="padding:0.35rem 0.35rem 0.6rem; color:#047857; font-weight:bold; background:#FFF8F0;"><b>完售/缺料秒級主動推播警報給老闆，後台直覺管控庫存</b></td>
               </tr>
               <tr style="border-bottom:1px solid var(--card-border);">
                 <td style="padding:0.35rem 0.6rem; font-weight:bold;">顧客歷史記憶與互動</td>
@@ -838,6 +844,57 @@
   </div>
 
   <script>
+    // Security & Anti-Theft Protection Suite
+    document.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      return false;
+    });
+
+    document.addEventListener('keydown', (e) => {
+      // F12 Key
+      if (e.key === "F12" || e.keyCode === 123) {
+        e.preventDefault();
+        return false;
+      }
+      // Ctrl+Shift+I / Cmd+Option+I (Inspect)
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "I" || e.key === "i")) {
+        e.preventDefault();
+        return false;
+      }
+      // Ctrl+Shift+J / Cmd+Option+J (Console)
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "J" || e.key === "j")) {
+        e.preventDefault();
+        return false;
+      }
+      // Ctrl+Shift+C / Cmd+Option+C (Inspect Element)
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "C" || e.key === "c")) {
+        e.preventDefault();
+        return false;
+      }
+      // Ctrl+U / Cmd+Option+U (View Source)
+      if ((e.ctrlKey || e.metaKey) && (e.key === "U" || e.key === "u")) {
+        e.preventDefault();
+        return false;
+      }
+      // Ctrl+S / Cmd+S (Save Page)
+      if ((e.ctrlKey || e.metaKey) && (e.key === "S" || e.key === "s")) {
+        e.preventDefault();
+        return false;
+      }
+    });
+
+    document.addEventListener('selectstart', (e) => {
+      if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        return false;
+      }
+    });
+
+    console.log(
+      "%c⚠️ 商業資安提醒：本頁面受智慧財產權與全防護加密機制保護，嚴禁任何未授權複製、檢視或逆向工程行為！",
+      "color:#B26A27; font-size:16px; font-weight:bold; background:#FFF8F0; padding:8px; border-radius:4px;"
+    );
+
     let currentSlide = 0;
     const slides = document.querySelectorAll('.slide');
     const totalSlides = slides.length;

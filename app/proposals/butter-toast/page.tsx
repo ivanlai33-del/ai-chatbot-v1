@@ -44,6 +44,85 @@ export default function ButterToastProposalPage() {
   // Today's date password (e.g., 20260723 or 0723)
   const VALID_PASSWORDS = ["20260723", "0723"];
 
+  // Security & Anti-Theft Protection Hooks
+  useEffect(() => {
+    // 1. Disable Right Click Context Menu
+    const handleContextMenu = (e: MouseEvent) => {
+      e.preventDefault();
+      return false;
+    };
+
+    // 2. Disable Key Combinations for DevTools, Viewing Source, Saving Page, Copying
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // F12 Key
+      if (e.key === "F12" || e.keyCode === 123) {
+        e.preventDefault();
+        return false;
+      }
+      // Ctrl+Shift+I / Cmd+Option+I (Inspect)
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "I" || e.key === "i")) {
+        e.preventDefault();
+        return false;
+      }
+      // Ctrl+Shift+J / Cmd+Option+J (Console)
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "J" || e.key === "j")) {
+        e.preventDefault();
+        return false;
+      }
+      // Ctrl+Shift+C / Cmd+Option+C (Inspect Element)
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "C" || e.key === "c")) {
+        e.preventDefault();
+        return false;
+      }
+      // Ctrl+U / Cmd+Option+U (View Source)
+      if ((e.ctrlKey || e.metaKey) && (e.key === "U" || e.key === "u")) {
+        e.preventDefault();
+        return false;
+      }
+      // Ctrl+S / Cmd+S (Save Page)
+      if ((e.ctrlKey || e.metaKey) && (e.key === "S" || e.key === "s")) {
+        e.preventDefault();
+        return false;
+      }
+      // Ctrl+C / Cmd+C (Copy Text)
+      if ((e.ctrlKey || e.metaKey) && (e.key === "C" || e.key === "c") && !isUnlocked) {
+        e.preventDefault();
+        return false;
+      }
+
+      // Slide Navigation
+      if (isUnlocked) {
+        if (e.key === "ArrowRight" || e.key === " ") {
+          setCurrentSlide((prev) => Math.min(prev + 1, 6));
+        } else if (e.key === "ArrowLeft") {
+          setCurrentSlide((prev) => Math.max(prev - 1, 0));
+        }
+      }
+    };
+
+    // 3. Disable Text Selection & Dragging
+    const handleSelectStart = (e: Event) => {
+      e.preventDefault();
+      return false;
+    };
+
+    document.addEventListener("contextmenu", handleContextMenu);
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("selectstart", handleSelectStart);
+
+    // Console Anti-Tamper Security Banner
+    console.log(
+      "%c⚠️ 商業資安提醒：本頁面受智慧財產權與全防護加密機制保護，嚴禁任何未授權複製、檢視或逆向工程行為！",
+      "color:#B26A27; font-size:16px; font-weight:bold; background:#FFF8F0; padding:8px; border-radius:4px;"
+    );
+
+    return () => {
+      document.removeEventListener("contextmenu", handleContextMenu);
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("selectstart", handleSelectStart);
+    };
+  }, [isUnlocked]);
+
   useEffect(() => {
     const unlocked = sessionStorage.getItem("proposal_unlocked_butter_toast");
     if (unlocked === "true") {
@@ -69,7 +148,6 @@ export default function ButterToastProposalPage() {
     if (typeof window !== "undefined" && (window as any).liff) {
       try {
         const liff = (window as any).liff;
-        // Basic LIFF init if ID configured, or silent detection
         if (liff.isInClient && liff.isInClient()) {
           setIsLiffReady(true);
           if (liff.isLoggedIn && liff.isLoggedIn()) {
@@ -139,7 +217,7 @@ export default function ButterToastProposalPage() {
     } catch (err: any) {
       console.error(err);
       alert("啟動藍新定期定額刷卡失敗，請稍後再試。");
-    } finally {
+    } fontally {
       setCheckoutLoading(false);
     }
   };
@@ -235,24 +313,10 @@ export default function ButterToastProposalPage() {
     touchEndX.current = null;
   };
 
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (!isUnlocked) return;
-    if (e.key === "ArrowRight" || e.key === " ") {
-      setCurrentSlide((prev) => Math.min(prev + 1, 6));
-    } else if (e.key === "ArrowLeft") {
-      setCurrentSlide((prev) => Math.max(prev - 1, 0));
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isUnlocked]);
-
   // Password Gate
   if (!isUnlocked) {
     return (
-      <div className="min-h-screen bg-[#F7F3ED] text-[#382D24] flex items-center justify-center p-4 font-sans">
+      <div className="min-h-screen bg-[#F7F3ED] text-[#382D24] flex items-center justify-center p-4 font-sans select-none">
         <Script
           src="https://static.line-scdn.net/liff/edge/2/sdk.js"
           onLoad={handleLiffInit}
@@ -265,7 +329,7 @@ export default function ButterToastProposalPage() {
             【生乳/奶霜專賣店】專屬提案
           </h1>
           <p className="text-xs md:text-sm text-[#7C6E62] mb-5 leading-relaxed">
-            本專案報價為【生乳/奶霜專賣店 (cream_specialty_store)】量身打造之受保護內容，支援 LINE LIFF 手機直接瀏覽。
+            本專案報價為受資安防護與商業加密保護之受控內容，請輸入授權密碼檢視。
           </p>
 
           <form onSubmit={handleUnlock} className="space-y-3">
@@ -294,14 +358,14 @@ export default function ButterToastProposalPage() {
 
           <div className="mt-5 pt-3 border-t border-[#E6DDCF] text-[11px] text-[#A39587] flex items-center justify-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
-            <span>bot.ycideas.com 📱 LIFF 手機流暢瀏覽系統</span>
+            <span>bot.ycideas.com 🛡️ 商業資安與防複製加密保護中</span>
           </div>
         </div>
       </div>
     );
   }
 
-  // Magazine Editorial Cover Style Slides (Scrubbed of explicit voice wording, fully responsive for LIFF touch screens)
+  // Magazine Editorial Cover Style Slides
   const slides = [
     // Slide 1: Magazine Style Editorial Cover
     {
@@ -890,17 +954,19 @@ export default function ButterToastProposalPage() {
 
   return (
     <div
-      className="min-h-screen bg-[#F7F3ED] text-[#382D24] flex flex-col justify-between items-center p-2 md:p-8 font-sans touch-pan-y"
+      className="min-h-screen bg-[#F7F3ED] text-[#382D24] flex flex-col justify-between items-center p-2 md:p-8 font-sans touch-pan-y select-none"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
+      onCopy={(e) => e.preventDefault()}
+      onCut={(e) => e.preventDefault()}
     >
       <Script
         src="https://static.line-scdn.net/liff/edge/2/sdk.js"
         onLoad={handleLiffInit}
       />
 
-      {/* Top Header with LIFF status indicator */}
+      {/* Top Header with LIFF status indicator & Security badge */}
       <header className="w-full max-w-5xl flex justify-between items-center pb-2 md:pb-4 border-b border-[#E6DDCF]">
         <div className="flex items-center gap-1.5">
           <span className="px-2.5 py-0.5 bg-[#EFE7DA] border border-[#D6A86E] text-[#B26A27] rounded-full text-[10px] md:text-xs font-bold truncate max-w-[240px] md:max-w-none">
@@ -908,16 +974,18 @@ export default function ButterToastProposalPage() {
           </span>
         </div>
         <div className="text-[10px] md:text-xs text-[#7C6E62] font-mono flex items-center gap-1">
+          <span className="text-amber-800 font-bold bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+            🛡️ 智慧財產保護中
+          </span>
           {lineProfile?.displayName && (
             <span className="hidden md:inline text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
               👤 {lineProfile.displayName}
             </span>
           )}
-          <span>proposals/butter-toast</span>
         </div>
       </header>
 
-      {/* Main Slide Card (Fully responsive for LIFF touch screens) */}
+      {/* Main Slide Card */}
       <main className="w-full max-w-5xl flex-1 my-3 md:my-6 bg-[#FFFDF9] border border-[#E6DDCF] rounded-2xl md:rounded-3xl p-4 md:p-10 shadow-xl flex flex-col justify-between backdrop-blur-md overflow-y-auto max-h-[82vh] md:max-h-none">
         {slides[currentSlide].title && (
           <h2 className="text-lg md:text-3xl font-bold font-serif text-[#382D24] mb-3 md:mb-6">
@@ -935,7 +1003,7 @@ export default function ButterToastProposalPage() {
         </div>
       </main>
 
-      {/* Bottom Sticky Controls (Thumb-friendly for LINE LIFF Mobile) */}
+      {/* Bottom Sticky Controls */}
       <footer className="w-full max-w-5xl flex justify-between items-center gap-2 pt-1">
         <div className="text-[11px] md:text-xs font-mono font-bold text-[#7C6E62]">
           SLIDE {currentSlide + 1} / {slides.length}

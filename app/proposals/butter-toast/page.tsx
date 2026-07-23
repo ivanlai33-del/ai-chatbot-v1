@@ -268,7 +268,7 @@ export default function ButterToastProposalPage() {
 
           {/* Company Contact Info Line */}
           <div className="mt-4 pt-3 border-t border-[#E6DDCF] text-xs text-[#7C6E62] font-medium flex justify-center flex-wrap gap-4">
-            <span>🏢 <b>提案單位：</b>奕暢創新設計工作室</span>
+            <span>🏢 <b>提案單位：</b>奕暢創新設計工作室 <span className="font-mono text-[#B26A27]">(統編: 41370842)</span></span>
             <span>💬 <b>專案負責人 LINE ID：</b><b className="text-[#B26A27] font-mono">ivanlai33</b></span>
             <span>📞 <b>電話：</b><b className="text-[#B26A27] font-mono">0987528785</b></span>
           </div>
@@ -745,14 +745,17 @@ export default function ButterToastProposalPage() {
             </table>
           </div>
 
-          {/* DEDICATED PROPOSING COMPANY CONTACT CARD */}
+          {/* DEDICATED PROPOSING COMPANY CONTACT CARD WITH TAX ID */}
           <div className="bg-gradient-to-r from-[#FFFDF9] via-[#FCEFDC] to-[#FFFDF9] border-2 border-[#B26A27] rounded-2xl p-3 shadow-md flex flex-col md:flex-row justify-between items-center gap-2">
             <div>
               <span className="text-[10px] bg-[#B26A27] text-white px-2 py-0.5 rounded-full font-bold block w-fit mb-1">
                 🏢 提案團隊聯絡資訊
               </span>
-              <h3 className="font-serif font-extrabold text-base text-[#382D24]">
-                奕暢創新設計工作室
+              <h3 className="font-serif font-extrabold text-base text-[#382D24] flex items-center gap-2">
+                <span>奕暢創新設計工作室</span>
+                <span className="text-xs font-mono font-bold text-[#B26A27] bg-[#EFE7DA] px-2 py-0.5 rounded-md border border-[#D6A86E]">
+                  統編: 41370842
+                </span>
               </h3>
             </div>
 

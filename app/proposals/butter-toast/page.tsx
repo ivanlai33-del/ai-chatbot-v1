@@ -247,7 +247,7 @@ export default function ButterToastProposalPage() {
   const slides = [
     // Slide 1: Magazine Style Editorial Cover
     {
-      badge: "🧸 品牌吉祥物擬真人設 ✕ 24H 智慧總管",
+      badge: "🧸 品牌吉祥物擬真人設 ✕ 後台 AI 經營助手",
       content: (
         <div className="text-center py-2 max-w-4xl mx-auto">
           {/* Top Magazine Eyebrow */}
@@ -267,7 +267,7 @@ export default function ButterToastProposalPage() {
 
           {/* Subtitle / Narrative summary */}
           <p className="text-sm md:text-base text-[#7C6E62] max-w-2xl mx-auto mb-4 leading-relaxed font-medium">
-            專為無專職小編門市打造的 <b>24 小時線上 AI 智慧總管</b>！結合吉祥物娃娃溫暖人設，提供品牌導覽、吐司算錢、顧客記憶與雙向通知，讓營運零負擔升級！
+            專為無專職小編門市打造的 <b>24 小時線上 AI 智慧總管 ✕ 老闆後台 AI 數據助手</b>！前台溫暖自動接單、後台店長一鍵查詢今日業績、完成單數與未下單流失分析！
           </p>
 
           {/* 4 Feature Cards (Magazine Cover Headline Highlights) */}
@@ -281,9 +281,9 @@ export default function ButterToastProposalPage() {
 
             <div className="bg-white/90 border border-[#D6A86E] p-2.5 rounded-xl shadow-xs">
               <div className="text-sm font-bold text-[#B26A27] flex items-center gap-1 mb-0.5">
-                <span>🧠</span> 顧客歷史記憶
+                <span>📊</span> 後台 AI 經營助手
               </div>
-              <p className="text-[11px] text-[#7C6E62]">自動牢記喜好口味與訂單，主動溫暖問候推薦</p>
+              <p className="text-[11px] text-[#7C6E62]">店長直接問「今天業績/完成幾單/幾人沒下單」，AI 自動生成報表</p>
             </div>
 
             <div className="bg-white/90 border border-[#D6A86E] p-2.5 rounded-xl shadow-xs">
@@ -306,11 +306,11 @@ export default function ButterToastProposalPage() {
             <span className="inline-flex items-center flex-wrap justify-center gap-2 px-4 py-1.5 bg-[#B26A27] text-[#FFFDF9] rounded-full text-xs font-bold shadow-sm">
               <span>✨ 0 專職小編需求</span>
               <span>•</span>
-              <span>✨ 24H 自動應答導覽</span>
+              <span>✨ 後台 AI 業績流失日報</span>
               <span>•</span>
               <span>✨ 100+人防爆佇列</span>
               <span>•</span>
-              <span>✨ 員工專屬權限鎖</span>
+              <span>✨ 員工權限鎖</span>
             </span>
           </div>
 
@@ -354,10 +354,10 @@ export default function ButterToastProposalPage() {
           </div>
 
           <div className="bg-white border-2 border-[#D6A86E] rounded-2xl p-5 shadow-sm bg-amber-50/20 hover:border-[#B26A27] transition">
-            <div className="text-2xl mb-1">🧠</div>
-            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">需求 4：AI 歷史訂單記憶 ✕ 溫暖交流與新品推薦</h3>
+            <div className="text-2xl mb-1">📊</div>
+            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">需求 4：後台 AI 經營助手與流失客分析</h3>
             <p className="text-sm text-[#382D24] leading-relaxed">
-              <b>【獨家專利特色】</b>AI 自動牢記顧客歷史訂單與喜好口味（如：抹茶/OREO）。再次對話時進行溫暖交流：<b>「上次買的抹茶奶霜還喜歡嗎？今天有新出夏日限定芒果口味，要不要順便帶一份試試看？」</b>，貼心推薦、拉近距離！
+              <b>【老闆專屬數據 Copilot】</b>店長用文字或語氣隨時問：<b>「今天業績多少？完成幾單？有幾個人問了沒買？今天新增多少會員？」</b>，AI 立刻統計生成經營日報，幫老闆掌握客群流失與熱銷狀況！
             </p>
           </div>
         </div>
@@ -366,7 +366,7 @@ export default function ButterToastProposalPage() {
     // Slide 3: Complete Front-end & Back-end Architecture
     {
       badge: "專屬前後台系統與安全權限防護",
-      title: "顧客專屬一鍵點餐介面 ✕ 店家員工安全權限鎖",
+      title: "顧客專屬一鍵點餐介面 ✕ 老闆後台 AI 經營助手",
       content: (
         <div className="space-y-3">
           {/* Front-end & Back-end Dual System Grid */}
@@ -387,17 +387,18 @@ export default function ButterToastProposalPage() {
               </ul>
             </div>
 
-            {/* Back-end Merchant Dashboard */}
+            {/* Back-end Merchant Dashboard & Executive AI Copilot */}
             <div className="bg-white border-2 border-[#B26A27] p-3.5 rounded-xl shadow-xs">
               <div className="flex items-center gap-1.5 mb-1.5">
-                <span className="text-base">🔑</span>
+                <span className="text-base">📊</span>
                 <h4 className="font-serif font-bold text-[#B26A27] text-sm">
-                  後台：店家員工安全權限鎖（防非授權人員進入）
+                  後台：老闆後台 AI 經營助手與員工權限鎖
                 </h4>
               </div>
               <ul className="text-xs text-[#382D24] space-y-1">
-                <li>• <b>店家專屬員工權限鎖</b>：僅授權之店長與廚房師傅帳號可開啟管理後台。</li>
-                <li>• <b>非授權人員自動封鎖</b>：外人或顧客點開會顯示 `⛔ 權限不足`，防護 100% 嚴密。</li>
+                <li>• <b>後台 AI 數據 Copilot</b>：店長直接問「今日業績/完成幾單/詢問未下單幾人/新會員數」，AI 秒回！</li>
+                <li>• <b>每日營業自動日報</b>：每日打烊時間 AI 自動整理今日營業額、熱銷排行與未下單潛在顧客分析。</li>
+                <li>• <b>店家專屬員工權限鎖</b>：僅授權之店長與廚房師傅帳號可存取，非授權人員自動封鎖。</li>
                 <li>• <b>流量平滑防爆機制</b>：獨家系統防爆大腦，同時 100+ 人順暢點餐 0 掉單。</li>
               </ul>
             </div>
@@ -414,8 +415,8 @@ export default function ButterToastProposalPage() {
               <p className="text-[10px] text-[#7C6E62]">自動消化高併發流量，確保訊息順暢 0 掉單</p>
             </div>
             <div className="bg-[#FFFDF9] border border-[#E6DDCF] p-2 rounded-lg">
-              <b className="text-[#B26A27]">3. 店家員工白名單驗證</b>
-              <p className="text-[10px] text-[#7C6E62]">自動驗證員工身份，僅授權人員可看備貨單</p>
+              <b className="text-[#B26A27]">3. 後台 AI 經營助手</b>
+              <p className="text-[10px] text-[#7C6E62]">問「今天業績/完成幾單/未下單人數」，AI 秒出日報</p>
             </div>
             <div className="bg-emerald-50 border border-emerald-300 p-2 rounded-lg text-emerald-900">
               <b className="text-emerald-700">4. AI 自動推播取餐</b>
@@ -452,9 +453,9 @@ export default function ButterToastProposalPage() {
                 </div>
                 <ul className="text-xs text-[#382D24] space-y-0.5 mb-1.5">
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 100% 線上全遠端建置，免到店干擾營運</li>
-                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> <b>AI 歷史訂單記憶大腦 (口味記憶・溫暖交流・貼心新品推薦)</b></li>
+                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> <b>後台 AI 經營助手大腦 (對話調閱業績、完成單數與未下單分析)</b></li>
+                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> AI 歷史訂單記憶大腦 (口味記憶・溫暖交流・貼心新品推薦)</li>
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 前後台原生身份認證與店家員工專屬權限鎖</li>
-                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 品牌吉祥物/娃娃專屬 AI 人設口吻微調</li>
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 專屬點餐介面與 3/5入優惠組算錢大腦</li>
                 </ul>
               </div>
@@ -685,7 +686,7 @@ export default function ButterToastProposalPage() {
             <span className="inline-block px-2.5 py-0.5 bg-[#B26A27] text-[#FFFDF9] rounded-full text-xs font-bold mb-2">PHASE 2 (Week 2)</span>
             <h4 className="font-serif font-bold text-[#B26A27] mb-2">測試環境與線上視訊演練</h4>
             <ul className="text-xs text-[#7C6E62] space-y-1.5">
-              <li>✓ 專屬點餐介面免登入與 AI 口味歷史記憶對話測試</li>
+              <li>✓ 專屬點餐介面免登入與 AI 後台經營助手日報測試</li>
               <li>✓ 掃測試碼進行 3入/5入折價與雙向取貨測試</li>
               <li>✓ 雙方進行 30 分鐘線上視訊會審，微調娃娃回應語氣細節</li>
             </ul>
@@ -713,11 +714,11 @@ export default function ButterToastProposalPage() {
             <h4 className="font-bold text-[#B26A27] text-xs mb-1.5">📌 AI 店長與品牌基礎建置 (一次性)</h4>
             <ul className="text-[11px] text-[#382D24] space-y-1">
               <li>✓ 100% 全遠端雲端建置與線上指導驗收</li>
-              <li>✓ <b>AI 歷史訂單記憶大腦 (口味記憶・溫暖交流・貼心新品推薦)</b></li>
+              <li>✓ <b>後台 AI 經營助手 (語音/文字隨時調閱業績與未下單分析)</b></li>
+              <li>✓ AI 歷史訂單記憶大腦 (口味記憶・溫暖交流・貼心新品推薦)</li>
               <li>✓ 前後台原生身份認證與店家員工專屬權限鎖</li>
               <li>✓ 品牌吉祥物/娃娃專屬 AI 人設口吻微調</li>
               <li>✓ 商店介紹/產品圖文介紹/品牌故事建置</li>
-              <li>✓ 官方 IG / FB / 社群專頁連結導流選單</li>
               <li>✓ 前後台專屬一鍵點餐與備貨介面開發</li>
             </ul>
           </div>
@@ -727,8 +728,8 @@ export default function ButterToastProposalPage() {
             <ul className="text-[11px] text-[#382D24] space-y-1">
               <li>✓ <b>首月 30 天線上免費微調保障 (語氣與菜單彈性調整)</b></li>
               <li>✓ 每月 2 次限量預購 Banner 設計全自動推播</li>
+              <li>✓ 每晚自動推播「今日經營日報」給店長老闆</li>
               <li>✓ 每週巡檢 AI 未解答對話與補充知識庫</li>
-              <li>✓ 季節限定甜點 (夏日芒果/秋冬新品) 上架</li>
               <li>✓ 5,000 會員偏好標籤維護與會員訂購名單匯出</li>
             </ul>
           </div>
@@ -763,9 +764,14 @@ export default function ButterToastProposalPage() {
               </thead>
               <tbody className="divide-y divide-[#E6DDCF] text-[#382D24]">
                 <tr>
+                  <td className="p-2 font-bold">經營數據與日報統計</td>
+                  <td className="p-2 text-gray-600">晚上需人工打字算帳，無法追蹤未下單顧客</td>
+                  <td className="p-2 font-bold text-emerald-700 bg-[#FFF8F0]"><b>後台 AI 經營助手自動計算業績、完成單數與未下單流失分析</b></td>
+                </tr>
+                <tr>
                   <td className="p-2 font-bold">顧客歷史記憶與互動</td>
                   <td className="p-2 text-gray-600">記不住歷史訂單與口味，只能冰冷回答</td>
-                  <td className="p-2 font-bold text-emerald-700 bg-[#FFF8F0]"><b>牢記顧客歷史訂單，進行溫暖交流與貼心新品推薦</b></td>
+                  <td className="p-2 font-bold text-emerald-700 bg-[#FFF8F0]">牢記顧客歷史訂單，進行溫暖交流與貼心新品推薦</td>
                 </tr>
                 <tr>
                   <td className="p-2 font-bold">單日點餐對話處理容量</td>
@@ -778,11 +784,6 @@ export default function ButterToastProposalPage() {
                   <td className="p-2 font-bold text-emerald-700 bg-[#FFF8F0]">
                     <b>獨家流量平滑防爆保護</b> (同時 100+ 人順暢點餐 0 掉單)
                   </td>
-                </tr>
-                <tr>
-                  <td className="p-2 font-bold">後台權限防護與品牌人設</td>
-                  <td className="p-2 text-gray-600">人工易洩漏帳密給員工</td>
-                  <td className="p-2 font-bold text-emerald-700 bg-[#FFF8F0]"><b>店家員工專屬權限鎖</b> (0 密碼外洩，外人無法進入)</td>
                 </tr>
                 <tr>
                   <td className="p-2 font-bold">每月固定費用成本</td>

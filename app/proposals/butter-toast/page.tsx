@@ -152,7 +152,7 @@ export default function ButterToastProposalPage() {
       console.error(err);
       setIsSaved(true);
       alert("發票資料已儲存於本機。");
-    } finally {
+    } fontally {
       setIsSubmitting(false);
     }
   };
@@ -367,7 +367,7 @@ export default function ButterToastProposalPage() {
         </div>
       ),
     },
-    // Slide 4: UPDATED PRICING CARDS ($48,000 建置費 / $6,800 月費) + BANK + INVOICE + CHECKOUT BUTTON + CANCELLATION POLICY
+    // Slide 4: PRICING CARDS ($48,000 建置費 / $6,800 月費) + BANK + INVOICE + CHECKOUT BUTTON + CANCELLATION POLICY
     {
       badge: "生乳/奶霜專賣店 專案報價",
       title: "專案報價金額、匯款帳號與發票填寫",
@@ -383,7 +383,7 @@ export default function ButterToastProposalPage() {
                     🛠️ 【一次性】AI 店長系統建置費
                   </span>
                   <span className="text-[10px] bg-[#EFE7DA] text-[#B26A27] px-2 py-0.5 rounded-full font-bold">
-                    分兩期 (轉帳付訂/尾款)
+                    分兩期 (簽約訂金 / 驗收尾款)
                   </span>
                 </div>
                 <div className="text-xl md:text-2xl font-black font-mono text-[#B26A27] my-0.5">
@@ -399,7 +399,7 @@ export default function ButterToastProposalPage() {
                 </ul>
               </div>
               <div className="text-[11px] text-[#7C6E62] bg-[#FFF8F0] p-1.5 rounded-xl border border-[#D6A86E] font-medium text-center">
-                👇 請參考下方<b>「中國信託銀行轉帳卡片」</b>支付第一期訂金 $25,200 (含稅)
+                👇 簽約開工付訂金 $25,200 (含稅)；第3週<b>驗收通過付尾款 $25,200 (含稅)</b>
               </div>
             </div>
 
@@ -411,7 +411,7 @@ export default function ButterToastProposalPage() {
                     💳 【每月】代營運與 AI 系統費
                   </span>
                   <span className="text-[10px] bg-amber-500 text-white px-2 py-0.5 rounded-full font-bold shadow-xs">
-                    藍新信用卡定期定額
+                    驗收通過當天線上刷卡開通
                   </span>
                 </div>
                 <div className="text-xl md:text-2xl font-black font-mono text-[#B26A27] my-0.5">
@@ -434,7 +434,7 @@ export default function ButterToastProposalPage() {
                 className="w-full py-2 px-3 bg-gradient-to-r from-[#B26A27] via-[#D6A86E] to-[#B26A27] hover:from-[#8F521B] hover:to-[#8F521B] text-white font-extrabold rounded-xl shadow-md shadow-[#B26A27]/30 transition-all duration-200 transform hover:scale-[1.01] flex items-center justify-center gap-1.5 text-xs cursor-pointer disabled:opacity-50 active:scale-95"
               >
                 <span>💳</span>
-                <span>{checkoutLoading ? "正在連接藍新金流..." : "點此線上綁定【藍新信用卡定期扣款】(NT$ 7,140/月)"}</span>
+                <span>{checkoutLoading ? "正在連接藍新金流..." : "驗收通過點此【線上綁定藍新信用卡開通營運】(NT$ 7,140/月)"}</span>
                 <span>➔</span>
               </button>
             </div>
@@ -479,8 +479,8 @@ export default function ButterToastProposalPage() {
             </div>
 
             <div className="flex justify-between items-center text-[10px] text-[#7C6E62] mt-1 px-1 font-medium">
-              <span>● 第一期簽約訂金 (50%)：<b className="text-[#B26A27]">NT$ 24,000</b> (含稅 $25,200)</span>
-              <span>● 第二期交案尾款 (50%)：<b className="text-[#B26A27]">NT$ 24,000</b> (含稅 $25,200)</span>
+              <span>● 第一期簽約訂金 (50%)：<b className="text-[#B26A27]">NT$ 24,000</b> (含稅 $25,200) ➔ 簽約付款</span>
+              <span>● 第二期交案尾款 (50%)：<b className="text-[#B26A27]">NT$ 24,000</b> (含稅 $25,200) ➔ 驗收付款</span>
             </div>
           </div>
 
@@ -488,12 +488,12 @@ export default function ButterToastProposalPage() {
           <div className="bg-[#FFFDF9] border border-[#D6A86E] rounded-xl p-2.5 text-[11px] text-[#7C6E62] leading-relaxed space-y-1 shadow-xs">
             <div className="font-bold text-[#B26A27] flex items-center gap-1.5 text-xs">
               <span>📋</span>
-              <span>月費服務取消方式與數位雲端服務條款：</span>
+              <span>月費開通方式、服務取消與數位雲端服務條款：</span>
             </div>
             <ul className="list-disc pl-4 space-y-0.5 text-[10px] text-[#382D24]">
+              <li><b>月費開通時機：</b>第 3 週雙方實測並<b>完成驗收通過當天</b>，點擊上方按鈕綁定藍新信用卡支付首月代營運費（含稅 $7,140/月），系統即刻開通 AI 店長權限上線服務。</li>
               <li><b>取消扣款流程：</b>若後續欲取消每月代營運與 AI 系統服務，只需於<b>下一期自動扣款日前 7 天</b>通知團隊客服，我們將即時為您辦理藍新定期扣款解約。</li>
-              <li><b>當期服務權益：</b>已扣款之當期服務將持續運作為您服務至<b>當月帳期結束（使用至月底或扣款週期屆滿日）</b>，保障您的完整權益。</li>
-              <li><b>數位服務退款說明：</b>依消費者保護法「合理例外情事」規定，本服務屬<b>已即時提供之數位化內容與雲端伺服器運算代營運服務</b>，一經扣款即已配置 AI 主機資源與小編維護人力，當期已付費用恕不辦理中途退款。</li>
+              <li><b>當期服務權益與數位退款：</b>已扣款之當期服務持續運作至當月帳期結束；依消保法合理例外情事規定，數位雲端內容與代營運資源一經扣款恕不辦理當期中途退款。</li>
             </ul>
           </div>
 
@@ -602,7 +602,7 @@ export default function ButterToastProposalPage() {
         </div>
       ),
     },
-    // Slide 5: Timeline
+    // Slide 5: UPDATED TIMELINE WITH CLEAR ACCEPTANCE & ACTIVATION MILESTONES
     {
       badge: "共計 3 週上線",
       title: "專案製作時間與交案流程",
@@ -626,13 +626,13 @@ export default function ButterToastProposalPage() {
               <li>✓ 串接廚房打單機/POS對接、Notify 推播與雙向取貨通知</li>
             </ul>
           </div>
-          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm">
-            <span className="inline-block px-2.5 py-0.5 bg-[#B26A27] text-[#FFFDF9] rounded-full text-xs font-bold mb-2">PHASE 3 (Week 3)</span>
-            <h4 className="font-serif font-bold text-[#B26A27] mb-2">實測試驗與正式交案</h4>
-            <ul className="text-xs text-[#7C6E62] space-y-1.5">
-              <li>✓ 雙方進行多品項點餐算錢與接管流程實測</li>
+          <div className="bg-white border-2 border-[#B26A27] rounded-2xl p-5 shadow-md bg-amber-50/30">
+            <span className="inline-block px-2.5 py-0.5 bg-[#B26A27] text-[#FFFDF9] rounded-full text-xs font-bold mb-2">PHASE 3 (Week 3 驗收上線)</span>
+            <h4 className="font-serif font-bold text-[#B26A27] mb-2">驗收通過 ➔ 付尾款 ➔ 刷卡開通</h4>
+            <ul className="text-xs text-[#382D24] space-y-1.5 font-medium">
+              <li>✓ 雙方進行點餐算錢與廚房打單/取貨流程實測</li>
               <li>✓ 驗收通過<b>轉帳付尾款 $24,000 (含稅$25,200)</b></li>
-              <li>✓ 點擊按鈕線上設定藍新定期定額 ($7,140/月含稅)，正式上線！</li>
+              <li>✓ 驗收當天<b>線上綁定藍新信用卡 ($7,140/月含稅) 開通 AI 店長正式營運！</b></li>
             </ul>
           </div>
         </div>

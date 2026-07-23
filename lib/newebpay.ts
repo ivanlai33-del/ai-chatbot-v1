@@ -17,24 +17,36 @@ export interface NewebPayConfig {
     notifyUrl: string;
     backendUrl: string;
     periodicalUpdateUrl: string;
+    isTestMode: boolean;
 }
 
-// 取得環境變數中的藍新設定
+// 取得環境變數中的藍新設定（若無設定則預設啟用測試沙盒模式）
 export function getNewebPayConfig(): NewebPayConfig {
-    // 強力清理：移除兩端的空格與可能被誤加的引號
     const cleanEnv = (val: string | undefined) => (val || '').trim().replace(/^["']|["']$/g, '');
     
-    const merchantId = cleanEnv(process.env.NEWEBPAY_MERCHANT_ID);
-    const hashKey = cleanEnv(process.env.NEWEBPAY_HASH_KEY);
-    const hashIV = cleanEnv(process.env.NEWEBPAY_HASH_IV);
+    let merchantId = cleanEnv(process.env.NEWEBPAY_MERCHANT_ID);
+    let hashKey = cleanEnv(process.env.NEWEBPAY_HASH_KEY);
+    let hashIV = cleanEnv(process.env.NEWEBPAY_HASH_IV);
     const version = cleanEnv(process.env.NEWEBPAY_VERSION) || '2.0';
-    const appUrl = (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000').trim();
-    const backendUrl = (process.env.NEXT_PUBLIC_NEWEBPAY_URL || '').trim();
-    const periodicalUpdateUrl = process.env.NEWEBPAY_PERIODICAL_UPDATE_URL || 'https://core.newebpay.com/MPG/periodical';
-
+    const appUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://bot.ycideas.com').trim();
+    
+    // 是否為測試環境沙盒
+    let isTestMode = false;
     if (!merchantId || !hashKey || !hashIV) {
-        throw new Error('NewebPay configuration is missing in environment variables');
+        console.warn('⚠️ [NewebPay Warning] 尚未設定正式金鑰，目前使用藍新測試沙盒 (Sandbox) 模式');
+        merchantId = 'MS32470650'; // 藍新測試商店代號
+        hashKey = '28489704253948572093847502938475'; 
+        hashIV = '1029384756019283';
+        isTestMode = true;
     }
+
+    const defaultBackendUrl = isTestMode 
+        ? 'https://ccore.newebpay.com/MPG/mpg_gateway' 
+        : 'https://core.newebpay.com/MPG/mpg_gateway';
+
+    const backendUrl = cleanEnv(process.env.NEXT_PUBLIC_NEWEBPAY_URL) || defaultBackendUrl;
+    const periodicalUpdateUrl = process.env.NEWEBPAY_PERIODICAL_UPDATE_URL || 
+        (isTestMode ? 'https://ccore.newebpay.com/MPG/periodical' : 'https://core.newebpay.com/MPG/periodical');
 
     return {
         merchantId,
@@ -45,7 +57,8 @@ export function getNewebPayConfig(): NewebPayConfig {
         returnUrl: `${appUrl}/dashboard/billing/success`,
         notifyUrl: `${appUrl}/api/payment/webhook`,
         backendUrl,
-        periodicalUpdateUrl
+        periodicalUpdateUrl,
+        isTestMode
     };
 }
 
@@ -73,7 +86,6 @@ export function createMpgShaEncrypt(aesEncrypted: string, hashKey: string, hashI
 export function decryptTradeInfo(encryptedTradeInfo: string, hashKey: string, hashIV: string): any {
     try {
         const decipher = crypto.createDecipheriv('aes-256-cbc', hashKey, hashIV);
-        // 設定不自動取消 padding，我們手動處理，避免某些特殊字串報錯
         decipher.setAutoPadding(false);
 
         let decrypted = decipher.update(encryptedTradeInfo, 'hex', 'utf8');
@@ -85,7 +97,6 @@ export function decryptTradeInfo(encryptedTradeInfo: string, hashKey: string, ha
             decrypted = decrypted.slice(0, -paddingLength);
         }
 
-        // 回傳的解密字串會是 JSON 格式（因為我們請求時 RespondType 會設為 JSON）
         return JSON.parse(decrypted);
 
     } catch (error) {
@@ -95,7 +106,6 @@ export function decryptTradeInfo(encryptedTradeInfo: string, hashKey: string, ha
 }
 
 export function genDataChain(orderParams: Record<string, any>): string {
-    // ✅ 藍新規範：value 做 URL encode，空白轉 +，其他特殊字元 encode
     return Object.entries(orderParams)
         .filter(([_, value]) => value !== undefined && value !== null && value !== '') 
         .map(([key, value]) => {
@@ -110,9 +120,7 @@ export function genDataChain(orderParams: Record<string, any>): string {
  */
 export function generateMerchantOrderNo(prefix = 'ORD'): string {
     const date = new Date();
-    // 產生如 20231005123045
     const timestamp = date.toISOString().replace(/[-T:.Z]/g, '').slice(0, 14);
-    // 產生 4 碼隨機字串
     const randomStr = crypto.randomBytes(2).toString('hex').toUpperCase();
     
     return `${prefix}${timestamp}${randomStr}`;
@@ -120,7 +128,6 @@ export function generateMerchantOrderNo(prefix = 'ORD'): string {
 
 /**
  * 產生定期定額執行/中止所需的加密資料 (Periodical Update API)
- * @param orderParams 包含 MerchantOrderNo, PeriodNo, PeriodType ('terminate') 等
  */
 export function createPeriodicalUpdatePayload(orderParams: Record<string, any>, hashKey: string, hashIV: string): string {
     const dataChain = genDataChain(orderParams);

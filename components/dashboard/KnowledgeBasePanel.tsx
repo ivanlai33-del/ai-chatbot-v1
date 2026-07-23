@@ -136,7 +136,7 @@ export default function KnowledgeBasePanel({
 
             <div className="flex flex-1 min-h-0">
                 {/* Fixed Side Navigation */}
-                <div className="w-[250px] border-r bg-white/10 backdrop-blur-xl p-5 overflow-y-auto shrink-0 glass-scrollbar">
+                <div className="w-[250px] border-r bg-white/10 backdrop-blur-xl p-5 overflow-y-auto shrink-0 glass-scrollbar no-scrollbar">
                     <div className="space-y-1.5 pt-2">
                         {tabs.map((tab) => {
                             const meta = TAB_META[tab.id] || TAB_META.brand;
@@ -191,7 +191,7 @@ export default function KnowledgeBasePanel({
 
                 {/* Main Content Area */}
                 <div className="flex-1 flex flex-col min-w-0 bg-transparent relative">
-                    <div className="flex-1 overflow-y-auto px-10 pt-6 pb-12 glass-scrollbar">
+                    <div className="flex-1 overflow-y-auto px-10 pt-6 pb-12 glass-scrollbar no-scrollbar">
                         {saveSuccess && (
                             <motion.div
                                 initial={{ opacity: 0, y: -20 }}

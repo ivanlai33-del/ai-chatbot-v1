@@ -35,13 +35,28 @@
     color: var(--text-sub) !important;
 }
 
-/* 捲軸透明化 - 僅在後台生效 */
-.saas-theme-root *::-webkit-scrollbar {
+/* 捲軸 100% 透明隱形化 - 店長智庫與後台通用 */
+*::-webkit-scrollbar {
     width: 0px !important;
     height: 0px !important;
+    background: transparent !important;
 }
-.saas-theme-root {
-    scrollbar-width: none !important;
+
+*::-webkit-scrollbar-track {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+}
+
+html, body, div, main, section, aside, nav, article {
+    -ms-overflow-style: none !important; /* IE & Edge */
+    scrollbar-width: none !important;    /* Firefox */
 }
 
 /* 強制後台內容區域透明，讓 b_01.svg 穿透 */

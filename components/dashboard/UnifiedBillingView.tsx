@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { PRICING_PLANS, getPlanByTier, PLAN_IDS_ORDERED, PlanId } from '@/lib/config/pricing';
 import LandingFooter from '@/components/landing/LandingFooter';
 import ReferralProgramSection from '@/components/dashboard/ReferralProgramSection';
+import StoreWalletSection from '@/components/dashboard/StoreWalletSection';
 
 const AVAILABLE_PLAN_IDS = PLAN_IDS_ORDERED.filter(id => id === 'starter');
 
@@ -165,6 +166,9 @@ export default function UnifiedBillingView() {
                     )}
                 </div>
             </section>
+
+            {/* 💰 店長購物金與大小月爆量保護錢包 (Store Wallet Section) */}
+            <StoreWalletSection ownerLineId={lineUserId} />
 
             {/* 🌟 推薦好友·月費全免專區 (Referral Program Section) */}
             <ReferralProgramSection botId={null} />

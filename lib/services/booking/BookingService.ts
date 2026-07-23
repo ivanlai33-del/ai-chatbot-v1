@@ -10,6 +10,7 @@ export interface BookingSlotAvailability {
 export interface BookingQueryResult {
     botId: string;
     date: string; // YYYY-MM-DD
+    isBookingEnabled: boolean; // 門市預約功能總開關
     totalSlots: number;
     availableSlotsCount: number;
     slots: BookingSlotAvailability[];
@@ -86,6 +87,7 @@ export class BookingService {
             return {
                 botId,
                 date: dateStr,
+                isBookingEnabled: settings?.is_enabled ?? true,
                 totalSlots: slots.length,
                 availableSlotsCount: availableCount,
                 slots,
@@ -98,6 +100,7 @@ export class BookingService {
             return {
                 botId,
                 date: dateStr,
+                isBookingEnabled: false,
                 totalSlots: 0,
                 availableSlotsCount: 0,
                 slots: [],

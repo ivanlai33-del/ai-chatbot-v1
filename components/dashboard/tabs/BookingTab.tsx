@@ -30,6 +30,8 @@ export default function BookingTab({ botId = '00000000-0000-0000-0000-0000000000
     const [newServiceDuration, setNewServiceDuration] = useState(60);
     const [newServicePrice, setNewServicePrice] = useState(0);
 
+    const [isBookingEnabled, setIsBookingEnabled] = useState<boolean>(true);
+
     useEffect(() => {
         if (isUnlocked) {
             fetchBookingData();
@@ -43,6 +45,9 @@ export default function BookingTab({ botId = '00000000-0000-0000-0000-0000000000
             const data = await res.json();
             if (data.success) {
                 setBookings(data.bookings || []);
+                if (data.availability) {
+                    setIsBookingEnabled(data.availability.isBookingEnabled ?? true);
+                }
                 if (data.services && data.services.length > 0) {
                     setServices(data.services);
                 }
@@ -51,6 +56,23 @@ export default function BookingTab({ botId = '00000000-0000-0000-0000-0000000000
             console.error('[Fetch Admin Booking Data Error]', err);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleToggleBookingMaster = async () => {
+        const nextState = !isBookingEnabled;
+        setIsBookingEnabled(nextState);
+        try {
+            await fetch(`/api/bot/${botId}/booking`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'TOGGLE_MASTER_BOOKING',
+                    isBookingEnabled: nextState
+                })
+            });
+        } catch (err) {
+            console.error('[Toggle Master Booking Error]', err);
         }
     };
 
@@ -132,6 +154,21 @@ export default function BookingTab({ botId = '00000000-0000-0000-0000-0000000000
                         }`}
                     >
                         ⚙️ 營業時間與規則設定
+                    </button>
+                </div>
+
+                {/* 🟢 / ⚪ 預約功能總開關 */}
+                <div className="flex items-center gap-3 bg-white border border-slate-200 px-4 py-2 rounded-2xl shadow-sm">
+                    <span className="text-xs font-black text-slate-700">LINE 店長預約功能總開關：</span>
+                    <button
+                        onClick={handleToggleBookingMaster}
+                        className={`px-4 py-1.5 rounded-full text-xs font-black transition-all flex items-center gap-1.5 shadow-sm ${
+                            isBookingEnabled
+                                ? 'bg-emerald-500 text-white shadow-emerald-500/20'
+                                : 'bg-slate-200 text-slate-600'
+                        }`}
+                    >
+                        {isBookingEnabled ? '🟢 已開啟 (AI 將提供預約卡片)' : '⚪ 已關閉 (不提供預約卡片)'}
                     </button>
                 </div>
             </div>

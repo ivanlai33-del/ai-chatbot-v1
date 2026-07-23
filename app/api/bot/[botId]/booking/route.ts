@@ -57,6 +57,24 @@ export async function POST(
         const botId = params.botId;
         const body = await req.json();
 
+        // 情境 A：切換預約功能總開關 (Master Enable Toggle)
+        if (body.action === 'TOGGLE_MASTER_BOOKING') {
+            const { isBookingEnabled } = body;
+            await supabase
+                .from('booking_settings')
+                .upsert({
+                    bot_id: botId,
+                    owner_line_id: body.ownerLineId || 'OWNER_DEFAULT',
+                    is_enabled: isBookingEnabled,
+                    updated_at: new Date().toISOString()
+                });
+
+            return NextResponse.json({
+                success: true,
+                isBookingEnabled
+            });
+        }
+
         const {
             serviceId,
             serviceName = '標準預約服務',

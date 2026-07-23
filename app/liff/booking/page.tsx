@@ -120,7 +120,18 @@ export default function LiffBookingPage() {
                     </div>
                 </div>
 
-                {successBooking ? (
+                {availability?.isBookingEnabled === false ? (
+                    /* ⚪ 門市未開啟預約功能提示 */
+                    <div className="text-center py-8 space-y-4">
+                        <div className="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto">
+                            <AlertCircle className="w-8 h-8" />
+                        </div>
+                        <div className="space-y-2">
+                            <h2 className="text-xl font-black text-slate-800">本門市暫未開放線上預約</h2>
+                            <p className="text-xs font-bold text-slate-500">歡迎直接傳訊向 LINE 店長詢問產品或服務細節！</p>
+                        </div>
+                    </div>
+                ) : successBooking ? (
                     /* 🥳 預約成功畫面 */
                     <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-6 space-y-6">
                         <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/20">

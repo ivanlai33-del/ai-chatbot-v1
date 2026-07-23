@@ -258,6 +258,28 @@ export default function StoreWalletSection({ ownerLineId }: StoreWalletSectionPr
                         </table>
                     </div>
                 </div>
+
+                {/* 📋 購物金點數使用說明與服務條款 (Terms of Service & Usage Rules) */}
+                <div className="relative z-10 bg-slate-50/80 border border-slate-200/60 rounded-2xl p-5 text-[12px] text-slate-600 space-y-2">
+                    <p className="font-black text-slate-800 flex items-center gap-1.5 text-[13px]">
+                        <AlertCircle className="w-4 h-4 text-amber-500 shrink-0" />
+                        購物金點數使用說明與服務條款 (Terms of Service)：
+                    </p>
+                    <ul className="space-y-1.5 pl-5 list-disc text-slate-500 font-bold leading-relaxed">
+                        <li>
+                            <strong className="text-slate-800">點數價值與折抵：</strong> 點數比例為 1 點 = NT$ 1 元，可用於自動折抵您名下所有門市之月費方案與大小月超量訊息費用。
+                        </li>
+                        <li>
+                            <strong className="text-rose-600">⚠️ 不得兌換現金與退款聲明：</strong> 本錢包內之所有點數（包含線上儲值點數、儲值加碼贈點、活動贈點與好友推薦獎勵金）一經入帳發放，<span className="text-rose-600 font-black underline underline-offset-2">概屬本平台服務折抵專用，嚴禁要求兌換為現金、轉讓、提領或申請刷退扣款</span>。
+                        </li>
+                        <li>
+                            <strong className="text-slate-800">點數有效期限：</strong> 本錢包內之點數無使用期限，永久有效、不限期自動扣抵。
+                        </li>
+                        <li>
+                            <strong className="text-slate-800">多門市自動共享：</strong> 同一 LINE 老闆帳號下之多門市共用點數水庫，系統於每月續訂日自動由錢包進行扣抵，若點數不足則帶入信用卡補扣差額。
+                        </li>
+                    </ul>
+                </div>
             </div>
 
             {/* 儲值 Modal (Modal) */}

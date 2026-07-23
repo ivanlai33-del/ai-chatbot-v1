@@ -333,7 +333,7 @@ export default function ButterToastProposalPage() {
             <div className="bg-white border-2 border-[#B26A27] p-3.5 rounded-xl shadow-xs">
               <div className="flex items-center gap-1.5 mb-1.5">
                 <span className="text-base">🛡️</span>
-                <h4 className="font-serif font-bold text-sm text-[#B26A27]">
+                <h4 className="font-serif font-bold text-[#B26A27] text-sm">
                   後台：LINE 緩衝隊列 (Queue) 防爆防掉單機制
                 </h4>
               </div>
@@ -421,7 +421,7 @@ export default function ButterToastProposalPage() {
                   🧾 加上 5% 營業稅 ($240) ＝ <b>含稅 NT$ 5,040 / 月</b>
                 </div>
                 <div className="text-[10px] bg-amber-50 border border-[#D6A86E] p-1.5 rounded-lg mb-2 text-[#382D24]">
-                  💡 <b>對標真人小編效益：</b>真人小編每天最多處理 <b>30~50 筆訂單</b>；AI 店長具備 <b>LINE 防爆隊列緩衝機制</b>，同時 100+ 人順暢點餐 0 掉單，每年直接為店家省下 <b>NT$ 28 萬薪資！</b>
+                  💡 <b>對標真人小編效益：</b>真人小編每天最多處理 <b>30~50 筆訂單</b>；AI 店長具備 <b>LINE 防爆隊列與資安過濾</b>，同時 100+ 人順暢點餐 0 掉單，每年直接為店家省下 <b>NT$ 28 萬薪資！</b>
                 </div>
                 <ul className="text-xs text-[#382D24] space-y-0.5 mb-2">
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 5,000 會員容量 AI 流量 (20,000則/月)</li>
@@ -641,30 +641,44 @@ export default function ButterToastProposalPage() {
         </div>
       ),
     },
-    // Slide 6: Feature Checklist
+    // Slide 6: Tailored Feature Checklist WITH CYBERSECURITY SAFEGUARDS
     {
       badge: "生乳/奶霜專賣店 交付清單",
-      title: "詳細服務與交付對照表",
+      title: "詳細服務交付 ✕ 企業級 AI 資安防護清單",
       content: (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm">
-            <h4 className="font-bold text-[#B26A27] mb-2">📌 AI 店長建置交付項目 (一次性)</h4>
-            <ul className="text-xs text-[#382D24] space-y-1.5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-3.5 shadow-sm">
+            <h4 className="font-bold text-[#B26A27] text-xs mb-1.5">📌 AI 店長建置交付 (一次性)</h4>
+            <ul className="text-[11px] text-[#382D24] space-y-1">
               <li>✓ 100% 全遠端雲端建置與線上視訊指導驗收</li>
-              <li>✓ 前後台 LINE LIFF 網頁介面開發 (顧客點餐 / 廚房備貨看板)</li>
-              <li>✓ 奶霜炸吐司、芒果限定與 3入/5入優惠組合 AI 算錢邏輯</li>
-              <li>✓ 廚房自動出單機 / POS 機 API / 送貨單列印整合</li>
-              <li>✓ 「預約完成✔️」 Flex Card 與雙向【完成備貨推播顧客】</li>
-              <li>✓ 廚房小編 LINE Notify 訊息推播與一鍵通知串接</li>
+              <li>✓ 前後台 LINE LIFF 網頁開發 (點餐 / 廚房備貨)</li>
+              <li>✓ 奶霜炸吐司與 3入/5入優惠組 AI 算錢大腦</li>
+              <li>✓ 廚房自動出單機 / POS 機 API 列印串接</li>
+              <li>✓ 「預約完成✔️」 Flex Card 與雙向取貨推播</li>
+              <li>✓ 廚房小編 LINE Notify 訊息推播串接</li>
             </ul>
           </div>
-          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm">
-            <h4 className="font-bold text-[#B26A27] mb-2">🔄 代營運交付項目 (每月持續)</h4>
-            <ul className="text-xs text-[#382D24] space-y-1.5">
+
+          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-3.5 shadow-sm">
+            <h4 className="font-bold text-[#B26A27] text-xs mb-1.5">🔄 代營運交付 (每月持續)</h4>
+            <ul className="text-[11px] text-[#382D24] space-y-1">
               <li>✓ 每月 2 次限量預購 Banner 設計與全自動推播</li>
               <li>✓ 每週巡檢 AI 未解答對話與補充知識庫</li>
-              <li>✓ 季節限定甜點 (如夏日芒果/秋冬新品) 上架與價格更新</li>
-              <li>✓ 5,000 會員偏好標籤維護與 CSV/Excel 會員清單導出</li>
+              <li>✓ 季節限定甜點 (夏日芒果/秋冬新品) 價格更新</li>
+              <li>✓ 5,000 會員偏好標籤維護與 CSV/Excel 導出</li>
+            </ul>
+          </div>
+
+          {/* NEW: Enterprise AI Cybersecurity Safeguards Box */}
+          <div className="bg-white border-2 border-emerald-600 rounded-2xl p-3.5 shadow-sm bg-emerald-50/20">
+            <h4 className="font-bold text-emerald-800 text-xs mb-1.5 flex items-center gap-1">
+              <span>🔒</span> 企業級 AI 資安防護 4 大防線
+            </h4>
+            <ul className="text-[11px] text-[#382D24] space-y-1">
+              <li>• <b>SSL/TLS 加密傳輸</b>：全站與金流 AES-256 加密。</li>
+              <li>• <b>AI 越獄與算錢防護</b>：防 Prompt Injection 騙價。</li>
+              <li>• <b>LINE 簽章與 0 密碼</b>：HMAC-SHA256 驗證防偽造。</li>
+              <li>• <b>個資隔離與 CSV 導出</b>：嚴格符合台灣個人資料保護法。</li>
             </ul>
           </div>
         </div>
@@ -711,16 +725,16 @@ export default function ButterToastProposalPage() {
                   <td className="p-2.5 text-emerald-700 font-mono font-black bg-[#FFF8F0]">NT$ 4,800 / 月 (含稅 $5,040)</td>
                 </tr>
                 <tr>
-                  <td className="p-2.5 font-bold">行銷推播與 Banner 設計</td>
-                  <td className="p-2.5 text-gray-600">需額外發包設計，費用另計</td>
-                  <td className="p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]">包辦每月 2 次限量預購 Banner 設計發送</td>
+                  <td className="p-2.5 font-bold">資安保護與算錢防護</td>
+                  <td className="p-2.5 text-gray-600">人工易洩漏個資、找錯錢</td>
+                  <td className="p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]">SSL+AES-256 加密 ✕ 提示詞越獄防禦大腦</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
           <div className="bg-emerald-50 border border-emerald-300 p-2.5 rounded-xl text-center text-xs text-emerald-900 font-bold">
-            🎉 結論：內建 LINE API 緩衝保護機制，<b>處理單量能力達真人 20 倍以上</b>，月費僅真人 <b>15%</b>，每年省下超過 <b>NT$ 280,000 元</b> 人力成本！
+            🎉 結論：內建 LINE API 緩衝保護機制與資安防禦大腦，<b>處理單量能力達真人 20 倍以上</b>，月費僅真人 <b>15%</b>，每年省下超過 <b>NT$ 280,000 元</b> 人力成本！
           </div>
         </div>
       ),

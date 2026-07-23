@@ -306,10 +306,10 @@ export default function ButterToastProposalPage() {
         </div>
       ),
     },
-    // Slide 3: Complete Front-end & Back-end LIFF Architecture & Kitchen Printing Workflow
+    // Slide 3: Complete Front-end & Back-end LIFF Architecture & LINE Buffer Queue Safeguard
     {
-      badge: "前後台 LIFF 網頁與廚房串接架構",
-      title: "前後台 LINE LIFF 網頁 ✕ 廚房打單/POS 完整流程",
+      badge: "前後台 LIFF 網頁與高併發隊列保護",
+      title: "前後台 LINE LIFF 網頁 ✕ LINE Rate Limit 緩衝機制",
       content: (
         <div className="space-y-3">
           {/* Front-end & Back-end Dual System Grid */}
@@ -329,18 +329,18 @@ export default function ButterToastProposalPage() {
               </ul>
             </div>
 
-            {/* Back-end Merchant Dashboard */}
+            {/* Back-end Merchant Dashboard & Rate Limit Safeguard */}
             <div className="bg-white border-2 border-[#B26A27] p-3.5 rounded-xl shadow-xs">
               <div className="flex items-center gap-1.5 mb-1.5">
-                <span className="text-base">👨‍🍳</span>
+                <span className="text-base">🛡️</span>
                 <h4 className="font-serif font-bold text-sm text-[#B26A27]">
-                  後台：LINE LIFF 廚房看板 ✕ 電腦數據後台
+                  後台：LINE 緩衝隊列 (Queue) 防爆防掉單機制
                 </h4>
               </div>
               <ul className="text-xs text-[#382D24] space-y-1">
-                <li>• <b>手機 LIFF 廚房看板</b>：廚房手機點開 LINE 即可看單，按 `[✅完成備貨]` 觸發取貨推播。</li>
-                <li>• <b>電腦端 RWD 後台</b>：電腦大螢幕登入，即時查看營運數據與<b>一鍵匯出會員 CSV/Excel</b>。</li>
-                <li>• <b>自動打單 / POS 拋轉</b>：支援雲端打單機（自動印小白單/送貨聯）或拋轉既有 POS 機。</li>
+                <li>• <b>Redis 隊列防爆機制</b>：遵循 LINE API 速率規範（2,000 req/sec），多人在線不打爆 LINE。</li>
+                <li>• <b>平滑併發佇列</b>：1,000 人同時點餐自動排入高併發佇列池，0 掉單、0.1 秒平滑回覆。</li>
+                <li>• <b>廚房看板與打單</b>：手機 LIFF 廚房點擊 `[✅完成備貨]`，自動觸發買家取貨推播。</li>
               </ul>
             </div>
           </div>
@@ -352,12 +352,12 @@ export default function ButterToastProposalPage() {
               <p className="text-[10px] text-[#7C6E62]">顧客開 LIFF 選吐司與優惠組，AI 精確算金額 $475</p>
             </div>
             <div className="bg-[#FFFDF9] border border-[#E6DDCF] p-2 rounded-lg">
-              <b className="text-[#B26A27]">2. 出單機/POS自動打單</b>
-              <p className="text-[10px] text-[#7C6E62]">廚房印出備貨單與送貨聯，Notify 群組即時通知</p>
+              <b className="text-[#B26A27]">2. Redis 佇列平滑緩衝</b>
+              <p className="text-[10px] text-[#7C6E62]">自動消化高併發流量，符合 LINE API 速率 0 掉單</p>
             </div>
             <div className="bg-[#FFFDF9] border border-[#E6DDCF] p-2 rounded-lg">
-              <b className="text-[#B26A27]">3. LIFF 完成備貨按鈕</b>
-              <p className="text-[10px] text-[#7C6E62]">廚房點擊 LIFF 備貨看板 `[✅製作完成]`</p>
+              <b className="text-[#B26A27]">3. 出單機/看板備貨</b>
+              <p className="text-[10px] text-[#7C6E62]">廚房打單或點擊 LIFF 備貨看板 `[✅製作完成]`</p>
             </div>
             <div className="bg-emerald-50 border border-emerald-300 p-2 rounded-lg text-emerald-900">
               <b className="text-emerald-700">4. AI 自動推播取餐</b>
@@ -369,7 +369,7 @@ export default function ButterToastProposalPage() {
     },
     // Slide 4: PRICING CARDS WITH HUMAN EDITOR VS AI MANAGER COST COMPARISON
     {
-      badge: "生乳/奶霜專賣店 專案報價",
+      badge: "生乳/奶霜專案報價",
       title: "專案報價金額、對標真人小編成本與發票填寫",
       content: (
         <div className="space-y-3">
@@ -421,7 +421,7 @@ export default function ButterToastProposalPage() {
                   🧾 加上 5% 營業稅 ($240) ＝ <b>含稅 NT$ 5,040 / 月</b>
                 </div>
                 <div className="text-[10px] bg-amber-50 border border-[#D6A86E] p-1.5 rounded-lg mb-2 text-[#382D24]">
-                  💡 <b>對標真人小編效益：</b>真人小編每天最多處理 <b>30~50 筆訂單</b>；AI 店長可<b>「同時無上限併發處理無限筆訂單 (0.1秒秒回)」</b>，每年直接為店家省下 <b>NT$ 28 萬薪資支出！</b>
+                  💡 <b>對標真人小編效益：</b>真人小編每天最多處理 <b>30~50 筆訂單</b>；AI 店長具備 <b>LINE 防爆隊列緩衝機制</b>，處理 1,000 人湧入 0 掉單，每年直接為店家省下 <b>NT$ 28 萬薪資！</b>
                 </div>
                 <ul className="text-xs text-[#382D24] space-y-0.5 mb-2">
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 5,000 會員容量 AI 流量 (20,000則/月)</li>
@@ -670,7 +670,7 @@ export default function ButterToastProposalPage() {
         </div>
       ),
     },
-    // Slide 7: ROI BENCHMARKED DIRECTLY AGAINST HUMAN EDITOR WITH ORDER CAPACITY METRICS
+    // Slide 7: ROI BENCHMARKED DIRECTLY AGAINST HUMAN EDITOR WITH EXACT ORDER CAPACITY & LINE BUFFER SAFEGUARD
     {
       badge: "商業價值總結",
       title: "真人小編 ✕ AI 店長效益與單量對比",
@@ -693,9 +693,12 @@ export default function ButterToastProposalPage() {
                   <td className="p-2.5 font-black text-emerald-700 bg-[#FFF8F0]">單日可精確處理 10,000+ 筆點餐訂單</td>
                 </tr>
                 <tr>
-                  <td className="p-2.5 font-bold">同時多人群發併發處理</td>
+                  <td className="p-2.5 font-bold">高併發處理與防爆隊列機制</td>
                   <td className="p-2.5 text-gray-600">同時只能回 1 人 (多視窗易出錯)</td>
-                  <td className="p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]">同時無上限併發處理 (1,000人同時下單)</td>
+                  <td className="p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]">
+                    <b>Redis 佇列平滑緩衝保護</b><br />
+                    遵循 LINE API 速率上限，1,000 人同時下單 0 掉單、不打爆對話！
+                  </td>
                 </tr>
                 <tr>
                   <td className="p-2.5 font-bold">平均回覆與試算速度</td>
@@ -717,7 +720,7 @@ export default function ButterToastProposalPage() {
           </div>
 
           <div className="bg-emerald-50 border border-emerald-300 p-2.5 rounded-xl text-center text-xs text-emerald-900 font-bold">
-            🎉 結論：AI 店長處理單量能力是真人小編的 <b>200 倍以上</b>，且月費僅真人小編的 <b>15%</b>，每年直接為店家節省超過 <b>NT$ 280,000 元</b> 人力成本！
+            🎉 結論：內建 LINE Messaging API 緩衝保護機制，<b>處理單量能力達真人 200 倍以上</b>，月費僅真人 <b>15%</b>，每年省下超過 <b>NT$ 280,000 元</b> 人力成本！
           </div>
         </div>
       ),

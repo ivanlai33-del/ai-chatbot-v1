@@ -154,10 +154,10 @@ export default function ButterToastProposalPage() {
             🔒
           </div>
           <h1 className="text-2xl font-bold font-serif mb-2 text-[#382D24]">
-            【奶油吐司】AI 店長服務提案
+            【生乳/奶霜專賣店】專屬提案
           </h1>
           <p className="text-sm text-[#7C6E62] mb-6">
-            本專案報價為受保護內容，請輸入授權瀏覽密碼以檢視專案細節。
+            本專案報價為【生乳/奶霜專賣店 (cream_specialty_store)】量身打造之受保護內容，請輸入授權密碼檢視。
           </p>
 
           <form onSubmit={handleUnlock} className="space-y-4">
@@ -180,7 +180,7 @@ export default function ButterToastProposalPage() {
               type="submit"
               className="w-full py-3 bg-[#B26A27] hover:bg-[#8F521B] text-[#FFFDF9] font-bold rounded-xl shadow-md transition-all duration-200"
             >
-              解鎖檢視報價提案
+              解鎖檢視量身打造提案
             </button>
           </form>
 
@@ -192,87 +192,96 @@ export default function ButterToastProposalPage() {
     );
   }
 
-  // Interactive Slides
+  // Interactive Tailor-made Slides for 「生乳/奶霜專賣店」 (cream_specialty_store)
   const slides = [
-    // Slide 1: Cover
+    // Slide 1: Tailored Cover
     {
-      badge: "🍞 奶油吐司 AI 店長提案",
+      badge: "🧁 生乳/奶霜專賣店 專屬 AI 店長提案",
       content: (
         <div className="text-center py-6">
+          <span className="text-xs font-bold text-[#B26A27] uppercase tracking-widest block mb-2">
+            cream_specialty_store ✕ LINE 官方帳號升級
+          </span>
           <h1 className="text-4xl md:text-5xl font-extrabold font-serif mb-4 leading-tight text-[#382D24]">
-            現有 LINE 官方帳號升級<br />
-            <span className="text-[#B26A27]">✕ AI 智慧店長系統建置</span>
+            【生乳/奶霜專賣店】<br />
+            <span className="text-[#B26A27]">奶霜炸吐司 AI 點餐算錢與自動化專案</span>
           </h1>
-          <p className="text-lg text-[#7C6E62] max-w-xl mx-auto mb-8">
-            導入自動化點餐算錢大腦、無內用指引與 5,000 會員全代營運
+          <p className="text-base md:text-lg text-[#7C6E62] max-w-2xl mx-auto mb-6 leading-relaxed">
+            為「奶霜炸吐司、OREO/芒果/肉鬆多品項與 3入/5入優惠組合」量身打造 24hr 自動算錢、自備零錢提醒、發送「預約完成✔️」與 LINE Notify 備貨通知
           </p>
           <span className="inline-block px-6 py-2 bg-[#B26A27] text-[#FFFDF9] rounded-full text-sm font-bold shadow-md">
-            現有帳號升級 / 自動算錢接單 / 無小編最佳解答
+            營業時間 18:00 - 售完為止 / 現金面交不找零 / 0 小編自動化
           </span>
         </div>
       ),
     },
-    // Slide 2: Challenges
+    // Slide 2: Actual Workflow & Pain Points
     {
-      badge: "5,000人規模規劃",
-      title: "工作室現況與核心需求",
+      badge: "現況點餐流程優化",
+      title: "【生乳/奶霜專賣店】現狀對話與 AI 自動化對比",
       content: (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm hover:border-[#D6A86E] transition">
-            <div className="text-2xl mb-1">🏠</div>
-            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">需求 1：無實體內用指引</h3>
-            <p className="text-sm text-[#7C6E62]">中央廚房工作室模式，已建有 LINE 帳號。需 AI 24hr 自動說明無內用、引導「指定地址面交」與取餐地圖。</p>
+          <div className="bg-[#FFF8F0] border-2 border-[#D6A86E] rounded-2xl p-4 shadow-sm">
+            <h3 className="font-serif font-bold text-base text-[#B26A27] mb-2 flex items-center gap-1.5">
+              <span>📲</span> 現有 LINE 手動留言訂購流程
+            </h3>
+            <div className="bg-white/80 p-3 rounded-xl border border-[#E6DDCF] text-xs text-[#7C6E62] space-y-1.5 leading-relaxed font-mono">
+              <p><b>現有歡迎語：</b>「嗨👋 歡迎光臨 生乳/奶霜專賣店，請留下：1.姓名 2.電話 3.產品內容 4.取餐日期/時間」</p>
+              <p><b>現場規定：</b>✨ 營業時間:18:00-售完為止 (現點現做)</p>
+              <p><b>付款提醒：</b>📌 付款請準備剛好金額 (恕不找零)，亦接受提前匯款。</p>
+              <p><b>完成憑證：</b>收到「預約完成✔️」，訂單才算成功。</p>
+            </div>
+            <p className="text-xs text-red-600 mt-2 font-medium">❌ 痛點：多品項（如 3入組合/芒果抹茶）需人工試算金額，老闆現點現做時無法及時回覆「預約完成✔️」。</p>
           </div>
-          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm hover:border-[#D6A86E] transition">
-            <div className="text-2xl mb-1">🧮</div>
-            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">需求 2：現金面交，自動算錢</h3>
-            <p className="text-sm text-[#7C6E62]">無線上刷卡，免去人工計算多品項金額。AI 需具備精確辨識品項數量並自動加總生成訂單明細能力。</p>
-          </div>
-          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm hover:border-[#D6A86E] transition">
-            <div className="text-2xl mb-1">🤖</div>
-            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">需求 3：AI 店長全自動接管</h3>
-            <p className="text-sm text-[#7C6E62]">目前無專職 LINE 小編。需升級 AI 智能大腦，24 小時自動回覆甜點保存、冷凍重烤教學與出貨詢問。</p>
-          </div>
-          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm hover:border-[#D6A86E] transition">
-            <div className="text-2xl mb-1">📈</div>
-            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">需求 4：5,000 會員預購營運</h3>
-            <p className="text-sm text-[#7C6E62]">每日約 50 人對話詢問。需由團隊協助每月 2 次限量甜點預購視覺 Banner 設計與全自動推播發送。</p>
+
+          <div className="bg-emerald-50/70 border-2 border-emerald-500/40 rounded-2xl p-4 shadow-sm">
+            <h3 className="font-serif font-bold text-base text-emerald-800 mb-2 flex items-center gap-1.5">
+              <span>🤖</span> 升級 AI 智慧店長全自動運作
+            </h3>
+            <div className="bg-white/90 p-3 rounded-xl border border-emerald-200 text-xs text-slate-700 space-y-1.5 leading-relaxed">
+              <p><b>1. 多品項語意算錢：</b>顧客輸入「3入組A款x1 + OREO抹茶炸吐司x2」，AI 0.1秒精確算出 <b>$270 + $170 = $440 元</b>。</p>
+              <p><b>2. 自動帶入取餐說明：</b>自動提示 18:00 開店取餐時間，並溫馨提醒「請準備剛好金額 $440（恕不找零）或提前匯款」。</p>
+              <p><b>3. 發送「預約完成✔️」Flex 卡片：</b>自動生成質感訂單明細，顧客即時收到成功確認。</p>
+              <p><b>4. LINE Notify 備貨通知：</b>訂單立刻發送至後台備貨群組，讓您專心在廚房製作。</p>
+            </div>
+            <p className="text-xs text-emerald-700 mt-2 font-bold">✅ 效益：24hr 不漏單，省下每日 3 小時人工算錢與回覆時間！</p>
           </div>
         </div>
       ),
     },
-    // Slide 3: Core AI Modules
+    // Slide 3: Tailored Menu & System Integration
     {
-      badge: "奶油吐司專屬 AI 模組",
-      title: "四大多功能 AI 店長建置模組",
+      badge: "專屬菜單與邏輯深度適配",
+      title: "【生乳/奶霜專賣店】菜單與系統客製細節",
       content: (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm hover:border-[#D6A86E] transition">
-            <div className="text-2xl mb-1">🔗</div>
-            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">01. 現有 LINE 官方帳號 API 串接</h3>
-            <p className="text-sm text-[#7C6E62]">串接現有 Messaging API 權限，適配 6 格 Rich Menu 圖文選單（點餐算錢、面交地點、重烤教學、預購專區）。</p>
+          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-4 shadow-sm">
+            <h4 className="font-serif font-bold text-[#B26A27] text-sm mb-2">🍞 全品項菜單與自由配金額計算大腦</h4>
+            <ul className="text-xs text-[#382D24] space-y-1.5">
+              <li>✓ <b>基本款</b>：原味 ($55)、巧克力 ($70)、抹茶 ($70)</li>
+              <li>✓ <b>OREO 系列</b>：OREO 原味 ($75)、巧克力 ($85)、抹茶 ($85)</li>
+              <li>✓ <b>肉鬆 / 芒果系列</b>：肉鬆原味 ($85)、芒果原味 ($120)、巧克力 ($130)、抹茶 ($130)</li>
+              <li>✓ <b>優惠組合試算</b>：<b>3入組 $270</b> (巧克力/抹茶/鹹甜 A/B/C款) 與 <b>5入自由配 $400</b> 自動折價計算</li>
+            </ul>
           </div>
-          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm hover:border-[#D6A86E] transition">
-            <div className="text-2xl mb-1">🤖</div>
-            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">02. AI 多品項點餐與金額試算引擎</h3>
-            <p className="text-sm text-[#7C6E62]">辨識品項與數量（例:生吐司x2+布丁x3）➔ 自動加總計算總金額 ➔ 產出現金面交 Flex Message 明細 ＋ Notify 通知。</p>
-          </div>
-          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm hover:border-[#D6A86E] transition">
-            <div className="text-2xl mb-1">📚</div>
-            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">03. 奶油吐司 RAG 知識庫訓練</h3>
-            <p className="text-sm text-[#7C6E62]">24/7 自動解答無內用說明、面交地址導航、冷凍保存與吐司重烤 SOP，涵蓋 50+ 題常見問答。</p>
-          </div>
-          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm hover:border-[#D6A86E] transition">
-            <div className="text-2xl mb-1">🚀</div>
-            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">04. 5,000 會員 CRM 與全代營運</h3>
-            <p className="text-sm text-[#7C6E62]">每月 2 次限量預購圖文 Banner 設計與發送 ＋ 每週 AI 菜單優化、對話語意巡檢與數據簡報。</p>
+
+          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-4 shadow-sm">
+            <h4 className="font-serif font-bold text-[#B26A27] text-sm mb-2">📍 6格 Rich Menu 與面交導覽適配</h4>
+            <ul className="text-xs text-[#382D24] space-y-1.5">
+              <li>1. 🍞 <b>線上點餐算錢</b>（開啟 AI 算錢點餐）</li>
+              <li>2. 🎁 <b>3入/5入優惠組合</b>（一鍵預購組合包）</li>
+              <li>3. 📍 <b>取餐地點/導航</b>（傳送指定地址面交位置）</li>
+              <li>4. ⏰ <b>營業時間與須知</b>（18:00-售完/現點現做說明）</li>
+              <li>5. ❄️ <b>奶霜炸吐司保存</b>（熱熱吃與冷凍重烤 SOP）</li>
+              <li>6. 👤 <b>轉接老闆/匯款</b>（提供中信匯款資訊）</li>
+            </ul>
           </div>
         </div>
       ),
     },
-    // Slide 4: Pricing Cards + Bank Transfer + Invoice Form
+    // Slide 4: Pricing Cards + Bank Details + Invoice Form
     {
-      badge: "報價與金流資訊",
+      badge: "生乳/奶霜專賣店 專案報價",
       title: "專案報價金額、匯款帳號與發票填寫",
       content: (
         <div className="space-y-3.5">
@@ -286,7 +295,7 @@ export default function ButterToastProposalPage() {
                     🛠️ 【一次性】AI 店長系統建置費
                   </span>
                   <span className="text-[10px] bg-[#EFE7DA] text-[#B26A27] px-2 py-0.5 rounded-full font-bold">
-                    一次付清 / 分兩期
+                    分兩期 (訂金/尾款)
                   </span>
                 </div>
                 <div className="text-2xl font-black font-mono text-[#B26A27] my-1">
@@ -296,9 +305,9 @@ export default function ButterToastProposalPage() {
                   🧾 加上 5% 營業稅 ($1,400) ＝ <b>含稅總額 NT$ 29,400</b>
                 </div>
                 <ul className="text-xs text-[#382D24] space-y-1">
-                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 現有 LINE 官方帳號 API 串接與選單適配</li>
-                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> AI 自動點餐算錢與 Flex 訂單明細生成</li>
-                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 奶油吐司專屬知識庫 50+ 題問答深度訓練</li>
+                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 現有 LINE 官方帳號 Messaging API 權限串接</li>
+                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 奶霜炸吐司全菜單與 3入/5入優惠組合 AI 算錢引擎</li>
+                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 自動發送「預約完成✔️」Flex 憑證與 Notify 備貨通知</li>
                 </ul>
               </div>
             </div>
@@ -425,7 +434,7 @@ export default function ButterToastProposalPage() {
                   <label className="block text-[#7C6E62] mb-0.5 text-[11px]">公司全銜 / 買受人抬頭</label>
                   <input
                     type="text"
-                    placeholder="例如: 奶油吐司甜點工作室"
+                    placeholder="例如: 生乳/奶霜專賣店"
                     value={companyName}
                     onChange={(e) => setCompanyName(e.target.value)}
                     className="w-full px-2.5 py-1.5 bg-[#F7F3ED] border border-[#E6DDCF] rounded-lg focus:outline-none focus:border-[#B26A27] text-[#382D24]"
@@ -495,11 +504,11 @@ export default function ButterToastProposalPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm">
             <span className="inline-block px-2.5 py-0.5 bg-[#B26A27] text-[#FFFDF9] rounded-full text-xs font-bold mb-2">PHASE 1 (Week 1)</span>
-            <h4 className="font-serif font-bold text-[#B26A27] mb-2">現有帳號串接與素材收集</h4>
+            <h4 className="font-serif font-bold text-[#B26A27] mb-2">Messaging API 串接與菜單匯入</h4>
             <ul className="text-xs text-[#7C6E62] space-y-1.5">
               <li>✓ 簽訂合約並<b>轉帳付訂金 $14,000 (含稅$14,700)</b></li>
               <li>✓ 串接現有 LINE 官方帳號 Messaging API 權限</li>
-              <li>✓ 收集菜單品項、價格、面交地址與門檻</li>
+              <li>✓ 載入奶霜炸吐司單品與 3入/5入優惠組合菜單</li>
             </ul>
           </div>
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm">
@@ -507,15 +516,15 @@ export default function ButterToastProposalPage() {
             <h4 className="font-serif font-bold text-[#B26A27] mb-2">AI 算錢引擎與知識庫訓練</h4>
             <ul className="text-xs text-[#7C6E62] space-y-1.5">
               <li>✓ 6格 Rich Menu 圖文選單適配 AI 店長</li>
-              <li>✓ AI 點餐算錢引擎與 Notify 通知串接</li>
-              <li>✓ 載入 50+ 題問答與保存重烤 SOP 知識庫</li>
+              <li>✓ 自動計算金額、提示自備零錢與「預約完成✔️」卡片</li>
+              <li>✓ 串接 LINE Notify 自動推播備貨群組</li>
             </ul>
           </div>
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm">
             <span className="inline-block px-2.5 py-0.5 bg-[#B26A27] text-[#FFFDF9] rounded-full text-xs font-bold mb-2">PHASE 3 (Week 3)</span>
             <h4 className="font-serif font-bold text-[#B26A27] mb-2">實測試驗與正式交案</h4>
             <ul className="text-xs text-[#7C6E62] space-y-1.5">
-              <li>✓ 雙方進行點餐算錢與接管流程實測</li>
+              <li>✓ 雙方進行多品項點餐算錢與接管流程實測</li>
               <li>✓ 驗收通過<b>轉帳付尾款 $14,000 (含稅$14,700)</b></li>
               <li>✓ 綁定藍新定期定額 ($5,040/月含稅)，正式上線！</li>
             </ul>
@@ -523,9 +532,9 @@ export default function ButterToastProposalPage() {
         </div>
       ),
     },
-    // Slide 6: Checklist
+    // Slide 6: Tailored Feature Checklist
     {
-      badge: "完整交付項目",
+      badge: "生乳/奶霜專賣店 交付清單",
       title: "詳細服務與交付對照表",
       content: (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -533,19 +542,20 @@ export default function ButterToastProposalPage() {
             <h4 className="font-bold text-[#B26A27] mb-2">📌 AI 店長建置交付項目 (一次性)</h4>
             <ul className="text-xs text-[#382D24] space-y-1.5">
               <li>✓ 現有 LINE 官方帳號 Messaging API 權限串接</li>
-              <li>✓ 6格 Rich Menu 適配 AI 店長 (點餐/面交/保存/預購/小編/會員)</li>
-              <li>✓ AI 語意點餐算錢與單價加總邏輯</li>
-              <li>✓ 現金面交訂單明細 Flex Message 生成</li>
-              <li>✓ 備貨小編 LINE Notify 訊息推播串接</li>
+              <li>✓ 6格 Rich Menu (點餐算錢/組合優惠/取餐導航/營業須知/重烤教學/轉接匯款)</li>
+              <li>✓ 奶霜炸吐司與 3入/5入優惠組合 AI 語意算錢邏輯</li>
+              <li>✓ 自動帶入 18:00 開店時間與「不找零/提前匯款」提醒</li>
+              <li>✓ 「預約完成✔️」 Flex Message 訂單卡片自動發送</li>
+              <li>✓ 廚房小編 LINE Notify 訊息推播串接</li>
             </ul>
           </div>
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm">
             <h4 className="font-bold text-[#B26A27] mb-2">🔄 代營運交付項目 (每月持續)</h4>
             <ul className="text-xs text-[#382D24] space-y-1.5">
-              <li>✓ 每月 2 次限量預購 Banner 設計與推播</li>
+              <li>✓ 每月 2 次限量預購 Banner 設計與全自動推播</li>
               <li>✓ 每週巡檢 AI 未解答對話並補充知識庫</li>
-              <li>✓ 季節甜點上架與價格即時調整</li>
-              <li>✓ 5,000 會員偏好標籤維護與數據月報</li>
+              <li>✓ 季節甜點/新口味上架與價格即時調整</li>
+              <li>✓ 5,000 會員偏好標籤維護與對話數據月報</li>
             </ul>
           </div>
         </div>
@@ -570,7 +580,7 @@ export default function ButterToastProposalPage() {
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm">
             <div className="text-2xl mb-1">📈</div>
             <h3 className="font-serif font-bold text-[#B26A27] mb-1">推播輕鬆賺回月費</h3>
-            <p className="text-xs text-[#7C6E62]">每月 2 次限量預購推播帶動 10 筆生吐司訂單，即可完全覆蓋每月營運費用。</p>
+            <p className="text-xs text-[#7C6E62]">每月 2 次限量預購推播帶動 10 筆奶霜炸吐司組合訂單，即可完全覆蓋每月營運費用。</p>
           </div>
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm">
             <div className="text-2xl mb-1">🤝</div>

@@ -152,7 +152,7 @@ export default function ButterToastProposalPage() {
       console.error(err);
       setIsSaved(true);
       alert("發票資料已儲存於本機。");
-    } fontally {
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -258,7 +258,7 @@ export default function ButterToastProposalPage() {
             <span className="text-[#B26A27]">奶霜炸吐司 AI 點餐算錢與自動化專案</span>
           </h1>
           <p className="text-base md:text-lg text-[#7C6E62] max-w-2xl mx-auto mb-6 leading-relaxed">
-            專為「奶霜炸吐司 (原味/抹茶/巧克力)、OREO系列、夏日限定芒果系列與 3入$270/5入$400自由配」量身打造 前後台 LIFF 網頁架構、24hr 自動算錢、廚房印單/POS對接與雙向取貨通知
+            專為「奶霜炸吐司 (原味/抹茶/巧克力)、OREO系列、夏日限定芒果系列與 3入$270/5入$400自由配」量身打造 100% 全遠端雲端導入、24hr 自動算錢、廚房印單與雙向取貨通知
           </p>
           <span className="inline-block px-6 py-2 bg-[#B26A27] text-[#FFFDF9] rounded-full text-sm font-bold shadow-md">
             營業時間 18:00 - 售完為止 / 現金面交恕不找零 / 0 小編自動化
@@ -393,13 +393,13 @@ export default function ButterToastProposalPage() {
                   🧾 加上 5% 營業稅 ($2,400) ＝ <b>含稅總額 NT$ 50,400</b>
                 </div>
                 <ul className="text-xs text-[#382D24] space-y-0.5 mb-1.5">
-                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 前後台 LINE LIFF 網頁建置 (免登入點餐/廚房看板)</li>
-                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 奶霜炸吐司與 3/5入優惠組 AI 算錢引擎</li>
-                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 廚房自動打單機/POS對接、發送「預約完成✔️」與雙向取貨推播</li>
+                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 100% 線上全遠端建置，免到店干擾營運</li>
+                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 前後台 LINE LIFF 網頁與 3/5入優惠組算錢大腦</li>
+                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 預先設定開箱即用打單機、發送「預約完成✔️」與雙向取貨推播</li>
                 </ul>
               </div>
               <div className="text-[11px] text-[#7C6E62] bg-[#FFF8F0] p-1.5 rounded-xl border border-[#D6A86E] font-medium text-center">
-                👇 簽約開工付訂金 $25,200 (含稅)；第3週<b>驗收通過付尾款 $25,200 (含稅)</b>
+                👇 簽約開工付訂金 $25,200 (含稅)；第3週<b>遠端會審驗收付尾款 $25,200 (含稅)</b>
               </div>
             </div>
 
@@ -480,7 +480,7 @@ export default function ButterToastProposalPage() {
 
             <div className="flex justify-between items-center text-[10px] text-[#7C6E62] mt-1 px-1 font-medium">
               <span>● 第一期簽約訂金 (50%)：<b className="text-[#B26A27]">NT$ 24,000</b> (含稅 $25,200) ➔ 簽約付款</span>
-              <span>● 第二期交案尾款 (50%)：<b className="text-[#B26A27]">NT$ 24,000</b> (含稅 $25,200) ➔ 驗收付款</span>
+              <span>● 第二期交案尾款 (50%)：<b className="text-[#B26A27]">NT$ 24,000</b> (含稅 $25,200) ➔ 遠端會審驗收付款</span>
             </div>
           </div>
 
@@ -602,37 +602,37 @@ export default function ButterToastProposalPage() {
         </div>
       ),
     },
-    // Slide 5: UPDATED TIMELINE WITH CLEAR ACCEPTANCE & ACTIVATION MILESTONES
+    // Slide 5: 100% FULLY REMOTE TIMELINE & ONBOARDING SOP
     {
-      badge: "共計 3 週上線",
-      title: "專案製作時間與交案流程",
+      badge: "100% 全遠端無縫導入",
+      title: "全遠端零干擾建置、線上測試與交案流程",
       content: (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm">
             <span className="inline-block px-2.5 py-0.5 bg-[#B26A27] text-[#FFFDF9] rounded-full text-xs font-bold mb-2">PHASE 1 (Week 1)</span>
-            <h4 className="font-serif font-bold text-[#B26A27] mb-2">Messaging API 串接與菜單匯入</h4>
+            <h4 className="font-serif font-bold text-[#B26A27] mb-2">遠端權限交接與雲端打單預設</h4>
             <ul className="text-xs text-[#7C6E62] space-y-1.5">
               <li>✓ 簽訂合約並<b>轉帳付訂金 $24,000 (含稅$25,200)</b></li>
-              <li>✓ 串接現有 LINE 官方帳號 Messaging API 權限</li>
-              <li>✓ 載入奶霜炸吐司單品與【夏日限定】芒果系列菜單</li>
+              <li>✓ 線上邀請授權 LINE API 權限與匯入菜單</li>
+              <li>✓ 預先綁定雲端打單機設定，開箱插電即用</li>
             </ul>
           </div>
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm">
             <span className="inline-block px-2.5 py-0.5 bg-[#B26A27] text-[#FFFDF9] rounded-full text-xs font-bold mb-2">PHASE 2 (Week 2)</span>
-            <h4 className="font-serif font-bold text-[#B26A27] mb-2">AI 算錢引擎與前後台 LIFF 建置</h4>
+            <h4 className="font-serif font-bold text-[#B26A27] mb-2">Staging 測試與線上視訊演練</h4>
             <ul className="text-xs text-[#7C6E62] space-y-1.5">
-              <li>✓ 前台 LIFF 免登入點餐與後台 LIFF 廚房看板建置</li>
-              <li>✓ 自動計算金額、提示自備零錢與「預約完成✔️」卡片</li>
-              <li>✓ 串接廚房打單機/POS對接、Notify 推播與雙向取貨通知</li>
+              <li>✓ 前後台 LIFF 免登入點餐與廚房看板建置</li>
+              <li>✓ 掃測試碼進行 3入/5入折價與雙向取貨測試</li>
+              <li>✓ 雙方進行 30 分鐘線上視訊會審，微調回應細節</li>
             </ul>
           </div>
           <div className="bg-white border-2 border-[#B26A27] rounded-2xl p-5 shadow-md bg-amber-50/30">
-            <span className="inline-block px-2.5 py-0.5 bg-[#B26A27] text-[#FFFDF9] rounded-full text-xs font-bold mb-2">PHASE 3 (Week 3 驗收上線)</span>
-            <h4 className="font-serif font-bold text-[#B26A27] mb-2">驗收通過 ➔ 付尾款 ➔ 刷卡開通</h4>
+            <span className="inline-block px-2.5 py-0.5 bg-[#B26A27] text-[#FFFDF9] rounded-full text-xs font-bold mb-2">PHASE 3 (Week 3 遠端驗收)</span>
+            <h4 className="font-serif font-bold text-[#B26A27] mb-2">雲端無縫切換 ➔ 驗收 ➔ 開通</h4>
             <ul className="text-xs text-[#382D24] space-y-1.5 font-medium">
-              <li>✓ 雙方進行點餐算錢與廚房打單/取貨流程實測</li>
-              <li>✓ 驗收通過<b>轉帳付尾款 $24,000 (含稅$25,200)</b></li>
-              <li>✓ 驗收當天<b>線上綁定藍新信用卡 ($7,140/月含稅) 開通 AI 店長正式營運！</b></li>
+              <li>✓ 5 分鐘遠端切換正式 Webhook，原 LINE 零停機升級</li>
+              <li>✓ 線上通過驗收並<b>轉帳付尾款 $24,000 (含稅$25,200)</b></li>
+              <li>✓ 點擊按鈕<b>線上綁定藍新信用卡 ($7,140/月含稅)，正式開通！</b></li>
             </ul>
           </div>
         </div>
@@ -647,7 +647,7 @@ export default function ButterToastProposalPage() {
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm">
             <h4 className="font-bold text-[#B26A27] mb-2">📌 AI 店長建置交付項目 (一次性)</h4>
             <ul className="text-xs text-[#382D24] space-y-1.5">
-              <li>✓ 現有 LINE 官方帳號 Messaging API 權限串接</li>
+              <li>✓ 100% 全遠端雲端建置與線上視訊指導驗收</li>
               <li>✓ 前後台 LINE LIFF 網頁介面開發 (顧客點餐 / 廚房備貨看板)</li>
               <li>✓ 奶霜炸吐司、芒果限定與 3入/5入優惠組合 AI 算錢邏輯</li>
               <li>✓ 廚房自動出單機 / POS 機 API / 送貨單列印整合</li>

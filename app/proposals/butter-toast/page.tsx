@@ -2,6 +2,16 @@
 
 import React, { useState, useEffect } from "react";
 
+interface InvoiceRecord {
+  id: string;
+  company_name: string;
+  tax_id: string;
+  address: string;
+  contact_email: string;
+  created_at: string;
+  notes: string;
+}
+
 export default function ButterToastProposalPage() {
   const [password, setPassword] = useState("");
   const [isUnlocked, setIsUnlocked] = useState(false);
@@ -13,8 +23,13 @@ export default function ButterToastProposalPage() {
   const [taxId, setTaxId] = useState("");
   const [invoiceAddress, setInvoiceAddress] = useState("");
   const [contactEmail, setContactEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
+
+  // Admin View State
+  const [isAdminView, setIsAdminView] = useState(false);
+  const [invoiceRecords, setInvoiceRecords] = useState<InvoiceRecord[]>([]);
 
   // Today's date password (e.g., 20260723 or 0723)
   const VALID_PASSWORDS = ["20260723", "0723"];
@@ -25,7 +40,7 @@ export default function ButterToastProposalPage() {
     if (unlocked === "true") {
       setIsUnlocked(true);
     }
-    // Load saved invoice info if present
+    // Load saved invoice info from local storage
     const savedInfo = localStorage.getItem("butter_toast_invoice_info");
     if (savedInfo) {
       try {
@@ -52,11 +67,64 @@ export default function ButterToastProposalPage() {
     }
   };
 
-  const handleSaveInvoiceInfo = (e: React.FormEvent) => {
+  const handleSaveInvoiceInfo = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!companyName || !taxId) {
+      alert("請填寫公司全銜與統一編號！");
+      return;
+    }
+
+    setIsSubmitting(true);
     const info = { companyName, taxId, invoiceAddress, contactEmail };
     localStorage.setItem("butter_toast_invoice_info", JSON.stringify(info));
-    setIsSaved(true);
+
+    try {
+      const res = await fetch("/api/proposals/invoice-submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          companyName,
+          taxId,
+          invoiceAddress,
+          contactEmail,
+          proposalSlug: "butter-toast",
+        }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        setIsSaved(true);
+        alert("✓ 發票資料已成功儲存並傳送給系統管理員！");
+      } else {
+        alert("儲存成功，如需開啟通知請確認系統設定。");
+        setIsSaved(true);
+      }
+    } catch (err) {
+      console.error(err);
+      setIsSaved(true);
+      alert("發票資料已儲存於本機對話中。");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const fetchAdminRecords = async () => {
+    try {
+      const res = await fetch("/api/proposals/invoice-submit");
+      const data = await res.json();
+      if (data.records) {
+        setInvoiceRecords(data.records);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const toggleAdminView = () => {
+    if (!isAdminView) {
+      fetchAdminRecords();
+    }
+    setIsAdminView(!isAdminView);
   };
 
   const handleCopyAccount = () => {
@@ -207,7 +275,7 @@ export default function ButterToastProposalPage() {
     // Slide 4: Pricing & Bank Transfer & Invoice
     {
       badge: "報價與金流資訊",
-      title: "專案報價、銀行匯款帳號與發票填寫",
+      title: "專案報價、匯款帳號與發票填寫",
       content: (
         <div className="space-y-4">
           {/* Bank Transfer Card */}
@@ -258,65 +326,103 @@ export default function ButterToastProposalPage() {
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-4 shadow-sm">
             <div className="flex justify-between items-center mb-3">
               <h4 className="font-serif font-bold text-sm text-[#B26A27] flex items-center gap-1.5">
-                <span>🧾</span> 客戶公司發票資料填寫 (開立三聯式發票)
+                <span>🧾</span> 客戶公司發票資料填寫 (線上同步傳送給團隊)
               </h4>
-              {isSaved && (
-                <span className="text-xs text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                  ✓ 發票資料已儲存
-                </span>
-              )}
-            </div>
-
-            <form onSubmit={handleSaveInvoiceInfo} className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-              <div>
-                <label className="block text-[#7C6E62] mb-1 font-medium">公司全銜 / 買受人抬頭</label>
-                <input
-                  type="text"
-                  placeholder="例如: 奶油吐司甜點工作室"
-                  value={companyName}
-                  onChange={(e) => setCompanyName(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#F7F3ED] border border-[#E6DDCF] rounded-lg focus:outline-none focus:border-[#B26A27] text-[#382D24]"
-                />
-              </div>
-              <div>
-                <label className="block text-[#7C6E62] mb-1 font-medium">統一編號 (統編)</label>
-                <input
-                  type="text"
-                  placeholder="例如: 88888888"
-                  value={taxId}
-                  onChange={(e) => setTaxId(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#F7F3ED] border border-[#E6DDCF] rounded-lg focus:outline-none focus:border-[#B26A27] text-[#382D24]"
-                />
-              </div>
-              <div>
-                <label className="block text-[#7C6E62] mb-1 font-medium">發票寄送地址</label>
-                <input
-                  type="text"
-                  placeholder="請輸入紙本發票寄送地址"
-                  value={invoiceAddress}
-                  onChange={(e) => setInvoiceAddress(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#F7F3ED] border border-[#E6DDCF] rounded-lg focus:outline-none focus:border-[#B26A27] text-[#382D24]"
-                />
-              </div>
-              <div>
-                <label className="block text-[#7C6E62] mb-1 font-medium">電子發票通知 Email</label>
-                <input
-                  type="email"
-                  placeholder="請輸入收到發票通知的 Email"
-                  value={contactEmail}
-                  onChange={(e) => setContactEmail(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#F7F3ED] border border-[#E6DDCF] rounded-lg focus:outline-none focus:border-[#B26A27] text-[#382D24]"
-                />
-              </div>
-              <div className="md:col-span-2 text-right">
+              <div className="flex items-center gap-2">
+                {isSaved && (
+                  <span className="text-xs text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                    ✓ 發票資料已同步傳送
+                  </span>
+                )}
                 <button
-                  type="submit"
-                  className="px-5 py-2 bg-[#B26A27] hover:bg-[#8F521B] text-white font-bold rounded-lg shadow-sm transition text-xs"
+                  onClick={toggleAdminView}
+                  className="text-[11px] text-[#B26A27] underline hover:text-[#8F521B]"
                 >
-                  💾 儲存發票資料
+                  {isAdminView ? "返回提案頁" : "🔍 老闆檢視收到的發票紀錄"}
                 </button>
               </div>
-            </form>
+            </div>
+
+            {isAdminView ? (
+              <div className="bg-[#F7F3ED] p-3 rounded-xl border border-[#E6DDCF] max-h-48 overflow-y-auto space-y-2 text-xs">
+                <div className="font-bold text-[#B26A27] border-b pb-1 flex justify-between">
+                  <span>所有已填寫發票清單</span>
+                  <span>點擊刷卡/開立</span>
+                </div>
+                {invoiceRecords.length === 0 ? (
+                  <p className="text-xs text-[#7C6E62] py-2 text-center">目前尚無已填寫之發票資料紀錄</p>
+                ) : (
+                  invoiceRecords.map((r) => (
+                    <div key={r.id} className="bg-white p-2.5 rounded-lg border border-[#E6DDCF] space-y-1">
+                      <div className="flex justify-between font-bold text-[#382D24]">
+                        <span>🏢 {r.company_name}</span>
+                        <span className="font-mono text-[#B26A27]">統編: {r.tax_id}</span>
+                      </div>
+                      <div className="text-[11px] text-[#7C6E62]">
+                        📍 地址: {r.address || "未填寫"} ｜ ✉️ Email: {r.contact_email || "未填寫"}
+                      </div>
+                      <div className="text-[10px] text-[#A39587] text-right">
+                        填寫時間: {new Date(r.created_at).toLocaleString("zh-TW")}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            ) : (
+              <form onSubmit={handleSaveInvoiceInfo} className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                <div>
+                  <label className="block text-[#7C6E62] mb-1 font-medium">公司全銜 / 買受人抬頭</label>
+                  <input
+                    type="text"
+                    placeholder="例如: 奶油吐司甜點工作室"
+                    value={companyName}
+                    onChange={(e) => setCompanyName(e.target.value)}
+                    className="w-full px-3 py-2 bg-[#F7F3ED] border border-[#E6DDCF] rounded-lg focus:outline-none focus:border-[#B26A27] text-[#382D24]"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-[#7C6E62] mb-1 font-medium">統一編號 (統編)</label>
+                  <input
+                    type="text"
+                    placeholder="例如: 88888888"
+                    value={taxId}
+                    onChange={(e) => setTaxId(e.target.value)}
+                    className="w-full px-3 py-2 bg-[#F7F3ED] border border-[#E6DDCF] rounded-lg focus:outline-none focus:border-[#B26A27] text-[#382D24]"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-[#7C6E62] mb-1 font-medium">發票寄送地址</label>
+                  <input
+                    type="text"
+                    placeholder="請輸入紙本發票寄送地址"
+                    value={invoiceAddress}
+                    onChange={(e) => setInvoiceAddress(e.target.value)}
+                    className="w-full px-3 py-2 bg-[#F7F3ED] border border-[#E6DDCF] rounded-lg focus:outline-none focus:border-[#B26A27] text-[#382D24]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[#7C6E62] mb-1 font-medium">電子發票通知 Email</label>
+                  <input
+                    type="email"
+                    placeholder="請輸入收到發票通知的 Email"
+                    value={contactEmail}
+                    onChange={(e) => setContactEmail(e.target.value)}
+                    className="w-full px-3 py-2 bg-[#F7F3ED] border border-[#E6DDCF] rounded-lg focus:outline-none focus:border-[#B26A27] text-[#382D24]"
+                  />
+                </div>
+                <div className="md:col-span-2 text-right">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="px-5 py-2 bg-[#B26A27] hover:bg-[#8F521B] text-white font-bold rounded-lg shadow-sm transition text-xs disabled:opacity-50"
+                  >
+                    {isSubmitting ? "傳送中..." : "💾 儲存並同步傳送發票資料"}
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
 
           {/* NewebPay Monthly Subscription Security Box */}

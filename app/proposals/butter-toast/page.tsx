@@ -338,8 +338,8 @@ export default function ButterToastProposalPage() {
                 </h4>
               </div>
               <ul className="text-xs text-[#382D24] space-y-1">
-                <li>• <b>Redis 隊列防爆機制</b>：遵循 LINE API 速率規範（2,000 req/sec），多人在線不打爆 LINE。</li>
-                <li>• <b>平滑併發佇列</b>：1,000 人同時點餐自動排入高併發佇列池，0 掉單、0.1 秒平滑回覆。</li>
+                <li>• <b>Redis 隊列防爆機制</b>：遵循 LINE API 速率規範，確保高峰期對話順暢不打爆。</li>
+                <li>• <b>平滑併發佇列</b>：支援同時 100+ 人順暢點餐排入佇列池，0 掉單、0.1 秒平滑回覆。</li>
                 <li>• <b>廚房看板與打單</b>：手機 LIFF 廚房點擊 `[✅完成備貨]`，自動觸發買家取貨推播。</li>
               </ul>
             </div>
@@ -421,7 +421,7 @@ export default function ButterToastProposalPage() {
                   🧾 加上 5% 營業稅 ($240) ＝ <b>含稅 NT$ 5,040 / 月</b>
                 </div>
                 <div className="text-[10px] bg-amber-50 border border-[#D6A86E] p-1.5 rounded-lg mb-2 text-[#382D24]">
-                  💡 <b>對標真人小編效益：</b>真人小編每天最多處理 <b>30~50 筆訂單</b>；AI 店長具備 <b>LINE 防爆隊列緩衝機制</b>，處理 1,000 人湧入 0 掉單，每年直接為店家省下 <b>NT$ 28 萬薪資！</b>
+                  💡 <b>對標真人小編效益：</b>真人小編每天最多處理 <b>30~50 筆訂單</b>；AI 店長具備 <b>LINE 防爆隊列緩衝機制</b>，同時 100+ 人順暢點餐 0 掉單，每年直接為店家省下 <b>NT$ 28 萬薪資！</b>
                 </div>
                 <ul className="text-xs text-[#382D24] space-y-0.5 mb-2">
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 5,000 會員容量 AI 流量 (20,000則/月)</li>
@@ -670,7 +670,7 @@ export default function ButterToastProposalPage() {
         </div>
       ),
     },
-    // Slide 7: ROI BENCHMARKED DIRECTLY AGAINST HUMAN EDITOR WITH EXACT ORDER CAPACITY & LINE BUFFER SAFEGUARD
+    // Slide 7: ROI BENCHMARKED DIRECTLY AGAINST HUMAN EDITOR WITH SAFEGUARD
     {
       badge: "商業價值總結",
       title: "真人小編 ✕ AI 店長效益與單量對比",
@@ -690,14 +690,14 @@ export default function ButterToastProposalPage() {
                 <tr>
                   <td className="p-2.5 font-bold">單日點餐對話處理容量</td>
                   <td className="p-2.5 text-red-600 font-bold">每天最多 30 ~ 50 筆對話 (易超載)</td>
-                  <td className="p-2.5 font-black text-emerald-700 bg-[#FFF8F0]">單日可精確處理 10,000+ 筆點餐訂單</td>
+                  <td className="p-2.5 font-black text-emerald-700 bg-[#FFF8F0]">單日可精確處理 1,000+ 筆點餐訂單</td>
                 </tr>
                 <tr>
                   <td className="p-2.5 font-bold">高併發處理與防爆隊列機制</td>
                   <td className="p-2.5 text-gray-600">同時只能回 1 人 (多視窗易出錯)</td>
                   <td className="p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]">
                     <b>Redis 佇列平滑緩衝保護</b><br />
-                    遵循 LINE API 速率上限，1,000 人同時下單 0 掉單、不打爆對話！
+                    遵循 LINE API 速率規範，同時 100+ 人順暢點餐 0 掉單！
                   </td>
                 </tr>
                 <tr>
@@ -720,7 +720,7 @@ export default function ButterToastProposalPage() {
           </div>
 
           <div className="bg-emerald-50 border border-emerald-300 p-2.5 rounded-xl text-center text-xs text-emerald-900 font-bold">
-            🎉 結論：內建 LINE Messaging API 緩衝保護機制，<b>處理單量能力達真人 200 倍以上</b>，月費僅真人 <b>15%</b>，每年省下超過 <b>NT$ 280,000 元</b> 人力成本！
+            🎉 結論：內建 LINE API 緩衝保護機制，<b>處理單量能力達真人 20 倍以上</b>，月費僅真人 <b>15%</b>，每年省下超過 <b>NT$ 280,000 元</b> 人力成本！
           </div>
         </div>
       ),

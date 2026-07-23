@@ -513,7 +513,7 @@
       </div>
     </div>
 
-    <!-- Slide 3: Front-end & Back-end LIFF Architecture & LINE Buffer Queue Safeguard -->
+    <!-- Slide 3: Front-end & Back-end LIFF Architecture & LINE Whitelist Security -->
     <div class="slide" id="slide-3">
       <div class="slide-header">
         <h2 class="slide-title">前後台 LINE LIFF 網頁 ✕ LINE Rate Limit 緩衝機制</h2>
@@ -524,24 +524,23 @@
           <div class="feature-card" style="border-color:var(--accent-butter);">
             <div style="display:flex; align-items:center; gap:0.4rem; margin-bottom:0.3rem;">
               <span style="font-size:1.3rem;">📱</span>
-              <div class="card-title" style="margin-bottom:0;">前台：LINE LIFF 點餐與品牌娃娃吉祥物人設</div>
+              <div class="card-title" style="margin-bottom:0;">前台：LINE LIFF 點餐（顧客無感免登入）</div>
             </div>
             <div class="card-desc" style="font-size:0.8rem;">
-              • <b>品牌娃娃專屬口吻</b>：AI 設定為品牌吉祥物口頭禪與溫暖互動，擬真活潑。<br>
-              • <b>免記憶密碼點餐</b>：顧客點擊「🍞線上點餐」彈出 LIFF 頁面，自動帶入 LINE 身份。<br>
-              • <b>產品/商店介紹建置</b>：包含吐司特色圖文導覽與一鍵跳轉官方 IG 專頁連結。<br>
-              • <b>預約憑證卡片</b>：送出訂單即刻於 LINE 對話生成格式化「預約完成✔️」Flex 卡片。
+              • <b>LINE 官方原生驗證</b>：顧客開啟 LIFF 背景自動認證 LINE 身份，免記憶帳密。<br>
+              • <b>個人化訂單隔離</b>：顧客僅能存取自己的預約卡片，其他人就算偷網址也看不到個資。<br>
+              • <b>品牌娃娃親切互動</b>：注入吉祥物口頭禪與溫暖對話，展演品牌特色。
             </div>
           </div>
           <div class="feature-card" style="border-color:var(--accent-caramel);">
             <div style="display:flex; align-items:center; gap:0.4rem; margin-bottom:0.3rem;">
-              <span style="font-size:1.3rem;">🛡️</span>
-              <div class="card-title" style="margin-bottom:0;">後台：LINE 緩衝隊列 (Queue) 防爆防掉單機制</div>
+              <span style="font-size:1.3rem;">🔑</span>
+              <div class="card-title" style="margin-bottom:0;">後台：店長與員工 LINE ID 白名單權限鎖</div>
             </div>
             <div class="card-desc" style="font-size:0.8rem;">
-              • <b>Redis 隊列防爆機制</b>：遵循 LINE API 速率規範，確保高峰期對話順暢不打爆。<br>
-              • <b>平滑併發佇列</b>：支援同時 100+ 人順暢點餐排入佇列池，0 掉單、0.1 秒平滑回覆。<br>
-              • <b>廚房看板與打單</b>：手機 LIFF 廚房點擊 `[✅完成備貨]`，自動觸發買家取貨推播。
+              • <b>員工 LINE ID 白名單</b>：僅授權之店長與廚房師傅 LINE 帳號可存取後台。<br>
+              • <b>非授權人員自動封鎖</b>：外人或顧客開網址會顯示 `⛔ 權限不足`，防護 100% 嚴密。<br>
+              • <b>免記後台帳密</b>：店長/廚房用手機點開即操作，不用人工反覆輸入密碼。
             </div>
           </div>
         </div>
@@ -549,15 +548,15 @@
         <div class="grid-4col">
           <div class="feature-card" style="padding:0.6rem 0.8rem;">
             <b style="color:var(--accent-caramel); font-size:0.82rem;">1. 吉祥物娃娃 AI 導覽</b>
-            <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.15rem;">以品牌娃娃親切口吻介紹吐司與優惠組</p>
+            <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.15rem;">顧客 LINE 自動帶入身份免登入點餐</p>
           </div>
           <div class="feature-card" style="padding:0.6rem 0.8rem;">
             <b style="color:var(--accent-caramel); font-size:0.82rem;">2. Redis 佇列平滑緩衝</b>
             <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.15rem;">自動消化高併發流量，符合 LINE API 速率 0 掉單</p>
           </div>
           <div class="feature-card" style="padding:0.6rem 0.8rem;">
-            <b style="color:var(--accent-caramel); font-size:0.82rem;">3. 出單機/看板備貨</b>
-            <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.15rem;">廚房打單或點擊 LIFF 備貨看板 `[✅製作完成]`</p>
+            <b style="color:var(--accent-caramel); font-size:0.82rem;">3. 員工 LINE 白名單驗證</b>
+            <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.15rem;">自動比對 LINE ID，僅授權員工可看備貨單</p>
           </div>
           <div class="feature-card" style="padding:0.6rem 0.8rem; background:#F0FDF4; border-color:#86EFAC;">
             <b style="color:#15803D; font-size:0.82rem;">4. AI 自動推播取餐</b>
@@ -584,10 +583,10 @@
               <div class="price-tax-box">🧾 加上 5% 營業稅 ($2,400) ＝ <b>含稅 NT$ 50,400</b></div>
               <ul class="bullet-list">
                 <li>100% 線上全遠端建置，免到店干擾營運</li>
-                <li><b>品牌吉祥物/娃娃專屬 AI 人設口吻微調</b></li>
+                <li><b>前後台 LINE 身份原生認證與員工 LINE ID 白名單權限鎖</b></li>
+                <li>品牌吉祥物/娃娃專屬 AI 人設口吻微調</li>
                 <li>商店簡介/產品介紹/IG專頁連結圖文選單建置</li>
                 <li>前後台 LINE LIFF 網頁與 3/5入優惠組算錢大腦</li>
-                <li>預先設定開箱即用打單機、發送「預約完成✔️」與雙向取貨推播</li>
               </ul>
             </div>
             <div style="font-size:0.72rem; color:var(--text-muted); text-align:center; margin-top:0.3rem; background:#FFF8F0; padding:0.25rem; border-radius:6px; border:1px solid var(--accent-butter);">
@@ -712,7 +711,7 @@
             <div class="card-title">遠端權限交接與雲端打單預設</div>
             <ul class="bullet-list" style="margin-top: 0.6rem;">
               <li>簽訂合約並<b>轉帳付訂金 $24,000 (含稅 $25,200)</b></li>
-              <li>線上邀請授權 API 權限、提供吉祥物娃娃個性、品牌簡介與菜單</li>
+              <li>線上邀請授權 API 權限、提供員工 LINE ID 白名單、品牌簡介與菜單</li>
               <li>預先綁定雲端打單機設定，開箱插電即用</li>
             </ul>
           </div>
@@ -720,7 +719,7 @@
             <span class="step-number">PHASE 2 (Week 2)</span>
             <div class="card-title">Staging 測試與線上視訊演練</div>
             <ul class="bullet-list" style="margin-top: 0.6rem;">
-              <li>前後台 LIFF 免登入點餐與吉祥物口吻語氣試玩</li>
+              <li>前後台 LIFF 免登入點餐與員工 LINE 白名單登入測試</li>
               <li>掃測試碼進行 3入/5入折價與雙向取貨測試</li>
               <li>雙方進行 30 分鐘線上視訊會審，微調娃娃回應語氣細節</li>
             </ul>
@@ -751,12 +750,12 @@
             <b style="color:var(--accent-caramel); font-size:0.85rem;">📌 AI 店長與品牌基礎建置 (一次性)</b>
             <ul class="bullet-list" style="margin-top: 0.4rem; font-size:0.75rem;">
               <li>100% 全遠端雲端建置與線上指導驗收</li>
-              <li><b>品牌吉祥物/娃娃專屬 AI 人設口吻微調</b></li>
-              <li><b>商店介紹/產品圖文介紹/品牌故事建置</b></li>
-              <li><b>官方 IG / FB / 社群專頁連結導流選單</b></li>
+              <li><b>前後台 LINE 身份原生認證與員工 LINE ID 白名單權限鎖</b></li>
+              <li>品牌吉祥物/娃娃專屬 AI 人設口吻微調</li>
+              <li>商店介紹/產品圖文介紹/品牌故事建置</li>
+              <li>官方 IG / FB / 社群專頁連結導流選單</li>
               <li>前後台 LINE LIFF 網頁開發 (點餐/備貨)</li>
               <li>奶霜炸吐司與 3/5入優惠組 AI 算錢大腦</li>
-              <li>廚房自動出單機 / POS API 列印串接</li>
             </ul>
           </div>
 
@@ -776,7 +775,7 @@
             <ul class="bullet-list" style="margin-top: 0.4rem; font-size:0.75rem; color:#065F46;">
               <li><b>SSL/TLS 加密傳輸</b>：全站與金流 AES-256 加密</li>
               <li><b>AI 越獄與算錢防護</b>：防 Prompt Injection 騙價</li>
-              <li><b>LINE 簽章與 0 密碼</b>：HMAC-SHA256 防偽造</li>
+              <li><b>LINE 員工白名單鎖</b>：非授權 LINE 絕對無法存取</li>
               <li><b>個資隔離與 CSV 導出</b>：符合個人資料保護法</li>
             </ul>
           </div>
@@ -812,9 +811,9 @@
                 <td style="padding:0.45rem 0.8rem; color:#047857; font-weight:bold; background:#FFF8F0;"><b>Redis 佇列平滑緩衝保護</b> (同時 100+ 人順暢點餐 0 掉單)</td>
               </tr>
               <tr style="border-bottom:1px solid var(--card-border);">
-                <td style="padding:0.45rem 0.8rem; font-weight:bold;">品牌娃娃人設與售後保障</td>
-                <td style="padding:0.45rem 0.8rem; color:#4B5563;">語氣不固定，無維護保固概念</td>
-                <td style="padding:0.45rem 0.8rem; color:#047857; font-weight:bold; background:#FFF8F0;">融入吉祥物親切口吻，開通享<b>首月 30 天免費維護微調</b>！</td>
+                <td style="padding:0.45rem 0.8rem; font-weight:bold;">後台權限防護與品牌人設</td>
+                <td style="padding:0.45rem 0.8rem; color:#4B5563;">人工易洩漏帳密給員工</td>
+                <td style="padding:0.45rem 0.8rem; color:#047857; font-weight:bold; background:#FFF8F0;"><b>LINE 員工白名單權限鎖</b> (0 密碼外洩，外人無法進入)</td>
               </tr>
               <tr style="border-bottom:1px solid var(--card-border);">
                 <td style="padding:0.45rem 0.8rem; font-weight:bold;">每月固定費用成本</td>
@@ -831,7 +830,7 @@
         </div>
 
         <!-- Proposing Company Contact Card WITH TAX ID -->
-        <div style="background:linear-gradient(90deg, #FFFDF9 0%, #FCEFDC 50%, #FFFDF9 100%); border:2px solid var(--accent-caramel); border-radius:14px; padding:0.6rem 1rem; display:flex; justify-content:space-between; align-items:center;">
+        <div style="background:linear-gradient(90deg, #FFFDF9 0%, #FCEFDC 50%, #FFFDF9 100%); border:2px solid var(--accent-caramel); border-radius:14px; padding:0.6rem 1rem; display:flex; justify-space-between; align-items:center;">
           <div>
             <span style="font-size:0.68rem; background:var(--accent-caramel); color:#FFF; padding:0.1rem 0.5rem; border-radius:50px; font-weight:bold;">🏢 提案團隊聯絡資訊</span>
             <div style="font-family:'Noto Serif TC',serif; font-weight:900; font-size:1.05rem; color:var(--text-main); margin-top:0.2rem; display:flex; align-items:center; gap:0.5rem;">

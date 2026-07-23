@@ -367,10 +367,10 @@ export default function ButterToastProposalPage() {
         </div>
       ),
     },
-    // Slide 4: PRICING CARDS ($48,000 建置費 / $4,800 月費) + BANK + INVOICE + CHECKOUT BUTTON + CANCELLATION POLICY
+    // Slide 4: PRICING CARDS WITH HUMAN EDITOR VS AI MANAGER COST COMPARISON
     {
       badge: "生乳/奶霜專賣店 專案報價",
-      title: "專案報價金額、匯款帳號與發票填寫",
+      title: "專案報價金額、對標真人小編成本與發票填寫",
       content: (
         <div className="space-y-3">
           {/* Top Two Main Pricing Cards */}
@@ -403,15 +403,15 @@ export default function ButterToastProposalPage() {
               </div>
             </div>
 
-            {/* Card 2: Monthly Recurring ($4,800/月) with PROMINENT CHECKOUT BUTTON */}
+            {/* Card 2: Monthly Recurring ($4,800/月) - BENCHMARKED AGAINST HUMAN EDITOR */}
             <div className="bg-white border-2 border-[#B26A27] rounded-2xl p-3.5 shadow-md relative flex flex-col justify-between ring-2 ring-[#B26A27]/20">
               <div>
                 <div className="flex justify-between items-center mb-1">
                   <span className="font-bold text-sm text-[#B26A27] flex items-center gap-1">
                     💳 【每月】代營運與 AI 系統費
                   </span>
-                  <span className="text-[10px] bg-amber-500 text-white px-2 py-0.5 rounded-full font-bold shadow-xs">
-                    驗收通過當天線上刷卡開通
+                  <span className="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-bold shadow-xs">
+                    比請真人小編省 85% 人力
                   </span>
                 </div>
                 <div className="text-xl md:text-2xl font-black font-mono text-[#B26A27] my-0.5">
@@ -419,6 +419,9 @@ export default function ButterToastProposalPage() {
                 </div>
                 <div className="text-[11px] text-[#7C6E62] mb-1.5 bg-[#F7F3ED] p-1 rounded-lg border border-[#E6DDCF]">
                   🧾 加上 5% 營業稅 ($240) ＝ <b>含稅 NT$ 5,040 / 月</b>
+                </div>
+                <div className="text-[10px] bg-amber-50 border border-[#D6A86E] p-1.5 rounded-lg mb-2 text-[#382D24]">
+                  💡 <b>對標真人小編效益：</b>真人小編月薪至少 $30,000 且無法 24hr 秒回；AI 全包方案月費僅 <b>$4,800</b>，每年直接為店家省下 <b>NT$ 28 萬薪資支出！</b>
                 </div>
                 <ul className="text-xs text-[#382D24] space-y-0.5 mb-2">
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 5,000 會員容量 AI 流量 (20,000則/月)</li>
@@ -667,31 +670,49 @@ export default function ButterToastProposalPage() {
         </div>
       ),
     },
-    // Slide 7: ROI
+    // Slide 7: ROI BENCHMARKED DIRECTLY AGAINST HUMAN EDITOR
     {
       badge: "商業價值總結",
-      title: "核心效益與 ROI 評估",
+      title: "真人小編 ✕ AI 店長效益與成本對比",
       content: (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm">
-            <div className="text-2xl mb-1">💰</div>
-            <h3 className="font-serif font-bold text-[#B26A27] mb-1">節省 85% 人力費用</h3>
-            <p className="text-xs text-[#7C6E62]">聘請專職小編月薪至少 NT$ 30,000+；全包方案每月僅 **$4,800 (含稅$5,040)**，省下龐大固定成本。</p>
+        <div className="space-y-3">
+          {/* Comparison Table */}
+          <div className="bg-white border-2 border-[#B26A27] rounded-2xl overflow-hidden shadow-sm">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-[#EFE7DA] text-[#B26A27] font-bold border-b border-[#D6A86E]">
+                <tr>
+                  <th className="p-2.5">評估比較項目</th>
+                  <th className="p-2.5 text-gray-500">聘請專職 / 兼職真人小編</th>
+                  <th className="p-2.5 text-[#B26A27] bg-[#FFF8F0] font-black">🤖 AI 店長全代營運方案 (本專案)</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#E6DDCF] text-[#382D24]">
+                <tr>
+                  <td className="p-2.5 font-bold">每月固定費用成本</td>
+                  <td className="p-2.5 text-red-600 font-mono font-bold">NT$ 30,000 ~ 35,000 / 月</td>
+                  <td className="p-2.5 text-emerald-700 font-mono font-black bg-[#FFF8F0]">NT$ 4,800 / 月 (含稅 $5,040)</td>
+                </tr>
+                <tr>
+                  <td className="p-2.5 font-bold">服務時間與回應速度</td>
+                  <td className="p-2.5 text-gray-600">每天 8 小時 (下班時間無法回覆)</td>
+                  <td className="p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]">24 小時 365 天不間斷 0.1 秒回覆</td>
+                </tr>
+                <tr>
+                  <td className="p-2.5 font-bold">點餐算錢與廚房打單</td>
+                  <td className="p-2.5 text-gray-600">人工計算易算錯，需手動打單</td>
+                  <td className="p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]">0 算錯率，自動打單與推播取貨</td>
+                </tr>
+                <tr>
+                  <td className="p-2.5 font-bold">行銷推播與 Banner 設計</td>
+                  <td className="p-2.5 text-gray-600">需額外發包設計，費用另計</td>
+                  <td className="p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]">包辦每月 2 次限量預購 Banner 設計發送</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm">
-            <div className="text-2xl mb-1">⏱️</div>
-            <h3 className="font-serif font-bold text-[#B26A27] mb-1">每日省 3.3 小時接單時間</h3>
-            <p className="text-xs text-[#7C6E62]">AI 24 小時精確算錢與出單，每天處理 50 人對話，讓老闆專心做甜點。</p>
-          </div>
-          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm">
-            <div className="text-2xl mb-1">📈</div>
-            <h3 className="font-serif font-bold text-[#B26A27] mb-1">推播輕鬆賺回月費</h3>
-            <p className="text-xs text-[#7C6E62]">每月 2 次限量預購推播帶動 10 筆奶霜炸吐司組合訂單，即可完全覆蓋每月營運費用。</p>
-          </div>
-          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm">
-            <div className="text-2xl mb-1">🤝</div>
-            <h3 className="font-serif font-bold text-[#B26A27] mb-1">開箱即用，零學習負擔</h3>
-            <p className="text-xs text-[#7C6E62]">完全不需要學習複雜的後台操作，從視覺設計到 AI 維護全包服務。</p>
+
+          <div className="bg-emerald-50 border border-emerald-300 p-2.5 rounded-xl text-center text-xs text-emerald-900 font-bold">
+            🎉 結論：採用 AI 店長代營運方案，<b>每年直接為【生乳/奶霜專賣店】節省超過 NT$ 280,000 元</b> 的龐大薪資開銷，同時提升 3 倍接單效率！
           </div>
         </div>
       ),

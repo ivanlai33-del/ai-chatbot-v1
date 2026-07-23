@@ -192,14 +192,14 @@ export default function ButterToastProposalPage() {
     );
   }
 
-  // Interactive Tailor-made Slides for 「生乳/奶霜專賣店」 (cream_specialty_store)
+  // Interactive Tailor-made Slides explicitly built for 「生乳/奶霜專賣店」 (cream_specialty_store)
   const slides = [
     // Slide 1: Tailored Cover
     {
       badge: "🧁 生乳/奶霜專賣店 專屬 AI 店長提案",
       content: (
         <div className="text-center py-6">
-          <span className="text-xs font-bold text-[#B26A27] uppercase tracking-widest block mb-2">
+          <span className="text-xs font-bold text-[#B26A27] uppercase tracking-widest block mb-2 font-mono">
             cream_specialty_store ✕ LINE 官方帳號升級
           </span>
           <h1 className="text-4xl md:text-5xl font-extrabold font-serif mb-4 leading-tight text-[#382D24]">
@@ -207,49 +207,55 @@ export default function ButterToastProposalPage() {
             <span className="text-[#B26A27]">奶霜炸吐司 AI 點餐算錢與自動化專案</span>
           </h1>
           <p className="text-base md:text-lg text-[#7C6E62] max-w-2xl mx-auto mb-6 leading-relaxed">
-            為「奶霜炸吐司、OREO系列、夏日限定芒果系列與 3入/5入優惠組合」量身打造 24hr 自動算錢、自備零錢提醒、發送「預約完成✔️」與 LINE Notify 備貨通知
+            專為「奶霜炸吐司 (原味/抹茶/巧克力)、OREO系列、夏日限定芒果系列與 3入$270/5入$400自由配」量身打造 24hr 自動算錢、不找零提醒、發送「預約完成✔️」與 LINE Notify 備貨通知
           </p>
           <span className="inline-block px-6 py-2 bg-[#B26A27] text-[#FFFDF9] rounded-full text-sm font-bold shadow-md">
-            營業時間 18:00 - 售完為止 / 現金面交不找零 / 0 小編自動化
+            營業時間 18:00 - 售完為止 / 現金面交恕不找零 / 0 小編自動化
           </span>
         </div>
       ),
     },
-    // Slide 2: Actual Workflow & Pain Points
+    // Slide 2: Tailored Pain Points & Real Operational Needs (Strictly customized for cream_specialty_store)
     {
-      badge: "現況點餐流程優化",
-      title: "【生乳/奶霜專賣店】現狀對話與 AI 自動化對比",
+      badge: "5,000人規模規劃",
+      title: "【生乳/奶霜專賣店】現況與核心需求拆解",
       content: (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-[#FFF8F0] border-2 border-[#D6A86E] rounded-2xl p-4 shadow-sm">
-            <h3 className="font-serif font-bold text-base text-[#B26A27] mb-2 flex items-center gap-1.5">
-              <span>📲</span> 現有 LINE 手動留言訂購流程
-            </h3>
-            <div className="bg-white/80 p-3 rounded-xl border border-[#E6DDCF] text-xs text-[#7C6E62] space-y-1.5 leading-relaxed font-mono">
-              <p><b>現有歡迎語：</b>「嗨👋 歡迎光臨 生乳/奶霜專賣店，請留下：1.姓名 2.電話 3.產品內容 4.取餐日期/時間」</p>
-              <p><b>現場規定：</b>✨ 營業時間:18:00-售完為止 (現點現做)</p>
-              <p><b>付款提醒：</b>📌 付款請準備剛好金額 (恕不找零)，亦接受提前匯款。</p>
-              <p><b>完成憑證：</b>收到「預約完成✔️」，訂單才算成功。</p>
-            </div>
-            <p className="text-xs text-red-600 mt-2 font-medium">❌ 痛點：多品項（如 3入組合/夏日限定芒果抹茶）需人工算錢，現點現做無法即時回覆「預約完成✔️」。</p>
+          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm hover:border-[#D6A86E] transition">
+            <div className="text-2xl mb-1">🏠</div>
+            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">需求 1：取餐導引與現點現做說明</h3>
+            <p className="text-sm text-[#7C6E62] leading-relaxed">
+              「生乳/奶霜專賣店」無實體內用門市。AI 24hr 自動說明「✨營業時間 18:00 - 售完為止 (餐點現點現做)」、指引取餐地點與地圖導航，避免耽誤顧客時間。
+            </p>
           </div>
 
-          <div className="bg-emerald-50/70 border-2 border-emerald-500/40 rounded-2xl p-4 shadow-sm">
-            <h3 className="font-serif font-bold text-base text-emerald-800 mb-2 flex items-center gap-1.5">
-              <span>🤖</span> 升級 AI 智慧店長全自動運作
-            </h3>
-            <div className="bg-white/90 p-3 rounded-xl border border-emerald-200 text-xs text-slate-700 space-y-1.5 leading-relaxed">
-              <p><b>1. 多品項語意算錢：</b>顧客輸入「3入組A款x1 + 夏日限定芒果抹茶x1 + OREO原味x1」，AI 0.1秒精確算出 <b>$270 + $130 + $75 = $475 元</b>。</p>
-              <p><b>2. 自動帶入取餐說明：</b>自動提示 18:00 開店時間，並溫馨提醒「請準備剛好金額 $475（恕不找零）或提前匯款」。</p>
-              <p><b>3. 發送「預約完成✔️」Flex 卡片：</b>自動生成質感訂單明細，顧客即時收到成功確認。</p>
-              <p><b>4. LINE Notify 備貨通知：</b>訂單立刻發送至後台備貨群組，讓您專心在廚房製作。</p>
-            </div>
-            <p className="text-xs text-emerald-700 mt-2 font-bold">✅ 效益：24hr 不漏單，省下每日 3 小時人工算錢與回覆時間！</p>
+          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm hover:border-[#D6A86E] transition">
+            <div className="text-2xl mb-1">🧮</div>
+            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">需求 2：奶霜炸吐司多品項自動算錢</h3>
+            <p className="text-sm text-[#7C6E62] leading-relaxed">
+              免去人工計算「奶霜炸吐司 ($55-$70)、OREO系列 ($75-$85)、夏日限定芒果 ($120-$130) 與 3入$270/5入$400 自由配」。AI 自動試算總金額，並提示「📌付款請準備剛好金額 (恕不找零) 或提前匯款」。
+            </p>
+          </div>
+
+          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm hover:border-[#D6A86E] transition">
+            <div className="text-2xl mb-1">🤖</div>
+            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">需求 3：AI 自動發送「預約完成✔️」與廚房推播</h3>
+            <p className="text-sm text-[#7C6E62] leading-relaxed">
+              目前無專職 LINE 小編。當顧客確認訂購資料後，AI 自動發送「預約完成✔️」質感 Flex 訂單明細，並同步 LINE Notify 推播至備貨群組，讓您在廚房專心炸吐司。
+            </p>
+          </div>
+
+          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm hover:border-[#D6A86E] transition">
+            <div className="text-2xl mb-1">📈</div>
+            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">需求 4：5,000 會員限定組合預購營運</h3>
+            <p className="text-sm text-[#7C6E62] leading-relaxed">
+              每日約 50 人對話詢問。由團隊協助每月 2 次設計「夏日限定芒果系列」與「3入組$270 / 5入自由配$400」限量預購圖文 Banner 並發送推播。
+            </p>
           </div>
         </div>
       ),
     },
-    // Slide 3: Tailored Menu & System Integration (Updated with exact menu card details)
+    // Slide 3: Tailored Menu & System Integration (Using exact product names from menu card)
     {
       badge: "專屬菜單與季節新品適配",
       title: "【生乳/奶霜專賣店】真實菜單與 AI 計算適配",
@@ -257,7 +263,7 @@ export default function ButterToastProposalPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-4 shadow-sm">
             <h4 className="font-serif font-bold text-[#B26A27] text-sm mb-2 flex items-center gap-1">
-              <span>🍞</span> 完整單品與【夏日限定】菜單大腦
+              <span>🍞</span> 奶霜炸吐司全品項與【夏日限定】大腦
             </h4>
             <ul className="text-xs text-[#382D24] space-y-1.5">
               <li>✓ <b>基本奶霜炸吐司</b>：原味 ($55) ｜ 抹茶 ($70) ｜ 巧克力 ($70)</li>
@@ -279,8 +285,8 @@ export default function ButterToastProposalPage() {
               <li>1. 🍞 <b>線上點餐算錢</b>（開啟 AI 算錢點餐對話）</li>
               <li>2. ☀️ <b>夏日限定/優惠組</b>（一鍵看芒果與 3/5入自由配）</li>
               <li>3. 📍 <b>取餐地點/導航</b>（一鍵傳送指定地址面交地圖）</li>
-              <li>4. ⏰ <b>營業時間須知</b>（18:00-售完為止/現點現做說明）</li>
-              <li>5. ❄️ <b>熱熱吃與重烤教學</b>（奶霜炸吐司冷凍重烤 SOP）</li>
+              <li>4. ⏰ <b>營業時間須知</b>（18:00-售完/現點現做說明）</li>
+              <li>5. ❄️ <b>熱熱吃與重烤教學</b>（奶霜炸吐司冷藏/冷凍重烤 SOP）</li>
               <li>6. 👤 <b>轉接老闆/匯款帳號</b>（提供中信 131540035543 匯款）</li>
             </ul>
           </div>
@@ -339,7 +345,7 @@ export default function ButterToastProposalPage() {
                 </div>
                 <ul className="text-xs text-[#382D24] space-y-1">
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 5,000 會員容量 AI 流量 (20,000則/月)</li>
-                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 每月 2 次限量預購 Banner 設計與全自動推播</li>
+                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 每月 2 次夏日限定與優惠組 Banner 設計與發送</li>
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 每週 AI 對話巡檢、菜單維護與月數據簡報</li>
                 </ul>
               </div>

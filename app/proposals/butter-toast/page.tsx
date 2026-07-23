@@ -247,18 +247,18 @@ export default function ButterToastProposalPage() {
   const slides = [
     // Slide 1: Tailored Cover
     {
-      badge: "🧸 品牌吉祥物人設 ✕ AI 專屬記憶大腦",
+      badge: "🧸 品牌吉祥物人設 ✕ AI 顧客訂單記憶大腦",
       content: (
         <div className="text-center py-4">
           <span className="text-xs font-bold text-[#B26A27] uppercase tracking-widest block mb-2 font-mono">
-            cream_specialty_store ✕ 顧客消費歷史記憶與溫馨回購關懷
+            cream_specialty_store ✕ 歷史訂單記憶・溫暖交流・貼心新品推薦
           </span>
           <h1 className="text-4xl md:text-5xl font-extrabold font-serif mb-4 leading-tight text-[#382D24]">
             【生乳/奶霜專賣店】<br />
             <span className="text-[#B26A27]">奶霜炸吐司 AI 點餐算錢與自動化專案</span>
           </h1>
           <p className="text-base md:text-lg text-[#7C6E62] max-w-2xl mx-auto mb-6 leading-relaxed">
-            融入「品牌吉祥物娃娃」親切口吻與<b>AI 歷史口味記憶大腦</b>！能主動反問：「上次買的抹茶奶霜還喜歡嗎？今天幫您準備老樣子嗎？」，大幅促進會員高頻率回購！
+            融入「品牌吉祥物娃娃」親切口吻與<b>AI 歷史訂單記憶大腦</b>！牢記顧客喜好口味，進行溫暖對話交流，主動推薦新品與 3入/5入優惠組，大幅促進高頻率回購！
           </p>
           <div className="mb-4">
             <span className="inline-block px-6 py-2 bg-[#B26A27] text-[#FFFDF9] rounded-full text-sm font-bold shadow-md">
@@ -307,9 +307,9 @@ export default function ButterToastProposalPage() {
 
           <div className="bg-white border-2 border-[#D6A86E] rounded-2xl p-5 shadow-sm bg-amber-50/20 hover:border-[#B26A27] transition">
             <div className="text-2xl mb-1">🧠</div>
-            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">需求 4：AI 歷史口味記憶與回購問候</h3>
+            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">需求 4：AI 歷史訂單記憶 ✕ 溫暖交流與新品推薦</h3>
             <p className="text-sm text-[#382D24] leading-relaxed">
-              <b>【超強 killer 功能】</b>AI 自動牢記顧客上次買過的吐司口味（如：抹茶/OREO）與購買次數。再次對話時主動寒暄：<b>「上次買的抹茶奶霜炸吐司還喜歡嗎？今天幫您準備老樣子嗎？」</b>，極致拉近距離、促進回購！
+              <b>【超強 killer 功能】</b>AI 自動牢記顧客歷史訂單與喜好口味（如：抹茶/OREO）。再次對話時進行溫暖交流：<b>「上次買的抹茶奶霜還喜歡嗎？今天有新出夏日限定芒果口味，要不要順便帶一份試試看？」</b>，貼心推薦、拉近距離！
             </p>
           </div>
         </div>
@@ -317,8 +317,8 @@ export default function ButterToastProposalPage() {
     },
     // Slide 3: Complete Front-end & Back-end LIFF Architecture & LINE Whitelist Security
     {
-      badge: "前後台 LIFF 網頁與吉祥物 AI 人設",
-      title: "前後台 LINE LIFF 網頁 ✕ AI 顧客歷史記憶大腦",
+      badge: "前後台 LIFF 網頁與 AI 溫暖互動大腦",
+      title: "前後台 LINE LIFF 網頁 ✕ AI 顧客訂單記憶與溫暖推薦",
       content: (
         <div className="space-y-3">
           {/* Front-end & Back-end Dual System Grid */}
@@ -328,12 +328,12 @@ export default function ButterToastProposalPage() {
               <div className="flex items-center gap-1.5 mb-1.5">
                 <span className="text-base">🧠</span>
                 <h4 className="font-serif font-bold text-sm text-[#B26A27]">
-                  前台：LINE LIFF 點餐與 AI 顧客歷史記憶大腦
+                  前台：LINE LIFF 點餐與 AI 訂單記憶溫暖推薦
                 </h4>
               </div>
               <ul className="text-xs text-[#382D24] space-y-1">
-                <li>• <b>顧客歷史口味記憶</b>：AI 自動記錄喜好口味，主動問候：「上次買的抹茶奶霜還喜歡嗎？」</li>
-                <li>• <b>品牌娃娃專屬口吻</b>：AI 設定為品牌吉祥物口頭禪與溫暖互動，擬真活潑。</li>
+                <li>• <b>顧客歷史訂單記憶</b>：AI 自動記錄買過品項與口味，進行溫暖對話交流與新品推薦。</li>
+                <li>• <b>品牌娃娃親切口吻</b>：AI 設定為品牌吉祥物口頭禪與溫暖互動，擬真活潑。</li>
                 <li>• <b>免記憶密碼點餐</b>：顧客點擊「🍞線上點餐」彈出 LIFF 頁面，自動帶入 LINE 身份。</li>
                 <li>• <b>預約憑證卡片</b>：送出訂單即刻於 LINE 對話生成格式化「預約完成✔️」Flex 卡片。</li>
               </ul>
@@ -358,8 +358,8 @@ export default function ButterToastProposalPage() {
           {/* 4-Step Process Bar */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-2 text-xs">
             <div className="bg-[#FFFDF9] border border-[#E6DDCF] p-2 rounded-lg">
-              <b className="text-[#B26A27]">1. AI 歷史記憶問候</b>
-              <p className="text-[10px] text-[#7C6E62]">反問上次抹茶口味喜歡嗎？引導顧客快速回購老樣子</p>
+              <b className="text-[#B26A27]">1. AI 訂單記憶與推薦</b>
+              <p className="text-[10px] text-[#7C6E62]">反問上次口味喜歡嗎？溫暖交流並介紹熱銷新品</p>
             </div>
             <div className="bg-[#FFFDF9] border border-[#E6DDCF] p-2 rounded-lg">
               <b className="text-[#B26A27]">2. Redis 佇列平滑緩衝</b>
@@ -404,7 +404,7 @@ export default function ButterToastProposalPage() {
                 </div>
                 <ul className="text-xs text-[#382D24] space-y-0.5 mb-1.5">
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 100% 線上全遠端建置，免到店干擾營運</li>
-                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> <b>AI 顧客專屬歷史記憶大腦 (自動記錄口味與問候關懷)</b></li>
+                  <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> <b>AI 歷史訂單記憶大腦 (口味記憶・溫暖交流・貼心新品推薦)</b></li>
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 前後台 LINE 身份原生認證與員工 LINE ID 白名單權限鎖</li>
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 品牌吉祥物/娃娃專屬 AI 人設口吻微調</li>
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 前後台 LINE LIFF 網頁與 3/5入優惠組算錢大腦</li>
@@ -665,7 +665,7 @@ export default function ButterToastProposalPage() {
             <h4 className="font-bold text-[#B26A27] text-xs mb-1.5">📌 AI 店長與品牌基礎建置 (一次性)</h4>
             <ul className="text-[11px] text-[#382D24] space-y-1">
               <li>✓ 100% 全遠端雲端建置與線上指導驗收</li>
-              <li>✓ <b>AI 顧客專屬歷史記憶大腦 (口味記憶與主動關懷)</b></li>
+              <li>✓ <b>AI 歷史訂單記憶大腦 (口味記憶・溫暖交流・貼心新品推薦)</b></li>
               <li>✓ 前後台 LINE 身份原生認證與員工 LINE ID 白名單權限鎖</li>
               <li>✓ 品牌吉祥物/娃娃專屬 AI 人設口吻微調</li>
               <li>✓ 商店介紹/產品圖文介紹/品牌故事建置</li>
@@ -716,8 +716,8 @@ export default function ButterToastProposalPage() {
               <tbody className="divide-y divide-[#E6DDCF] text-[#382D24]">
                 <tr>
                   <td className="p-2 font-bold">顧客歷史記憶與互動</td>
-                  <td className="p-2 text-gray-600">記不住買家口味，只能複製貼上</td>
-                  <td className="p-2 font-bold text-emerald-700 bg-[#FFF8F0]"><b>牢記買家歷史口味，主動反問關懷促進回購</b></td>
+                  <td className="p-2 text-gray-600">記不住買家口味，只能冰冷回答</td>
+                  <td className="p-2 font-bold text-emerald-700 bg-[#FFF8F0]"><b>牢記顧客歷史訂單，進行溫暖交流與貼心新品推薦</b></td>
                 </tr>
                 <tr>
                   <td className="p-2 font-bold">單日點餐對話處理容量</td>

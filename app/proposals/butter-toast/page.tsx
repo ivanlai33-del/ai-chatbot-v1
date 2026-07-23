@@ -243,31 +243,79 @@ export default function ButterToastProposalPage() {
     );
   }
 
-  // Interactive Tailor-made Slides (Scrubbed of technical jargon)
+  // Magazine Editorial Cover Style Slides
   const slides = [
-    // Slide 1: Tailored Cover
+    // Slide 1: Magazine Style Editorial Cover
     {
-      badge: "🧸 品牌吉祥物人設 ✕ AI 顧客訂單記憶大腦",
+      badge: "🧸 品牌吉祥物擬真人設 ✕ 24H 智慧總管",
       content: (
-        <div className="text-center py-4">
-          <span className="text-xs font-bold text-[#B26A27] uppercase tracking-widest block mb-2 font-mono">
-            cream_specialty_store ✕ 歷史訂單記憶・溫暖交流・貼心新品推薦
-          </span>
-          <h1 className="text-4xl md:text-5xl font-extrabold font-serif mb-4 leading-tight text-[#382D24]">
+        <div className="text-center py-2 max-w-4xl mx-auto">
+          {/* Top Magazine Eyebrow */}
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <span className="h-[1px] w-8 bg-[#D6A86E]"></span>
+            <span className="text-xs font-bold text-[#B26A27] tracking-widest uppercase font-mono">
+              SPECIAL PROPOSAL ✕ 2026 品牌升級企劃
+            </span>
+            <span className="h-[1px] w-8 bg-[#D6A86E]"></span>
+          </div>
+
+          {/* Main Headline Title */}
+          <h1 className="text-3xl md:text-5xl font-black font-serif mb-3 leading-tight text-[#382D24]">
             【生乳/奶霜專賣店】<br />
-            <span className="text-[#B26A27]">奶霜炸吐司 AI 點餐算錢與自動化專案</span>
+            <span className="text-[#B26A27]">AI 品牌店長 24H 自動化專案</span>
           </h1>
-          <p className="text-base md:text-lg text-[#7C6E62] max-w-2xl mx-auto mb-6 leading-relaxed">
-            融入「品牌吉祥物娃娃」親切口吻與<b>AI 歷史訂單記憶大腦</b>！牢記顧客喜好口味，進行溫暖對話交流，主動推薦新品與 3入/5入優惠組，大幅促進高頻率回購！
+
+          {/* Subtitle / Narrative summary */}
+          <p className="text-sm md:text-base text-[#7C6E62] max-w-2xl mx-auto mb-4 leading-relaxed font-medium">
+            專為無專職小編門市打造的 <b>24 小時線上 AI 智慧總管</b>！結合吉祥物娃娃溫暖人設，提供品牌導覽、吐司算錢、顧客記憶與雙向通知，讓營運零負擔升級！
           </p>
-          <div className="mb-4">
-            <span className="inline-block px-6 py-2 bg-[#B26A27] text-[#FFFDF9] rounded-full text-sm font-bold shadow-md">
-              營業時間 18:00 - 售完為止 / 現金面交恕不找零 / 0 小編自動化
+
+          {/* 4 Feature Cards (Magazine Cover Headline Highlights) */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4 text-left">
+            <div className="bg-white/90 border border-[#D6A86E] p-2.5 rounded-xl shadow-xs">
+              <div className="text-sm font-bold text-[#B26A27] flex items-center gap-1 mb-0.5">
+                <span>🧸</span> 吉祥物擬真人設
+              </div>
+              <p className="text-[11px] text-[#7C6E62]">融入品牌娃娃溫暖語氣與口頭禪，建立親切感</p>
+            </div>
+
+            <div className="bg-white/90 border border-[#D6A86E] p-2.5 rounded-xl shadow-xs">
+              <div className="text-sm font-bold text-[#B26A27] flex items-center gap-1 mb-0.5">
+                <span>🧠</span> 顧客歷史記憶
+              </div>
+              <p className="text-[11px] text-[#7C6E62]">自動牢記喜好口味與訂單，主動溫暖問候推薦</p>
+            </div>
+
+            <div className="bg-white/90 border border-[#D6A86E] p-2.5 rounded-xl shadow-xs">
+              <div className="text-sm font-bold text-[#B26A27] flex items-center gap-1 mb-0.5">
+                <span>🧮</span> 智慧自動算錢
+              </div>
+              <p className="text-[11px] text-[#7C6E62]">自動計算單點與自由配組合，提示剛好金額</p>
+            </div>
+
+            <div className="bg-white/90 border border-[#D6A86E] p-2.5 rounded-xl shadow-xs">
+              <div className="text-sm font-bold text-[#B26A27] flex items-center gap-1 mb-0.5">
+                <span>🔔</span> 雙向自動化提醒
+              </div>
+              <p className="text-[11px] text-[#7C6E62]">預約完成憑證卡片 ✕ 廚房備貨完成取餐通知</p>
+            </div>
+          </div>
+
+          {/* Key Selling Tags Bar */}
+          <div className="mb-2">
+            <span className="inline-flex items-center flex-wrap justify-center gap-2 px-4 py-1.5 bg-[#B26A27] text-[#FFFDF9] rounded-full text-xs font-bold shadow-sm">
+              <span>✨ 0 專職小編需求</span>
+              <span>•</span>
+              <span>✨ 24H 自動應答導覽</span>
+              <span>•</span>
+              <span>✨ 100+人防爆佇列</span>
+              <span>•</span>
+              <span>✨ 員工專屬權限鎖</span>
             </span>
           </div>
 
           {/* Company Contact Info Line */}
-          <div className="mt-4 pt-3 border-t border-[#E6DDCF] text-xs text-[#7C6E62] font-medium flex justify-center flex-wrap gap-4">
+          <div className="mt-3 pt-2.5 border-t border-[#E6DDCF] text-xs text-[#7C6E62] font-medium flex justify-center flex-wrap gap-4">
             <span>🏢 <b>提案單位：</b>奕暢創新設計工作室 <span className="font-mono text-[#B26A27]">(統編: 41370842)</span></span>
             <span>💬 <b>專案負責人 LINE ID：</b><b className="text-[#B26A27] font-mono">ivanlai33</b></span>
             <span>📞 <b>電話：</b><b className="text-[#B26A27] font-mono">0987528785</b></span>
@@ -315,7 +363,7 @@ export default function ButterToastProposalPage() {
         </div>
       ),
     },
-    // Slide 3: Complete Front-end & Back-end Architecture (Scrubbed of jargon like LIFF, Redis, Queue)
+    // Slide 3: Complete Front-end & Back-end Architecture
     {
       badge: "專屬前後台系統與安全權限防護",
       title: "顧客專屬一鍵點餐介面 ✕ 店家員工安全權限鎖",

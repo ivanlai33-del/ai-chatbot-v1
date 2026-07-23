@@ -29,8 +29,8 @@ export async function POST(req: NextRequest) {
         let itemDesc = '';
 
         if (planId === 'butter_toast_managed' || planId === 'managed_service') {
-            // 奶油吐司 / 客製全代營運方案: 含稅 NT$ 5,040 /月
-            amount = 5040;
+            // 生乳/奶霜專賣店 AI店長全代營運月費: $6,800 + 5% 稅 = 含稅 NT$ 7,140 /月
+            amount = 7140;
             itemDesc = '生乳/奶霜專賣店 AI店長全代營運月費';
         } else if (isPartner) {
             const plan = SAAS_PARTNER_PLANS[planId as PartnerPlanId];

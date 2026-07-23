@@ -367,7 +367,7 @@ export default function ButterToastProposalPage() {
         </div>
       ),
     },
-    // Slide 4: Pricing Cards + Bank Details + Invoice Form + PROMINENT CREDIT CARD BUTTON + CANCELLATION POLICY
+    // Slide 4: UPDATED PRICING CARDS ($48,000 建置費 / $6,800 月費) + BANK + INVOICE + CHECKOUT BUTTON + CANCELLATION POLICY
     {
       badge: "生乳/奶霜專賣店 專案報價",
       title: "專案報價金額、匯款帳號與發票填寫",
@@ -375,7 +375,7 @@ export default function ButterToastProposalPage() {
         <div className="space-y-3">
           {/* Top Two Main Pricing Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {/* Card 1: One-time Setup */}
+            {/* Card 1: One-time Setup ($48,000) */}
             <div className="bg-white border-2 border-[#D6A86E] rounded-2xl p-3.5 shadow-sm relative flex flex-col justify-between">
               <div>
                 <div className="flex justify-between items-center mb-1">
@@ -387,10 +387,10 @@ export default function ButterToastProposalPage() {
                   </span>
                 </div>
                 <div className="text-xl md:text-2xl font-black font-mono text-[#B26A27] my-0.5">
-                  NT$ 28,000 <span className="text-xs font-normal text-[#7C6E62]">(未稅)</span>
+                  NT$ 48,000 <span className="text-xs font-normal text-[#7C6E62]">(未稅)</span>
                 </div>
                 <div className="text-[11px] text-[#7C6E62] mb-1.5 bg-[#F7F3ED] p-1 rounded-lg border border-[#E6DDCF]">
-                  🧾 加上 5% 營業稅 ($1,400) ＝ <b>含稅總額 NT$ 29,400</b>
+                  🧾 加上 5% 營業稅 ($2,400) ＝ <b>含稅總額 NT$ 50,400</b>
                 </div>
                 <ul className="text-xs text-[#382D24] space-y-0.5 mb-1.5">
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 前後台 LINE LIFF 網頁建置 (免登入點餐/廚房看板)</li>
@@ -399,11 +399,11 @@ export default function ButterToastProposalPage() {
                 </ul>
               </div>
               <div className="text-[11px] text-[#7C6E62] bg-[#FFF8F0] p-1.5 rounded-xl border border-[#D6A86E] font-medium text-center">
-                👇 請參考下方<b>「中國信託銀行轉帳卡片」</b>支付第一期訂金 $14,700 (含稅)
+                👇 請參考下方<b>「中國信託銀行轉帳卡片」</b>支付第一期訂金 $25,200 (含稅)
               </div>
             </div>
 
-            {/* Card 2: Monthly Recurring with PROMINENT CHECKOUT BUTTON */}
+            {/* Card 2: Monthly Recurring ($6,800/月) with PROMINENT CHECKOUT BUTTON */}
             <div className="bg-white border-2 border-[#B26A27] rounded-2xl p-3.5 shadow-md relative flex flex-col justify-between ring-2 ring-[#B26A27]/20">
               <div>
                 <div className="flex justify-between items-center mb-1">
@@ -415,10 +415,10 @@ export default function ButterToastProposalPage() {
                   </span>
                 </div>
                 <div className="text-xl md:text-2xl font-black font-mono text-[#B26A27] my-0.5">
-                  NT$ 4,800 <span className="text-xs font-normal text-[#7C6E62]">/ 月 (未稅)</span>
+                  NT$ 6,800 <span className="text-xs font-normal text-[#7C6E62]">/ 月 (未稅)</span>
                 </div>
                 <div className="text-[11px] text-[#7C6E62] mb-1.5 bg-[#F7F3ED] p-1 rounded-lg border border-[#E6DDCF]">
-                  🧾 加上 5% 營業稅 ($240) ＝ <b>含稅 NT$ 5,040 / 月</b>
+                  🧾 加上 5% 營業稅 ($340) ＝ <b>含稅 NT$ 7,140 / 月</b>
                 </div>
                 <ul className="text-xs text-[#382D24] space-y-0.5 mb-2">
                   <li className="flex items-center gap-1.5"><span className="text-[#B26A27] font-bold">✓</span> 5,000 會員容量 AI 流量 (20,000則/月)</li>
@@ -434,7 +434,7 @@ export default function ButterToastProposalPage() {
                 className="w-full py-2 px-3 bg-gradient-to-r from-[#B26A27] via-[#D6A86E] to-[#B26A27] hover:from-[#8F521B] hover:to-[#8F521B] text-white font-extrabold rounded-xl shadow-md shadow-[#B26A27]/30 transition-all duration-200 transform hover:scale-[1.01] flex items-center justify-center gap-1.5 text-xs cursor-pointer disabled:opacity-50 active:scale-95"
               >
                 <span>💳</span>
-                <span>{checkoutLoading ? "正在連接藍新金流..." : "點此線上綁定【藍新信用卡定期扣款】(NT$ 5,040/月)"}</span>
+                <span>{checkoutLoading ? "正在連接藍新金流..." : "點此線上綁定【藍新信用卡定期扣款】(NT$ 7,140/月)"}</span>
                 <span>➔</span>
               </button>
             </div>
@@ -479,8 +479,8 @@ export default function ButterToastProposalPage() {
             </div>
 
             <div className="flex justify-between items-center text-[10px] text-[#7C6E62] mt-1 px-1 font-medium">
-              <span>● 第一期簽約訂金 (50%)：<b className="text-[#B26A27]">NT$ 14,000</b> (含稅 $14,700)</span>
-              <span>● 第二期交案尾款 (50%)：<b className="text-[#B26A27]">NT$ 14,000</b> (含稅 $14,700)</span>
+              <span>● 第一期簽約訂金 (50%)：<b className="text-[#B26A27]">NT$ 24,000</b> (含稅 $25,200)</span>
+              <span>● 第二期交案尾款 (50%)：<b className="text-[#B26A27]">NT$ 24,000</b> (含稅 $25,200)</span>
             </div>
           </div>
 
@@ -612,7 +612,7 @@ export default function ButterToastProposalPage() {
             <span className="inline-block px-2.5 py-0.5 bg-[#B26A27] text-[#FFFDF9] rounded-full text-xs font-bold mb-2">PHASE 1 (Week 1)</span>
             <h4 className="font-serif font-bold text-[#B26A27] mb-2">Messaging API 串接與菜單匯入</h4>
             <ul className="text-xs text-[#7C6E62] space-y-1.5">
-              <li>✓ 簽訂合約並<b>轉帳付訂金 $14,000 (含稅$14,700)</b></li>
+              <li>✓ 簽訂合約並<b>轉帳付訂金 $24,000 (含稅$25,200)</b></li>
               <li>✓ 串接現有 LINE 官方帳號 Messaging API 權限</li>
               <li>✓ 載入奶霜炸吐司單品與【夏日限定】芒果系列菜單</li>
             </ul>
@@ -631,8 +631,8 @@ export default function ButterToastProposalPage() {
             <h4 className="font-serif font-bold text-[#B26A27] mb-2">實測試驗與正式交案</h4>
             <ul className="text-xs text-[#7C6E62] space-y-1.5">
               <li>✓ 雙方進行多品項點餐算錢與接管流程實測</li>
-              <li>✓ 驗收通過<b>轉帳付尾款 $14,000 (含稅$14,700)</b></li>
-              <li>✓ 點擊按鈕線上設定藍新定期定額 ($5,040/月含稅)，正式上線！</li>
+              <li>✓ 驗收通過<b>轉帳付尾款 $24,000 (含稅$25,200)</b></li>
+              <li>✓ 點擊按鈕線上設定藍新定期定額 ($7,140/月含稅)，正式上線！</li>
             </ul>
           </div>
         </div>
@@ -676,7 +676,7 @@ export default function ButterToastProposalPage() {
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm">
             <div className="text-2xl mb-1">💰</div>
             <h3 className="font-serif font-bold text-[#B26A27] mb-1">節省 85% 人力費用</h3>
-            <p className="text-xs text-[#7C6E62]">聘請專職小編月薪至少 NT$ 30,000+；全包方案每月僅 $4,800 (含稅$5,040)，省下龐大固定成本。</p>
+            <p className="text-xs text-[#7C6E62]">聘請專職小編月薪至少 NT$ 30,000+；全包方案每月僅 **$6,800 (含稅$7,140)**，省下龐大固定成本。</p>
           </div>
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm">
             <div className="text-2xl mb-1">⏱️</div>
@@ -686,7 +686,7 @@ export default function ButterToastProposalPage() {
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm">
             <div className="text-2xl mb-1">📈</div>
             <h3 className="font-serif font-bold text-[#B26A27] mb-1">推播輕鬆賺回月費</h3>
-            <p className="text-xs text-[#7C6E62]">每月 2 次限量預購推播帶動 10 筆奶霜炸吐司組合訂單，即可完全覆蓋每月營運費用。</p>
+            <p className="text-xs text-[#7C6E62]">每月 2 次限量預購推播帶動 15 筆奶霜炸吐司組合訂單，即可完全覆蓋每月營運費用。</p>
           </div>
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm">
             <div className="text-2xl mb-1">🤝</div>

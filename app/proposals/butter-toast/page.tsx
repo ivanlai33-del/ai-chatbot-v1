@@ -207,7 +207,7 @@ export default function ButterToastProposalPage() {
             <span className="text-[#B26A27]">奶霜炸吐司 AI 點餐算錢與自動化專案</span>
           </h1>
           <p className="text-base md:text-lg text-[#7C6E62] max-w-2xl mx-auto mb-6 leading-relaxed">
-            為「奶霜炸吐司、OREO/芒果/肉鬆多品項與 3入/5入優惠組合」量身打造 24hr 自動算錢、自備零錢提醒、發送「預約完成✔️」與 LINE Notify 備貨通知
+            為「奶霜炸吐司、OREO系列、夏日限定芒果系列與 3入/5入優惠組合」量身打造 24hr 自動算錢、自備零錢提醒、發送「預約完成✔️」與 LINE Notify 備貨通知
           </p>
           <span className="inline-block px-6 py-2 bg-[#B26A27] text-[#FFFDF9] rounded-full text-sm font-bold shadow-md">
             營業時間 18:00 - 售完為止 / 現金面交不找零 / 0 小編自動化
@@ -231,7 +231,7 @@ export default function ButterToastProposalPage() {
               <p><b>付款提醒：</b>📌 付款請準備剛好金額 (恕不找零)，亦接受提前匯款。</p>
               <p><b>完成憑證：</b>收到「預約完成✔️」，訂單才算成功。</p>
             </div>
-            <p className="text-xs text-red-600 mt-2 font-medium">❌ 痛點：多品項（如 3入組合/芒果抹茶）需人工試算金額，老闆現點現做時無法及時回覆「預約完成✔️」。</p>
+            <p className="text-xs text-red-600 mt-2 font-medium">❌ 痛點：多品項（如 3入組合/夏日限定芒果抹茶）需人工算錢，現點現做無法即時回覆「預約完成✔️」。</p>
           </div>
 
           <div className="bg-emerald-50/70 border-2 border-emerald-500/40 rounded-2xl p-4 shadow-sm">
@@ -239,8 +239,8 @@ export default function ButterToastProposalPage() {
               <span>🤖</span> 升級 AI 智慧店長全自動運作
             </h3>
             <div className="bg-white/90 p-3 rounded-xl border border-emerald-200 text-xs text-slate-700 space-y-1.5 leading-relaxed">
-              <p><b>1. 多品項語意算錢：</b>顧客輸入「3入組A款x1 + OREO抹茶炸吐司x2」，AI 0.1秒精確算出 <b>$270 + $170 = $440 元</b>。</p>
-              <p><b>2. 自動帶入取餐說明：</b>自動提示 18:00 開店取餐時間，並溫馨提醒「請準備剛好金額 $440（恕不找零）或提前匯款」。</p>
+              <p><b>1. 多品項語意算錢：</b>顧客輸入「3入組A款x1 + 夏日限定芒果抹茶x1 + OREO原味x1」，AI 0.1秒精確算出 <b>$270 + $130 + $75 = $475 元</b>。</p>
+              <p><b>2. 自動帶入取餐說明：</b>自動提示 18:00 開店時間，並溫馨提醒「請準備剛好金額 $475（恕不找零）或提前匯款」。</p>
               <p><b>3. 發送「預約完成✔️」Flex 卡片：</b>自動生成質感訂單明細，顧客即時收到成功確認。</p>
               <p><b>4. LINE Notify 備貨通知：</b>訂單立刻發送至後台備貨群組，讓您專心在廚房製作。</p>
             </div>
@@ -249,31 +249,39 @@ export default function ButterToastProposalPage() {
         </div>
       ),
     },
-    // Slide 3: Tailored Menu & System Integration
+    // Slide 3: Tailored Menu & System Integration (Updated with exact menu card details)
     {
-      badge: "專屬菜單與邏輯深度適配",
-      title: "【生乳/奶霜專賣店】菜單與系統客製細節",
+      badge: "專屬菜單與季節新品適配",
+      title: "【生乳/奶霜專賣店】真實菜單與 AI 計算適配",
       content: (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-4 shadow-sm">
-            <h4 className="font-serif font-bold text-[#B26A27] text-sm mb-2">🍞 全品項菜單與自由配金額計算大腦</h4>
+            <h4 className="font-serif font-bold text-[#B26A27] text-sm mb-2 flex items-center gap-1">
+              <span>🍞</span> 完整單品與【夏日限定】菜單大腦
+            </h4>
             <ul className="text-xs text-[#382D24] space-y-1.5">
-              <li>✓ <b>基本款</b>：原味 ($55)、巧克力 ($70)、抹茶 ($70)</li>
-              <li>✓ <b>OREO 系列</b>：OREO 原味 ($75)、巧克力 ($85)、抹茶 ($85)</li>
-              <li>✓ <b>肉鬆 / 芒果系列</b>：肉鬆原味 ($85)、芒果原味 ($120)、巧克力 ($130)、抹茶 ($130)</li>
-              <li>✓ <b>優惠組合試算</b>：<b>3入組 $270</b> (巧克力/抹茶/鹹甜 A/B/C款) 與 <b>5入自由配 $400</b> 自動折價計算</li>
+              <li>✓ <b>基本奶霜炸吐司</b>：原味 ($55) ｜ 抹茶 ($70) ｜ 巧克力 ($70)</li>
+              <li>✓ <b>OREO 奶霜炸吐司</b>：OREO原味 ($75) ｜ OREO抹茶 ($85) ｜ OREO巧克力 ($85)</li>
+              <li>✓ <b>鹹甜特調</b>：肉鬆原味奶霜炸吐司 ($85)</li>
+              <li>✓ ☀️ <b>【夏日限定】熱銷系列</b>：芒果原味 ($120) ｜ 芒果巧克力 ($130) ｜ 芒果抹茶 ($130)</li>
+              <li>✓ <b>優惠組合試算</b>：<b>3入組 $270</b> (省$30) ｜ <b>5入自由配 $400</b> (省$40) 自動計算</li>
             </ul>
+            <div className="mt-2 bg-[#F7F3ED] p-2 rounded-lg text-[11px] text-[#7C6E62]">
+              💡 <b>季節更換維護：</b>代營運期間若推出秋冬限定商品（如草莓/芋泥系列），團隊免費協助即時更新 AI 大腦與選單！
+            </div>
           </div>
 
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-4 shadow-sm">
-            <h4 className="font-serif font-bold text-[#B26A27] text-sm mb-2">📍 6格 Rich Menu 與面交導覽適配</h4>
+            <h4 className="font-serif font-bold text-[#B26A27] text-sm mb-2 flex items-center gap-1">
+              <span>📍</span> 6格 Rich Menu 與動態導覽適配
+            </h4>
             <ul className="text-xs text-[#382D24] space-y-1.5">
-              <li>1. 🍞 <b>線上點餐算錢</b>（開啟 AI 算錢點餐）</li>
-              <li>2. 🎁 <b>3入/5入優惠組合</b>（一鍵預購組合包）</li>
-              <li>3. 📍 <b>取餐地點/導航</b>（傳送指定地址面交位置）</li>
-              <li>4. ⏰ <b>營業時間與須知</b>（18:00-售完/現點現做說明）</li>
-              <li>5. ❄️ <b>奶霜炸吐司保存</b>（熱熱吃與冷凍重烤 SOP）</li>
-              <li>6. 👤 <b>轉接老闆/匯款</b>（提供中信匯款資訊）</li>
+              <li>1. 🍞 <b>線上點餐算錢</b>（開啟 AI 算錢點餐對話）</li>
+              <li>2. ☀️ <b>夏日限定/優惠組</b>（一鍵看芒果與 3/5入自由配）</li>
+              <li>3. 📍 <b>取餐地點/導航</b>（一鍵傳送指定地址面交地圖）</li>
+              <li>4. ⏰ <b>營業時間須知</b>（18:00-售完為止/現點現做說明）</li>
+              <li>5. ❄️ <b>熱熱吃與重烤教學</b>（奶霜炸吐司冷凍重烤 SOP）</li>
+              <li>6. 👤 <b>轉接老闆/匯款帳號</b>（提供中信 131540035543 匯款）</li>
             </ul>
           </div>
         </div>
@@ -508,7 +516,7 @@ export default function ButterToastProposalPage() {
             <ul className="text-xs text-[#7C6E62] space-y-1.5">
               <li>✓ 簽訂合約並<b>轉帳付訂金 $14,000 (含稅$14,700)</b></li>
               <li>✓ 串接現有 LINE 官方帳號 Messaging API 權限</li>
-              <li>✓ 載入奶霜炸吐司單品與 3入/5入優惠組合菜單</li>
+              <li>✓ 載入奶霜炸吐司單品與【夏日限定】芒果系列菜單</li>
             </ul>
           </div>
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm">
@@ -542,8 +550,8 @@ export default function ButterToastProposalPage() {
             <h4 className="font-bold text-[#B26A27] mb-2">📌 AI 店長建置交付項目 (一次性)</h4>
             <ul className="text-xs text-[#382D24] space-y-1.5">
               <li>✓ 現有 LINE 官方帳號 Messaging API 權限串接</li>
-              <li>✓ 6格 Rich Menu (點餐算錢/組合優惠/取餐導航/營業須知/重烤教學/轉接匯款)</li>
-              <li>✓ 奶霜炸吐司與 3入/5入優惠組合 AI 語意算錢邏輯</li>
+              <li>✓ 6格 Rich Menu (點餐算錢/夏日限定/取餐導航/營業須知/重烤教學/轉接匯款)</li>
+              <li>✓ 奶霜炸吐司、芒果限定與 3入/5入優惠組合 AI 算錢邏輯</li>
               <li>✓ 自動帶入 18:00 開店時間與「不找零/提前匯款」提醒</li>
               <li>✓ 「預約完成✔️」 Flex Message 訂單卡片自動發送</li>
               <li>✓ 廚房小編 LINE Notify 訊息推播串接</li>
@@ -554,7 +562,7 @@ export default function ButterToastProposalPage() {
             <ul className="text-xs text-[#382D24] space-y-1.5">
               <li>✓ 每月 2 次限量預購 Banner 設計與全自動推播</li>
               <li>✓ 每週巡檢 AI 未解答對話並補充知識庫</li>
-              <li>✓ 季節甜點/新口味上架與價格即時調整</li>
+              <li>✓ 季節限定甜點 (如夏日芒果/秋冬新品) 上架與價格更新</li>
               <li>✓ 5,000 會員偏好標籤維護與對話數據月報</li>
             </ul>
           </div>

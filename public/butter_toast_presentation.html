@@ -334,6 +334,12 @@
       gap: 1.2rem;
     }
 
+    .grid-4col {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.8rem;
+    }
+
     .grid-3col {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
@@ -344,27 +350,27 @@
       background: #FFFFFF;
       border: 1px solid var(--card-border);
       border-radius: 16px;
-      padding: 1.3rem 1.6rem;
+      padding: 1.1rem 1.3rem;
       transition: all 0.3s ease;
     }
 
     .card-icon {
-      font-size: 1.6rem;
-      margin-bottom: 0.4rem;
+      font-size: 1.4rem;
+      margin-bottom: 0.3rem;
     }
 
     .card-title {
       font-family: 'Noto Serif TC', serif;
-      font-size: 1.15rem;
+      font-size: 1.05rem;
       font-weight: 700;
       color: var(--accent-caramel);
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.3rem;
     }
 
     .card-desc {
-      font-size: 0.92rem;
+      font-size: 0.85rem;
       color: var(--text-muted);
-      line-height: 1.6;
+      line-height: 1.5;
     }
 
     /* Timeline Cards */
@@ -495,49 +501,58 @@
           </div>
           <div class="feature-card">
             <div class="card-icon">🤖</div>
-            <div class="card-title">需求 3：AI 發送「預約完成✔️」與廚房推播</div>
-            <div class="card-desc">目前無專職 LINE 小編。當顧客確認訂購資料後，AI 自動發送「預約完成✔️」質感 Flex 訂單明細，並同步 LINE Notify 推播至備貨群組，讓您在廚房專心炸吐司。</div>
+            <div class="card-title">需求 3：AI 自動發送「預約完成✔️」與雙向通知</div>
+            <div class="card-desc">目前無專職 LINE 小編。當顧客確認訂購後，AI 自動發送「預約完成✔️」Flex 卡片與廚房 Notify 推播；廚房做完點擊「完成備貨」，AI 自動推播「餐點已備妥，請至指定地點取餐」給顧客！</div>
           </div>
           <div class="feature-card">
             <div class="card-icon">📈</div>
-            <div class="card-title">需求 4：5,000 會員限定組合預購營運</div>
-            <div class="card-desc">每日約 50 人對話詢問。由團隊協助每月 2 次設計「夏日限定芒果系列」與「3入組$270 / 5入自由配$400」限量預購圖文 Banner 並發送推播。</div>
+            <div class="card-title">需求 4：會員清單匯出與組合預購營運</div>
+            <div class="card-desc">後台支援一鍵導出「訂貨會員 CSV/Excel 清單」（含姓名、電話、口味偏好、消費次數）。團隊協助每月 2 次發送「夏日限定芒果系列 / 3入與5入優惠組」預購推播。</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Slide 3: Core AI Modules -->
+    <!-- Slide 3: Kitchen Workflow & Customer Pickup Loop -->
     <div class="slide" id="slide-3">
       <div class="slide-header">
-        <h2 class="slide-title">【生乳/奶霜專賣店】真實菜單與 AI 計算適配</h2>
-        <span class="brand-badge">專屬菜單適配</span>
+        <h2 class="slide-title">廚房看單備貨 ✕ AI 自動通知顧客取貨全流程</h2>
+        <span class="brand-badge">備貨與取貨閉環邏輯</span>
       </div>
       <div class="slide-body">
-        <div class="grid-2x2">
+        <div class="grid-4col">
           <div class="feature-card">
-            <div class="card-icon">🍞</div>
-            <div class="card-title">奶霜炸吐司全品項與【夏日限定】大腦</div>
-            <div class="card-desc">
-              • <b>基本奶霜炸吐司</b>：原味 ($55) ｜ 抹茶 ($70) ｜ 巧克力 ($70)<br>
-              • <b>OREO 奶霜炸吐司</b>：OREO原味 ($75) ｜ OREO抹茶 ($85) ｜ OREO巧克力 ($85)<br>
-              • <b>鹹甜特調</b>：肉鬆原味奶霜炸吐司 ($85)<br>
-              • ☀️ <b>【夏日限定】熱銷系列</b>：芒果原味 ($120) ｜ 芒果巧克力 ($130) ｜ 芒果抹茶 ($130)<br>
-              • <b>優惠組合試算</b>：<b>3入組 $270</b> (省$30) ｜ <b>5入自由配 $400</b> (省$40) 自動計算
+            <div style="font-size:0.75rem; font-weight:700; color:var(--accent-caramel); background:var(--accent-light); display:inline-block; padding:0.15rem 0.5rem; border-radius:50px; margin-bottom:0.3rem;">STEP 1</div>
+            <div class="card-title" style="font-size:0.95rem;">顧客下單與「預約完成✔️」</div>
+            <div class="card-desc" style="font-size:0.8rem;">
+              AI 自動算金額（如 $475），確認姓名電話取餐時間後，傳送 Flex 憑證並記錄於雲端庫存與會員清單。
             </div>
           </div>
           <div class="feature-card">
-            <div class="card-icon">📍</div>
-            <div class="card-title">6格 Rich Menu 與動態導覽適配</div>
-            <div class="card-desc">
-              1. 🍞 <b>線上點餐算錢</b>（開啟 AI 算錢點餐）<br>
-              2. ☀️ <b>夏日限定/優惠組</b>（一鍵看芒果與 3/5入自由配）<br>
-              3. 📍 <b>取餐地點/導航</b>（傳送指定地址面交位置）<br>
-              4. ⏰ <b>營業時間須知</b>（18:00-售完/現點現做說明）<br>
-              5. ❄️ <b>奶霜炸吐司保存</b>（熱熱吃與冷藏/冷凍重烤 SOP）<br>
-              6. 👤 <b>專人客服與提前匯款</b>（買家預訂產品匯款說明與真人解答）
+            <div style="font-size:0.75rem; font-weight:700; color:var(--accent-caramel); background:var(--accent-light); display:inline-block; padding:0.15rem 0.5rem; border-radius:50px; margin-bottom:0.3rem;">STEP 2</div>
+            <div class="card-title" style="font-size:0.95rem;">LINE Notify 廚房即時推播</div>
+            <div class="card-desc" style="font-size:0.8rem;">
+              廚房群組即時收到：單號 #BT-0823、顧客姓名電話、品項（如 3入組A款x1 + 芒果抹茶x1）、總額 $475，以及<b>「連結/按鈕」</b>。
             </div>
           </div>
+          <div class="feature-card">
+            <div style="font-size:0.75rem; font-weight:700; color:var(--accent-caramel); background:var(--accent-light); display:inline-block; padding:0.15rem 0.5rem; border-radius:50px; margin-bottom:0.3rem;">STEP 3</div>
+            <div class="card-title" style="font-size:0.95rem;">廚房看單製作 ➔ 點擊完成</div>
+            <div class="card-desc" style="font-size:0.8rem;">
+              廚房依清單現點現做炸吐司。完成時只需在手機 Notify 群組或平板點擊<b>【✅ 製作完成 / 通知取貨】</b>。
+            </div>
+          </div>
+          <div class="feature-card" style="background:#F0FDF4; border-color:#86EFAC;">
+            <div style="font-size:0.75rem; font-weight:700; color:#166534; background:#DCFCE7; display:inline-block; padding:0.15rem 0.5rem; border-radius:50px; margin-bottom:0.3rem;">STEP 4</div>
+            <div class="card-title" style="font-size:0.95rem; color:#15803D;">AI 店長自動通知顧客取貨</div>
+            <div class="card-desc" style="font-size:0.8rem; color:#166534;">
+              系統自動以 AI 店長發送 LINE 訊息：<b>「您的吐司已熱騰騰做好囉！請至指定地點取餐 (含地圖/剛好金額提醒)」</b>。
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:0.8rem; background:#FFFDF9; border:1px solid var(--accent-butter); padding:0.6rem 0.9rem; border-radius:12px; font-size:0.8rem; color:var(--text-main);">
+          📊 <b>會員與訂單資料導出功能：</b>後台提供 Excel / CSV 一鍵導出功能，包含訂貨會員姓名、電話、LINE ID、購買口味偏好（如愛吃芒果或 OREO）與總消費金額，方便店家掌控客戶資料與分析高價值 VIP 顧客。
         </div>
       </div>
     </div>
@@ -558,9 +573,9 @@
               <div class="price-num">NT$ 28,000 <span style="font-size:0.8rem; font-weight:normal; color:var(--text-muted);">(未稅)</span></div>
               <div class="price-tax-box">🧾 加上 5% 營業稅 ($1,400) ＝ <b>含稅 NT$ 29,400</b></div>
               <ul class="bullet-list">
-                <li>現有 Messaging API 串接與 6格選單適配</li>
+                <li>Messaging API 串接與 6格選單適配</li>
                 <li>奶霜炸吐司與 3/5入優惠組 AI 算錢引擎</li>
-                <li>自動發送「預約完成✔️」與 Notify 備貨推播</li>
+                <li>發送「預約完成✔️」、Notify 備貨與雙向取貨推播</li>
               </ul>
             </div>
             <div style="font-size:0.72rem; color:var(--text-muted); text-align:center; margin-top:0.3rem; background:#FFF8F0; padding:0.25rem; border-radius:6px; border:1px solid var(--accent-butter);">
@@ -576,7 +591,7 @@
               <ul class="bullet-list">
                 <li>5,000 會員容量 AI 流量 (20,000則/月)</li>
                 <li>每月 2 次夏日限定與優惠組 Banner 全自動推播</li>
-                <li>每週 AI 對話巡檢、菜單維護與月數據簡報</li>
+                <li>每週 AI 對話巡檢、菜單維護與會員資料匯出</li>
               </ul>
             </div>
             <button class="card-checkout-btn" onclick="triggerCheckout()">
@@ -688,7 +703,7 @@
             <ul class="bullet-list" style="margin-top: 0.6rem;">
               <li>6格 Rich Menu 圖文選單適配 AI 店長</li>
               <li>自動計算金額、提示自備零錢與「預約完成✔️」卡片</li>
-              <li>串接 LINE Notify 自動推播備貨群組</li>
+              <li>串接 LINE Notify 自動推播備貨群組與雙向取貨通知</li>
             </ul>
           </div>
           <div class="timeline-card">
@@ -719,17 +734,17 @@
               <li>6格 Rich Menu (點餐算錢/夏日限定/取餐導航/營業須知/重烤教學/轉接客服)</li>
               <li>奶霜炸吐司、芒果限定與 3入/5入優惠組合 AI 算錢邏輯</li>
               <li>自動帶入 18:00 開店時間與「不找零/提前匯款」提醒</li>
-              <li>「預約完成✔️」 Flex Message 訂單卡片自動發送</li>
-              <li>廚房小編 LINE Notify 訊息推播串接</li>
+              <li>「預約完成✔️」 Flex Card 與雙向【完成備貨推播顧客】</li>
+              <li>廚房小編 LINE Notify 訊息推播與一鍵通知串接</li>
             </ul>
           </div>
           <div class="feature-card">
             <div class="card-title">🔄 代營運交付項目 (每月持續)</div>
             <ul class="bullet-list" style="margin-top: 0.6rem;">
               <li>每月 2 次限量預購 Banner 設計與全自動推播</li>
-              <li>每週巡檢 AI 未解答對話並補充知識庫</li>
+              <li>每週巡檢 AI 未解答對話與補充知識庫</li>
               <li>季節限定甜點 (如夏日芒果/秋冬新品) 上架與價格更新</li>
-              <li>5,000 會員偏好標籤維護與對話數據月報</li>
+              <li>5,000 會員偏好標籤維護與 CSV/Excel 會員清單導出</li>
             </ul>
           </div>
         </div>

@@ -45,10 +45,11 @@ const TEMPLATES = [
 ];
 
 const ACTION_TYPES = [
+    { id: 'booking_liff', name: '📅 門市線上預約 (LIFF 卡片)', icon: <Calendar className="w-3 h-3" />, color: 'text-emerald-600' },
     { id: 'uri', name: '開啟網頁', icon: <Link className="w-3 h-3" />, color: 'text-blue-500' },
     { id: 'message', name: '傳送文字', icon: <MessageSquare className="w-3 h-3" />, color: 'text-emerald-500' },
     { id: 'postback', name: '隱藏回傳 (AI)', icon: <Zap className="w-3 h-3" />, color: 'text-amber-500' },
-    { id: 'datetimepicker', name: '時間預約', icon: <Calendar className="w-3 h-3" />, color: 'text-rose-500' },
+    { id: 'datetimepicker', name: '時間選擇器', icon: <Calendar className="w-3 h-3" />, color: 'text-rose-500' },
     { id: 'clipboard', name: '複製文字', icon: <Copy className="w-3 h-3" />, color: 'text-purple-500' },
     { id: 'richmenuswitch', name: '切換選單', icon: <Repeat className="w-3 h-3" />, color: 'text-indigo-500' },
 ];
@@ -326,7 +327,15 @@ export default function RichMenuTab({ config, setConfig, planLevel, botId }: any
                                 </div>
 
                                 {/* 動態顯示對應輸入框 */}
-                                {btn.type === 'datetimepicker' ? (
+                                {btn.type === 'booking_liff' ? (
+                                    <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-[11px] font-bold space-y-1">
+                                        <div className="font-black text-emerald-900 flex items-center gap-1">
+                                            <Calendar className="w-3.5 h-3.5 text-emerald-600" />
+                                            已自動對接門市線上預約 LIFF 卡片
+                                        </div>
+                                        <p className="text-[10px] text-emerald-700">顧客在 LINE 點擊此按鈕，將直接喚起極速預約月曆！</p>
+                                    </div>
+                                ) : btn.type === 'datetimepicker' ? (
                                     <div className="grid grid-cols-2 gap-3">
                                         <div className="space-y-1.5">
                                             <label className="text-[10px] font-black text-slate-400 ml-1 tracking-wider">選擇模式</label>

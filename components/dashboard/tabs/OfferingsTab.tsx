@@ -130,15 +130,19 @@ export default function OfferingsTab({ config, setConfig, planLevel = 0, botId }
                 <div className="flex items-center gap-3 mb-4">
                     <Wand2 className="w-5 h-5 text-emerald-500" />
                     <div>
-                        <h4 className="text-[15px] font-black text-slate-900">官網內容自動同步</h4>
-                        <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider text-left">Auto-Sync</p>
+                        <h4 className="text-[15px] font-black text-slate-900 flex items-center gap-2">
+                            ⚡ AI 自動抓取與同步賣場商品
+                        </h4>
+                        <p className="text-[11px] text-emerald-600 font-bold tracking-wider text-left">
+                            支援貼上 LINE 賣場、口袋商店、蝦皮或官網網址，AI 自動擷取圖文與售價
+                        </p>
                     </div>
                 </div>
                 <div className="bg-slate-50 border border-slate-100 p-3 rounded-[16px] flex gap-3">
                     <input 
                         type="text" 
-                        placeholder="貼上網址..." 
-                        className="flex-1 bg-transparent px-4 py-2 text-slate-900 text-sm outline-none" 
+                        placeholder="貼上您的 LINE 賣場 / 口袋商店 / 官網網址 (例如 https://shop.line.me/@...)" 
+                        className="flex-1 bg-transparent px-4 py-2 text-slate-900 text-xs font-bold outline-none" 
                         value={syncUrl} 
                         onChange={e => setSyncUrl(e.target.value)} 
                     />

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { AtomicWalletService } from '@/lib/services/wallet/AtomicWalletService';
 
 /**
  * GET /api/wallet/[ownerId]
@@ -16,7 +17,6 @@ export async function GET(
             ownerLineId = req.nextUrl.searchParams.get('lineUserId') || 'Ud8b8dd79162387a80b2b5a4aba20f604';
         }
 
-        // 1. 查詢或初始化錢包 (含 deduction_mode 偏好)
         let { data: wallet } = await supabase
             .from('store_wallets')
             .select('*')
@@ -43,7 +43,6 @@ export async function GET(
             }
         }
 
-        // 2. 撈取對帳單交易紀錄
         const { data: transactions } = await supabase
             .from('wallet_transactions')
             .select('*')
@@ -67,7 +66,7 @@ export async function GET(
 
 /**
  * POST /api/wallet/[ownerId]
- * 儲值購物金點數或切換扣款偏好設定 (deductionMode)
+ * 🛡️ 金融級原子性線上儲值或切換扣款偏好設定 (含 FOR UPDATE 悲觀鎖與 Idempotency 防重複扣款)
  */
 export async function POST(
     req: NextRequest,
@@ -98,50 +97,33 @@ export async function POST(
             });
         }
 
-        // 情境 B：線上儲值購物金點數
-        const { amount, bonusCredits = 0, description = '線上儲值購物金' } = body;
+        // 情境 B：線上儲值購物金點數 (使用金融級原子性交易)
+        const { amount, bonusCredits = 0, description = '線上儲值購物金', idempotencyKey } = body;
 
         if (!amount || amount <= 0) {
             return NextResponse.json({ error: 'Invalid top-up amount' }, { status: 400 });
         }
 
         const totalAdd = Number(amount) + Number(bonusCredits);
+        const uniqueKey = idempotencyKey || AtomicWalletService.generateIdempotencyKey('TOPUP', ownerLineId, `${amount}_${Date.now()}`);
 
-        let { data: wallet } = await supabase
-            .from('store_wallets')
-            .select('*')
-            .eq('owner_line_id', ownerLineId)
-            .maybeSingle();
+        const result = await AtomicWalletService.processTransaction({
+            ownerLineId,
+            type: 'TOP_UP',
+            amount: totalAdd,
+            description: `${description} (${amount}元 ${bonusCredits > 0 ? `+加碼${bonusCredits}點` : ''})`,
+            idempotencyKey: uniqueKey
+        });
 
-        const currentBalance = Number(wallet?.balance_credits || 0);
-        const newBalance = currentBalance + totalAdd;
-        const newTotalEarned = Number(wallet?.total_earned || 0) + totalAdd;
-
-        await supabase
-            .from('store_wallets')
-            .upsert({
-                owner_line_id: ownerLineId,
-                balance_credits: newBalance,
-                total_earned: newTotalEarned,
-                updated_at: new Date().toISOString()
-            });
-
-        const { data: tx } = await supabase
-            .from('wallet_transactions')
-            .insert({
-                owner_line_id: ownerLineId,
-                type: 'TOP_UP',
-                amount: totalAdd,
-                balance_after: newBalance,
-                description: `${description} (${amount}元 ${bonusCredits > 0 ? `+加碼${bonusCredits}點` : ''})`
-            })
-            .select('*')
-            .single();
+        if (!result.success) {
+            return NextResponse.json({ error: result.error || 'Top-up transaction failed' }, { status: 500 });
+        }
 
         return NextResponse.json({
             success: true,
-            newBalance,
-            transaction: tx
+            newBalance: result.balanceAfter,
+            idempotencyReplay: result.idempotencyReplay,
+            transactionId: result.transactionId
         });
 
     } catch (err: any) {

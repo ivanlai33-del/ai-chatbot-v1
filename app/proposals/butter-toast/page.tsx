@@ -306,7 +306,7 @@ export default function ButterToastProposalPage() {
         </div>
       ),
     },
-    // Slide 3: Tailored Menu
+    // Slide 3: Tailored Menu & Rich Menu (Fixed item 6 to Customer Product Payment Flow)
     {
       badge: "專屬菜單與季節新品適配",
       title: "【生乳/奶霜專賣店】真實菜單與 AI 計算適配",
@@ -338,7 +338,7 @@ export default function ButterToastProposalPage() {
               <li>3. 📍 <b>取餐地點/導航</b>（一鍵傳送指定地址面交地圖）</li>
               <li>4. ⏰ <b>營業時間須知</b>（18:00-售完/現點現做說明）</li>
               <li>5. ❄️ <b>熱熱吃與重烤教學</b>（奶霜炸吐司冷藏/冷凍重烤 SOP）</li>
-              <li>6. 👤 <b>轉接老闆/匯款帳號</b>（提供中信 131540035543 匯款）</li>
+              <li>6. 👤 <b>專人客服與提前匯款</b>（買家預訂產品匯款說明與真人解答）</li>
             </ul>
           </div>
         </div>
@@ -621,7 +621,7 @@ export default function ButterToastProposalPage() {
             <h4 className="font-bold text-[#B26A27] mb-2">📌 AI 店長建置交付項目 (一次性)</h4>
             <ul className="text-xs text-[#382D24] space-y-1.5">
               <li>✓ 現有 LINE 官方帳號 Messaging API 權限串接</li>
-              <li>✓ 6格 Rich Menu (點餐算錢/夏日限定/取餐導航/營業須知/重烤教學/轉接匯款)</li>
+              <li>✓ 6格 Rich Menu (點餐算錢/夏日限定/取餐導航/營業須知/重烤教學/轉接客服)</li>
               <li>✓ 奶霜炸吐司、芒果限定與 3入/5入優惠組合 AI 算錢邏輯</li>
               <li>✓ 自動帶入 18:00 開店時間與「不找零/提前匯款」提醒</li>
               <li>✓ 「預約完成✔️」 Flex Message 訂單卡片自動發送</li>

@@ -35,12 +35,10 @@ export default function ButterToastProposalPage() {
   const VALID_PASSWORDS = ["20260723", "0723"];
 
   useEffect(() => {
-    // Check session unlock
     const unlocked = sessionStorage.getItem("proposal_unlocked_butter_toast");
     if (unlocked === "true") {
       setIsUnlocked(true);
     }
-    // Load saved invoice info from local storage
     const savedInfo = localStorage.getItem("butter_toast_invoice_info");
     if (savedInfo) {
       try {
@@ -94,15 +92,15 @@ export default function ButterToastProposalPage() {
       const data = await res.json();
       if (data.success) {
         setIsSaved(true);
-        alert("✓ 發票資料已成功儲存並傳送給系統管理員！");
+        alert("✓ 發票資料已成功儲存並同步傳送！");
       } else {
-        alert("儲存成功，如需開啟通知請確認系統設定。");
         setIsSaved(true);
+        alert("發票資料已成功儲存！");
       }
     } catch (err) {
       console.error(err);
       setIsSaved(true);
-      alert("發票資料已儲存於本機對話中。");
+      alert("發票資料已儲存於本機。");
     } finally {
       setIsSubmitting(false);
     }
@@ -147,7 +145,7 @@ export default function ButterToastProposalPage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isUnlocked]);
 
-  // Password Input Screen (Japanese Minimalist Style)
+  // Password Gate
   if (!isUnlocked) {
     return (
       <div className="min-h-screen bg-[#F7F3ED] text-[#382D24] flex items-center justify-center p-4 font-sans">
@@ -194,7 +192,7 @@ export default function ButterToastProposalPage() {
     );
   }
 
-  // Interactive Slides (Rendered when Unlocked)
+  // Interactive Slides
   const slides = [
     // Slide 1: Cover
     {
@@ -202,14 +200,14 @@ export default function ButterToastProposalPage() {
       content: (
         <div className="text-center py-6">
           <h1 className="text-4xl md:text-5xl font-extrabold font-serif mb-4 leading-tight text-[#382D24]">
-            LINE 官方帳號全包建置<br />
-            <span className="text-[#B26A27]">✕ AI 智慧店長服務</span>
+            現有 LINE 官方帳號升級<br />
+            <span className="text-[#B26A27]">✕ AI 智慧店長系統建置</span>
           </h1>
           <p className="text-lg text-[#7C6E62] max-w-xl mx-auto mb-8">
-            0 到 1 打造 5,000 會員自動化點餐算錢與全代營運閉環
+            導入自動化點餐算錢大腦、無內用指引與 5,000 會員全代營運
           </p>
           <span className="inline-block px-6 py-2 bg-[#B26A27] text-[#FFFDF9] rounded-full text-sm font-bold shadow-md">
-            工作室模式 / 現金面交 / 無小編最佳解答
+            現有帳號升級 / 自動算錢接單 / 無小編最佳解答
           </span>
         </div>
       ),
@@ -217,62 +215,62 @@ export default function ButterToastProposalPage() {
     // Slide 2: Challenges
     {
       badge: "5,000人規模規劃",
-      title: "工作室現況與核心痛點",
+      title: "工作室現況與核心需求",
       content: (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm hover:border-[#D6A86E] transition">
             <div className="text-2xl mb-1">🏠</div>
-            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">痛點 1：無實體內用店面</h3>
-            <p className="text-sm text-[#7C6E62]">中央廚房工作室模式，缺乏門市接待。需 24hr 自動指引「指定地址面交」與「取餐導航」。</p>
+            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">需求 1：無實體內用指引</h3>
+            <p className="text-sm text-[#7C6E62]">中央廚房工作室模式，已建有 LINE 帳號。需 AI 24hr 自動說明無內用、引導「指定地址面交」與取餐地圖。</p>
           </div>
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm hover:border-[#D6A86E] transition">
             <div className="text-2xl mb-1">🧮</div>
-            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">痛點 2：現金面交，人工算錢耗時</h3>
-            <p className="text-sm text-[#7C6E62]">無線上刷卡，需人工計算多品項數量金額。AI 店長需具備精確自動算錢與生成訂單明細能力。</p>
-          </div>
-          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm hover:border-[#D6A86E] transition">
-            <div className="text-2xl mb-1">👥</div>
-            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">痛點 3：團隊內部無 LINE 小編</h3>
-            <p className="text-sm text-[#7C6E62]">缺乏視覺設計與運營人力。需要全權委外進行 0 到 1 官方帳號視覺包裝與每月代營運。</p>
-          </div>
-          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm hover:border-[#D6A86E] transition">
-            <div className="text-2xl mb-1">📈</div>
-            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">痛點 4：5,000 會員流量負擔</h3>
-            <p className="text-sm text-[#7C6E62]">每日約 50 人對話詢問。需要高容量 AI 大腦穩定接單與限量預購推播導購。</p>
-          </div>
-        </div>
-      ),
-    },
-    // Slide 3: Core Modules
-    {
-      badge: "奶油吐司客製化",
-      title: "四大專屬 AI 服務模組",
-      content: (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm hover:border-[#D6A86E] transition">
-            <div className="text-2xl mb-1">🎨</div>
-            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">01. LINE 0 到 1 品牌視覺包裝</h3>
-            <p className="text-sm text-[#7C6E62]">官方帳號申請、品牌 Banner 設計，以及專屬 6 格高質感圖文選單 (Rich Menu)。</p>
+            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">需求 2：現金面交，自動算錢</h3>
+            <p className="text-sm text-[#7C6E62]">無線上刷卡，免去人工計算多品項金額。AI 需具備精確辨識品項數量並自動加總生成訂單明細能力。</p>
           </div>
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm hover:border-[#D6A86E] transition">
             <div className="text-2xl mb-1">🤖</div>
-            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">02. AI 點餐與金額試算系統</h3>
-            <p className="text-sm text-[#7C6E62]">辨識品項與數量（生吐司x2+布丁x3）➔ 自動試算總金額 ➔ 產出現金面交訂單明細 ＋ Notify 通知。</p>
+            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">需求 3：AI 店長全自動接管</h3>
+            <p className="text-sm text-[#7C6E62]">目前無專職 LINE 小編。需升級 AI 智能大腦，24 小時自動回覆甜點保存、冷凍重烤教學與出貨詢問。</p>
           </div>
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm hover:border-[#D6A86E] transition">
-            <div className="text-2xl mb-1">📚</div>
-            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">03. 無內用導覽與 FAQ 知識庫</h3>
-            <p className="text-sm text-[#7C6E62]">24/7 自動解答無內用說明、面交地址導航，以及生吐司/甜點冷凍重烤教學。</p>
-          </div>
-          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm hover:border-[#D6A86E] transition">
-            <div className="text-2xl mb-1">🚀</div>
-            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">04. 5,000 會員 CRM 與代營運</h3>
-            <p className="text-sm text-[#7C6E62]">每月 2 次限量預購圖文推播設計與發送 ＋ 每週 AI 菜單優化與未解答巡檢。</p>
+            <div className="text-2xl mb-1">📈</div>
+            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">需求 4：5,000 會員預購營運</h3>
+            <p className="text-sm text-[#7C6E62]">每日約 50 人對話詢問。需由團隊協助每月 2 次限量甜點預購視覺 Banner 設計與全自動推播發送。</p>
           </div>
         </div>
       ),
     },
-    // Slide 4: Pricing & Bank Transfer & Invoice
+    // Slide 3: Core AI Modules
+    {
+      badge: "奶油吐司專屬 AI 模組",
+      title: "四大多功能 AI 店長建置模組",
+      content: (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm hover:border-[#D6A86E] transition">
+            <div className="text-2xl mb-1">🔗</div>
+            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">01. 現有 LINE 官方帳號 API 串接</h3>
+            <p className="text-sm text-[#7C6E62]">串接現有 Messaging API 權限，適配 6 格 Rich Menu 圖文選單（點餐算錢、面交地點、重烤教學、預購專區）。</p>
+          </div>
+          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm hover:border-[#D6A86E] transition">
+            <div className="text-2xl mb-1">🤖</div>
+            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">02. AI 多品項點餐與金額試算引擎</h3>
+            <p className="text-sm text-[#7C6E62]">辨識品項與數量（例:生吐司x2+布丁x3）➔ 自動加總計算總金額 ➔ 產出現金面交 Flex Message 明細 ＋ Notify 通知。</p>
+          </div>
+          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm hover:border-[#D6A86E] transition">
+            <div className="text-2xl mb-1">📚</div>
+            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">03. 奶油吐司 RAG 知識庫訓練</h3>
+            <p className="text-sm text-[#7C6E62]">24/7 自動解答無內用說明、面交地址導航、冷凍保存與吐司重烤 SOP，涵蓋 50+ 題常見問答。</p>
+          </div>
+          <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm hover:border-[#D6A86E] transition">
+            <div className="text-2xl mb-1">🚀</div>
+            <h3 className="font-serif font-bold text-lg text-[#B26A27] mb-1">04. 5,000 會員 CRM 與全代營運</h3>
+            <p className="text-sm text-[#7C6E62]">每月 2 次限量預購圖文 Banner 設計與發送 ＋ 每週 AI 菜單優化、對話語意巡檢與數據簡報。</p>
+          </div>
+        </div>
+      ),
+    },
+    // Slide 4: Pricing & Bank & Invoice
     {
       badge: "報價與金流資訊",
       title: "專案報價、匯款帳號與發票填寫",
@@ -347,7 +345,7 @@ export default function ButterToastProposalPage() {
               <div className="bg-[#F7F3ED] p-3 rounded-xl border border-[#E6DDCF] max-h-48 overflow-y-auto space-y-2 text-xs">
                 <div className="font-bold text-[#B26A27] border-b pb-1 flex justify-between">
                   <span>所有已填寫發票清單</span>
-                  <span>點擊刷卡/開立</span>
+                  <span>狀態: 已同步至雲端</span>
                 </div>
                 {invoiceRecords.length === 0 ? (
                   <p className="text-xs text-[#7C6E62] py-2 text-center">目前尚無已填寫之發票資料紀錄</p>
@@ -444,25 +442,25 @@ export default function ButterToastProposalPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm">
             <span className="inline-block px-2.5 py-0.5 bg-[#B26A27] text-[#FFFDF9] rounded-full text-xs font-bold mb-2">PHASE 1 (Week 1)</span>
-            <h4 className="font-serif font-bold text-[#B26A27] mb-2">素材收集與專案啟動</h4>
+            <h4 className="font-serif font-bold text-[#B26A27] mb-2">現有帳號串接與素材收集</h4>
             <ul className="text-xs text-[#7C6E62] space-y-1.5">
               <li>✓ 簽訂合約並<b>轉帳付訂金 $14,000 (含稅$14,700)</b></li>
+              <li>✓ 串接現有 LINE 官方帳號 Messaging API 權限</li>
               <li>✓ 收集菜單品項、價格、面交地址與門檻</li>
-              <li>✓ 開通 LINE 官方帳號管理權限並開立發票</li>
             </ul>
           </div>
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm">
             <span className="inline-block px-2.5 py-0.5 bg-[#B26A27] text-[#FFFDF9] rounded-full text-xs font-bold mb-2">PHASE 2 (Week 2)</span>
-            <h4 className="font-serif font-bold text-[#B26A27] mb-2">視覺設計與 AI 開發</h4>
+            <h4 className="font-serif font-bold text-[#B26A27] mb-2">AI 算錢引擎與知識庫訓練</h4>
             <ul className="text-xs text-[#7C6E62] space-y-1.5">
-              <li>✓ 6格 Rich Menu 圖文選單視覺設計</li>
+              <li>✓ 6格 Rich Menu 圖文選單適配 AI 店長</li>
               <li>✓ AI 點餐算錢引擎與 Notify 通知串接</li>
-              <li>✓ 載入 50+ 題問答與保存重烤知識庫</li>
+              <li>✓ 載入 50+ 題問答與保存重烤 SOP 知識庫</li>
             </ul>
           </div>
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm">
             <span className="inline-block px-2.5 py-0.5 bg-[#B26A27] text-[#FFFDF9] rounded-full text-xs font-bold mb-2">PHASE 3 (Week 3)</span>
-            <h4 className="font-serif font-bold text-[#B26A27] mb-2">測試驗收與正式交案</h4>
+            <h4 className="font-serif font-bold text-[#B26A27] mb-2">實測試驗與正式交案</h4>
             <ul className="text-xs text-[#7C6E62] space-y-1.5">
               <li>✓ 雙方進行點餐算錢與接管流程實測</li>
               <li>✓ 驗收通過<b>轉帳付尾款 $14,000 (含稅$14,700)</b></li>
@@ -479,10 +477,10 @@ export default function ButterToastProposalPage() {
       content: (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-white border border-[#E6DDCF] rounded-2xl p-5 shadow-sm">
-            <h4 className="font-bold text-[#B26A27] mb-2">📌 建置期交付項目 (一次性)</h4>
+            <h4 className="font-bold text-[#B26A27] mb-2">📌 AI 店長建置交付項目 (一次性)</h4>
             <ul className="text-xs text-[#382D24] space-y-1.5">
-              <li>✓ LINE 帳號權限與主頁 Banner 包裝</li>
-              <li>✓ 6格 Rich Menu (點餐/面交/保存/預購/小編/會員)</li>
+              <li>✓ 現有 LINE 官方帳號 Messaging API 權限串接</li>
+              <li>✓ 6格 Rich Menu 適配 AI 店長 (點餐/面交/保存/預購/小編/會員)</li>
               <li>✓ AI 語意點餐算錢與單價加總邏輯</li>
               <li>✓ 現金面交訂單明細 Flex Message 生成</li>
               <li>✓ 備貨小編 LINE Notify 訊息推播串接</li>

@@ -158,14 +158,14 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1rem;
-      margin-bottom: 0.8rem;
+      margin-bottom: 0.6rem;
     }
 
     .pricing-card {
       background: #FFFFFF;
       border: 2px solid var(--accent-butter);
       border-radius: 14px;
-      padding: 1rem 1.2rem;
+      padding: 0.8rem 1.2rem;
       position: relative;
       display: flex;
       flex-direction: column;
@@ -174,7 +174,7 @@
 
     .price-num {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.8rem;
+      font-size: 1.6rem;
       font-weight: 800;
       color: var(--accent-caramel);
       margin: 0.2rem 0;
@@ -184,20 +184,20 @@
       font-size: 0.75rem;
       color: var(--text-muted);
       background: var(--bg-main);
-      padding: 0.3rem 0.6rem;
+      padding: 0.25rem 0.6rem;
       border-radius: 6px;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.4rem;
     }
 
     /* Prominent Credit Card Button */
     .card-checkout-btn {
       width: 100%;
-      margin-top: 0.6rem;
-      padding: 0.65rem 1rem;
+      margin-top: 0.4rem;
+      padding: 0.55rem 0.8rem;
       background: linear-gradient(90deg, #B26A27 0%, #D6A86E 50%, #B26A27 100%);
       color: #FFFDF9;
       font-weight: 800;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       border: none;
       border-radius: 10px;
       cursor: pointer;
@@ -220,15 +220,15 @@
       background: linear-gradient(135deg, #FFFDF9 0%, #FCEFDC 100%);
       border: 2px solid var(--accent-caramel);
       border-radius: 14px;
-      padding: 0.8rem 1.2rem;
-      margin-bottom: 0.8rem;
+      padding: 0.6rem 1.2rem;
+      margin-bottom: 0.6rem;
     }
 
     .bank-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.3rem;
     }
 
     .bank-grid {
@@ -236,14 +236,14 @@
       grid-template-columns: repeat(4, 1fr);
       gap: 0.6rem;
       background: rgba(255, 255, 255, 0.85);
-      padding: 0.6rem 0.8rem;
+      padding: 0.5rem 0.8rem;
       border-radius: 10px;
       border: 1px solid var(--accent-butter);
-      font-size: 0.8rem;
+      font-size: 0.78rem;
     }
 
     .bank-item-label {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       color: var(--text-muted);
     }
 
@@ -256,7 +256,26 @@
       font-family: 'Outfit', monospace;
       font-weight: 800;
       color: var(--accent-caramel);
-      font-size: 0.95rem;
+      font-size: 0.9rem;
+    }
+
+    /* Policy Box */
+    .policy-box {
+      background: #FFFDF9;
+      border: 1px solid var(--accent-butter);
+      border-radius: 12px;
+      padding: 0.5rem 0.8rem;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-bottom: 0.6rem;
+    }
+
+    .policy-box ul {
+      margin-top: 0.2rem;
+      padding-left: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
     }
 
     /* Invoice Form Card */
@@ -264,35 +283,35 @@
       background: #FFFFFF;
       border: 1px solid var(--card-border);
       border-radius: 14px;
-      padding: 0.8rem 1.2rem;
+      padding: 0.6rem 1.2rem;
     }
 
     .invoice-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.6rem;
-      margin-top: 0.4rem;
+      gap: 0.4rem;
+      margin-top: 0.3rem;
     }
 
     .form-group {
       display: flex;
       flex-direction: column;
-      gap: 0.2rem;
+      gap: 0.15rem;
     }
 
     .form-label {
-      font-size: 0.72rem;
+      font-size: 0.68rem;
       color: var(--text-muted);
       font-weight: 600;
     }
 
     .form-input {
       width: 100%;
-      padding: 0.4rem 0.6rem;
+      padding: 0.3rem 0.5rem;
       background: var(--bg-main);
       border: 1px solid var(--card-border);
       border-radius: 6px;
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       color: var(--text-main);
       outline: none;
     }
@@ -301,9 +320,9 @@
       background: var(--accent-caramel);
       color: #FFFDF9;
       border: none;
-      padding: 0.3rem 0.8rem;
+      padding: 0.25rem 0.7rem;
       border-radius: 6px;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 700;
       cursor: pointer;
     }
@@ -523,7 +542,7 @@
       </div>
     </div>
 
-    <!-- Slide 4: Pricing Cards + Bank Transfer + Invoice Form + PROMINENT CREDIT CARD BUTTON -->
+    <!-- Slide 4: Pricing Cards + Bank Transfer + Invoice Form + PROMINENT CREDIT CARD BUTTON + CANCELLATION POLICY -->
     <div class="slide" id="slide-4">
       <div class="slide-header">
         <h2 class="slide-title">專案報價金額、匯款帳號與發票填寫</h2>
@@ -544,7 +563,7 @@
                 <li>自動發送「預約完成✔️」與 Notify 備貨推播</li>
               </ul>
             </div>
-            <div style="font-size:0.75rem; color:var(--text-muted); text-align:center; margin-top:0.4rem; background:#FFF8F0; padding:0.3rem; border-radius:6px; border:1px solid var(--accent-butter);">
+            <div style="font-size:0.72rem; color:var(--text-muted); text-align:center; margin-top:0.3rem; background:#FFF8F0; padding:0.25rem; border-radius:6px; border:1px solid var(--accent-butter);">
               👇 請參考下方<b>「中國信託轉帳卡片」</b>付第一期訂金 $14,700 (含稅)
             </div>
           </div>
@@ -595,10 +614,20 @@
               <div class="bank-account-num">131540035543</div>
             </div>
           </div>
-          <div style="display:flex; justify-content:space-between; font-size:0.73rem; color:var(--text-muted); margin-top:0.3rem;">
+          <div style="display:flex; justify-content:space-between; font-size:0.71rem; color:var(--text-muted); margin-top:0.25rem;">
             <span>● 訂金 50%：NT$ 14,000 (含稅 $14,700)</span>
             <span>● 尾款 50%：NT$ 14,000 (含稅 $14,700)</span>
           </div>
+        </div>
+
+        <!-- Cancellation & Refund Policy Box -->
+        <div class="policy-box">
+          <div style="font-weight:bold; color:var(--accent-caramel);">📋 月費服務取消方式與數位雲端服務條款：</div>
+          <ul>
+            <li><b>取消扣款流程：</b>若後續欲取消每月代營運與 AI 系統服務，只需於<b>下一期自動扣款日前 7 天</b>通知團隊客服，我們將即時為您辦理藍新定期扣款解約。</li>
+            <li><b>當期服務權益：</b>已扣款之當期服務將持續運作為您服務至<b>當月帳期結束（使用至月底或扣款週期屆滿日）</b>，保障您的完整權益。</li>
+            <li><b>數位服務退款說明：</b>依消費者保護法「合理例外情事」規定，本服務屬<b>已即時提供之數位化內容與雲端伺服器運算代營運服務</b>，一經扣款即已配置 AI 主機資源與小編維護人力，當期已付費用恕不辦理中途退款。</li>
+          </ul>
         </div>
 
         <!-- Invoice Form Card -->
@@ -627,7 +656,7 @@
                 <input type="email" id="invEmail" class="form-input" placeholder="例: service@creamstore.com">
               </div>
             </div>
-            <div style="text-align: right; margin-top: 0.4rem;">
+            <div style="text-align: right; margin-top: 0.3rem;">
               <button type="submit" class="copy-btn">💾 儲存並同步發票資料</button>
             </div>
           </form>
@@ -814,11 +843,11 @@
 
     function saveInvoice(e) {
       e.preventDefault();
-      const comp = document.getElementById('compName').value;
-      const tax = document.getElementById('taxIdInput').value;
-      const addr = document.getElementById('invAddr').value;
-      const email = document.getElementById('invEmail').value;
-      localStorage.setItem('butter_toast_invoice_info', JSON.stringify({ companyName: comp, taxId: tax, invoiceAddress: addr, contactEmail: email }));
+      const compName = document.getElementById('compName').value;
+      const taxId = document.getElementById('taxIdInput').value;
+      const invoiceAddress = document.getElementById('invAddr').value;
+      const contactEmail = document.getElementById('invEmail').value;
+      localStorage.setItem('butter_toast_invoice_info', JSON.stringify({ companyName: compName, taxId: taxId, invoiceAddress: invoiceAddress, contactEmail: contactEmail }));
       document.getElementById('saved-badge').style.display = 'inline';
     }
 

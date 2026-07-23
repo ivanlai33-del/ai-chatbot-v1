@@ -11,6 +11,7 @@ import {
 import { cn } from '@/lib/utils';
 import { PRICING_PLANS, getPlanByTier, PLAN_IDS_ORDERED, PlanId } from '@/lib/config/pricing';
 import LandingFooter from '@/components/landing/LandingFooter';
+import ReferralProgramSection from '@/components/dashboard/ReferralProgramSection';
 
 const AVAILABLE_PLAN_IDS = PLAN_IDS_ORDERED.filter(id => id === 'starter');
 
@@ -164,6 +165,9 @@ export default function UnifiedBillingView() {
                     )}
                 </div>
             </section>
+
+            {/* 🌟 推薦好友·月費全免專區 (Referral Program Section) */}
+            <ReferralProgramSection botId={null} />
 
             {/* 2. 所有的服務方案 */}
             <section className="pt-2">

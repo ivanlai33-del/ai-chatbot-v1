@@ -249,7 +249,7 @@ export default function ButterToastProposalPage() {
     {
       badge: "🧸 品牌吉祥物人設 ✕ AI 智慧店長",
       content: (
-        <div className="text-center py-6">
+        <div className="text-center py-4">
           <span className="text-xs font-bold text-[#B26A27] uppercase tracking-widest block mb-2 font-mono">
             cream_specialty_store ✕ 品牌吉祥物娃娃專屬 AI 口吻
           </span>
@@ -260,9 +260,18 @@ export default function ButterToastProposalPage() {
           <p className="text-base md:text-lg text-[#7C6E62] max-w-2xl mx-auto mb-6 leading-relaxed">
             融入「品牌吉祥物娃娃」親切口吻人設！專為「奶霜炸吐司 (原味/抹茶/巧克力)、OREO系列、夏日限定芒果系列與 3入$270/5入$400自由配」量身打造 100% 全遠端雲端導入、品牌介紹/產品導覽、24hr 自動算錢與雙向取貨通知
           </p>
-          <span className="inline-block px-6 py-2 bg-[#B26A27] text-[#FFFDF9] rounded-full text-sm font-bold shadow-md">
-            營業時間 18:00 - 售完為止 / 現金面交恕不找零 / 0 小編自動化
-          </span>
+          <div className="mb-4">
+            <span className="inline-block px-6 py-2 bg-[#B26A27] text-[#FFFDF9] rounded-full text-sm font-bold shadow-md">
+              營業時間 18:00 - 售完為止 / 現金面交恕不找零 / 0 小編自動化
+            </span>
+          </div>
+
+          {/* Company Contact Info Line */}
+          <div className="mt-4 pt-3 border-t border-[#E6DDCF] text-xs text-[#7C6E62] font-medium flex justify-center flex-wrap gap-4">
+            <span>🏢 <b>提案單位：</b>奕暢創新設計工作室</span>
+            <span>💬 <b>專案負責人 LINE ID：</b><b className="text-[#B26A27] font-mono">ivanlai33</b></span>
+            <span>📞 <b>電話：</b><b className="text-[#B26A27] font-mono">0987528785</b></span>
+          </div>
         </div>
       ),
     },
@@ -688,10 +697,10 @@ export default function ButterToastProposalPage() {
         </div>
       ),
     },
-    // Slide 7: ROI BENCHMARKED DIRECTLY AGAINST HUMAN EDITOR WITH SAFEGUARD
+    // Slide 7: ROI BENCHMARKED DIRECTLY AGAINST HUMAN EDITOR WITH SAFEGUARD & PROPOSING COMPANY CONTACT CARD
     {
       badge: "商業價值總結",
-      title: "真人小編 ✕ AI 店長效益與單量對比",
+      title: "真人小編 ✕ AI 店長效益與聯絡資訊",
       content: (
         <div className="space-y-3">
           {/* Comparison Table */}
@@ -699,46 +708,71 @@ export default function ButterToastProposalPage() {
             <table className="w-full text-left text-xs">
               <thead className="bg-[#EFE7DA] text-[#B26A27] font-bold border-b border-[#D6A86E]">
                 <tr>
-                  <th className="p-2.5">評估比較項目</th>
-                  <th className="p-2.5 text-gray-500">聘請專職 / 兼職真人小編</th>
-                  <th className="p-2.5 text-[#B26A27] bg-[#FFF8F0] font-black">🤖 AI 店長全代營運方案 (本專案)</th>
+                  <th className="p-2">評估比較項目</th>
+                  <th className="p-2 text-gray-500">聘請專職 / 兼職真人小編</th>
+                  <th className="p-2 text-[#B26A27] bg-[#FFF8F0] font-black">🤖 AI 店長全代營運方案 (本專案)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#E6DDCF] text-[#382D24]">
                 <tr>
-                  <td className="p-2.5 font-bold">單日點餐對話處理容量</td>
-                  <td className="p-2.5 text-red-600 font-bold">每天最多 30 ~ 50 筆對話 (易超載)</td>
-                  <td className="p-2.5 font-black text-emerald-700 bg-[#FFF8F0]">單日可精確處理 1,000+ 筆點餐訂單</td>
+                  <td className="p-2 font-bold">單日點餐對話處理容量</td>
+                  <td className="p-2 text-red-600 font-bold">每天最多 30 ~ 50 筆對話 (易超載)</td>
+                  <td className="p-2 font-black text-emerald-700 bg-[#FFF8F0]">單日可精確處理 1,000+ 筆點餐訂單</td>
                 </tr>
                 <tr>
-                  <td className="p-2.5 font-bold">高併發處理與防爆隊列機制</td>
-                  <td className="p-2.5 text-gray-600">同時只能回 1 人 (多視窗易出錯)</td>
-                  <td className="p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]">
-                    <b>Redis 佇列平滑緩衝保護</b><br />
-                    遵循 LINE API 速率規範，同時 100+ 人順暢點餐 0 掉單！
+                  <td className="p-2 font-bold">高併發處理與防爆隊列機制</td>
+                  <td className="p-2 text-gray-600">同時只能回 1 人 (多視窗易出錯)</td>
+                  <td className="p-2 font-bold text-emerald-700 bg-[#FFF8F0]">
+                    <b>Redis 佇列平滑緩衝保護</b> (同時 100+ 人順暢點餐 0 掉單)
                   </td>
                 </tr>
                 <tr>
-                  <td className="p-2.5 font-bold">品牌娃娃人設與售後保障</td>
-                  <td className="p-2.5 text-gray-600">語氣不固定，無維護保固概念</td>
-                  <td className="p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]">融入吉祥物親切口吻，開通享<b>首月 30 天免費維護微調</b>！</td>
+                  <td className="p-2 font-bold">品牌娃娃人設與售後保障</td>
+                  <td className="p-2 text-gray-600">語氣不固定，無維護保固概念</td>
+                  <td className="p-2 font-bold text-emerald-700 bg-[#FFF8F0]">融入吉祥物親切口吻，開通享<b>首月 30 天免費維護微調</b>！</td>
                 </tr>
                 <tr>
-                  <td className="p-2.5 font-bold">每月固定費用成本</td>
-                  <td className="p-2.5 text-red-600 font-mono font-bold">NT$ 30,000 ~ 35,000 / 月</td>
-                  <td className="p-2.5 text-emerald-700 font-mono font-black bg-[#FFF8F0]">NT$ 4,800 / 月 (含稅 $5,040)</td>
+                  <td className="p-2 font-bold">每月固定費用成本</td>
+                  <td className="p-2 text-red-600 font-mono font-bold">NT$ 30,000 ~ 35,000 / 月</td>
+                  <td className="p-2 text-emerald-700 font-mono font-black bg-[#FFF8F0]">NT$ 4,800 / 月 (含稅 $5,040)</td>
                 </tr>
                 <tr>
-                  <td className="p-2.5 font-bold">資安保護與算錢防護</td>
-                  <td className="p-2.5 text-gray-600">人工易洩漏個資、找錯錢</td>
-                  <td className="p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]">SSL+AES-256 加密 ✕ 提示詞越獄防禦大腦</td>
+                  <td className="p-2 font-bold">資安保護與算錢防護</td>
+                  <td className="p-2 text-gray-600">人工易洩漏個資、找錯錢</td>
+                  <td className="p-2 font-bold text-emerald-700 bg-[#FFF8F0]">SSL+AES-256 加密 ✕ 提示詞越獄防禦大腦</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <div className="bg-emerald-50 border border-emerald-300 p-2.5 rounded-xl text-center text-xs text-emerald-900 font-bold">
-            🎉 結論：內建 LINE API 緩衝保護機制與資安防禦大腦，<b>處理單量能力達真人 20 倍以上</b>，月費僅真人 <b>15%</b>，每年省下超過 <b>NT$ 280,000 元</b> 人力成本！
+          {/* DEDICATED PROPOSING COMPANY CONTACT CARD */}
+          <div className="bg-gradient-to-r from-[#FFFDF9] via-[#FCEFDC] to-[#FFFDF9] border-2 border-[#B26A27] rounded-2xl p-3 shadow-md flex flex-col md:flex-row justify-between items-center gap-2">
+            <div>
+              <span className="text-[10px] bg-[#B26A27] text-white px-2 py-0.5 rounded-full font-bold block w-fit mb-1">
+                🏢 提案團隊聯絡資訊
+              </span>
+              <h3 className="font-serif font-extrabold text-base text-[#382D24]">
+                奕暢創新設計工作室
+              </h3>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 text-xs">
+              <div className="flex items-center gap-1.5 bg-white/80 px-2.5 py-1 rounded-xl border border-[#D6A86E]">
+                <span className="text-base">💬</span>
+                <div>
+                  <span className="text-[10px] text-[#7C6E62] block">專案負責人 LINE ID</span>
+                  <span className="font-mono font-black text-[#B26A27] text-xs md:text-sm">ivanlai33</span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-1.5 bg-white/80 px-2.5 py-1 rounded-xl border border-[#D6A86E]">
+                <span className="text-base">📞</span>
+                <div>
+                  <span className="text-[10px] text-[#7C6E62] block">專案聯絡電話</span>
+                  <span className="font-mono font-black text-[#B26A27] text-xs md:text-sm">0987528785</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       ),

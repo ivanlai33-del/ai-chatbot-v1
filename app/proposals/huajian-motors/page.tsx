@@ -39,7 +39,7 @@ export default function HuajianMotorsProposalPage() {
   // Password Verification (Today's date: 20260724 or 0724)
   const VALID_PASSWORDS = ["20260724", "0724", "20260723", "0723"];
 
-  // Anti-Theft & Security Hooks
+  // Anti-Theft & Security Hooks (Disabled selection locking for mobile inputs)
   useEffect(() => {
     const handleContextMenu = (e: MouseEvent) => {
       e.preventDefault();
@@ -70,23 +70,12 @@ export default function HuajianMotorsProposalPage() {
       }
     };
 
-    const handleSelectStart = (e: Event) => {
-      const target = e.target as HTMLElement;
-      if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA")) {
-        return true;
-      }
-      e.preventDefault();
-      return false;
-    };
-
     document.addEventListener("contextmenu", handleContextMenu);
     document.addEventListener("keydown", handleKeyDown);
-    document.addEventListener("selectstart", handleSelectStart);
 
     return () => {
       document.removeEventListener("contextmenu", handleContextMenu);
       document.removeEventListener("keydown", handleKeyDown);
-      document.removeEventListener("selectstart", handleSelectStart);
     };
   }, [isUnlocked]);
 
@@ -114,6 +103,10 @@ export default function HuajianMotorsProposalPage() {
     if (typeof window !== "undefined" && (window as any).liff) {
       try {
         const liff = (window as any).liff;
+        const defaultLiffId = process.env.NEXT_PUBLIC_LINE_LIFF_ID || "2000000000-xxxxxx";
+        if (!liff.isLoggedIn()) {
+          await liff.init({ liffId: defaultLiffId }).catch(() => {});
+        }
         if (liff.isInClient && liff.isInClient()) {
           if (liff.isLoggedIn && liff.isLoggedIn()) {
             const profile = await liff.getProfile();
@@ -257,7 +250,7 @@ export default function HuajianMotorsProposalPage() {
   // Password Lock View (100% Mobile Responsive inside LINE LIFF)
   if (!isUnlocked) {
     return (
-      <div className="w-full min-h-screen bg-[#121824] text-[#E2E8F0] flex flex-col justify-center items-center p-4 font-sans select-none overflow-x-hidden">
+      <div className="w-full min-h-screen bg-[#121824] text-[#E2E8F0] flex flex-col justify-center items-center p-4 font-sans overflow-x-hidden">
         <Script src="https://static.line-scdn.net/liff/edge/2/sdk.js" onLoad={handleLiffInit} />
         <div className="w-full max-w-sm bg-[#1E293B] border border-[#334155] rounded-3xl p-6 shadow-2xl text-center backdrop-blur-md">
           <div className="w-12 h-12 bg-blue-900/50 text-blue-400 rounded-full flex items-center justify-center text-xl mx-auto mb-3 border border-blue-500/30">
@@ -286,7 +279,7 @@ export default function HuajianMotorsProposalPage() {
 
             <button
               type="submit"
-              className="w-full py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg transition text-sm active:scale-95"
+              className="w-full py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg transition text-sm active:scale-95 cursor-pointer"
             >
               解鎖檢視華鍵汽車提案
             </button>
@@ -424,7 +417,7 @@ export default function HuajianMotorsProposalPage() {
     </div>
   );
 
-  // Section 3: Detailed Modules Breakdown (Includes Optional Short Video Module with Mobile Camera Support)
+  // Section 3: Detailed Modules Breakdown
   const sectionModules = (
     <div className="w-full my-auto space-y-3">
       <div className="flex justify-between items-center border-b border-slate-800 pb-1.5">
@@ -454,7 +447,7 @@ export default function HuajianMotorsProposalPage() {
           </ul>
         </div>
 
-        {/* Module 2: Merchant Console (Mobile Camera Direct Capture Support) */}
+        {/* Module 2: Merchant Console */}
         <div className="bg-slate-800/80 border border-indigo-500/40 p-3 rounded-2xl shadow-xs">
           <div className="flex items-center justify-between mb-1.5">
             <h4 className="font-bold text-xs md:text-sm text-indigo-400 flex items-center gap-1.5">
@@ -736,7 +729,7 @@ export default function HuajianMotorsProposalPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg text-xs transition"
+                className="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg text-xs transition cursor-pointer"
               >
                 {isSubmitting ? "傳送中..." : "💾 儲存並同步傳送發票資料"}
               </button>
@@ -925,7 +918,7 @@ export default function HuajianMotorsProposalPage() {
   ];
 
   return (
-    <div className="w-full min-h-screen bg-[#0F172A] text-slate-200 font-sans select-none overflow-x-hidden">
+    <div className="w-full min-h-screen bg-[#0F172A] text-slate-200 font-sans overflow-x-hidden">
       <Script src="https://static.line-scdn.net/liff/edge/2/sdk.js" onLoad={handleLiffInit} />
 
       {/* Top Header Bar */}
@@ -950,15 +943,29 @@ export default function HuajianMotorsProposalPage() {
         </div>
       </header>
 
-      {/* Mobile Mode: Native Vertical Continuous Scroll View (手機直向順暢上下滑動模式) */}
-      <div className="block md:hidden w-full max-w-xl mx-auto p-3 space-y-4">
-        {sectionCover}
-        {sectionRequirements}
-        {sectionModules}
-        {sectionPricing}
-        {sectionTimeline}
-        {sectionChecklist}
-        {sectionSummary}
+      {/* Mobile Mode: Native Vertical Continuous Scroll View inside LINE LIFF (手機直向順暢上下滑動模式) */}
+      <div className="block md:hidden w-full max-w-xl mx-auto p-3 space-y-6 overflow-y-auto touch-pan-y" style={{ WebkitOverflowScrolling: "touch" }}>
+        <div className="bg-[#1E293B]/90 border border-slate-800 rounded-3xl p-4 shadow-xl backdrop-blur-md">
+          {sectionCover}
+        </div>
+        <div className="bg-[#1E293B]/90 border border-slate-800 rounded-3xl p-4 shadow-xl backdrop-blur-md">
+          {sectionRequirements}
+        </div>
+        <div className="bg-[#1E293B]/90 border border-slate-800 rounded-3xl p-4 shadow-xl backdrop-blur-md">
+          {sectionModules}
+        </div>
+        <div className="bg-[#1E293B]/90 border border-slate-800 rounded-3xl p-4 shadow-xl backdrop-blur-md">
+          {sectionPricing}
+        </div>
+        <div className="bg-[#1E293B]/90 border border-slate-800 rounded-3xl p-4 shadow-xl backdrop-blur-md">
+          {sectionTimeline}
+        </div>
+        <div className="bg-[#1E293B]/90 border border-slate-800 rounded-3xl p-4 shadow-xl backdrop-blur-md">
+          {sectionChecklist}
+        </div>
+        <div className="bg-[#1E293B]/90 border border-slate-800 rounded-3xl p-4 shadow-xl backdrop-blur-md mb-8">
+          {sectionSummary}
+        </div>
       </div>
 
       {/* Desktop Mode: High-End Vertically & Horizontally Centered Minimalist Deck View */}
@@ -976,20 +983,20 @@ export default function HuajianMotorsProposalPage() {
             <button
               onClick={() => setCurrentSlide((prev) => Math.max(prev - 1, 0))}
               disabled={currentSlide === 0}
-              className="px-5 py-2 bg-slate-800 border border-slate-700 rounded-full text-xs font-bold text-slate-200 hover:bg-blue-600 hover:text-white disabled:opacity-30 transition shadow-xs active:scale-95"
+              className="px-5 py-2 bg-slate-800 border border-slate-700 rounded-full text-xs font-bold text-slate-200 hover:bg-blue-600 hover:text-white disabled:opacity-30 transition shadow-xs active:scale-95 cursor-pointer"
             >
               ← 上一頁
             </button>
             <button
               onClick={() => setCurrentSlide((prev) => Math.min(prev + 1, allSections.length - 1))}
               disabled={currentSlide === allSections.length - 1}
-              className="px-5 py-2 bg-slate-800 border border-slate-700 rounded-full text-xs font-bold text-slate-200 hover:bg-blue-600 hover:text-white disabled:opacity-30 transition shadow-xs active:scale-95"
+              className="px-5 py-2 bg-slate-800 border border-slate-700 rounded-full text-xs font-bold text-slate-200 hover:bg-blue-600 hover:text-white disabled:opacity-30 transition shadow-xs active:scale-95 cursor-pointer"
             >
               下一頁 →
             </button>
             <button
               onClick={() => window.print()}
-              className="px-5 py-2 bg-blue-950 border border-blue-700 text-blue-300 rounded-full text-xs font-bold hover:bg-blue-600 hover:text-white transition shadow-xs active:scale-95"
+              className="px-5 py-2 bg-blue-950 border border-blue-700 text-blue-300 rounded-full text-xs font-bold hover:bg-blue-600 hover:text-white transition shadow-xs active:scale-95 cursor-pointer"
             >
               🖨️ 列印 / PDF
             </button>

@@ -360,7 +360,7 @@ export default function HuajianMotorsProposalPage() {
     </div>
   );
 
-  // Section 2: Requirements & Quotas (Clean customer-facing wording)
+  // Section 2: Requirements & Quotas
   const sectionRequirements = (
     <div className="w-full my-auto space-y-4">
       <div className="flex justify-between items-center border-b border-slate-800 pb-2">
@@ -424,30 +424,30 @@ export default function HuajianMotorsProposalPage() {
     </div>
   );
 
-  // Section 3: Detailed Modules Breakdown
+  // Section 3: Detailed Modules Breakdown (Includes Optional Short Video Module)
   const sectionModules = (
-    <div className="w-full my-auto space-y-4">
-      <div className="flex justify-between items-center border-b border-slate-800 pb-2">
+    <div className="w-full my-auto space-y-3">
+      <div className="flex justify-between items-center border-b border-slate-800 pb-1.5">
         <h2 className="text-base md:text-2xl font-bold text-white">
           詳細功能模組與系統架構拆解
         </h2>
         <span className="text-[10px] md:text-xs bg-indigo-900/60 text-indigo-300 px-2.5 py-0.5 rounded-full font-bold border border-indigo-700/50">
-          4 大核心系統模組
+          4 大核心模組 ✕ 1 選配擴充模組
         </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
         {/* Module 1: AI Content Engine */}
-        <div className="bg-slate-800/80 border border-blue-500/40 p-4 rounded-2xl shadow-xs">
-          <div className="flex items-center justify-between mb-2">
-            <h4 className="font-bold text-sm md:text-base text-blue-400 flex items-center gap-1.5">
+        <div className="bg-slate-800/80 border border-blue-500/40 p-3 rounded-2xl shadow-xs">
+          <div className="flex items-center justify-between mb-1.5">
+            <h4 className="font-bold text-xs md:text-sm text-blue-400 flex items-center gap-1.5">
               <span>🤖</span> 模組 1：AI 汽車專業文案與圖片配圖大腦
             </h4>
-            <span className="text-[10px] bg-blue-900/80 text-blue-200 px-2 py-0.5 rounded font-mono">
+            <span className="text-[10px] bg-blue-900/80 text-blue-200 px-1.5 py-0.5 rounded font-mono">
               文案大腦
             </span>
           </div>
-          <ul className="text-xs md:text-sm text-slate-300 space-y-1.5">
+          <ul className="text-[11px] md:text-xs text-slate-300 space-y-1">
             <li>✓ <b>汽車專業知識庫</b>：中古車挑選眉角、保養日常、車款規格與促銷文案</li>
             <li>✓ <b>品牌風格視覺</b>：維護華鍵汽車統一色調、特色 Hashtag 與專業排版</li>
             <li>✓ <b>AI 智慧配圖推薦</b>：上傳在庫車照片，AI 自動配對最佳文案與圖片視覺</li>
@@ -455,16 +455,16 @@ export default function HuajianMotorsProposalPage() {
         </div>
 
         {/* Module 2: Merchant Console */}
-        <div className="bg-slate-800/80 border border-indigo-500/40 p-4 rounded-2xl shadow-xs">
-          <div className="flex items-center justify-between mb-2">
-            <h4 className="font-bold text-sm md:text-base text-indigo-400 flex items-center gap-1.5">
+        <div className="bg-slate-800/80 border border-indigo-500/40 p-3 rounded-2xl shadow-xs">
+          <div className="flex items-center justify-between mb-1.5">
+            <h4 className="font-bold text-xs md:text-sm text-indigo-400 flex items-center gap-1.5">
               <span>🖥️</span> 模組 2：店家專屬後台控制中心 (AI 智慧發文 ✕ 人工審核)
             </h4>
-            <span className="text-[10px] bg-indigo-900/80 text-indigo-200 px-2 py-0.5 rounded font-mono">
+            <span className="text-[10px] bg-indigo-900/80 text-indigo-200 px-1.5 py-0.5 rounded font-mono">
               店家專屬後台
             </span>
           </div>
-          <ul className="text-xs md:text-sm text-slate-300 space-y-1.5">
+          <ul className="text-[11px] md:text-xs text-slate-300 space-y-1">
             <li>✓ <b>草稿一鍵生成</b>：輸入關鍵字（如：2022 Benz C300 入庫），秒出 3 平台文案</li>
             <li>✓ <b>視覺化預覽與審核</b>：發布前直覺預覽臉書/IG/Threads 貼文呈現效果</li>
             <li>✓ <b>多平台自由勾選</b>：可獨立選擇勾選發布至臉書、IG 或 Threads (脆)</li>
@@ -472,16 +472,16 @@ export default function HuajianMotorsProposalPage() {
         </div>
 
         {/* Module 3: Multi-Platform Auto-Publisher */}
-        <div className="bg-slate-800/80 border border-sky-500/40 p-4 rounded-2xl shadow-xs">
-          <div className="flex items-center justify-between mb-2">
-            <h4 className="font-bold text-sm md:text-base text-sky-400 flex items-center gap-1.5">
+        <div className="bg-slate-800/80 border border-sky-500/40 p-3 rounded-2xl shadow-xs">
+          <div className="flex items-center justify-between mb-1.5">
+            <h4 className="font-bold text-xs md:text-sm text-sky-400 flex items-center gap-1.5">
               <span>🚀</span> 模組 3：臉書 ✕ IG ✕ Threads 一鍵同步與排程發布
             </h4>
-            <span className="text-[10px] bg-sky-900/80 text-sky-200 px-2 py-0.5 rounded font-mono">
+            <span className="text-[10px] bg-sky-900/80 text-sky-200 px-1.5 py-0.5 rounded font-mono">
               多平台同步推播
             </span>
           </div>
-          <ul className="text-xs md:text-sm text-slate-300 space-y-1.5">
+          <ul className="text-[11px] md:text-xs text-slate-300 space-y-1">
             <li>✓ <b>社群官方安全連線</b>：Facebook 粉絲專頁與 Instagram 商業帳號官方安全連線</li>
             <li>✓ <b>Threads (脆) 管道自動連線</b>：自動排程發布優惠活動與熱點貼文</li>
             <li>✓ <b>智慧排程推播引擎</b>：支援「立即發布」或「指定高流量時段自動排程」</li>
@@ -489,20 +489,51 @@ export default function HuajianMotorsProposalPage() {
         </div>
 
         {/* Module 4: Social Engagement & Lead Gen */}
-        <div className="bg-slate-800/80 border border-emerald-500/40 p-4 rounded-2xl shadow-xs">
-          <div className="flex items-center justify-between mb-2">
-            <h4 className="font-bold text-sm md:text-base text-emerald-400 flex items-center gap-1.5">
+        <div className="bg-slate-800/80 border border-emerald-500/40 p-3 rounded-2xl shadow-xs">
+          <div className="flex items-center justify-between mb-1.5">
+            <h4 className="font-bold text-xs md:text-sm text-emerald-400 flex items-center gap-1.5">
               <span>💬</span> 模組 4：三平台 AI 小編留言秒回與賞車留單
             </h4>
-            <span className="text-[10px] bg-emerald-900/80 text-emerald-200 px-2 py-0.5 rounded font-mono">
+            <span className="text-[10px] bg-emerald-900/80 text-emerald-200 px-1.5 py-0.5 rounded font-mono">
               AI 小編互動
             </span>
           </div>
-          <ul className="text-xs md:text-sm text-slate-300 space-y-1.5">
+          <ul className="text-[11px] md:text-xs text-slate-300 space-y-1">
             <li>✓ <b>留言自動回覆</b>：貼文下方網友詢問車價或地點，AI 即時回應親切留言</li>
             <li>✓ <b>私訊自動引導</b>：自動發送詳細規格與預約賞車連結給私訊顧客</li>
             <li>✓ <b>潛在買家留單導客</b>：自動整理留言/私訊有意向顧客名單至後台</li>
           </ul>
+        </div>
+      </div>
+
+      {/* Module 5: Optional Video Upgrade Card */}
+      <div className="bg-gradient-to-r from-purple-950/60 via-slate-800 to-indigo-950/60 border-2 border-purple-500/60 p-3 rounded-2xl shadow-md">
+        <div className="flex flex-wrap items-center justify-between gap-1 mb-1.5 border-b border-purple-700/50 pb-1">
+          <h4 className="font-bold text-xs md:text-sm text-purple-300 flex items-center gap-1.5">
+            <span>🎬</span> 【彈性加購選配模組】AI 社群短影音 ✕ IG Reels 自動剪輯生成系統
+          </h4>
+          <div className="flex items-center gap-1.5">
+            <span className="text-[10px] bg-purple-900 text-purple-200 px-2 py-0.5 rounded-full font-bold border border-purple-500/50">
+              選購建置費 +$15,000 / 月費 +$1,500/月
+            </span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-[11px] md:text-xs">
+          <div className="bg-slate-900/80 p-2 rounded-xl border border-slate-700">
+            <span className="font-bold text-purple-300 block mb-0.5">📹 每月短影音產出額度</span>
+            <p className="text-slate-300"><b>每月 15 ~ 30 支短影片</b> (每 1~2 天即可發布一支精美 Reels / Shorts 短影片)。未用完額度順延。</p>
+          </div>
+
+          <div className="bg-slate-900/80 p-2 rounded-xl border border-slate-700">
+            <span className="font-bold text-purple-300 block mb-0.5">🎙️ 核心影音編輯功能</span>
+            <p className="text-slate-300"><b>• 手機拍車 ➔ AI 剪輯與字幕</b><br/><b>• AI 國台語真人口播語音配音</b><br/><b>• 照片 ➔ 3D 動態鏡頭推拉影片</b></p>
+          </div>
+
+          <div className="bg-slate-900/80 p-2 rounded-xl border border-slate-700">
+            <span className="font-bold text-purple-300 block mb-0.5">📱 簡單 3 步驟使用方式</span>
+            <p className="text-slate-300">1. 後台上傳 15秒影片或車照<br/>2. AI 秒配 BGM 配音與大字幕<br/>3. 一鍵同步推播 IG Reels / FB 短片</p>
+          </div>
         </div>
       </div>
     </div>
@@ -571,7 +602,7 @@ export default function HuajianMotorsProposalPage() {
             <ul className="text-xs text-slate-300 space-y-1 mb-3">
               <li className="flex items-center gap-1"><span className="text-emerald-400 font-bold">★</span> <b>月發文 60-90 篇 ✕ 車輛照片無限量 ✕ AI留言秒回無限次</b></li>
               <li className="flex items-center gap-1"><span className="text-indigo-400 font-bold">✓</span> 每月華鍵汽車知識庫彈性新增與車款微調</li>
-              <li className="flex items-center gap-1"><span className="text-indigo-400 font-bold">✓</span> 雲端資料庫與發文紀錄每日自動備份</li>
+              <li className="flex items-center gap-1"><span className="text-purple-400 font-bold">🎬</span> 可隨時彈性選配加購 AI 短影音/Reels 模組 (+ $1,500/月)</li>
             </ul>
           </div>
 
@@ -886,7 +917,7 @@ export default function HuajianMotorsProposalPage() {
   const allSections = [
     { title: "封面", component: sectionCover },
     { title: "發文與配圖額度", component: sectionRequirements },
-    { title: "4大核心模組", component: sectionModules },
+    { title: "4大核心模組+選配", component: sectionModules },
     { title: "金額與發票", component: sectionPricing },
     { title: "建置時程", component: sectionTimeline },
     { title: "交付清單", component: sectionChecklist },

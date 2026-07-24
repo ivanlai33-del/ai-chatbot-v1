@@ -844,8 +844,8 @@ export default function HuajianMotorsProposalPage() {
         </span>
       </div>
 
-      <div className="bg-slate-800/90 border-2 border-blue-500/60 rounded-2xl overflow-hidden shadow-xs">
-        <table className="w-full text-left text-xs md:text-sm">
+      <div className="bg-slate-800/90 border-2 border-blue-500/60 rounded-2xl overflow-x-auto shadow-xs">
+        <table className="w-full min-w-[320px] text-left text-xs md:text-sm">
           <thead className="bg-slate-900 text-blue-400 font-bold border-b border-slate-700">
             <tr>
               <th className="p-2 md:p-2.5">評估比較項目</th>

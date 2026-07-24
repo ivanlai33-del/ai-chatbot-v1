@@ -317,7 +317,7 @@ export default function ButterToastProposalPage() {
       </h1>
 
       <p className="text-xs md:text-base text-[#7C6E62] max-w-2xl mx-auto mb-4 md:mb-6 leading-relaxed font-medium">
-        專為無專職小編門市打造的 <b>24 小時線上 AI 智慧總管 ✕ 老闆後台 AI 數據助手</b>！前台自動接單、後台實時推播<b>「完售/缺料警報 ✕ 刪改單控管 SOP ✕ 久候未取雙向提醒」</b>！
+        專為無專職小編門市打造的 <b>24 小時線上 AI 智慧總管 ✕ 老闆後台 AI 數據助手</b>！前台自動接單、後台實時推播<b>「完售/缺料警報 ✕ LINE 會員紅利積點折抵 ✕ 雙向提醒」</b>！
       </p>
 
       {/* 4 Feature Highlights Grid */}
@@ -328,13 +328,13 @@ export default function ButterToastProposalPage() {
         </div>
 
         <div className="bg-white/90 border border-[#D6A86E] p-3 rounded-xl shadow-xs">
-          <div className="text-xs md:text-sm font-bold text-[#B26A27] mb-1">🛡️ 刪單改單控管 SOP</div>
-          <p className="text-[11px] md:text-xs text-[#7C6E62] leading-tight">製作中狀態自動鎖定防隨意改單，保障現做品質與產線流程</p>
+          <div className="text-xs md:text-sm font-bold text-[#B26A27] mb-1">🪙 會員紅利積點折抵</div>
+          <p className="text-[11px] md:text-xs text-[#7C6E62] leading-tight">消費滿$50送1點，結帳一鍵折抵金額或兌換免費甜點</p>
         </div>
 
         <div className="bg-white/90 border border-[#D6A86E] p-3 rounded-xl shadow-xs">
-          <div className="text-xs md:text-sm font-bold text-[#B26A27] mb-1">🔔 久候未取雙向提醒</div>
-          <p className="text-[11px] md:text-xs text-[#7C6E62] leading-tight">逾時 30 分鐘自動對顧客發卡片催取，同步通知老闆備貨狀態</p>
+          <div className="text-xs md:text-sm font-bold text-[#B26A27] mb-1">🛡️ 刪單改單控管 SOP</div>
+          <p className="text-[11px] md:text-xs text-[#7C6E62] leading-tight">製作中狀態自動鎖定防隨意改單，保障現做品質與產線流程</p>
         </div>
 
         <div className="bg-white/90 border border-[#D6A86E] p-3 rounded-xl shadow-xs">
@@ -346,9 +346,9 @@ export default function ButterToastProposalPage() {
       <div className="inline-flex items-center flex-wrap justify-center gap-1.5 px-4 py-1.5 bg-[#B26A27] text-[#FFFDF9] rounded-full text-xs font-bold shadow-xs mb-4">
         <span>✨ 0 專職小編需求</span>
         <span>•</span>
-        <span>✨ 改單刪單 SOP 控管</span>
+        <span>✨ 會員紅利積點折抵</span>
         <span>•</span>
-        <span>✨ 久候未取雙向提醒</span>
+        <span>✨ 改單刪單 SOP 控管</span>
         <span>•</span>
         <span>✨ 後台 AI 日報</span>
       </div>
@@ -369,7 +369,7 @@ export default function ButterToastProposalPage() {
           【生乳/奶霜專賣店】現況與核心需求拆解
         </h2>
         <span className="text-[10px] md:text-xs bg-[#EFE7DA] text-[#B26A27] px-2.5 py-0.5 rounded-full font-bold">
-          5,000人規模與防禦 SOP 規劃
+          5,000人規模與 CRM 忠誠度規劃
         </span>
       </div>
 
@@ -383,18 +383,18 @@ export default function ButterToastProposalPage() {
         </div>
 
         <div className="bg-white border-2 border-[#D6A86E] rounded-2xl p-4 shadow-xs bg-amber-50/20">
-          <div className="text-xl md:text-2xl mb-1">🛡️</div>
-          <h3 className="font-serif font-bold text-sm md:text-base text-[#B26A27] mb-1">需求 2：刪單、改單嚴格防護 SOP</h3>
+          <div className="text-xl md:text-2xl mb-1">🪙</div>
+          <h3 className="font-serif font-bold text-sm md:text-base text-[#B26A27] mb-1">需求 2：LINE 會員紅利積點 ✕ 點數直接折抵點餐</h3>
           <p className="text-xs md:text-sm text-[#382D24] leading-relaxed">
-            <b>【產線保護 SOP】</b>未備貨狀態允許自主改單釋庫存；一旦廚房切換為「製作中」，AI 即刻鎖定訂單，親切引導：*「餐點已在現做程序囉！如需調整請致電門市」*，避免損耗與糾紛！
+            <b>【高回購率 CRM 機制】</b>消費滿 $50 贈 1 點（1點＝$1元）。結帳卡片自動讀取會員剩餘點數，允許<b>「一鍵全額/部分折抵」</b>或兌換指定免費炸吐司！
           </p>
         </div>
 
-        <div className="bg-white border-2 border-[#D6A86E] rounded-2xl p-4 shadow-xs bg-amber-50/20">
-          <div className="text-xl md:text-2xl mb-1">🔔</div>
-          <h3 className="font-serif font-bold text-sm md:text-base text-[#B26A27] mb-1">需求 3：久候未取雙向卡片提醒機制</h3>
-          <p className="text-xs md:text-sm text-[#382D24] leading-relaxed">
-            <b>【雙向防棄單提醒】</b>取餐前30分鐘自動卡片提醒；若逾時 30 分鐘未前來，AI 自動推播二次催取卡片給顧客，並<b>同步推播通知老闆/廚房</b>，掌握現場餐點狀態！
+        <div className="bg-white border border-[#E6DDCF] rounded-2xl p-4 shadow-xs">
+          <div className="text-xl md:text-2xl mb-1">🛡️</div>
+          <h3 className="font-serif font-bold text-sm md:text-base text-[#B26A27] mb-1">需求 3：刪單、改單嚴格防護 SOP 與久候催取</h3>
+          <p className="text-xs md:text-sm text-[#7C6E62] leading-relaxed">
+            未備貨狀態允許自主改單釋庫存；一旦切換為「製作中」，AI 即刻鎖定訂單並溫和說明；逾時 30 分鐘自動推播二次催取卡片，保障現做口感！
           </p>
         </div>
 
@@ -414,7 +414,7 @@ export default function ButterToastProposalPage() {
     <div className="w-full my-auto space-y-4">
       <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-2">
         <h2 className="text-base md:text-2xl font-bold font-serif text-[#382D24]">
-          顧客點餐介面 ✕ 刪改單控管 SOP ✕ 老闆 AI 助手
+          會員紅利積點折抵 ✕ 顧客點餐介面 ✕ 老闆 AI 助手
         </h2>
         <span className="text-[10px] md:text-xs bg-[#EFE7DA] text-[#B26A27] px-2.5 py-0.5 rounded-full font-bold">
           前後台權限隔離
@@ -426,14 +426,14 @@ export default function ButterToastProposalPage() {
           <div className="flex items-center gap-1.5 mb-2">
             <span className="text-lg">📱</span>
             <h4 className="font-serif font-bold text-xs md:text-base text-[#B26A27]">
-              前台：顧客點餐介面 ✕ 刪改單與催取提醒
+              前台：LINE 會員紅利積點 ✕ 一鍵點數折抵點餐
             </h4>
           </div>
           <ul className="text-xs md:text-sm text-[#382D24] space-y-1.5">
+            <li>• <b>點數自動歸戶與折抵</b>：消費滿 $50 送 1 點。結帳卡片自動顯示顧客點數並允許一鍵勾選「折抵現金」。</li>
+            <li>• <b>尊榮會員三層分級 (新星/狂熱者/VIP)</b>：根據消費金額自動升級，享有 1.5倍 ~ 2倍 點數加速與新品預購權。</li>
             <li>• <b>改單/刪單 SOP 控管</b>：未製作前可自主微調；已開始製作自動鎖定，AI 溫和說明並提供店家聯繫方式。</li>
             <li>• <b>久候未取雙向催取</b>：逾時 30 分鐘自動推播關懷卡片提醒取貨，維護現做最佳口感風味。</li>
-            <li>• <b>低庫存倒數動態標籤</b>：剩餘低於警戒自動顯示「🔥僅剩最後 X 份」加速顧客下單。</li>
-            <li>• <b>B2B 大宗採購對接</b>：200-400份公司活動採購自動引導填寫統編抬頭、外送時間與試算階梯折扣。</li>
           </ul>
         </div>
 
@@ -441,13 +441,13 @@ export default function ButterToastProposalPage() {
           <div className="flex items-center gap-1.5 mb-2">
             <span className="text-lg">🚨</span>
             <h4 className="font-serif font-bold text-[#B26A27] text-xs md:text-base">
-              後台：完售缺料實時推播 ✕ 一鍵匯出 PDF 估價單
+              後台：會員點數數據與 CRM 匯出 ✕ AI 數據 Copilot
             </h4>
           </div>
           <ul className="text-xs md:text-sm text-[#382D24] space-y-1.5">
+            <li>• <b>會員點數發放與過期設定</b>：老闆可彈性設定點數活動（如週五雙倍送）、手動補點與名單匯出。</li>
             <li>• <b>久候未取雙向同步通知</b>：顧客逾時未取餐，系統同步推播給老闆/廚房即時控管餐點狀況。</li>
             <li>• <b>大宗採購一鍵 PDF 匯出</b>：後台自動生成帶有公司統編與大小印章之正式 PDF 估價單供報帳。</li>
-            <li>• <b>品項完售與缺料實時警報</b>：限量賣完或原物料低於警戒，AI 秒級主動推播通知老闆！</li>
             <li>• <b>後台 AI 數據 Copilot</b>：店長直接查詢「今日業績/完成幾單/詢問未下單幾人/新會員數」，AI 秒回！</li>
           </ul>
         </div>
@@ -488,7 +488,7 @@ export default function ButterToastProposalPage() {
             </div>
             <ul className="text-xs text-[#382D24] space-y-0.5 mb-1.5">
               <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> 100% 線上全遠端建置，免到店干擾營運</li>
-              <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> <b>改單刪單控管 SOP ✕ 久候未取雙向提醒</b></li>
+              <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> <b>LINE 會員紅利積點 ✕ 點費折抵 ✕ 改單 SOP</b></li>
               <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> 後台 AI 經營助手大腦 (調閱業績與未下單分析)</li>
               <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> AI 歷史訂單記憶大腦 (口味記憶・貼心推薦)</li>
               <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> 前後台原生身份認證與店家員工專屬權限鎖</li>
@@ -722,7 +722,7 @@ export default function ButterToastProposalPage() {
     <div className="w-full my-auto space-y-4">
       <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-2">
         <h2 className="text-base md:text-2xl font-bold font-serif text-[#382D24]">
-          詳細服務交付 ✕ 吉祥物 AI 人設 ✕ 防禦 SOP 清單
+          詳細服務交付 ✕ 吉祥物 AI 人設 ✕ 會員 CRM 積點清單
         </h2>
         <span className="text-[10px] md:text-xs bg-[#EFE7DA] text-[#B26A27] px-2.5 py-0.5 rounded-full font-bold">
           完整交付清單
@@ -731,13 +731,13 @@ export default function ButterToastProposalPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
         <div className="bg-white border border-[#E6DDCF] rounded-2xl p-4 shadow-xs">
-          <h4 className="font-bold text-[#B26A27] text-xs md:text-sm mb-2">📌 AI 店長與防禦 SOP 建置 (一次性)</h4>
+          <h4 className="font-bold text-[#B26A27] text-xs md:text-sm mb-2">📌 AI 店長與會員 CRM 建置 (一次性)</h4>
           <ul className="text-xs md:text-sm text-[#382D24] space-y-1">
             <li>✓ 100% 全遠端雲端建置與線上指導驗收</li>
-            <li>✓ <b>刪單/改單產線鎖定控管 SOP 流程</b></li>
-            <li>✓ <b>久候未取餐雙向自動化提醒與催取卡片</b></li>
-            <li>✓ 完售/缺料實時推播警報 ✕ 企業 B2B 大宗對接</li>
-            <li>✓ 後台 AI 經營助手 (調閱業績與未下單分析)</li>
+            <li>✓ <b>LINE 會員紅利積點 ✕ 點數折抵點餐機制</b></li>
+            <li>✓ <b>會員尊榮分級 (新星/狂熱者/VIP) 自動升級</b></li>
+            <li>✓ 刪單/改單產線鎖定控管 SOP 流程</li>
+            <li>✓ 久候未取餐雙向自動化提醒與催取卡片</li>
             <li>✓ 前後台原生身份認證與店家員工專屬權限鎖</li>
           </ul>
         </div>
@@ -789,14 +789,14 @@ export default function ButterToastProposalPage() {
           </thead>
           <tbody className="divide-y divide-[#E6DDCF] text-[#382D24]">
             <tr>
+              <td className="p-2 md:p-2.5 font-bold">會員經營與紅利積點</td>
+              <td className="p-2 md:p-2.5 text-gray-600">手動蓋章卡易遺失，無法精確算點折抵</td>
+              <td className="p-2 md:p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]"><b>LINE 免下載卡片自動算點 ✕ 點餐一鍵直接折抵現金</b></td>
+            </tr>
+            <tr>
               <td className="p-2 md:p-2.5 font-bold">刪改單與棄單防禦</td>
               <td className="p-2 md:p-2.5 text-gray-600">口頭改單易忘記，棄單無法即時催取損耗大</td>
               <td className="p-2 md:p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]"><b>製作中狀態自動鎖定防隨意改單 ✕ 久候未取雙向催卡</b></td>
-            </tr>
-            <tr>
-              <td className="p-2 md:p-2.5 font-bold">完售與缺料監控</td>
-              <td className="p-2 md:p-2.5 text-gray-600">忘記手動改菜單易引糾紛</td>
-              <td className="p-2 md:p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]"><b>完售/缺料秒級主動推播警報給老闆</b></td>
             </tr>
             <tr>
               <td className="p-2 md:p-2.5 font-bold">企業 B2B 大宗團購對接</td>

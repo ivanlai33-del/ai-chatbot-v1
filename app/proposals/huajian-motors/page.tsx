@@ -331,7 +331,7 @@ export default function HuajianMotorsProposalPage() {
         </div>
 
         <div className="bg-slate-800/80 border border-slate-700 p-3 rounded-xl shadow-xs backdrop-blur-md">
-          <div className="text-xs md:text-sm font-bold text-indigo-400 mb-1">🖥️ 店家專屬後台 (AI 主 ✕ 我輔助)</div>
+          <div className="text-xs md:text-sm font-bold text-indigo-400 mb-1">🖥️ 店家專屬管理後台</div>
           <p className="text-[11px] md:text-xs text-slate-300 leading-tight">直覺操作後台，登入一鍵生成文案配圖、審核彈性修改與預覽。</p>
         </div>
 
@@ -347,9 +347,9 @@ export default function HuajianMotorsProposalPage() {
       </div>
 
       <div className="inline-flex items-center flex-wrap justify-center gap-1.5 px-4 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full text-xs font-bold shadow-md mb-4">
-        <span>✨ 建置費：NT$ 36,000 (落在預算 3-4 萬黃金區間)</span>
+        <span>✨ 系統建置費：NT$ 36,000</span>
         <span>•</span>
-        <span>✨ 月費：NT$ 2,500/月 (每天可發 2~3 篇貼文)</span>
+        <span>✨ 月營運維護費：NT$ 2,500/月 (每天可發 2~3 篇貼文)</span>
       </div>
 
       <div className="pt-3 border-t border-slate-800 text-xs text-slate-400 font-medium flex justify-center flex-wrap gap-2 md:gap-4">
@@ -360,7 +360,7 @@ export default function HuajianMotorsProposalPage() {
     </div>
   );
 
-  // Section 2: Requirements & Quotas (Plain language description of monthly quotas)
+  // Section 2: Requirements & Quotas (Clean customer-facing wording)
   const sectionRequirements = (
     <div className="w-full my-auto space-y-4">
       <div className="flex justify-between items-center border-b border-slate-800 pb-2">
@@ -368,7 +368,7 @@ export default function HuajianMotorsProposalPage() {
           每月發文與圖片產出額度詳細說明
         </h2>
         <span className="text-[10px] md:text-xs bg-blue-900/60 text-blue-300 px-2.5 py-0.5 rounded-full font-bold border border-blue-700/50">
-          每月 NT$ 2,500 包月額度
+          每月包月服務內容
         </span>
       </div>
 
@@ -424,7 +424,7 @@ export default function HuajianMotorsProposalPage() {
     </div>
   );
 
-  // Section 3: Detailed Modules Breakdown (Clean plain language)
+  // Section 3: Detailed Modules Breakdown
   const sectionModules = (
     <div className="w-full my-auto space-y-4">
       <div className="flex justify-between items-center border-b border-slate-800 pb-2">
@@ -458,7 +458,7 @@ export default function HuajianMotorsProposalPage() {
         <div className="bg-slate-800/80 border border-indigo-500/40 p-4 rounded-2xl shadow-xs">
           <div className="flex items-center justify-between mb-2">
             <h4 className="font-bold text-sm md:text-base text-indigo-400 flex items-center gap-1.5">
-              <span>🖥️</span> 模組 2：店家專屬後台控制中心 (AI 主 ✕ 我輔助)
+              <span>🖥️</span> 模組 2：店家專屬後台控制中心 (AI 智慧發文 ✕ 人工審核)
             </h4>
             <span className="text-[10px] bg-indigo-900/80 text-indigo-200 px-2 py-0.5 rounded font-mono">
               店家專屬後台
@@ -508,7 +508,7 @@ export default function HuajianMotorsProposalPage() {
     </div>
   );
 
-  // Section 4: Pricing & Invoice (3.6萬 建置費 / 2,500月費)
+  // Section 4: Pricing & Invoice
   const sectionPricing = (
     <div className="w-full my-auto space-y-3">
       <div className="flex justify-between items-center border-b border-slate-800 pb-2">
@@ -516,7 +516,7 @@ export default function HuajianMotorsProposalPage() {
           專案報價金額與發票資料填寫
         </h2>
         <span className="text-[10px] md:text-xs bg-emerald-900/80 text-emerald-300 px-2.5 py-0.5 rounded-full font-bold border border-emerald-700/50">
-          合乎客戶 3-4 萬預算
+          專屬優惠方案
         </span>
       </div>
 
@@ -761,7 +761,7 @@ export default function HuajianMotorsProposalPage() {
     </div>
   );
 
-  // Section 6: Checklist & Security (Plain language)
+  // Section 6: Checklist & Security
   const sectionChecklist = (
     <div className="w-full my-auto space-y-4">
       <div className="flex justify-between items-center border-b border-slate-800 pb-2">
@@ -779,7 +779,7 @@ export default function HuajianMotorsProposalPage() {
           <ul className="text-xs md:text-sm text-slate-300 space-y-1.5">
             <li>✓ 100% 全遠端雲端建置與線上指導驗收</li>
             <li>✓ <b>1. AI 汽車文案大腦與圖片風格配圖</b></li>
-            <li>✓ <b>2. 店家專屬後台控制中心 (AI 為主、我輔助)</b></li>
+            <li>✓ <b>2. 店家專屬後台控制中心</b></li>
             <li>✓ <b>3. 臉書 / IG / Threads 三平台一鍵同步與排程</b></li>
             <li>✓ <b>4. AI 小編留言秒回與賞車引導導客</b></li>
           </ul>

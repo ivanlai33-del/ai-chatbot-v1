@@ -300,57 +300,55 @@ export default function ButterToastProposalPage() {
     );
   }
 
-  // Section 1: Cover Header
+  // Section 1: Cover Header (Vertically Centered)
   const sectionCover = (
-    <div className="h-full flex flex-col justify-between text-center py-2 md:py-4">
-      <div>
-        <div className="flex items-center justify-center gap-2 mb-2 md:mb-3">
-          <span className="h-[1px] w-6 md:w-10 bg-[#D6A86E]"></span>
-          <span className="text-[10px] md:text-xs font-bold text-[#B26A27] tracking-widest uppercase font-mono">
-            SPECIAL PROPOSAL ✕ 2026 品牌升級企劃
-          </span>
-          <span className="h-[1px] w-6 md:w-10 bg-[#D6A86E]"></span>
+    <div className="w-full my-auto text-center py-2">
+      <div className="flex items-center justify-center gap-2 mb-2 md:mb-3">
+        <span className="h-[1px] w-6 md:w-10 bg-[#D6A86E]"></span>
+        <span className="text-[10px] md:text-xs font-bold text-[#B26A27] tracking-widest uppercase font-mono">
+          SPECIAL PROPOSAL ✕ 2026 品牌升級企劃
+        </span>
+        <span className="h-[1px] w-6 md:w-10 bg-[#D6A86E]"></span>
+      </div>
+
+      <h1 className="text-xl md:text-4xl lg:text-5xl font-black font-serif mb-2 md:mb-4 leading-tight text-[#382D24]">
+        【生乳/奶霜專賣店】<br />
+        <span className="text-[#B26A27]">AI 品牌店長 24H 自動化專案</span>
+      </h1>
+
+      <p className="text-xs md:text-base text-[#7C6E62] max-w-2xl mx-auto mb-4 md:mb-6 leading-relaxed font-medium">
+        專為無專職小編門市打造的 <b>24 小時線上 AI 智慧總管 ✕ 老闆後台 AI 數據助手</b>！前台自動接單、後台實時推播<b>「完售/缺料警報」</b>與調閱今日業績、完成單數與未下單分析！
+      </p>
+
+      {/* 4 Feature Highlights Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 mb-4 md:mb-6 text-left">
+        <div className="bg-white/90 border border-[#D6A86E] p-3 rounded-xl shadow-xs">
+          <div className="text-xs md:text-sm font-bold text-[#B26A27] mb-1">🧸 吉祥物擬真人設</div>
+          <p className="text-[11px] md:text-xs text-[#7C6E62] leading-tight">融入品牌娃娃溫暖語氣與口頭禪，建立親切感</p>
         </div>
 
-        <h1 className="text-xl md:text-4xl lg:text-5xl font-black font-serif mb-2 md:mb-4 leading-tight text-[#382D24]">
-          【生乳/奶霜專賣店】<br />
-          <span className="text-[#B26A27]">AI 品牌店長 24H 自動化專案</span>
-        </h1>
-
-        <p className="text-xs md:text-base text-[#7C6E62] max-w-2xl mx-auto mb-3 md:mb-6 leading-relaxed font-medium">
-          專為無專職小編門市打造的 <b>24 小時線上 AI 智慧總管 ✕ 老闆後台 AI 數據助手</b>！前台自動接單、後台實時推播<b>「完售/缺料警報」</b>與調閱今日業績、完成單數與未下單分析！
-        </p>
-
-        {/* 4 Feature Highlights Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 mb-3 md:mb-6 text-left">
-          <div className="bg-white/90 border border-[#D6A86E] p-3 rounded-xl shadow-xs">
-            <div className="text-xs md:text-sm font-bold text-[#B26A27] mb-1">🧸 吉祥物擬真人設</div>
-            <p className="text-[11px] md:text-xs text-[#7C6E62] leading-tight">融入品牌娃娃溫暖語氣與口頭禪，建立親切感</p>
-          </div>
-
-          <div className="bg-white/90 border border-[#D6A86E] p-3 rounded-xl shadow-xs">
-            <div className="text-xs md:text-sm font-bold text-[#B26A27] mb-1">🚨 完售與缺料警報</div>
-            <p className="text-[11px] md:text-xs text-[#7C6E62] leading-tight">品項賣完或原物料低於警戒值，AI 秒級主動推播通知老闆</p>
-          </div>
-
-          <div className="bg-white/90 border border-[#D6A86E] p-3 rounded-xl shadow-xs">
-            <div className="text-xs md:text-sm font-bold text-[#B26A27] mb-1">📊 後台 AI 數據 Copilot</div>
-            <p className="text-[11px] md:text-xs text-[#7C6E62] leading-tight">店長直接查詢「今天業績/完成幾單/幾人沒下單」，AI 自動生成報表</p>
-          </div>
-
-          <div className="bg-white/90 border border-[#D6A86E] p-3 rounded-xl shadow-xs">
-            <div className="text-xs md:text-sm font-bold text-[#B26A27] mb-1">🔔 雙向自動化提醒</div>
-            <p className="text-[11px] md:text-xs text-[#7C6E62] leading-tight">預約完成憑證卡片 ✕ 廚房備貨完成取餐通知</p>
-          </div>
+        <div className="bg-white/90 border border-[#D6A86E] p-3 rounded-xl shadow-xs">
+          <div className="text-xs md:text-sm font-bold text-[#B26A27] mb-1">🚨 完售與缺料警報</div>
+          <p className="text-[11px] md:text-xs text-[#7C6E62] leading-tight">品項賣完或原物料低於警戒值，AI 秒級主動推播通知老闆</p>
         </div>
 
-        <div className="inline-flex items-center flex-wrap justify-center gap-1.5 px-4 py-1.5 bg-[#B26A27] text-[#FFFDF9] rounded-full text-xs font-bold shadow-xs">
-          <span>✨ 0 專職小編需求</span>
-          <span>•</span>
-          <span>✨ 完售缺料實時警報</span>
-          <span>•</span>
-          <span>✨ 後台 AI 日報</span>
+        <div className="bg-white/90 border border-[#D6A86E] p-3 rounded-xl shadow-xs">
+          <div className="text-xs md:text-sm font-bold text-[#B26A27] mb-1">📊 後台 AI 數據 Copilot</div>
+          <p className="text-[11px] md:text-xs text-[#7C6E62] leading-tight">店長直接查詢「今天業績/完成幾單/幾人沒下單」，AI 自動生成報表</p>
         </div>
+
+        <div className="bg-white/90 border border-[#D6A86E] p-3 rounded-xl shadow-xs">
+          <div className="text-xs md:text-sm font-bold text-[#B26A27] mb-1">🔔 雙向自動化提醒</div>
+          <p className="text-[11px] md:text-xs text-[#7C6E62] leading-tight">預約完成憑證卡片 ✕ 廚房備貨完成取餐通知</p>
+        </div>
+      </div>
+
+      <div className="inline-flex items-center flex-wrap justify-center gap-1.5 px-4 py-1.5 bg-[#B26A27] text-[#FFFDF9] rounded-full text-xs font-bold shadow-xs mb-4">
+        <span>✨ 0 專職小編需求</span>
+        <span>•</span>
+        <span>✨ 完售缺料實時警報</span>
+        <span>•</span>
+        <span>✨ 後台 AI 日報</span>
       </div>
 
       <div className="pt-3 border-t border-[#E6DDCF] text-xs text-[#7C6E62] font-medium flex justify-center flex-wrap gap-2 md:gap-4">
@@ -361,10 +359,10 @@ export default function ButterToastProposalPage() {
     </div>
   );
 
-  // Section 2: Pain Points
+  // Section 2: Pain Points (Vertically Centered)
   const sectionPainPoints = (
-    <div className="h-full flex flex-col justify-between">
-      <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-2 mb-3">
+    <div className="w-full my-auto space-y-4">
+      <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-2">
         <h2 className="text-base md:text-2xl font-bold font-serif text-[#382D24]">
           【生乳/奶霜專賣店】現況與核心需求拆解
         </h2>
@@ -373,7 +371,7 @@ export default function ButterToastProposalPage() {
         </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 my-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
         <div className="bg-white border border-[#E6DDCF] rounded-2xl p-4 shadow-xs">
           <div className="text-xl md:text-2xl mb-1">🧸</div>
           <h3 className="font-serif font-bold text-sm md:text-base text-[#B26A27] mb-1">需求 1：品牌娃娃人設口吻與商店介紹</h3>
@@ -409,10 +407,10 @@ export default function ButterToastProposalPage() {
     </div>
   );
 
-  // Section 3: Architecture
+  // Section 3: Architecture (Vertically Centered)
   const sectionArchitecture = (
-    <div className="h-full flex flex-col justify-between">
-      <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-2 mb-3">
+    <div className="w-full my-auto space-y-4">
+      <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-2">
         <h2 className="text-base md:text-2xl font-bold font-serif text-[#382D24]">
           顧客專屬一鍵點餐介面 ✕ 老闆後台 AI 經營助手
         </h2>
@@ -421,7 +419,7 @@ export default function ButterToastProposalPage() {
         </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 my-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
         <div className="bg-white border-2 border-[#D6A86E] p-4 rounded-2xl shadow-xs">
           <div className="flex items-center gap-1.5 mb-2">
             <span className="text-lg">📱</span>
@@ -455,10 +453,10 @@ export default function ButterToastProposalPage() {
     </div>
   );
 
-  // Section 4: Pricing & Invoice
+  // Section 4: Pricing & Invoice (Vertically Centered)
   const sectionPricing = (
-    <div className="h-full flex flex-col justify-between">
-      <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-2 mb-2">
+    <div className="w-full my-auto space-y-3">
+      <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-2">
         <h2 className="text-base md:text-2xl font-bold font-serif text-[#382D24]">
           專案報價金額、對標真人小編成本與發票填寫
         </h2>
@@ -468,7 +466,7 @@ export default function ButterToastProposalPage() {
       </div>
 
       {/* Main Pricing Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {/* Card 1: Setup Fee */}
         <div className="bg-white border-2 border-[#D6A86E] rounded-2xl p-3.5 shadow-xs flex flex-col justify-between">
           <div>
@@ -540,7 +538,7 @@ export default function ButterToastProposalPage() {
       </div>
 
       {/* Bank Account Details */}
-      <div className="bg-gradient-to-br from-[#FFFDF9] to-[#FCEFDC] border-2 border-[#B26A27] rounded-2xl p-2.5 shadow-xs mb-2">
+      <div className="bg-gradient-to-br from-[#FFFDF9] to-[#FCEFDC] border-2 border-[#B26A27] rounded-2xl p-2.5 shadow-xs">
         <div className="flex justify-between items-center mb-1">
           <h4 className="font-serif font-bold text-[#B26A27] text-xs md:text-sm flex items-center gap-1">
             <span>🏦</span> 建置費訂金與尾款 — 現金匯款指定帳號
@@ -672,10 +670,10 @@ export default function ButterToastProposalPage() {
     </div>
   );
 
-  // Section 5: Timeline
+  // Section 5: Timeline (Vertically Centered)
   const sectionTimeline = (
-    <div className="h-full flex flex-col justify-between">
-      <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-2 mb-3">
+    <div className="w-full my-auto space-y-4">
+      <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-2">
         <h2 className="text-base md:text-2xl font-bold font-serif text-[#382D24]">
           全遠端零干擾建置、線上測試與交案流程
         </h2>
@@ -684,7 +682,7 @@ export default function ButterToastProposalPage() {
         </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 my-auto">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
         <div className="bg-white border border-[#E6DDCF] rounded-2xl p-4 shadow-xs">
           <span className="inline-block px-2.5 py-0.5 bg-[#B26A27] text-white rounded-full text-[10px] font-bold mb-2">PHASE 1 (Week 1)</span>
           <h4 className="font-serif font-bold text-[#B26A27] mb-1.5 text-sm md:text-base">遠端權限交接與雲端打單預設</h4>
@@ -717,10 +715,10 @@ export default function ButterToastProposalPage() {
     </div>
   );
 
-  // Section 6: Checklist & Cybersecurity
+  // Section 6: Checklist & Cybersecurity (Vertically Centered)
   const sectionChecklist = (
-    <div className="h-full flex flex-col justify-between">
-      <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-2 mb-3">
+    <div className="w-full my-auto space-y-4">
+      <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-2">
         <h2 className="text-base md:text-2xl font-bold font-serif text-[#382D24]">
           詳細服務交付 ✕ 吉祥物 AI 人設 ✕ 資安防護清單
         </h2>
@@ -729,7 +727,7 @@ export default function ButterToastProposalPage() {
         </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 my-auto">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
         <div className="bg-white border border-[#E6DDCF] rounded-2xl p-4 shadow-xs">
           <h4 className="font-bold text-[#B26A27] text-xs md:text-sm mb-2">📌 AI 店長與品牌基礎建置 (一次性)</h4>
           <ul className="text-xs md:text-sm text-[#382D24] space-y-1">
@@ -766,10 +764,10 @@ export default function ButterToastProposalPage() {
     </div>
   );
 
-  // Section 7: Summary & ROI
+  // Section 7: Summary & ROI (Vertically Centered)
   const sectionSummary = (
-    <div className="h-full flex flex-col justify-between">
-      <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-2 mb-3">
+    <div className="w-full my-auto space-y-4">
+      <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-2">
         <h2 className="text-base md:text-2xl font-bold font-serif text-[#382D24]">
           真人小編 ✕ AI 店長效益與聯絡資訊
         </h2>
@@ -778,7 +776,7 @@ export default function ButterToastProposalPage() {
         </span>
       </div>
 
-      <div className="bg-white border-2 border-[#B26A27] rounded-2xl overflow-hidden shadow-xs mb-3">
+      <div className="bg-white border-2 border-[#B26A27] rounded-2xl overflow-hidden shadow-xs">
         <table className="w-full text-left text-xs md:text-sm">
           <thead className="bg-[#EFE7DA] text-[#B26A27] font-bold border-b border-[#D6A86E]">
             <tr>
@@ -888,9 +886,9 @@ export default function ButterToastProposalPage() {
         {sectionSummary}
       </div>
 
-      {/* Desktop Mode: High-End Full Height Window Deck View (桌機經典高質感滿版矩形窗卡片) */}
+      {/* Desktop Mode: High-End Vertically & Horizontally Centered Minimalist Deck View */}
       <div className="hidden md:flex min-h-[calc(100vh-65px)] flex-col justify-between items-center p-6 max-w-5xl mx-auto">
-        <main className="w-full h-[80vh] max-h-[720px] bg-[#FFFDF9] border border-[#E6DDCF] rounded-3xl p-8 shadow-xl flex flex-col justify-between flex-1 my-2 backdrop-blur-md overflow-y-auto">
+        <main className="w-full h-[78vh] max-h-[700px] bg-[#FFFDF9] border border-[#E6DDCF] rounded-3xl p-8 md:p-10 shadow-xl flex flex-col justify-center items-center my-auto backdrop-blur-md overflow-y-auto">
           {allSections[currentSlide].component}
         </main>
 

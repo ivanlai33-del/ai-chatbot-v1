@@ -253,10 +253,10 @@ export default function ButterToastProposalPage() {
     setTimeout(() => setCopySuccess(false), 2500);
   };
 
-  // Password Lock View (100% Mobile Responsive)
+  // Password Lock View (100% Mobile Responsive inside LINE LIFF)
   if (!isUnlocked) {
     return (
-      <div className="min-h-screen bg-[#F7F3ED] text-[#382D24] flex items-center justify-center p-4 font-sans select-none overflow-x-hidden">
+      <div className="w-full min-h-screen bg-[#F7F3ED] text-[#382D24] flex flex-col justify-center items-center p-4 font-sans select-none overflow-x-hidden">
         <Script src="https://static.line-scdn.net/liff/edge/2/sdk.js" onLoad={handleLiffInit} />
         <div className="w-full max-w-sm bg-[#FFFDF9] border border-[#E6DDCF] rounded-3xl p-6 shadow-xl text-center backdrop-blur-md">
           <div className="w-12 h-12 bg-[#EFE7DA] text-[#B26A27] rounded-full flex items-center justify-center text-xl mx-auto mb-3 border border-[#D6A86E]">
@@ -293,14 +293,14 @@ export default function ButterToastProposalPage() {
 
           <div className="mt-4 pt-3 border-t border-[#E6DDCF] text-[10px] text-[#A39587] flex items-center justify-center gap-1">
             <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
-            <span>bot.ycideas.com 📱 LIFF 直向流暢瀏覽</span>
+            <span>bot.ycideas.com 📱 LINE LIFF 直向流暢瀏覽</span>
           </div>
         </div>
       </div>
     );
   }
 
-  // Section 1: Cover Header (Vertically Centered)
+  // Section 1: Cover Header
   const sectionCover = (
     <div className="w-full my-auto text-center py-2">
       <div className="flex items-center justify-center gap-2 mb-2 md:mb-3">
@@ -359,7 +359,7 @@ export default function ButterToastProposalPage() {
     </div>
   );
 
-  // Section 2: Pain Points (Vertically Centered)
+  // Section 2: Pain Points
   const sectionPainPoints = (
     <div className="w-full my-auto space-y-4">
       <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-2">
@@ -407,7 +407,7 @@ export default function ButterToastProposalPage() {
     </div>
   );
 
-  // Section 3: Architecture (Vertically Centered)
+  // Section 3: Architecture
   const sectionArchitecture = (
     <div className="w-full my-auto space-y-4">
       <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-2">
@@ -453,7 +453,7 @@ export default function ButterToastProposalPage() {
     </div>
   );
 
-  // Section 4: Pricing & Invoice (Vertically Centered)
+  // Section 4: Pricing & Invoice
   const sectionPricing = (
     <div className="w-full my-auto space-y-3">
       <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-2">
@@ -670,7 +670,7 @@ export default function ButterToastProposalPage() {
     </div>
   );
 
-  // Section 5: Timeline (Vertically Centered)
+  // Section 5: Timeline
   const sectionTimeline = (
     <div className="w-full my-auto space-y-4">
       <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-2">
@@ -715,7 +715,7 @@ export default function ButterToastProposalPage() {
     </div>
   );
 
-  // Section 6: Checklist & Cybersecurity (Vertically Centered)
+  // Section 6: Checklist & Cybersecurity
   const sectionChecklist = (
     <div className="w-full my-auto space-y-4">
       <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-2">
@@ -764,7 +764,7 @@ export default function ButterToastProposalPage() {
     </div>
   );
 
-  // Section 7: Summary & ROI (Vertically Centered)
+  // Section 7: Summary & ROI
   const sectionSummary = (
     <div className="w-full my-auto space-y-4">
       <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-2">
@@ -850,7 +850,7 @@ export default function ButterToastProposalPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F7F3ED] text-[#382D24] font-sans select-none overflow-x-hidden">
+    <div className="w-full min-h-screen bg-[#F7F3ED] text-[#382D24] font-sans select-none overflow-x-hidden">
       <Script src="https://static.line-scdn.net/liff/edge/2/sdk.js" onLoad={handleLiffInit} />
 
       {/* Top Header Bar */}
@@ -875,8 +875,8 @@ export default function ButterToastProposalPage() {
         </div>
       </header>
 
-      {/* Mobile Mode: Vertical Continuous Scroll View (手機直向順暢上下滑動模式) */}
-      <div className="block md:hidden max-w-xl mx-auto p-3 space-y-4">
+      {/* Mobile Mode: Native Vertical Continuous Scroll View (手機直向順暢上下滑動模式) */}
+      <div className="block md:hidden w-full max-w-xl mx-auto p-3 space-y-4">
         {sectionCover}
         {sectionPainPoints}
         {sectionArchitecture}

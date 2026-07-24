@@ -307,7 +307,7 @@ export default function ButterToastStarterProposalPage() {
       <div className="flex items-center justify-center gap-2 mb-2 md:mb-3">
         <span className="h-[1px] w-6 md:w-10 bg-[#D6A86E]"></span>
         <span className="text-[10px] md:text-xs font-bold text-[#B26A27] tracking-widest uppercase font-mono">
-          STARTER PROPOSAL ✕ 輕量專案
+          STARTER PROPOSAL ✕ 輕量入門專案
         </span>
         <span className="h-[1px] w-6 md:w-10 bg-[#D6A86E]"></span>
       </div>
@@ -318,23 +318,34 @@ export default function ButterToastStarterProposalPage() {
       </h1>
 
       <p className="text-xs md:text-base text-[#7C6E62] max-w-2xl mx-auto mb-4 md:mb-6 leading-relaxed font-medium">
-        專為輕量預算門市打造的 <b>1 萬元極速上線 AI 智慧總管 ✕ 1,000 元小額月費</b>！精準包含吉祥物 AI 擬真人設、LINE 圖文點餐與自動算錢發送「預約完成✔️」憑證！
+        專為輕量預算門市打造的 <b>1 萬元極速上線 AI 智慧總管 ✕ 1,000 元小額月費</b>！精準專注於<b>「聊天回覆 ✕ 產品卡片 ✕ 對話記憶 ✕ 資安防護 ✕ 品牌人設」</b>！
       </p>
 
-      {/* 2 Core Feature Highlights Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl mx-auto mb-4 md:mb-6 text-left">
-        <div className="bg-white/90 border-2 border-[#D6A86E] p-4 rounded-2xl shadow-xs">
-          <div className="text-sm md:text-base font-bold text-[#B26A27] mb-1.5">🧸 功能 1：品牌吉祥物娃娃 AI 擬真人設</div>
-          <p className="text-xs text-[#7C6E62] leading-relaxed">
-            融入「品牌吉祥物娃娃」親切可愛語氣作為 AI 店長靈魂！24hr 自動介紹品牌故事、✨營業時間 (18:00-售完為止)、面交地點地圖。
-          </p>
+      {/* 5 Core Feature Highlights Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 max-w-4xl mx-auto mb-4 md:mb-6 text-left">
+        <div className="bg-white/90 border border-[#D6A86E] p-2.5 rounded-xl shadow-xs">
+          <div className="text-xs font-bold text-[#B26A27] mb-0.5">💬 24H 聊天回覆</div>
+          <p className="text-[10px] text-[#7C6E62] leading-tight">24小時自動親切回應顧客詢問與介紹</p>
         </div>
 
-        <div className="bg-white/90 border-2 border-[#D6A86E] p-4 rounded-2xl shadow-xs">
-          <div className="text-sm md:text-base font-bold text-[#B26A27] mb-1.5">📱 功能 2：LINE 圖文菜單卡片與自動算錢</div>
-          <p className="text-xs text-[#7C6E62] leading-relaxed">
-            免去人工計算「奶霜炸吐司 ($55-$70) 與 3入$270/5入$400 自由配」。點餐卡片自動計算總額，並發送格式化「預約完成✔️」憑證卡片。
-          </p>
+        <div className="bg-white/90 border border-[#D6A86E] p-2.5 rounded-xl shadow-xs">
+          <div className="text-xs font-bold text-[#B26A27] mb-0.5">📱 彈出產品卡片</div>
+          <p className="text-[10px] text-[#7C6E62] leading-tight">即時調出圖文產品卡片供顧客點選</p>
+        </div>
+
+        <div className="bg-white/90 border border-[#D6A86E] p-2.5 rounded-xl shadow-xs">
+          <div className="text-xs font-bold text-[#B26A27] mb-0.5">🧠 記憶聊天內容</div>
+          <p className="text-[10px] text-[#7C6E62] leading-tight">記憶顧客喜好與買過的口味偏好</p>
+        </div>
+
+        <div className="bg-white/90 border border-[#D6A86E] p-2.5 rounded-xl shadow-xs">
+          <div className="text-xs font-bold text-[#B26A27] mb-0.5">🔒 金融級資安防護</div>
+          <p className="text-[10px] text-[#7C6E62] leading-tight">鎖定 F12/右鍵/複製，防偷窺騙價</p>
+        </div>
+
+        <div className="bg-white/90 border border-[#D6A86E] p-2.5 rounded-xl shadow-xs col-span-2 sm:col-span-1">
+          <div className="text-xs font-bold text-[#B26A27] mb-0.5">🧸 品牌人設導入</div>
+          <p className="text-[10px] text-[#7C6E62] leading-tight">融入品牌娃娃口頭禪與親切語氣</p>
         </div>
       </div>
 
@@ -343,7 +354,7 @@ export default function ButterToastStarterProposalPage() {
         <span>•</span>
         <span>✨ 月費低至 NT$ 1,000/月</span>
         <span>•</span>
-        <span>✨ 2 大核心功能極速上線</span>
+        <span>✨ 精準 5 大極簡核心</span>
       </div>
 
       <div className="pt-3 border-t border-[#E6DDCF] text-xs text-[#7C6E62] font-medium flex justify-center flex-wrap gap-2 md:gap-4">
@@ -354,47 +365,67 @@ export default function ButterToastStarterProposalPage() {
     </div>
   );
 
-  // Section 2: Pain Points (Exactly 2 Core Features as requested by user)
+  // Section 2: Pain Points (Strictly the 5 Core Features)
   const sectionPainPoints = (
     <div className="w-full my-auto space-y-4 max-w-4xl mx-auto">
       <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-2">
         <h2 className="text-base md:text-2xl font-bold font-serif text-[#382D24]">
-          【生乳/奶霜專賣店】入門版核心功能規劃
+          【生乳/奶霜專賣店】入門版 5 大極簡核心功能
         </h2>
         <span className="text-[10px] md:text-xs bg-[#EFE7DA] text-[#B26A27] px-2.5 py-0.5 rounded-full font-bold">
           極速 1 周輕鬆上線
         </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-white border-2 border-[#D6A86E] rounded-2xl p-5 shadow-xs flex flex-col justify-between">
-          <div>
-            <div className="text-2xl mb-2">🧸</div>
-            <h3 className="font-serif font-bold text-sm md:text-lg text-[#B26A27] mb-2">
-              功能 1：品牌吉祥物娃娃 AI 擬真人設
-            </h3>
-            <p className="text-xs md:text-sm text-[#7C6E62] leading-relaxed">
-              注入「品牌吉祥物娃娃」親切可愛語氣作為 AI 店長靈魂！24hr 自動介紹品牌故事、✨營業時間 (18:00-售完為止)、面交地點地圖。
-            </p>
-          </div>
-          <div className="mt-4 pt-2 border-t border-[#E6DDCF] text-xs font-bold text-[#B26A27]">
-            ✓ 24 小時無縫擬真客服回覆
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="bg-white border-2 border-[#D6A86E] rounded-2xl p-3.5 shadow-xs">
+          <div className="text-xl mb-1">💬</div>
+          <h3 className="font-serif font-bold text-sm text-[#B26A27] mb-1">
+            功能 1：24H 自動聊天回覆與門市問答
+          </h3>
+          <p className="text-xs text-[#7C6E62] leading-relaxed">
+            全天候 24 小時自動回覆顧客關於營業時間 (18:00-售完為止)、面交地點地圖、品牌故事與各類常見問題。
+          </p>
         </div>
 
-        <div className="bg-white border-2 border-[#D6A86E] rounded-2xl p-5 shadow-xs flex flex-col justify-between">
-          <div>
-            <div className="text-2xl mb-2">📱</div>
-            <h3 className="font-serif font-bold text-sm md:text-lg text-[#B26A27] mb-2">
-              功能 2：LINE 圖文菜單卡片與自動算錢
-            </h3>
-            <p className="text-xs md:text-sm text-[#7C6E62] leading-relaxed">
-              免去人工計算「奶霜炸吐司 ($55-$70) 與 3入$270/5入$400 自由配」。點餐卡片自動計算總額，並發送格式化「預約完成✔️」憑證卡片。
-            </p>
-          </div>
-          <div className="mt-4 pt-2 border-t border-[#E6DDCF] text-xs font-bold text-[#B26A27]">
-            ✓ 精確算錢 ✕ 免登入一鍵點餐
-          </div>
+        <div className="bg-white border-2 border-[#D6A86E] rounded-2xl p-3.5 shadow-xs">
+          <div className="text-xl mb-1">📱</div>
+          <h3 className="font-serif font-bold text-sm text-[#B26A27] mb-1">
+            功能 2：自動拉出圖文產品卡片與算錢
+          </h3>
+          <p className="text-xs text-[#7C6E62] leading-relaxed">
+            當顧客詢問品項或點餐時，AI 秒級彈出圖文產品卡片，自動計算「奶霜炸吐司 ($55-$70) 與 3入/5入優惠」。
+          </p>
+        </div>
+
+        <div className="bg-white border-2 border-[#D6A86E] rounded-2xl p-3.5 shadow-xs">
+          <div className="text-xl mb-1">🧠</div>
+          <h3 className="font-serif font-bold text-sm text-[#B26A27] mb-1">
+            功能 3：記憶客人對話內容與口味偏好
+          </h3>
+          <p className="text-xs text-[#7C6E62] leading-relaxed">
+            AI 自動記憶顧客歷史對話、買過的品項與口味偏好，在互動對話中展現個人化關懷與溫暖推薦。
+          </p>
+        </div>
+
+        <div className="bg-white border-2 border-[#D6A86E] rounded-2xl p-3.5 shadow-xs">
+          <div className="text-xl mb-1">🔒</div>
+          <h3 className="font-serif font-bold text-sm text-[#B26A27] mb-1">
+            功能 4：金融級資安防護與防偷窺鎖
+          </h3>
+          <p className="text-xs text-[#7C6E62] leading-relaxed">
+            全面防護！禁用 F12/DevTools/右鍵選單與文字複製選取，傳輸高強度加密防誘導改價防偷窺。
+          </p>
+        </div>
+
+        <div className="bg-white border-2 border-[#D6A86E] rounded-2xl p-3.5 shadow-xs md:col-span-2">
+          <div className="text-xl mb-1">🧸</div>
+          <h3 className="font-serif font-bold text-sm text-[#B26A27] mb-1">
+            功能 5：品牌吉祥物/娃娃 AI 擬真人設導入
+          </h3>
+          <p className="text-xs text-[#7C6E62] leading-relaxed">
+            將「品牌吉祥物娃娃」的親切可愛語氣、口頭禪與店長靈魂注入 AI，讓對話活潑親切、建立極佳顧客好感度！
+          </p>
         </div>
       </div>
     </div>
@@ -405,10 +436,10 @@ export default function ButterToastStarterProposalPage() {
     <div className="w-full my-auto space-y-4">
       <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-2">
         <h2 className="text-base md:text-2xl font-bold font-serif text-[#382D24]">
-          基礎 2 大核心功能 ✕ 可加購擴充模組地圖
+          極簡 5 大功能包 ✕ 未來擴充地圖
         </h2>
         <span className="text-[10px] md:text-xs bg-[#EFE7DA] text-[#B26A27] px-2.5 py-0.5 rounded-full font-bold">
-          隨時彈性擴充升級
+          極簡乾淨・不含雜質
         </span>
       </div>
 
@@ -417,22 +448,15 @@ export default function ButterToastStarterProposalPage() {
           <div className="flex items-center gap-1.5 mb-2">
             <span className="text-lg">✅</span>
             <h4 className="font-serif font-bold text-xs md:text-base text-[#B26A27]">
-              本入門版包含之 2 大標準功能
+              本入門版 100% 包含之 5 大功能
             </h4>
           </div>
-          <ul className="text-xs md:text-sm text-[#382D24] space-y-2">
-            <li className="p-2 bg-[#FFF8F0] rounded-xl border border-[#D6A86E]">
-              <b>🧸 功能 1：品牌吉祥物娃娃 AI 擬真人設</b><br/>
-              <span className="text-xs text-[#7C6E62]">24hr 親切回應、介紹故事、營業時間與門市地點</span>
-            </li>
-            <li className="p-2 bg-[#FFF8F0] rounded-xl border border-[#D6A86E]">
-              <b>📱 功能 2：LINE 圖文菜單卡片與自動算錢</b><br/>
-              <span className="text-xs text-[#7C6E62]">點餐介面、3入/5入優惠計算、發送預約完成憑證卡片</span>
-            </li>
-            <li className="text-xs text-[#7C6E62] pt-1">
-              ✓ 包含藍新金流定期定額刷卡 ($1,050/月含稅)<br/>
-              ✓ 包含企業級資安防護 (防 F12/防複製)
-            </li>
+          <ul className="text-xs text-[#382D24] space-y-1.5 font-medium">
+            <li className="p-1.5 bg-[#FFF8F0] rounded-lg border border-[#D6A86E]">💬 <b>1. 24H 聊天回覆與門市問答</b></li>
+            <li className="p-1.5 bg-[#FFF8F0] rounded-lg border border-[#D6A86E]">📱 <b>2. 自動彈出圖文產品卡片與算錢</b></li>
+            <li className="p-1.5 bg-[#FFF8F0] rounded-lg border border-[#D6A86E]">🧠 <b>3. 記憶客人對話內容與口味偏好</b></li>
+            <li className="p-1.5 bg-[#FFF8F0] rounded-lg border border-[#D6A86E]">🔒 <b>4. 金融級資安防護與防偷窺鎖</b></li>
+            <li className="p-1.5 bg-[#FFF8F0] rounded-lg border border-[#D6A86E]">🧸 <b>5. 品牌吉祥物娃娃 AI 人設導入</b></li>
           </ul>
         </div>
 
@@ -445,18 +469,18 @@ export default function ButterToastStarterProposalPage() {
           </div>
           <div className="space-y-1.5 text-xs">
             <div className="bg-[#F7F3ED] p-1.5 rounded-xl border border-[#E6DDCF]">
-              <b className="text-[#B26A27] block">🚨 完售/缺料警報 ✕ 老闆 AI 日報 Copilot</b>
-              <span className="text-[#7C6E62]">完售秒級推播通知老闆、AI 自動算帳出日報。<br/><b>加購價：+$4,000 (一次性) ｜ 月費 +$300</b></span>
+              <b className="text-[#B26A27] block">🚨 完售/缺料警報 ✕ 廚房看板 notification</b>
+              <span className="text-[#7C6E62]">完售推播老闆、廚房點擊備貨完成推播。<br/><b>加購價：+$4,000 (一次性) ｜ 月費 +$300</b></span>
             </div>
 
             <div className="bg-[#F7F3ED] p-1.5 rounded-xl border border-[#E6DDCF]">
               <b className="text-[#B26A27] block">🪙 擴充模組 A：會員紅利積點與折抵</b>
-              <span className="text-[#7C6E62]">滿$50送1點、點數現折現金、會員尊榮 3 層分級。<br/><b>加購價：+$8,000 (一次性) ｜ 月費 +$600</b></span>
+              <span className="text-[#7C6E62]">滿$50送1點、點數現折現金、VIP分級。<br/><b>加購價：+$8,000 (一次性) ｜ 月費 +$600</b></span>
             </div>
 
             <div className="bg-[#F7F3ED] p-1.5 rounded-xl border border-[#E6DDCF]">
               <b className="text-[#B26A27] block">🏢 擴充模組 B：企業 B2B 大宗團購+PDF單</b>
-              <span className="text-[#7C6E62]">200-400份公司採購對接、階梯折扣、蓋章PDF估價單。<br/><b>加購價：+$8,000 (一次性) ｜ 月費 +$600</b></span>
+              <span className="text-[#7C6E62]">200-400份公司採購對接、蓋章PDF估價單。<br/><b>加購價：+$8,000 (一次性) ｜ 月費 +$600</b></span>
             </div>
           </div>
         </div>
@@ -497,7 +521,7 @@ export default function ButterToastStarterProposalPage() {
             </div>
             <ul className="text-xs text-[#382D24] space-y-1 mb-2">
               <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> 100% 線上全遠端建置，免到店干擾營運</li>
-              <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> <b>精準包含 2 大核心接單大腦功能</b></li>
+              <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> <b>精準包含 5 大極簡核心功能 (聊天/卡片/記憶/資安/人設)</b></li>
               <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> 前後台原生身份認證與資安防護鎖</li>
               <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> 享【首月 30 天線上維護保障】與微調</li>
             </ul>
@@ -690,16 +714,14 @@ export default function ButterToastStarterProposalPage() {
           <h4 className="font-serif font-bold text-[#B26A27] mb-1.5 text-sm md:text-base">遠端權限交接與雲端打單預設</h4>
           <ul className="text-xs md:text-sm text-[#7C6E62] space-y-1">
             <li>✓ 簽訂合約並<b>轉帳付訂金 $5,000 (含稅$5,250)</b></li>
-            <li>✓ 線上邀請授權、提供員工名單白名單與菜單</li>
-            <li>✓ 預先綁定雲端打單機設定，開箱插電即用</li>
+            <li>✓ 線上邀請授權與菜單人設匯入</li>
           </ul>
         </div>
         <div className="bg-white border border-[#E6DDCF] rounded-2xl p-4 shadow-xs">
           <span className="inline-block px-2.5 py-0.5 bg-[#B26A27] text-white rounded-full text-[10px] font-bold mb-2">PHASE 2 (Week 2)</span>
           <h4 className="font-serif font-bold text-[#B26A27] mb-1.5 text-sm md:text-base">測試環境與線上視訊演練</h4>
           <ul className="text-xs md:text-sm text-[#7C6E62] space-y-1">
-            <li>✓ 專屬點餐介面免登入與 AI 後台經營助手測試</li>
-            <li>✓ 掃測試碼進行 3入/5入折價與雙向取貨測試</li>
+            <li>✓ 專屬點餐介面免登入與 AI 聊天對話測試</li>
             <li>✓ 雙方進行 30 分鐘線上視訊會審微調語氣</li>
           </ul>
         </div>
@@ -722,7 +744,7 @@ export default function ButterToastStarterProposalPage() {
     <div className="w-full my-auto space-y-4">
       <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-2">
         <h2 className="text-base md:text-2xl font-bold font-serif text-[#382D24]">
-          詳細服務交付 ✕ 2 大核心功能交付清單
+          詳細服務交付 ✕ 5 大極簡功能交付清單
         </h2>
         <span className="text-[10px] md:text-xs bg-[#EFE7DA] text-[#B26A27] px-2.5 py-0.5 rounded-full font-bold">
           入門版交付清單
@@ -731,12 +753,13 @@ export default function ButterToastStarterProposalPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
         <div className="bg-white border border-[#E6DDCF] rounded-2xl p-4 shadow-xs">
-          <h4 className="font-bold text-[#B26A27] text-xs md:text-sm mb-2">📌 基礎入門 AI 店長建置 (一次性)</h4>
+          <h4 className="font-bold text-[#B26A27] text-xs md:text-sm mb-2">📌 5 大極簡核心功能交付 (一次性)</h4>
           <ul className="text-xs md:text-sm text-[#382D24] space-y-1.5">
-            <li>✓ 100% 全遠端雲端建置與線上指導驗收</li>
-            <li>✓ <b>功能 1：品牌吉祥物娃娃 AI 擬真人設 (24H客服)</b></li>
-            <li>✓ <b>功能 2：LINE 圖文菜單卡片與自動算錢 (憑證發送)</b></li>
-            <li>✓ 前後台原生身份認證與資安防護鎖</li>
+            <li>✓ <b>1. 24H 聊天回覆與門市問答</b></li>
+            <li>✓ <b>2. 自動彈出圖文產品卡片與算錢</b></li>
+            <li>✓ <b>3. 記憶客人對話內容與口味偏好</b></li>
+            <li>✓ <b>4. 金融級資安防護與防偷窺鎖</b></li>
+            <li>✓ <b>5. 品牌吉祥物/娃娃 AI 人設導入</b></li>
           </ul>
         </div>
 
@@ -780,19 +803,19 @@ export default function ButterToastStarterProposalPage() {
             <tr>
               <th className="p-2 md:p-2.5">評估比較項目</th>
               <th className="p-2 md:p-2.5 text-gray-500">真人小編</th>
-              <th className="p-2 md:p-2.5 text-[#B26A27] bg-[#FFF8F0] font-black">🤖 AI 店長基礎入門版</th>
+              <th className="p-2 md:p-2.5 text-[#B26A27] bg-[#FFF8F0] font-black">🤖 AI 店長極簡入門版</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[#E6DDCF] text-[#382D24]">
             <tr>
-              <td className="p-2 md:p-2.5 font-bold">吉祥物客服對話</td>
+              <td className="p-2 md:p-2.5 font-bold">聊天回覆與人設</td>
               <td className="p-2 md:p-2.5 text-gray-600">打字慢，晚上休假無法即時回</td>
-              <td className="p-2 md:p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]"><b>【功能1】吉祥物娃娃語氣 24H 即時回覆</b></td>
+              <td className="p-2 md:p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]"><b>吉祥物娃娃語氣 24H 即時回覆 ✕ 記憶顧客內容</b></td>
             </tr>
             <tr>
-              <td className="p-2 md:p-2.5 font-bold">點餐算錢與憑證</td>
-              <td className="p-2 md:p-2.5 text-gray-600">人工算錢易算錯，需手打憑證</td>
-              <td className="p-2 md:p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]"><b>【功能2】LINE 圖文菜單自動算錢發憑證</b></td>
+              <td className="p-2 md:p-2.5 font-bold">點餐算錢與卡片</td>
+              <td className="p-2 md:p-2.5 text-gray-600">人工算錢易算錯，需手發圖文</td>
+              <td className="p-2 md:p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]"><b>自動彈出圖文產品卡片與算錢發憑證</b></td>
             </tr>
             <tr>
               <td className="p-2 md:p-2.5 font-bold">方案金額與負擔</td>

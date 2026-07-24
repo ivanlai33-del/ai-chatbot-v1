@@ -317,7 +317,7 @@ export default function ButterToastProposalPage() {
       </h1>
 
       <p className="text-xs md:text-base text-[#7C6E62] max-w-2xl mx-auto mb-4 md:mb-6 leading-relaxed font-medium">
-        專為無專職小編門市打造的 <b>24 小時線上 AI 智慧總管 ✕ 老闆後台 AI 數據助手</b>！前台自動接單、後台實時推播<b>「完售/缺料警報」</b>與調閱今日業績、完成單數與未下單分析！
+        專為無專職小編門市打造的 <b>24 小時線上 AI 智慧總管 ✕ 老闆後台 AI 數據助手</b>！前台自動接單、後台實時推播<b>「完售/缺料警報 ✕ 企業大宗採購對接」</b>與調閱今日業績！
       </p>
 
       {/* 4 Feature Highlights Grid */}
@@ -333,13 +333,13 @@ export default function ButterToastProposalPage() {
         </div>
 
         <div className="bg-white/90 border border-[#D6A86E] p-3 rounded-xl shadow-xs">
-          <div className="text-xs md:text-sm font-bold text-[#B26A27] mb-1">📊 後台 AI 數據 Copilot</div>
-          <p className="text-[11px] md:text-xs text-[#7C6E62] leading-tight">店長直接查詢「今天業績/完成幾單/幾人沒下單」，AI 自動生成報表</p>
+          <div className="text-xs md:text-sm font-bold text-[#B26A27] mb-1">🏢 企業 B2B 大宗團購</div>
+          <p className="text-[11px] md:text-xs text-[#7C6E62] leading-tight">200-400份公司採購自動引導、階梯折扣與一鍵匯出 PDF 估價單</p>
         </div>
 
         <div className="bg-white/90 border border-[#D6A86E] p-3 rounded-xl shadow-xs">
-          <div className="text-xs md:text-sm font-bold text-[#B26A27] mb-1">🔔 雙向自動化提醒</div>
-          <p className="text-[11px] md:text-xs text-[#7C6E62] leading-tight">預約完成憑證卡片 ✕ 廚房備貨完成取餐通知</p>
+          <div className="text-xs md:text-sm font-bold text-[#B26A27] mb-1">📊 後台 AI 數據 Copilot</div>
+          <p className="text-[11px] md:text-xs text-[#7C6E62] leading-tight">店長直接查詢「今天業績/完成幾單/幾人沒下單」，AI 自動生成報表</p>
         </div>
       </div>
 
@@ -347,6 +347,8 @@ export default function ButterToastProposalPage() {
         <span>✨ 0 專職小編需求</span>
         <span>•</span>
         <span>✨ 完售缺料實時警報</span>
+        <span>•</span>
+        <span>✨ 企業 B2B 大宗團購應變</span>
         <span>•</span>
         <span>✨ 後台 AI 日報</span>
       </div>
@@ -367,7 +369,7 @@ export default function ButterToastProposalPage() {
           【生乳/奶霜專賣店】現況與核心需求拆解
         </h2>
         <span className="text-[10px] md:text-xs bg-[#EFE7DA] text-[#B26A27] px-2.5 py-0.5 rounded-full font-bold">
-          5,000人規模規劃
+          5,000人規模與 B2B 大宗規劃
         </span>
       </div>
 
@@ -382,17 +384,17 @@ export default function ButterToastProposalPage() {
 
         <div className="bg-white border border-[#E6DDCF] rounded-2xl p-4 shadow-xs">
           <div className="text-xl md:text-2xl mb-1">🧮</div>
-          <h3 className="font-serif font-bold text-sm md:text-base text-[#B26A27] mb-1">需求 2：奶霜炸吐司多品項自動算錢</h3>
+          <h3 className="font-serif font-bold text-sm md:text-base text-[#B26A27] mb-1">需求 2：奶霜炸吐司多品項與低庫存倒數標籤</h3>
           <p className="text-xs md:text-sm text-[#7C6E62] leading-relaxed">
-            免去人工計算「奶霜炸吐司 ($55-$70)、OREO系列 ($75-$85)、夏日限定芒果 ($120-$130) 與 3入$270/5入$400 自由配」。AI 自動算總額，提示「📌付款請準備剛好金額 (恕不找零) 或提前匯款」。
+            免去人工計算「奶霜炸吐司 ($55-$70) 與 3入$270/5入$400 自由配」。當剩餘庫存低於警戒 (如剩5份)，菜單自動亮起<b>「🔥僅剩 5 份」</b>倒數標籤觸發飢餓行銷！
           </p>
         </div>
 
-        <div className="bg-white border border-[#E6DDCF] rounded-2xl p-4 shadow-xs">
-          <div className="text-xl md:text-2xl mb-1">🤖</div>
-          <h3 className="font-serif font-bold text-sm md:text-base text-[#B26A27] mb-1">需求 3：AI 自動發送「預約完成✔️」與雙向通知</h3>
-          <p className="text-xs md:text-sm text-[#7C6E62] leading-relaxed">
-            目前無專職小編。當顧客確認訂購後，AI 自動發送「預約完成✔️」憑證卡片與廚房提示；廚房做完點擊「完成備貨」，AI 自動推播「餐點已備妥，請至指定地點取餐」給顧客！
+        <div className="bg-white border-2 border-[#D6A86E] rounded-2xl p-4 shadow-xs bg-amber-50/20">
+          <div className="text-xl md:text-2xl mb-1">🏢</div>
+          <h3 className="font-serif font-bold text-sm md:text-base text-[#B26A27] mb-1">需求 3：企業 B2B 大宗團購 200-400 份應變</h3>
+          <p className="text-xs md:text-sm text-[#382D24] leading-relaxed">
+            <b>【高單價 B2B 採購對接】</b>識別經辦大宗詢問，AI 自動引導填寫公司統編、活動日期與數量；現場計算階梯折扣並秒級推播警報給老闆，後台一鍵匯出<b>「正式 PDF 蓋章估價單」</b>！
           </p>
         </div>
 
@@ -412,7 +414,7 @@ export default function ButterToastProposalPage() {
     <div className="w-full my-auto space-y-4">
       <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-2">
         <h2 className="text-base md:text-2xl font-bold font-serif text-[#382D24]">
-          顧客專屬一鍵點餐介面 ✕ 老闆後台 AI 經營助手
+          顧客點餐介面 ✕ 企業大宗採購對接 ✕ 老闆 AI 助手
         </h2>
         <span className="text-[10px] md:text-xs bg-[#EFE7DA] text-[#B26A27] px-2.5 py-0.5 rounded-full font-bold">
           前後台權限隔離
@@ -424,13 +426,13 @@ export default function ButterToastProposalPage() {
           <div className="flex items-center gap-1.5 mb-2">
             <span className="text-lg">📱</span>
             <h4 className="font-serif font-bold text-xs md:text-base text-[#B26A27]">
-              前台：顧客專屬一鍵點餐介面（免登入免帳密）
+              前台：顧客點餐介面 ✕ B2B 大宗團購詢價
             </h4>
           </div>
           <ul className="text-xs md:text-sm text-[#382D24] space-y-1.5">
             <li>• <b>顧客歷史訂單記憶</b>：AI 自動記錄買過品項與口味，進行溫暖對話交流與新品推薦。</li>
-            <li>• <b>品牌娃娃親切口吻</b>：AI 設定為品牌吉祥物口頭禪與溫暖互動，擬真活潑。</li>
-            <li>• <b>免記憶密碼點餐</b>：顧客點擊「🍞線上點餐」彈出專屬介面，自動識別顧客身份。</li>
+            <li>• <b>低庫存倒數動態標籤</b>：剩餘低於警戒自動顯示「🔥僅剩最後 X 份」加速顧客下單。</li>
+            <li>• <b>B2B 大宗採購對接</b>：200-400份公司活動採購自動引導填寫統編抬頭、外送時間與試算階梯折扣。</li>
             <li>• <b>預約憑證卡片</b>：送出訂單即刻於聊天對話生成格式化「預約完成✔️」憑證卡片。</li>
           </ul>
         </div>
@@ -439,14 +441,14 @@ export default function ButterToastProposalPage() {
           <div className="flex items-center gap-1.5 mb-2">
             <span className="text-lg">🚨</span>
             <h4 className="font-serif font-bold text-[#B26A27] text-xs md:text-base">
-              後台：完售缺料實時推播 ✕ 老闆 AI 數據助手
+              後台：完售缺料實時推播 ✕ 一鍵匯出 PDF 估價單
             </h4>
           </div>
           <ul className="text-xs md:text-sm text-[#382D24] space-y-1.5">
+            <li>• <b>大宗採購一鍵 PDF 匯出</b>：後台自動生成帶有公司統編與大小印章之正式 PDF 估價單供報帳。</li>
             <li>• <b>品項完售與缺料實時警報</b>：限量賣完或原物料低於警戒，AI 秒級主動推播通知老闆！</li>
             <li>• <b>直覺式後台庫存管理</b>：店長可隨時一鍵開關商品上架狀態與微調每日數量！</li>
             <li>• <b>後台 AI 數據 Copilot</b>：店長直接查詢「今日業績/完成幾單/詢問未下單幾人/新會員數」，AI 秒回！</li>
-            <li>• <b>每日營業自動日報</b>：每日打烊時間 AI 自動整理今日營業額、熱銷排行與未下單潛在顧客分析。</li>
           </ul>
         </div>
       </div>
@@ -486,7 +488,7 @@ export default function ButterToastProposalPage() {
             </div>
             <ul className="text-xs text-[#382D24] space-y-0.5 mb-1.5">
               <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> 100% 線上全遠端建置，免到店干擾營運</li>
-              <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> <b>完售/缺料實時推播警報 ✕ 直覺式庫存控管</b></li>
+              <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> <b>完售/缺料實時推播警報 ✕ 企業 B2B 大宗對接</b></li>
               <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> 後台 AI 經營助手大腦 (調閱業績與未下單分析)</li>
               <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> AI 歷史訂單記憶大腦 (口味記憶・貼心推薦)</li>
               <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> 前後台原生身份認證與店家員工專屬權限鎖</li>
@@ -732,7 +734,7 @@ export default function ButterToastProposalPage() {
           <h4 className="font-bold text-[#B26A27] text-xs md:text-sm mb-2">📌 AI 店長與品牌基礎建置 (一次性)</h4>
           <ul className="text-xs md:text-sm text-[#382D24] space-y-1">
             <li>✓ 100% 全遠端雲端建置與線上指導驗收</li>
-            <li>✓ <b>完售/缺料實時推播警報 ✕ 直覺式庫存控管</b></li>
+            <li>✓ <b>完售/缺料實時推播警報 ✕ 企業 B2B 大宗對接</b></li>
             <li>✓ <b>後台 AI 經營助手 (調閱業績與未下單分析)</b></li>
             <li>✓ AI 歷史訂單記憶大腦 (口味記憶・貼心推薦)</li>
             <li>✓ 前後台原生身份認證與店家員工專屬權限鎖</li>
@@ -797,9 +799,9 @@ export default function ButterToastProposalPage() {
               <td className="p-2 md:p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]"><b>完售/缺料秒級主動推播警報給老闆</b></td>
             </tr>
             <tr>
-              <td className="p-2 md:p-2.5 font-bold">單日對話處理容量</td>
-              <td className="p-2 md:p-2.5 text-red-600 font-bold">每天最多 30~50 筆</td>
-              <td className="p-2 md:p-2.5 font-black text-emerald-700 bg-[#FFF8F0]">單日精確處理 1,000+ 筆訂單</td>
+              <td className="p-2 md:p-2.5 font-bold">企業 B2B 大宗團購對接</td>
+              <td className="p-2 md:p-2.5 text-gray-600">人工詢問溝通慢，缺 PDF 報價單</td>
+              <td className="p-2 md:p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]"><b>200-400份採購引導、階梯折扣與一鍵 PDF 估價單</b></td>
             </tr>
             <tr>
               <td className="p-2 md:p-2.5 font-bold">每月固定費用成本</td>

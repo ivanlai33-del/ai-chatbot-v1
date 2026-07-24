@@ -349,7 +349,7 @@ export default function HuajianMotorsProposalPage() {
       <div className="inline-flex items-center flex-wrap justify-center gap-1.5 px-4 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full text-xs font-bold shadow-md mb-4">
         <span>✨ 建置費：NT$ 36,000 (落在預算 3-4 萬黃金區間)</span>
         <span>•</span>
-        <span>✨ 月費：NT$ 2,500/月</span>
+        <span>✨ 月費：NT$ 2,500/月 (每天可發 2~3 篇貼文)</span>
       </div>
 
       <div className="pt-3 border-t border-slate-800 text-xs text-slate-400 font-medium flex justify-center flex-wrap gap-2 md:gap-4">
@@ -360,63 +360,71 @@ export default function HuajianMotorsProposalPage() {
     </div>
   );
 
-  // Section 2: Requirements & Problem Statement
+  // Section 2: Requirements & Quotas (Monthly Article & Image Quota Detailed)
   const sectionRequirements = (
     <div className="w-full my-auto space-y-4">
       <div className="flex justify-between items-center border-b border-slate-800 pb-2">
         <h2 className="text-base md:text-2xl font-bold text-white">
-          【華鍵汽車】需求拆解與 AI 解決方案
+          每月發文與圖片產出額度詳細說明
         </h2>
         <span className="text-[10px] md:text-xs bg-blue-900/60 text-blue-300 px-2.5 py-0.5 rounded-full font-bold border border-blue-700/50">
-          需求完全對齊
+          每月 NT$ 2,500 包月額度
         </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-        <div className="bg-slate-800/70 border border-slate-700 rounded-2xl p-4 shadow-xs">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-xl">🎯</span>
-            <h3 className="font-bold text-sm md:text-base text-blue-400">痛點 1：三平台維護耗時，文案與風格易不一致</h3>
-          </div>
-          <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
-            以往小編需分別開啟 FB、IG、Threads 手動貼文，且文字色調與排版常不統一。<b>AI 大腦自動鎖定華鍵汽車風格，確保日常、知識與活動貼文排版完美統一。</b>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+        {/* Quota 1: Articles */}
+        <div className="bg-slate-800/80 border-2 border-blue-500/50 rounded-2xl p-4 shadow-xs">
+          <div className="text-2xl mb-1">📝</div>
+          <h3 className="font-bold text-sm md:text-base text-blue-400 mb-1">
+            1. 文案生成額度：60 ~ 90 篇 / 月
+          </h3>
+          <p className="text-xs text-slate-300 leading-relaxed mb-2">
+            相當於<b>天天可發文，每天可發 2~3 篇</b>！涵蓋華鍵汽車 FB 官方形象、IG 視覺與 Threads 即時促銷特賣。
           </p>
+          <div className="bg-slate-900/80 p-2 rounded-xl text-[11px] text-slate-400 border border-slate-700">
+            • 中古車挑選眉角知識貼文<br/>
+            • 在庫熱門車款開箱與規格介紹<br/>
+            • 限時優惠活動與節慶促銷貼文
+          </div>
         </div>
 
-        <div className="bg-slate-800/70 border border-slate-700 rounded-2xl p-4 shadow-xs">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-xl">🖥️</span>
-            <h3 className="font-bold text-sm md:text-base text-indigo-400">痛點 2：需要專屬後台「AI 為主、我為輔」簡單操作</h3>
-          </div>
-          <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
-            提供直覺化專屬網頁後台，只需輸入關鍵字或上傳新車照片，AI 即自動生成三平台專屬文案，您只需負責審核微調並一鍵點擊發布。
+        {/* Quota 2: Images */}
+        <div className="bg-slate-800/80 border-2 border-indigo-500/50 rounded-2xl p-4 shadow-xs">
+          <div className="text-2xl mb-1">🖼️</div>
+          <h3 className="font-bold text-sm md:text-base text-indigo-400 mb-1">
+            2. 圖片配圖額度：實拍照片無限量
+          </h3>
+          <p className="text-xs text-slate-300 leading-relaxed mb-2">
+            上傳華鍵汽車在庫車實拍照，AI 自動最佳化配色裁切加浮水印<b>不限張數 (無限量)</b>！
           </p>
+          <div className="bg-slate-900/80 p-2 rounded-xl text-[11px] text-slate-400 border border-slate-700">
+            • 在庫實拍照上傳加壓浮水印：<b>無限量</b><br/>
+            • AI 完全生成行銷情境海報：<b>每月 30 張</b><br/>
+            • 色調風格 100% 統一排版
+          </div>
         </div>
 
-        <div className="bg-slate-800/70 border border-slate-700 rounded-2xl p-4 shadow-xs">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-xl">🚀</span>
-            <h3 className="font-bold text-sm md:text-base text-sky-400">痛點 3：FB 形象、IG 視覺、Threads 促銷分工</h3>
-          </div>
-          <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
-            自動區分各社群屬性：<b>FB 當官方形象發文</b>、<b>IG 搭配車輛精美視覺貼文</b>、<b>Threads 專發即時優惠與熱點話題</b>，一次發布全網覆蓋。
+        {/* Quota 3: Comments & DM Auto-Reply */}
+        <div className="bg-slate-800/80 border-2 border-emerald-500/50 rounded-2xl p-4 shadow-xs">
+          <div className="text-2xl mb-1">⚡</div>
+          <h3 className="font-bold text-sm md:text-base text-emerald-400 mb-1">
+            3. AI 小編留言與私訊秒回：無限量
+          </h3>
+          <p className="text-xs text-[#7C6E62] text-slate-300 leading-relaxed mb-2">
+            三平台（FB/IG/Threads）網友留言與私訊互動，AI 小編 24 小時駐點<b>不限次數自動回覆</b>並導客留單！
           </p>
-        </div>
-
-        <div className="bg-slate-800/70 border border-slate-700 rounded-2xl p-4 shadow-xs">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-xl">💬</span>
-            <h3 className="font-bold text-sm md:text-base text-emerald-400">痛點 4：留言私訊洗板，真人回覆不及時錯失客戶</h3>
+          <div className="bg-slate-900/80 p-2 rounded-xl text-[11px] text-slate-400 border border-slate-700">
+            • 網友詢問車價/地點：<b>24H秒回</b><br/>
+            • 私訊自動發送規格與賞車預約連結<br/>
+            • 未使用額度自動順延至下月
           </div>
-          <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
-            AI 小編 24 小時駐點 FB/IG/Threads，當網友詢問「這台車還在嗎？」、「地址在哪？」，AI 即時回應並自動私訊引導留下預約賞車資料！
-          </p>
         </div>
       </div>
     </div>
   );
 
-  // Section 3: Detailed Modules Breakdown (AI / Frontend / Backend / API)
+  // Section 3: Detailed Modules Breakdown
   const sectionModules = (
     <div className="w-full my-auto space-y-4">
       <div className="flex justify-between items-center border-b border-slate-800 pb-2">
@@ -561,7 +569,7 @@ export default function HuajianMotorsProposalPage() {
               🧾 加上 5% 營業稅 ($125) ＝ <b>含稅 NT$ 2,625 / 月</b>
             </div>
             <ul className="text-xs text-slate-300 space-y-1 mb-3">
-              <li className="flex items-center gap-1"><span className="text-emerald-400 font-bold">★</span> <b>包含每個月 AI 文案對話算力與 FB/IG/Threads 官方 API 授權維持</b></li>
+              <li className="flex items-center gap-1"><span className="text-emerald-400 font-bold">★</span> <b>月發文 60-90 篇 ✕ 車輛照片無限量 ✕ AI留言秒回無限次</b></li>
               <li className="flex items-center gap-1"><span className="text-indigo-400 font-bold">✓</span> 每月華鍵汽車知識庫彈性新增與車款微調</li>
               <li className="flex items-center gap-1"><span className="text-indigo-400 font-bold">✓</span> 雲端資料庫與發文紀錄每日自動備份</li>
             </ul>
@@ -807,7 +815,7 @@ export default function HuajianMotorsProposalPage() {
         <h2 className="text-base md:text-2xl font-bold text-white">
           傳統真人社群小編 ✕ AI 社群矩陣系統效益比較
         </h2>
-        <span className="text-[10px] md:text-xs bg-blue-900/60 text-blue-300 px-2.5 py-0.5 rounded-full font-bold border border-blue-700/50">
+        <span className="text-[10px] md:text-xs bg-blue-900/60 text-blue-300 px-2.5 py-0.5 rounded-full font-bold border border-indigo-700/50">
           商業價值總結
         </span>
       </div>
@@ -877,7 +885,7 @@ export default function HuajianMotorsProposalPage() {
 
   const allSections = [
     { title: "封面", component: sectionCover },
-    { title: "需求與痛點", component: sectionRequirements },
+    { title: "發文與配圖額度", component: sectionRequirements },
     { title: "4大核心模組", component: sectionModules },
     { title: "金額與發票", component: sectionPricing },
     { title: "建置時程", component: sectionTimeline },

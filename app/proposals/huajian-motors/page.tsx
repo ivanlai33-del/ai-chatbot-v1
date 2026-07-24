@@ -264,7 +264,7 @@ export default function HuajianMotorsProposalPage() {
             🏎️
           </div>
           <h1 className="text-lg font-bold mb-1.5 text-white">
-            【華鍵汽車】<br />AI 社群全自動文案與多平台矩陣系統提案
+            【華鍵汽車】<br />AI 社群全自動文案與多平台發布系統提案
           </h1>
           <p className="text-xs text-slate-400 mb-4 leading-relaxed">
             本專案報價為受資安防護與商業加密保護之受控內容，請輸入授權密碼檢視。
@@ -315,12 +315,12 @@ export default function HuajianMotorsProposalPage() {
       <h1 className="text-xl md:text-4xl lg:text-5xl font-black mb-2 md:mb-4 leading-tight text-white">
         【華鍵汽車】<br />
         <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-sky-400">
-          AI 社群全自動文案 ✕ FB IG 脆三平台矩陣系統
+          AI 社群全自動文案 ✕ 臉書 IG 脆三平台連線系統
         </span>
       </h1>
 
       <p className="text-xs md:text-base text-slate-300 max-w-2xl mx-auto mb-4 md:mb-6 leading-relaxed font-medium">
-        協助華鍵汽車達成<b>「日常/知識/活動穩定發文 ✕ 色調排版一致性 ✕ FB IG Threads 一鍵三發 ✕ AI 自動回覆留言與導客」</b>的全方位社群 AI 自動化大腦！
+        協助華鍵汽車達成<b>「日常/知識/活動穩定發文 ✕ 色調排版一致性 ✕ 臉書 IG 脆一鍵發布 ✕ AI 自動回覆留言與導客」</b>的全方位社群 AI 自動化小編！
       </p>
 
       {/* 4 Core Pillars Grid */}
@@ -331,13 +331,13 @@ export default function HuajianMotorsProposalPage() {
         </div>
 
         <div className="bg-slate-800/80 border border-slate-700 p-3 rounded-xl shadow-xs backdrop-blur-md">
-          <div className="text-xs md:text-sm font-bold text-indigo-400 mb-1">🖥️ 專屬後台 (AI 主 ✕ 我輔助)</div>
+          <div className="text-xs md:text-sm font-bold text-indigo-400 mb-1">🖥️ 店家專屬後台 (AI 主 ✕ 我輔助)</div>
           <p className="text-[11px] md:text-xs text-slate-300 leading-tight">直覺操作後台，登入一鍵生成文案配圖、審核彈性修改與預覽。</p>
         </div>
 
         <div className="bg-slate-800/80 border border-slate-700 p-3 rounded-xl shadow-xs backdrop-blur-md">
-          <div className="text-xs md:text-sm font-bold text-sky-400 mb-1">🚀 FB / IG / 脆 一鍵同步發布</div>
-          <p className="text-[11px] md:text-xs text-slate-300 leading-tight">FB 官方形象發文、IG 視覺風格排版、Threads (脆) 優惠活動一鍵自動同步與排程！</p>
+          <div className="text-xs md:text-sm font-bold text-sky-400 mb-1">🚀 臉書 / IG / 脆 一鍵同步發布</div>
+          <p className="text-[11px] md:text-xs text-slate-300 leading-tight">臉書官方形象發文、IG 視覺風格排版、Threads (脆) 優惠活動一鍵自動同步與排程！</p>
         </div>
 
         <div className="bg-slate-800/80 border border-slate-700 p-3 rounded-xl shadow-xs backdrop-blur-md">
@@ -360,7 +360,7 @@ export default function HuajianMotorsProposalPage() {
     </div>
   );
 
-  // Section 2: Requirements & Quotas (Monthly Article & Image Quota Detailed)
+  // Section 2: Requirements & Quotas (Plain language description of monthly quotas)
   const sectionRequirements = (
     <div className="w-full my-auto space-y-4">
       <div className="flex justify-between items-center border-b border-slate-800 pb-2">
@@ -380,7 +380,7 @@ export default function HuajianMotorsProposalPage() {
             1. 文案生成額度：60 ~ 90 篇 / 月
           </h3>
           <p className="text-xs text-slate-300 leading-relaxed mb-2">
-            相當於<b>天天可發文，每天可發 2~3 篇</b>！涵蓋華鍵汽車 FB 官方形象、IG 視覺與 Threads 即時促銷特賣。
+            相當於<b>天天可發文，每天可發 2~3 篇</b>！涵蓋華鍵汽車臉書官方形象、IG 視覺與 Threads 即時促銷特賣。
           </p>
           <div className="bg-slate-900/80 p-2 rounded-xl text-[11px] text-slate-400 border border-slate-700">
             • 中古車挑選眉角知識貼文<br/>
@@ -411,8 +411,8 @@ export default function HuajianMotorsProposalPage() {
           <h3 className="font-bold text-sm md:text-base text-emerald-400 mb-1">
             3. AI 小編留言與私訊秒回：無限量
           </h3>
-          <p className="text-xs text-[#7C6E62] text-slate-300 leading-relaxed mb-2">
-            三平台（FB/IG/Threads）網友留言與私訊互動，AI 小編 24 小時駐點<b>不限次數自動回覆</b>並導客留單！
+          <p className="text-xs text-slate-300 leading-relaxed mb-2">
+            三平台（臉書/IG/Threads）網友留言與私訊互動，AI 小編 24 小時駐點<b>不限次數自動回覆</b>並導客留單！
           </p>
           <div className="bg-slate-900/80 p-2 rounded-xl text-[11px] text-slate-400 border border-slate-700">
             • 網友詢問車價/地點：<b>24H秒回</b><br/>
@@ -424,12 +424,12 @@ export default function HuajianMotorsProposalPage() {
     </div>
   );
 
-  // Section 3: Detailed Modules Breakdown
+  // Section 3: Detailed Modules Breakdown (Clean plain language)
   const sectionModules = (
     <div className="w-full my-auto space-y-4">
       <div className="flex justify-between items-center border-b border-slate-800 pb-2">
         <h2 className="text-base md:text-2xl font-bold text-white">
-          詳細功能模組與技術架構拆解
+          詳細功能模組與系統架構拆解
         </h2>
         <span className="text-[10px] md:text-xs bg-indigo-900/60 text-indigo-300 px-2.5 py-0.5 rounded-full font-bold border border-indigo-700/50">
           4 大核心系統模組
@@ -444,7 +444,7 @@ export default function HuajianMotorsProposalPage() {
               <span>🤖</span> 模組 1：AI 汽車專業文案與圖片配圖大腦
             </h4>
             <span className="text-[10px] bg-blue-900/80 text-blue-200 px-2 py-0.5 rounded font-mono">
-              AI Core
+              文案大腦
             </span>
           </div>
           <ul className="text-xs md:text-sm text-slate-300 space-y-1.5">
@@ -458,49 +458,49 @@ export default function HuajianMotorsProposalPage() {
         <div className="bg-slate-800/80 border border-indigo-500/40 p-4 rounded-2xl shadow-xs">
           <div className="flex items-center justify-between mb-2">
             <h4 className="font-bold text-sm md:text-base text-indigo-400 flex items-center gap-1.5">
-              <span>🖥️</span> 模組 2：專屬後台控制中心 (AI 主 ✕ 我輔助)
+              <span>🖥️</span> 模組 2：店家專屬後台控制中心 (AI 主 ✕ 我輔助)
             </h4>
             <span className="text-[10px] bg-indigo-900/80 text-indigo-200 px-2 py-0.5 rounded font-mono">
-              Console Admin
+              店家專屬後台
             </span>
           </div>
           <ul className="text-xs md:text-sm text-slate-300 space-y-1.5">
             <li>✓ <b>草稿一鍵生成</b>：輸入關鍵字（如：2022 Benz C300 入庫），秒出 3 平台文案</li>
-            <li>✓ <b>視覺化預覽與審核</b>：發布前直覺預覽 FB/IG/Threads 貼文呈現效果</li>
-            <li>✓ <b>多平台自由勾選</b>：可獨立選擇勾選發布至 FB、IG 或 Threads (脆)</li>
+            <li>✓ <b>視覺化預覽與審核</b>：發布前直覺預覽臉書/IG/Threads 貼文呈現效果</li>
+            <li>✓ <b>多平台自由勾選</b>：可獨立選擇勾選發布至臉書、IG 或 Threads (脆)</li>
           </ul>
         </div>
 
-        {/* Module 3: Multi-Platform API Auto-Publisher */}
+        {/* Module 3: Multi-Platform Auto-Publisher */}
         <div className="bg-slate-800/80 border border-sky-500/40 p-4 rounded-2xl shadow-xs">
           <div className="flex items-center justify-between mb-2">
             <h4 className="font-bold text-sm md:text-base text-sky-400 flex items-center gap-1.5">
-              <span>🚀</span> 模組 3：FB ✕ IG ✕ Threads API 一鍵同步與排程
+              <span>🚀</span> 模組 3：臉書 ✕ IG ✕ Threads 一鍵同步與排程發布
             </h4>
             <span className="text-[10px] bg-sky-900/80 text-sky-200 px-2 py-0.5 rounded font-mono">
-              Multi-API Engine
+              多平台同步推播
             </span>
           </div>
           <ul className="text-xs md:text-sm text-slate-300 space-y-1.5">
-            <li>✓ <b>Meta 官方 Graph API 串接</b>：Facebook Page & Instagram Commercial API</li>
-            <li>✓ <b>Threads (脆) 官方 API 串接</b>：自動排程發布優惠活動貼文</li>
+            <li>✓ <b>社群官方安全連線</b>：Facebook 粉絲專頁與 Instagram 商業帳號官方安全連線</li>
+            <li>✓ <b>Threads (脆) 管道自動連線</b>：自動排程發布優惠活動與熱點貼文</li>
             <li>✓ <b>智慧排程推播引擎</b>：支援「立即發布」或「指定高流量時段自動排程」</li>
           </ul>
         </div>
 
-        {/* Module 4: Social Engagement & DM Lead Gen */}
+        {/* Module 4: Social Engagement & Lead Gen */}
         <div className="bg-slate-800/80 border border-emerald-500/40 p-4 rounded-2xl shadow-xs">
           <div className="flex items-center justify-between mb-2">
             <h4 className="font-bold text-sm md:text-base text-emerald-400 flex items-center gap-1.5">
               <span>💬</span> 模組 4：三平台 AI 小編留言秒回與賞車留單
             </h4>
             <span className="text-[10px] bg-emerald-900/80 text-emerald-200 px-2 py-0.5 rounded font-mono">
-              AI Engagement
+              AI 小編互動
             </span>
           </div>
           <ul className="text-xs md:text-sm text-slate-300 space-y-1.5">
             <li>✓ <b>留言自動回覆</b>：貼文下方網友詢問車價或地點，AI 即時回應親切留言</li>
-            <li>✓ <b>私訊自動引導 (DM Auto-Reply)</b>：自動發送詳細規格與預約賞車連結</li>
+            <li>✓ <b>私訊自動引導</b>：自動發送詳細規格與預約賞車連結給私訊顧客</li>
             <li>✓ <b>潛在買家留單導客</b>：自動整理留言/私訊有意向顧客名單至後台</li>
           </ul>
         </div>
@@ -542,7 +542,7 @@ export default function HuajianMotorsProposalPage() {
             <ul className="text-xs text-slate-300 space-y-1 mb-2">
               <li className="flex items-center gap-1"><span className="text-blue-400 font-bold">✓</span> 100% 全遠端雲端建置，完全不干擾門市營運</li>
               <li className="flex items-center gap-1"><span className="text-blue-400 font-bold">✓</span> <b>包含 4 大系統模組：文案大腦、後台、3平台發布與AI留言秒回</b></li>
-              <li className="flex items-center gap-1"><span className="text-blue-400 font-bold">✓</span> 串接 FB 粉絲團、Instagram 商業帳號與 Threads (脆) API</li>
+              <li className="flex items-center gap-1"><span className="text-blue-400 font-bold">✓</span> 串接臉書粉絲團、Instagram 商業帳號與 Threads (脆)</li>
               <li className="flex items-center gap-1"><span className="text-blue-400 font-bold">✓</span> 享【首月 30 天線上免費維護保障與語氣微調】</li>
             </ul>
           </div>
@@ -556,7 +556,7 @@ export default function HuajianMotorsProposalPage() {
           <div>
             <div className="flex justify-between items-center mb-1">
               <span className="font-bold text-xs md:text-sm text-indigo-400">
-                💳 【每月】代營運與多平台 API 維護費
+                💳 【每月】代營運與多平台連線維護費
               </span>
               <span className="text-[10px] bg-emerald-900/80 text-emerald-200 px-2 py-0.5 rounded-full font-bold">
                 每月持續維持
@@ -565,7 +565,7 @@ export default function HuajianMotorsProposalPage() {
             <div className="text-2xl md:text-3xl font-black font-mono text-white my-1">
               NT$ 2,500 <span className="text-xs font-normal text-slate-400">/ 月 (未稅)</span>
             </div>
-            <div className="text-xs text-[#7C6E62] mb-2 bg-slate-900/80 p-1.5 rounded-lg border border-slate-700 text-slate-300">
+            <div className="text-xs mb-2 bg-slate-900/80 p-1.5 rounded-lg border border-slate-700 text-slate-300">
               🧾 加上 5% 營業稅 ($125) ＝ <b>含稅 NT$ 2,625 / 月</b>
             </div>
             <ul className="text-xs text-slate-300 space-y-1 mb-3">
@@ -734,7 +734,7 @@ export default function HuajianMotorsProposalPage() {
           <h4 className="font-bold text-blue-400 mb-1.5 text-sm md:text-base">社群授權交接與 AI 知識庫建置</h4>
           <ul className="text-xs md:text-sm text-slate-300 space-y-1">
             <li>✓ 簽訂合約並<b>轉帳付訂金 $18,900 (含稅)</b></li>
-            <li>✓ 授權 Facebook Page、Instagram 與 Threads API</li>
+            <li>✓ 授權 Facebook 粉絲專頁、Instagram 與 Threads 帳號</li>
             <li>✓ 匯入「華鍵汽車」二手車挑選知識、車款列表與風格色調</li>
           </ul>
         </div>
@@ -743,7 +743,7 @@ export default function HuajianMotorsProposalPage() {
           <h4 className="font-serif font-bold text-blue-400 mb-1.5 text-sm md:text-base">專屬後台微調與一鍵三發測試</h4>
           <ul className="text-xs md:text-sm text-slate-300 space-y-1">
             <li>✓ 提供專屬後台登入帳號，測試 AI 一鍵草稿生成</li>
-            <li>✓ 測試 FB 官方形象發文、IG 視覺圖文與 Threads 優惠排程</li>
+            <li>✓ 測試臉書官方形象發文、IG 視覺圖文與 Threads 優惠排程</li>
             <li>✓ 雙方進行 30 分鐘線上視訊會審微調對話語氣</li>
           </ul>
         </div>
@@ -761,7 +761,7 @@ export default function HuajianMotorsProposalPage() {
     </div>
   );
 
-  // Section 6: Checklist & Cybersecurity
+  // Section 6: Checklist & Security (Plain language)
   const sectionChecklist = (
     <div className="w-full my-auto space-y-4">
       <div className="flex justify-between items-center border-b border-slate-800 pb-2">
@@ -779,8 +779,8 @@ export default function HuajianMotorsProposalPage() {
           <ul className="text-xs md:text-sm text-slate-300 space-y-1.5">
             <li>✓ 100% 全遠端雲端建置與線上指導驗收</li>
             <li>✓ <b>1. AI 汽車文案大腦與圖片風格配圖</b></li>
-            <li>✓ <b>2. 專屬後台控制中心 (AI 為主、我輔助)</b></li>
-            <li>✓ <b>3. FB / IG / Threads 三平台一鍵同步與排程</b></li>
+            <li>✓ <b>2. 店家專屬後台控制中心 (AI 為主、我輔助)</b></li>
+            <li>✓ <b>3. 臉書 / IG / Threads 三平台一鍵同步與排程</b></li>
             <li>✓ <b>4. AI 小編留言秒回與賞車引導導客</b></li>
           </ul>
         </div>
@@ -790,18 +790,18 @@ export default function HuajianMotorsProposalPage() {
           <ul className="text-xs md:text-sm text-slate-300 space-y-1">
             <li>✓ <b>首月 30 天線上免費維護保障 (語氣與文案微調)</b></li>
             <li>✓ 每月車款庫與知識庫編修支援</li>
-            <li>✓ FB/IG/Threads 官方 API 存取與 Token 維護</li>
+            <li>✓ 官方社群管道連線維護與系統安全</li>
             <li>✓ 雲端資料庫與發文紀錄每日自動備份</li>
           </ul>
         </div>
 
         <div className="bg-emerald-950/40 border-2 border-emerald-500/60 rounded-2xl p-4 shadow-xs">
-          <h4 className="font-bold text-emerald-400 text-xs md:text-sm mb-2">🔒 企業級 API 與個資資安防線</h4>
+          <h4 className="font-bold text-emerald-400 text-xs md:text-sm mb-2">🔒 企業級帳號安全與個資防線</h4>
           <ul className="text-xs md:text-sm text-slate-200 space-y-1 font-medium">
-            <li>✓ <b>Meta 官方授權憑證隔離</b>：金鑰高強度加密存取</li>
+            <li>✓ <b>官方帳號安全金鑰防護</b>：連線憑證高強度加密隔離</li>
             <li>✓ <b>AI 惡意意圖過濾</b>：防範謾罵與競業惡意探聽</li>
             <li>✓ <b>賞車顧客名單保護</b>：符合個人資料保護法</li>
-            <li>✓ <b>系統權限安全鎖</b>：非授權帳號無法發布</li>
+            <li>✓ <b>店家專屬權限鎖</b>：非授權帳號無法發布</li>
           </ul>
         </div>
       </div>
@@ -837,8 +837,8 @@ export default function HuajianMotorsProposalPage() {
             </tr>
             <tr>
               <td className="p-2 md:p-2.5 font-bold">三平台一鍵同步發布</td>
-              <td className="p-2 md:p-2.5 text-slate-400">FB/IG/Threads 需分開複製貼上</td>
-              <td className="p-2 md:p-2.5 font-bold text-emerald-400 bg-blue-950/40"><b>後台勾選一鍵同步發布 FB 形象/IG視覺/脆促銷</b></td>
+              <td className="p-2 md:p-2.5 text-slate-400">臉書/IG/Threads 需分開複製貼上</td>
+              <td className="p-2 md:p-2.5 font-bold text-emerald-400 bg-blue-950/40"><b>後台勾選一鍵同步發布 臉書形象/IG視覺/脆促銷</b></td>
             </tr>
             <tr>
               <td className="p-2 md:p-2.5 font-bold">留言與私訊即時引導</td>
@@ -903,7 +903,7 @@ export default function HuajianMotorsProposalPage() {
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block animate-pulse"></span>
             <span className="font-bold text-xs md:text-sm text-white">
-              華鍵汽車 — AI 社群全自動文案與多平台矩陣系統
+              華鍵汽車 — AI 社群全自動文案與多平台發布系統
             </span>
           </div>
           <div className="text-[10px] md:text-xs text-slate-400 font-mono flex items-center gap-1.5">

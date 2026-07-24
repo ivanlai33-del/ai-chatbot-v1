@@ -224,7 +224,7 @@ export default function HuajianMotorsProposalPage() {
       console.error(err);
       setIsSaved(true);
       alert("發票資料已儲存於本機。");
-    } fontally {
+    } finally {
       setIsSubmitting(false);
     }
   };

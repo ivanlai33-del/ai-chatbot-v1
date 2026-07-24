@@ -224,7 +224,7 @@ export default function HuajianMotorsProposalPage() {
       console.error(err);
       setIsSaved(true);
       alert("發票資料已儲存於本機。");
-    } finally {
+    } fontally {
       setIsSubmitting(false);
     }
   };
@@ -331,8 +331,8 @@ export default function HuajianMotorsProposalPage() {
         </div>
 
         <div className="bg-slate-800/80 border border-slate-700 p-3 rounded-xl shadow-xs backdrop-blur-md">
-          <div className="text-xs md:text-sm font-bold text-indigo-400 mb-1">🖥️ 店家專屬管理後台</div>
-          <p className="text-[11px] md:text-xs text-slate-300 leading-tight">直覺操作後台，登入一鍵生成文案配圖、審核彈性修改與預覽。</p>
+          <div className="text-xs md:text-sm font-bold text-indigo-400 mb-1">📱 電腦/手機雙用後台</div>
+          <p className="text-[11px] md:text-xs text-slate-300 leading-tight">支援手機相機即拍即傳上傳照片影片，也可在電腦登入一鍵審核與發布。</p>
         </div>
 
         <div className="bg-slate-800/80 border border-slate-700 p-3 rounded-xl shadow-xs backdrop-blur-md">
@@ -424,7 +424,7 @@ export default function HuajianMotorsProposalPage() {
     </div>
   );
 
-  // Section 3: Detailed Modules Breakdown (Includes Optional Short Video Module)
+  // Section 3: Detailed Modules Breakdown (Includes Optional Short Video Module with Mobile Camera Support)
   const sectionModules = (
     <div className="w-full my-auto space-y-3">
       <div className="flex justify-between items-center border-b border-slate-800 pb-1.5">
@@ -454,20 +454,20 @@ export default function HuajianMotorsProposalPage() {
           </ul>
         </div>
 
-        {/* Module 2: Merchant Console */}
+        {/* Module 2: Merchant Console (Mobile Camera Direct Capture Support) */}
         <div className="bg-slate-800/80 border border-indigo-500/40 p-3 rounded-2xl shadow-xs">
           <div className="flex items-center justify-between mb-1.5">
             <h4 className="font-bold text-xs md:text-sm text-indigo-400 flex items-center gap-1.5">
-              <span>🖥️</span> 模組 2：店家專屬後台控制中心 (AI 智慧發文 ✕ 人工審核)
+              <span>🖥️</span> 模組 2：電腦/手機雙用後台 (支援手機相機即拍即傳)
             </h4>
             <span className="text-[10px] bg-indigo-900/80 text-indigo-200 px-1.5 py-0.5 rounded font-mono">
-              店家專屬後台
+              雙用管理後台
             </span>
           </div>
           <ul className="text-[11px] md:text-xs text-slate-300 space-y-1">
+            <li>✓ <b>📱 手機網頁直接開相機</b>：手機登入點上傳，自動開啟手機鏡頭即拍即傳</li>
             <li>✓ <b>草稿一鍵生成</b>：輸入關鍵字（如：2022 Benz C300 入庫），秒出 3 平台文案</li>
-            <li>✓ <b>視覺化預覽與審核</b>：發布前直覺預覽臉書/IG/Threads 貼文呈現效果</li>
-            <li>✓ <b>多平台自由勾選</b>：可獨立選擇勾選發布至臉書、IG 或 Threads (脆)</li>
+            <li>✓ <b>多平台自由勾選發布</b>：可獨立選擇勾選發布至臉書、IG 或 Threads (脆)</li>
           </ul>
         </div>
 
@@ -527,12 +527,12 @@ export default function HuajianMotorsProposalPage() {
 
           <div className="bg-slate-900/80 p-2 rounded-xl border border-slate-700">
             <span className="font-bold text-purple-300 block mb-0.5">🎙️ 核心影音編輯功能</span>
-            <p className="text-slate-300"><b>• 手機拍車 ➔ AI 剪輯與字幕</b><br/><b>• AI 國台語真人口播語音配音</b><br/><b>• 照片 ➔ 3D 動態鏡頭推拉影片</b></p>
+            <p className="text-slate-300"><b>• 手機相機直拍直傳 ➔ AI 剪輯與字幕</b><br/><b>• AI 國台語真人口播語音配音</b><br/><b>• 照片 ➔ 3D 動態鏡頭推拉影片</b></p>
           </div>
 
           <div className="bg-slate-900/80 p-2 rounded-xl border border-slate-700">
             <span className="font-bold text-purple-300 block mb-0.5">📱 簡單 3 步驟使用方式</span>
-            <p className="text-slate-300">1. 後台上傳 15秒影片或車照<br/>2. AI 秒配 BGM 配音與大字幕<br/>3. 一鍵同步推播 IG Reels / FB 短片</p>
+            <p className="text-slate-300">1. <b>手機登入開啟相機直接拍</b><br/>2. AI 秒配 BGM 配音與大字幕<br/>3. 一鍵同步推播 IG Reels / FB 短片</p>
           </div>
         </div>
       </div>
@@ -572,7 +572,7 @@ export default function HuajianMotorsProposalPage() {
             </div>
             <ul className="text-xs text-slate-300 space-y-1 mb-2">
               <li className="flex items-center gap-1"><span className="text-blue-400 font-bold">✓</span> 100% 全遠端雲端建置，完全不干擾門市營運</li>
-              <li className="flex items-center gap-1"><span className="text-blue-400 font-bold">✓</span> <b>包含 4 大系統模組：文案大腦、後台、3平台發布與AI留言秒回</b></li>
+              <li className="flex items-center gap-1"><span className="text-blue-400 font-bold">✓</span> <b>包含 4 大系統模組：文案大腦、雙用後台、3平台發布與AI留言秒回</b></li>
               <li className="flex items-center gap-1"><span className="text-blue-400 font-bold">✓</span> 串接臉書粉絲團、Instagram 商業帳號與 Threads (脆)</li>
               <li className="flex items-center gap-1"><span className="text-blue-400 font-bold">✓</span> 享【首月 30 天線上免費維護保障與語氣微調】</li>
             </ul>
@@ -810,7 +810,7 @@ export default function HuajianMotorsProposalPage() {
           <ul className="text-xs md:text-sm text-slate-300 space-y-1.5">
             <li>✓ 100% 全遠端雲端建置與線上指導驗收</li>
             <li>✓ <b>1. AI 汽車文案大腦與圖片風格配圖</b></li>
-            <li>✓ <b>2. 店家專屬後台控制中心</b></li>
+            <li>✓ <b>2. 電腦/手機雙用後台 (支援手機相機即拍即傳)</b></li>
             <li>✓ <b>3. 臉書 / IG / Threads 三平台一鍵同步與排程</b></li>
             <li>✓ <b>4. AI 小編留言秒回與賞車引導導客</b></li>
           </ul>

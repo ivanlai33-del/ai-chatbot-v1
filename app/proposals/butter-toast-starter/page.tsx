@@ -431,28 +431,28 @@ export default function ButterToastStarterProposalPage() {
     </div>
   );
 
-  // Section 3: Mathematically Exact Add-on Modules Architecture Map (Sums up to $58,000 / $3,000/mo)
+  // Section 3: Add-on Modules Architecture Map (Clean Header & No Bottom Banner)
   const sectionArchitecture = (
-    <div className="w-full my-auto space-y-3">
-      <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-1.5">
+    <div className="w-full my-auto space-y-4">
+      <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-2">
         <div>
           <h2 className="text-base md:text-xl font-bold font-serif text-[#382D24]">
             基礎入門版 ($10,000) ✕ 4 大擴充模組對照總覽
           </h2>
           <p className="text-[11px] text-[#7C6E62]">
-            👉 門市可先以 <b>$10,000 入門</b>，日後全選 4 大模組即可完全升級至 <b>$58,000 旗艦全能版</b>！
+            👉 門市可先以 <b>$10,000 入門</b>，日後可依需求隨時彈性加購獨立擴充模組！
           </p>
         </div>
         <span className="text-[10px] md:text-xs bg-[#EFE7DA] text-[#B26A27] px-2.5 py-1 rounded-full font-bold">
-          嚴密邏輯・無縫升級
+          模組功能・無縫升級
         </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4">
         {/* Left Column: Starter Plan (5 Core Features) */}
-        <div className="md:col-span-5 bg-white border-2 border-[#D6A86E] p-3 rounded-2xl shadow-xs flex flex-col justify-between">
+        <div className="md:col-span-5 bg-white border-2 border-[#D6A86E] p-4 rounded-2xl shadow-xs flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center justify-between mb-2">
               <h4 className="font-serif font-bold text-xs md:text-sm text-[#B26A27] flex items-center gap-1">
                 <span>✅</span> 【基礎入門版】5 大核心
               </h4>
@@ -460,76 +460,72 @@ export default function ButterToastStarterProposalPage() {
                 $10,000 (月費 $1,000)
               </span>
             </div>
-            <ul className="text-xs text-[#382D24] space-y-1 font-medium">
-              <li className="p-1 bg-[#FFF8F0] rounded border border-[#D6A86E]">💬 1. 24H 聊天回覆與門市問答</li>
-              <li className="p-1 bg-[#FFF8F0] rounded border border-[#D6A86E]">📱 2. 自動彈出圖文產品卡片算錢</li>
-              <li className="p-1 bg-[#FFF8F0] rounded border border-[#D6A86E]">🧠 3. 記憶客人對話內容與喜好</li>
-              <li className="p-1 bg-[#FFF8F0] rounded border border-[#D6A86E]">🔒 4. AI 資安防護 (防謾罵/套話/過載)</li>
-              <li className="p-1 bg-[#FFF8F0] rounded border border-[#D6A86E]">🧸 5. 品牌吉祥物娃娃 AI 人設</li>
+            <ul className="text-xs text-[#382D24] space-y-1.5 font-medium">
+              <li className="p-1.5 bg-[#FFF8F0] rounded-lg border border-[#D6A86E]">💬 1. 24H 聊天回覆與門市問答</li>
+              <li className="p-1.5 bg-[#FFF8F0] rounded-lg border border-[#D6A86E]">📱 2. 自動彈出圖文產品卡片算錢</li>
+              <li className="p-1.5 bg-[#FFF8F0] rounded-lg border border-[#D6A86E]">🧠 3. 記憶客人對話內容與喜好</li>
+              <li className="p-1.5 bg-[#FFF8F0] rounded-lg border border-[#D6A86E]">🔒 4. AI 資安防護 (防謾罵/套話/過載)</li>
+              <li className="p-1.5 bg-[#FFF8F0] rounded-lg border border-[#D6A86E]">🧸 5. 品牌吉祥物娃娃 AI 人設</li>
             </ul>
           </div>
-          <div className="mt-2 text-[10px] text-[#7C6E62] bg-[#F7F3ED] p-1.5 rounded-lg text-center font-bold">
+          <div className="mt-3 text-xs text-[#7C6E62] bg-[#F7F3ED] p-2 rounded-xl text-center font-bold">
             💡 輕鬆低門檻，1 萬元極速開通上線
           </div>
         </div>
 
-        {/* Right Column: 4 Full Add-on Modules (Total $48,000 / $2,000/mo) */}
-        <div className="md:col-span-7 bg-white border border-[#E6DDCF] p-3 rounded-2xl shadow-xs">
-          <div className="flex items-center justify-between mb-1">
+        {/* Right Column: 4 Full Add-on Modules */}
+        <div className="md:col-span-7 bg-white border border-[#E6DDCF] p-4 rounded-2xl shadow-xs">
+          <div className="flex items-center justify-between mb-2">
             <h4 className="font-serif font-bold text-xs md:text-sm text-[#7C6E62] flex items-center gap-1">
               <span>🧩</span> 完整 4 大彈性擴充模組清單
             </h4>
             <span className="text-[10px] font-mono text-[#7C6E62]">
-              (4 模組共 +$48,000 / +$2,000/月)
+              (依需求彈性加購)
             </span>
           </div>
 
-          <div className="space-y-1 text-xs">
-            <div className="bg-[#F7F3ED] p-1.5 rounded-xl border border-[#E6DDCF] flex justify-between items-center">
+          <div className="space-y-2 text-xs">
+            <div className="bg-[#F7F3ED] p-2 rounded-xl border border-[#E6DDCF] flex justify-between items-center">
               <div>
-                <b className="text-[#B26A27] block text-[11px]">🚨 模組 1：完售缺料推播警報 ✕ 廚房看板 ✕ 老闆 AI 日報 Copilot</b>
+                <b className="text-[#B26A27] block text-[11px] md:text-xs">🚨 模組 1：完售缺料推播警報 ✕ 廚房看板 ✕ 老闆 AI 日報</b>
                 <span className="text-[10px] text-[#7C6E62]">低庫存倒數標籤、完售/缺料秒級推推播老闆、廚房備貨通知、AI 自動算帳出日報。</span>
               </div>
-              <div className="text-right font-mono text-[10px] font-bold text-[#B26A27] shrink-0 ml-2">
-                +$12,000<br/><span className="text-[#7C6E62] font-normal">+$500/月</span>
+              <div className="text-right font-mono text-xs font-bold text-[#B26A27] shrink-0 ml-2">
+                +$12,000<br/><span className="text-[#7C6E62] font-normal text-[10px]">+$500/月</span>
               </div>
             </div>
 
-            <div className="bg-[#F7F3ED] p-1.5 rounded-xl border border-[#E6DDCF] flex justify-between items-center">
+            <div className="bg-[#F7F3ED] p-2 rounded-xl border border-[#E6DDCF] flex justify-between items-center">
               <div>
-                <b className="text-[#B26A27] block text-[11px]">🪙 模組 2：會員紅利積點 ✕ 點數現折 ✕ VIP 尊榮 3 層分級</b>
+                <b className="text-[#B26A27] block text-[11px] md:text-xs">🪙 模組 2：會員紅利積點 ✕ 點數現折 ✕ VIP 尊榮 3 層分級</b>
                 <span className="text-[10px] text-[#7C6E62]">滿$50送1點、點數現折現金、銅/銀/金吐司會員自動升降等與折扣。</span>
               </div>
-              <div className="text-right font-mono text-[10px] font-bold text-[#B26A27] shrink-0 ml-2">
-                +$12,000<br/><span className="text-[#7C6E62] font-normal">+$500/月</span>
+              <div className="text-right font-mono text-xs font-bold text-[#B26A27] shrink-0 ml-2">
+                +$12,000<br/><span className="text-[#7C6E62] font-normal text-[10px]">+$500/月</span>
               </div>
             </div>
 
-            <div className="bg-[#F7F3ED] p-1.5 rounded-xl border border-[#E6DDCF] flex justify-between items-center">
+            <div className="bg-[#F7F3ED] p-2 rounded-xl border border-[#E6DDCF] flex justify-between items-center">
               <div>
-                <b className="text-[#B26A27] block text-[11px]">🏢 模組 3：企業 B2B 大宗團購 (200-400份) ✕ PDF 自動估價單</b>
+                <b className="text-[#B26A27] block text-[11px] md:text-xs">🏢 模組 3：企業 B2B 大宗團購 (200-400份) ✕ PDF 自動估價單</b>
                 <span className="text-[10px] text-[#7C6E62]">公司活動採購對接、階梯折扣算帳、一鍵自動生成用印公司抬頭 PDF 估價單。</span>
               </div>
-              <div className="text-right font-mono text-[10px] font-bold text-[#B26A27] shrink-0 ml-2">
-                +$14,000<br/><span className="text-[#7C6E62] font-normal">+$600/月</span>
+              <div className="text-right font-mono text-xs font-bold text-[#B26A27] shrink-0 ml-2">
+                +$14,000<br/><span className="text-[#7C6E62] font-normal text-[10px]">+$600/月</span>
               </div>
             </div>
 
-            <div className="bg-[#F7F3ED] p-1.5 rounded-xl border border-[#E6DDCF] flex justify-between items-center">
+            <div className="bg-[#F7F3ED] p-2 rounded-xl border border-[#E6DDCF] flex justify-between items-center">
               <div>
-                <b className="text-[#B26A27] block text-[11px]">🛡️ 模組 4：防改單風控 SOP ✕ 逾時 30 分久候自動催取關懷卡</b>
+                <b className="text-[#B26A27] block text-[11px] md:text-xs">🛡️ 模組 4：防改單風控 SOP ✕ 逾時 30 分久候自動催取關懷卡</b>
                 <span className="text-[10px] text-[#7C6E62]">製作中狀態鎖定防改單、逾時 30 分鐘 LINE 自動雙向催取與關懷卡片。</span>
               </div>
-              <div className="text-right font-mono text-[10px] font-bold text-[#B26A27] shrink-0 ml-2">
-                +$10,000<br/><span className="text-[#7C6E62] font-normal">+$400/月</span>
+              <div className="text-right font-mono text-xs font-bold text-[#B26A27] shrink-0 ml-2">
+                +$10,000<br/><span className="text-[#7C6E62] font-normal text-[10px]">+$400/月</span>
               </div>
             </div>
           </div>
         </div>
-      </div>
-
-      <div className="bg-amber-50/70 border border-[#D6A86E] p-2 rounded-xl text-center text-xs font-bold text-[#B26A27] flex justify-center items-center gap-2">
-        <span>✨ 數學公式精準驗證：入門版 $10,000 + 4 大模組 $48,000 ＝ <b>旗艦全能版 $58,000 (月費 $3,000/月)</b></span>
       </div>
     </div>
   );

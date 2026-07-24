@@ -317,38 +317,38 @@ export default function ButterToastProposalPage() {
       </h1>
 
       <p className="text-xs md:text-base text-[#7C6E62] max-w-2xl mx-auto mb-4 md:mb-6 leading-relaxed font-medium">
-        專為無專職小編門市打造的 <b>24 小時線上 AI 智慧總管 ✕ 老闆後台 AI 數據助手</b>！前台自動接單、後台實時推播<b>「完售/缺料警報 ✕ LINE 會員紅利積點折抵 ✕ 雙向提醒」</b>！
+        專為無專職小編門市打造的 <b>24 小時線上 AI 智慧總管 ✕ 模組化階梯架構 ✕ 老闆後台 AI 數據助手</b>！前台自動接單、後台實時推播<b>「完售/缺料警報 ✕ 會員紅利積點 ✕ 企業大宗團購」</b>！
       </p>
 
       {/* 4 Feature Highlights Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 mb-4 md:mb-6 text-left">
         <div className="bg-white/90 border border-[#D6A86E] p-3 rounded-xl shadow-xs">
-          <div className="text-xs md:text-sm font-bold text-[#B26A27] mb-1">🧸 吉祥物擬真人設</div>
-          <p className="text-[11px] md:text-xs text-[#7C6E62] leading-tight">融入品牌娃娃溫暖語氣與口頭禪，建立親切感</p>
+          <div className="text-xs md:text-sm font-bold text-[#B26A27] mb-1">🧸 基礎核心接單大腦</div>
+          <p className="text-[11px] md:text-xs text-[#7C6E62] leading-tight">吉祥物擬真人設、LINE 點餐卡片、完售缺料 LINE 秒級警報</p>
         </div>
 
         <div className="bg-white/90 border border-[#D6A86E] p-3 rounded-xl shadow-xs">
-          <div className="text-xs md:text-sm font-bold text-[#B26A27] mb-1">🪙 會員紅利積點折抵</div>
-          <p className="text-[11px] md:text-xs text-[#7C6E62] leading-tight">消費滿$50送1點，結帳一鍵折抵金額或兌換免費甜點</p>
+          <div className="text-xs md:text-sm font-bold text-[#B26A27] mb-1">🪙 模組A: 會員紅利積點</div>
+          <p className="text-[11px] md:text-xs text-[#7C6E62] leading-tight">消費滿$50送1點，一鍵點數折抵現金、尊榮會員 3 層分級</p>
         </div>
 
         <div className="bg-white/90 border border-[#D6A86E] p-3 rounded-xl shadow-xs">
-          <div className="text-xs md:text-sm font-bold text-[#B26A27] mb-1">🛡️ 刪單改單控管 SOP</div>
-          <p className="text-[11px] md:text-xs text-[#7C6E62] leading-tight">製作中狀態自動鎖定防隨意改單，保障現做品質與產線流程</p>
-        </div>
-
-        <div className="bg-white/90 border border-[#D6A86E] p-3 rounded-xl shadow-xs">
-          <div className="text-xs md:text-sm font-bold text-[#B26A27] mb-1">🏢 企業 B2B 大宗團購</div>
+          <div className="text-xs md:text-sm font-bold text-[#B26A27] mb-1">🏢 模組B: 企業大宗團購</div>
           <p className="text-[11px] md:text-xs text-[#7C6E62] leading-tight">200-400份公司採購自動引導、階梯折扣與一鍵匯出 PDF 估價單</p>
+        </div>
+
+        <div className="bg-white/90 border border-[#D6A86E] p-3 rounded-xl shadow-xs">
+          <div className="text-xs md:text-sm font-bold text-[#B26A27] mb-1">🛡️ 模組C: 風控 SOP 催取</div>
+          <p className="text-[11px] md:text-xs text-[#7C6E62] leading-tight">製作中狀態自動鎖定防隨意改單，逾時 30 分鐘雙向催取提醒</p>
         </div>
       </div>
 
       <div className="inline-flex items-center flex-wrap justify-center gap-1.5 px-4 py-1.5 bg-[#B26A27] text-[#FFFDF9] rounded-full text-xs font-bold shadow-xs mb-4">
         <span>✨ 0 專職小編需求</span>
         <span>•</span>
-        <span>✨ 會員紅利積點折抵</span>
+        <span>✨ 模組化彈性加購</span>
         <span>•</span>
-        <span>✨ 改單刪單 SOP 控管</span>
+        <span>✨ 全功能旗艦包特惠</span>
         <span>•</span>
         <span>✨ 後台 AI 日報</span>
       </div>
@@ -369,40 +369,40 @@ export default function ButterToastProposalPage() {
           【生乳/奶霜專賣店】現況與核心需求拆解
         </h2>
         <span className="text-[10px] md:text-xs bg-[#EFE7DA] text-[#B26A27] px-2.5 py-0.5 rounded-full font-bold">
-          5,000人規模與 CRM 忠誠度規劃
+          模組化彈性擴充架構
         </span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
         <div className="bg-white border border-[#E6DDCF] rounded-2xl p-4 shadow-xs">
           <div className="text-xl md:text-2xl mb-1">🧸</div>
-          <h3 className="font-serif font-bold text-sm md:text-base text-[#B26A27] mb-1">需求 1：品牌娃娃人設口吻與商店介紹</h3>
+          <h3 className="font-serif font-bold text-sm md:text-base text-[#B26A27] mb-1">需求 1：基礎接單與品牌吉祥物人設</h3>
           <p className="text-xs md:text-sm text-[#7C6E62] leading-relaxed">
-            注入「品牌吉祥物娃娃」親切可愛語氣作為 AI 店長靈魂！24hr 自動介紹品牌故事、✨營業時間 (18:00-售完為止)、面交地點地圖，並一鍵跳轉官方社群專頁。
+            注入「品牌吉祥物娃娃」親切可愛語氣作為 AI 店長靈魂！24hr 自動介紹品牌故事、營業時間 (18:00-售完為止)、LINE LIFF 圖文點餐與完售/缺料警報。
           </p>
         </div>
 
         <div className="bg-white border-2 border-[#D6A86E] rounded-2xl p-4 shadow-xs bg-amber-50/20">
           <div className="text-xl md:text-2xl mb-1">🪙</div>
-          <h3 className="font-serif font-bold text-sm md:text-base text-[#B26A27] mb-1">需求 2：LINE 會員紅利積點 ✕ 點數直接折抵點餐</h3>
+          <h3 className="font-serif font-bold text-sm md:text-base text-[#B26A27] mb-1">需求 2：模組A — LINE 會員紅利積點與折抵</h3>
           <p className="text-xs md:text-sm text-[#382D24] leading-relaxed">
-            <b>【高回購率 CRM 機制】</b>消費滿 $50 贈 1 點（1點＝$1元）。結帳卡片自動讀取會員剩餘點數，允許<b>「一鍵全額/部分折抵」</b>或兌換指定免費炸吐司！
+            <b>【CRM 會員擴充模組】</b>消費滿 $50 贈 1 點（1點＝$1元）。結帳卡片自動讀取會員剩餘點數，允許<b>「一鍵全額/部分折抵」</b>或兌換指定免費甜點！
+          </p>
+        </div>
+
+        <div className="bg-white border-2 border-[#D6A86E] rounded-2xl p-4 shadow-xs bg-amber-50/20">
+          <div className="text-xl md:text-2xl mb-1">🏢</div>
+          <h3 className="font-serif font-bold text-sm md:text-base text-[#B26A27] mb-1">需求 3：模組B — 企業 B2B 大宗團購應變</h3>
+          <p className="text-xs md:text-sm text-[#382D24] leading-relaxed">
+            <b>【高單價 B2B 採購模组】</b>識別經辦大宗詢問，AI 自動引導填寫公司統編、活動日期與數量；現場計算階梯折扣並秒級推播警報給老闆，後台一鍵匯出<b>「正式 PDF 蓋章估價單」</b>！
           </p>
         </div>
 
         <div className="bg-white border border-[#E6DDCF] rounded-2xl p-4 shadow-xs">
           <div className="text-xl md:text-2xl mb-1">🛡️</div>
-          <h3 className="font-serif font-bold text-sm md:text-base text-[#B26A27] mb-1">需求 3：刪單、改單嚴格防護 SOP 與久候催取</h3>
+          <h3 className="font-serif font-bold text-sm md:text-base text-[#B26A27] mb-1">需求 4：模組C — 刪單/改單風控 SOP 與催取</h3>
           <p className="text-xs md:text-sm text-[#7C6E62] leading-relaxed">
             未備貨狀態允許自主改單釋庫存；一旦切換為「製作中」，AI 即刻鎖定訂單並溫和說明；逾時 30 分鐘自動推播二次催取卡片，保障現做口感！
-          </p>
-        </div>
-
-        <div className="bg-white border border-[#E6DDCF] rounded-2xl p-4 shadow-xs">
-          <div className="text-xl md:text-2xl mb-1">🏢</div>
-          <h3 className="font-serif font-bold text-sm md:text-base text-[#B26A27] mb-1">需求 4：企業 B2B 大宗團購 200-400 份應變</h3>
-          <p className="text-xs md:text-sm text-[#7C6E62] leading-relaxed">
-            識別經辦大宗詢問，AI 自動引導填寫公司統編、活動日期與數量；現場計算階梯折扣並秒級推播警報給老闆，後台一鍵匯出<b>「正式 PDF 蓋章估價單」</b>！
           </p>
         </div>
       </div>
@@ -414,7 +414,7 @@ export default function ButterToastProposalPage() {
     <div className="w-full my-auto space-y-4">
       <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-2">
         <h2 className="text-base md:text-2xl font-bold font-serif text-[#382D24]">
-          會員紅利積點折抵 ✕ 顧客點餐介面 ✕ 老闆 AI 助手
+          基礎核心接單 ✕ 3 大擴充模組 ✕ 老闆 AI 助手
         </h2>
         <span className="text-[10px] md:text-xs bg-[#EFE7DA] text-[#B26A27] px-2.5 py-0.5 rounded-full font-bold">
           前後台權限隔離
@@ -426,14 +426,14 @@ export default function ButterToastProposalPage() {
           <div className="flex items-center gap-1.5 mb-2">
             <span className="text-lg">📱</span>
             <h4 className="font-serif font-bold text-xs md:text-base text-[#B26A27]">
-              前台：LINE 會員紅利積點 ✕ 一鍵點數折抵點餐
+              前台：基礎點餐介面 ✕ 自由擴充功能模組
             </h4>
           </div>
           <ul className="text-xs md:text-sm text-[#382D24] space-y-1.5">
-            <li>• <b>點數自動歸戶與折抵</b>：消費滿 $50 送 1 點。結帳卡片自動顯示顧客點數並允許一鍵勾選「折抵現金」。</li>
-            <li>• <b>尊榮會員三層分級 (新星/狂熱者/VIP)</b>：根據消費金額自動升級，享有 1.5倍 ~ 2倍 點數加速與新品預購權。</li>
-            <li>• <b>改單/刪單 SOP 控管</b>：未製作前可自主微調；已開始製作自動鎖定，AI 溫和說明並提供店家聯繫方式。</li>
-            <li>• <b>久候未取雙向催取</b>：逾時 30 分鐘自動推播關懷卡片提醒取貨，維護現做最佳口感風味。</li>
+            <li>• <b>基礎接單大腦</b>：24H 吉祥物 AI 人設、LINE LIFF 圖文點餐、完售與缺料 LINE 秒級警報。</li>
+            <li>• <b>[加購模組 A] 會員積點折抵</b>：消費滿 $50 送 1 點。結帳卡片自動顯示點數並允許一鍵扣抵金額。</li>
+            <li>• <b>[加購模組 B] 企業 B2B 大宗對接</b>：200-400份公司採購自動引導填寫統編抬頭、試算階梯折扣。</li>
+            <li>• <b>[加購模組 C] 改單風控 SOP</b>：製作中狀態自動鎖定，逾時 30 分鐘自動推播催取關懷卡片。</li>
           </ul>
         </div>
 
@@ -441,13 +441,13 @@ export default function ButterToastProposalPage() {
           <div className="flex items-center gap-1.5 mb-2">
             <span className="text-lg">🚨</span>
             <h4 className="font-serif font-bold text-[#B26A27] text-xs md:text-base">
-              後台：會員點數數據與 CRM 匯出 ✕ AI 數據 Copilot
+              後台：模組化控制台 ✕ PDF 報價單 ✕ AI Copilot
             </h4>
           </div>
           <ul className="text-xs md:text-sm text-[#382D24] space-y-1.5">
-            <li>• <b>會員點數發放與過期設定</b>：老闆可彈性設定點數活動（如週五雙倍送）、手動補點與名單匯出。</li>
-            <li>• <b>久候未取雙向同步通知</b>：顧客逾時未取餐，系統同步推播給老闆/廚房即時控管餐點狀況。</li>
             <li>• <b>大宗採購一鍵 PDF 匯出</b>：後台自動生成帶有公司統編與大小印章之正式 PDF 估價單供報帳。</li>
+            <li>• <b>會員 CRM 與點數管理</b>：發放點數、過期時間設定、會員消費數據與 CSV 名單匯出。</li>
+            <li>• <b>直覺式庫存控制台</b>：一鍵開啟/關閉商品架、微調每日限量與原物料警戒值。</li>
             <li>• <b>後台 AI 數據 Copilot</b>：店長直接查詢「今日業績/完成幾單/詢問未下單幾人/新會員數」，AI 秒回！</li>
           </ul>
         </div>
@@ -455,99 +455,113 @@ export default function ButterToastProposalPage() {
     </div>
   );
 
-  // Section 4: Pricing & Invoice
+  // Section 4: Pricing & Invoice (Modular Pricing)
   const sectionPricing = (
     <div className="w-full my-auto space-y-3">
       <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-2">
         <h2 className="text-base md:text-2xl font-bold font-serif text-[#382D24]">
-          專案報價金額、對標真人小編成本與發票填寫
+          模組化階梯報價金額 ✕ 【全功能旗艦包】專屬特惠
         </h2>
         <span className="text-[10px] md:text-xs bg-emerald-600 text-white px-2.5 py-0.5 rounded-full font-bold">
-          節省 85% 人力成本
+          打包直降 $10,000
         </span>
       </div>
 
-      {/* Main Pricing Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {/* Card 1: Setup Fee */}
-        <div className="bg-white border-2 border-[#D6A86E] rounded-2xl p-3.5 shadow-xs flex flex-col justify-between">
+      {/* Modular Pricing Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 text-xs">
+        {/* Foundation Package */}
+        <div className="bg-white border border-[#E6DDCF] rounded-2xl p-3 shadow-xs flex flex-col justify-between">
           <div>
-            <div className="flex justify-between items-center mb-1">
-              <span className="font-bold text-xs md:text-sm text-[#B26A27]">
-                🛠️ 【一次性】AI 店長系統建置費
-              </span>
-              <span className="text-[10px] bg-[#EFE7DA] text-[#B26A27] px-2 py-0.5 rounded-full font-bold">
-                分兩期 (訂金 / 尾款)
-              </span>
+            <span className="font-bold text-xs text-[#382D24] block mb-1">
+              📦 【基礎入門版】核心接單大腦
+            </span>
+            <div className="text-lg font-black font-mono text-[#382D24] my-0.5">
+              NT$ 36,000 <span className="text-[10px] font-normal text-[#7C6E62]">(未稅)</span>
             </div>
-            <div className="text-xl md:text-2xl font-black font-mono text-[#B26A27] my-0.5">
-              NT$ 48,000 <span className="text-xs font-normal text-[#7C6E62]">(未稅)</span>
+            <div className="text-[10px] text-[#7C6E62] mb-1.5 bg-[#F7F3ED] p-1 rounded border border-[#E6DDCF]">
+              💳 月代營運費：<b>NT$ 3,600 / 月</b> (未稅)
             </div>
-            <div className="text-xs text-[#7C6E62] mb-1.5 bg-[#F7F3ED] p-1 rounded-lg border border-[#E6DDCF]">
-              🧾 加上 5% 營業稅 ($2,400) ＝ <b>含稅總額 NT$ 50,400</b>
-            </div>
-            <ul className="text-xs text-[#382D24] space-y-0.5 mb-1.5">
-              <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> 100% 線上全遠端建置，免到店干擾營運</li>
-              <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> <b>LINE 會員紅利積點 ✕ 點費折抵 ✕ 改單 SOP</b></li>
-              <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> 後台 AI 經營助手大腦 (調閱業績與未下單分析)</li>
-              <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> AI 歷史訂單記憶大腦 (口味記憶・貼心推薦)</li>
-              <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> 前後台原生身份認證與店家員工專屬權限鎖</li>
+            <ul className="text-[11px] text-[#7C6E62] space-y-1">
+              <li>✓ 24H 吉祥物 AI 人設與門市問答</li>
+              <li>✓ LINE LIFF 手機圖文點餐卡片</li>
+              <li>✓ 完售與缺料 LINE 秒級推播警報</li>
+              <li>✓ 後台 AI 數據 Copilot 業績日報</li>
+              <li>✓ 廚房看板與備貨完成通知</li>
             </ul>
           </div>
-          <div className="text-xs text-[#7C6E62] bg-[#FFF8F0] p-1 rounded-xl border border-[#D6A86E] text-center font-medium">
-            👇 簽約付訂金 $25,200 (含稅)；驗收付尾款 $25,200 (含稅)
+          <div className="mt-2 pt-1.5 border-t text-[10px] text-gray-500 text-center">
+            入門基礎適用
           </div>
         </div>
 
-        {/* Card 2: Monthly Managed */}
-        <div className="bg-white border-2 border-[#B26A27] rounded-2xl p-3.5 shadow-md flex flex-col justify-between">
+        {/* Add-on Modules List */}
+        <div className="bg-[#FFFDF9] border border-[#D6A86E] rounded-2xl p-3 shadow-xs flex flex-col justify-between">
           <div>
-            <div className="flex justify-between items-center mb-1">
-              <span className="font-bold text-xs md:text-sm text-[#B26A27]">
-                💳 【每月】代營運與 AI 系統費
-              </span>
-              <span className="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-bold">
-                超高 CP 值
-              </span>
+            <span className="font-bold text-xs text-[#B26A27] block mb-1">
+              🧩 自由加購擴充模組 (Add-ons)
+            </span>
+            <div className="space-y-1.5 text-[11px]">
+              <div className="bg-amber-50/60 p-1.5 rounded-lg border border-amber-200">
+                <b className="text-[#B26A27] block">🪙 模組A: 會員紅利積點與折抵</b>
+                <span className="text-[#7C6E62]">滿$50送1點、點數現折現金、VIP分級<br/><b>+$8,000 (一次性) ｜ 月費 +$600</b></span>
+              </div>
+              <div className="bg-amber-50/60 p-1.5 rounded-lg border border-amber-200">
+                <b className="text-[#B26A27] block">🏢 模组B: 企業大宗團購+PDF報價單</b>
+                <span className="text-[#7C6E62]">200-400份採購引導、階梯折扣、PDF單<br/><b>+$8,000 (一次性) ｜ 月費 +$600</b></span>
+              </div>
+              <div className="bg-amber-50/60 p-1.5 rounded-lg border border-amber-200">
+                <b className="text-[#B26A27] block">🛡️ 模組C: 改單風控SOP+久候催取</b>
+                <span className="text-[#7C6E62]">製作中鎖定防改單、逾時30分催取<br/><b>+$6,000 (一次性) ｜ 月費 +$400</b></span>
+              </div>
             </div>
-            <div className="text-xl md:text-2xl font-black font-mono text-[#B26A27] my-0.5">
-              NT$ 4,800 <span className="text-xs font-normal text-[#7C6E62]">/ 月 (未稅)</span>
+          </div>
+          <div className="mt-1 text-[10px] text-[#B26A27] text-center font-medium">
+            💡 未來加購新功能以此標準計費
+          </div>
+        </div>
+
+        {/* All-in-One Flagship Bundle (Selected for Butter Toast) */}
+        <div className="bg-gradient-to-b from-white to-[#FFF8F0] border-2 border-[#B26A27] rounded-2xl p-3 shadow-md flex flex-col justify-between relative overflow-hidden">
+          <div className="absolute top-0 right-0 bg-[#B26A27] text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-lg">
+            本專案特別推薦
+          </div>
+          <div>
+            <span className="font-bold text-xs text-[#B26A27] block mb-1">
+              🏆 【全功能尊榮旗艦包】
+            </span>
+            <div className="text-xl font-black font-mono text-[#B26A27] my-0.5">
+              NT$ 48,000 <span className="text-[10px] font-normal text-[#7C6E62]">(未稅)</span>
             </div>
-            <div className="text-xs text-[#7C6E62] mb-1.5 bg-[#F7F3ED] p-1 rounded-lg border border-[#E6DDCF]">
-              🧾 加上 5% 營業稅 ($240) ＝ <b>含稅 NT$ 5,040 / 月</b>
+            <div className="text-[10px] text-emerald-800 bg-emerald-50 p-1 rounded border border-emerald-200 mb-1.5">
+              🧾 加上5%營業稅 ($2,400) ＝ <b>含稅總額 NT$ 50,400</b><br/>
+              💳 每月代營運費：<b>NT$ 4,800 / 月 (含稅 $5,040)</b>
             </div>
-            <div className="text-[11px] bg-amber-50 border border-[#D6A86E] p-1 rounded-lg mb-1.5 text-[#382D24]">
-              💡 <b>對標真人小編：</b>每年直接為店家省下 <b>NT$ 28 萬薪資支出！</b>
+            <div className="text-[10px] text-[#382D24] bg-amber-100/70 p-1 rounded border border-amber-300 mb-1 font-medium">
+              ✨ <b>包含上述所有 24 大全套模組！</b>原價 $58,000 直降特惠！
             </div>
-            <ul className="text-xs text-[#382D24] space-y-0.5 mb-2">
-              <li className="flex items-center gap-1"><span className="text-emerald-700 font-bold">★</span> <b>首月 30 天線上免費維護保障 (依需求彈性微調)</b></li>
-              <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> 5,000 會員容量 AI 流量 (20,000則/月)</li>
-              <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> 每月 2 次限量預購 Banner 設計全自動推播</li>
-              <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> 每週 AI 對話巡檢與菜單維護</li>
-            </ul>
           </div>
 
           <button
             onClick={handleMonthlyCheckout}
             disabled={checkoutLoading}
-            className="w-full py-2 px-3 bg-gradient-to-r from-[#B26A27] via-[#D6A86E] to-[#B26A27] hover:from-[#8F521B] hover:to-[#8F521B] text-white font-extrabold rounded-xl shadow-md transition flex items-center justify-center gap-1 text-xs cursor-pointer active:scale-95"
+            className="w-full py-2 px-2 bg-gradient-to-r from-[#B26A27] via-[#D6A86E] to-[#B26A27] hover:from-[#8F521B] hover:to-[#8F521B] text-white font-extrabold rounded-xl shadow-md transition flex items-center justify-center gap-1 text-[11px] cursor-pointer active:scale-95 mt-1"
           >
             <span>💳</span>
-            <span>{checkoutLoading ? "正在連接藍新金流..." : "驗收通過點此【線上綁定藍新信用卡開通營運】(NT$ 5,040/月)"}</span>
+            <span>{checkoutLoading ? "連線中..." : "線上綁定藍新信用卡開通 ($5,040/月含稅)"}</span>
             <span>➔</span>
           </button>
         </div>
       </div>
 
       {/* Bank Account Details */}
-      <div className="bg-gradient-to-br from-[#FFFDF9] to-[#FCEFDC] border-2 border-[#B26A27] rounded-2xl p-2.5 shadow-xs">
+      <div className="bg-gradient-to-br from-[#FFFDF9] to-[#FCEFDC] border-2 border-[#B26A27] rounded-2xl p-2 shadow-xs">
         <div className="flex justify-between items-center mb-1">
-          <h4 className="font-serif font-bold text-[#B26A27] text-xs md:text-sm flex items-center gap-1">
+          <h4 className="font-serif font-bold text-[#B26A27] text-xs flex items-center gap-1">
             <span>🏦</span> 建置費訂金與尾款 — 現金匯款指定帳號
           </h4>
           <button
             onClick={handleCopyAccount}
-            className="px-2 py-0.5 bg-[#B26A27] text-white text-[11px] font-bold rounded-lg hover:bg-[#8F521B] transition"
+            className="px-2 py-0.5 bg-[#B26A27] text-white text-[10px] font-bold rounded-lg hover:bg-[#8F521B] transition"
           >
             {copySuccess ? "✓ 已複製" : "📋 複製帳號"}
           </button>
@@ -574,7 +588,7 @@ export default function ButterToastProposalPage() {
       </div>
 
       {/* Invoice Info Form */}
-      <div className="bg-white border border-[#E6DDCF] rounded-2xl p-2.5 shadow-xs">
+      <div className="bg-white border border-[#E6DDCF] rounded-2xl p-2 shadow-xs">
         <div className="flex justify-between items-center mb-1">
           <h4 className="font-serif font-bold text-xs text-[#B26A27] flex items-center gap-1">
             <span>🧾</span> 客戶公司發票資料填寫 (開立三聯式發票)
@@ -614,12 +628,11 @@ export default function ButterToastProposalPage() {
             )}
           </div>
         ) : (
-          <form onSubmit={handleSaveInvoiceInfo} className="grid grid-cols-1 md:grid-cols-2 gap-1.5 text-xs">
+          <form onSubmit={handleSaveInvoiceInfo} className="grid grid-cols-1 md:grid-cols-2 gap-1 text-xs">
             <div>
-              <label className="block text-[#7C6E62] mb-0.5 text-[10px]">公司全銜 / 買受人抬頭</label>
               <input
                 type="text"
-                placeholder="例如: 生乳/奶霜專賣店"
+                placeholder="公司全銜 / 買受人抬頭"
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
                 className="w-full px-2 py-1 bg-[#F7F3ED] border border-[#E6DDCF] rounded-lg focus:outline-none focus:border-[#B26A27] text-[#382D24]"
@@ -627,10 +640,9 @@ export default function ButterToastProposalPage() {
               />
             </div>
             <div>
-              <label className="block text-[#7C6E62] mb-0.5 text-[10px]">統一編號 (統編)</label>
               <input
                 type="text"
-                placeholder="例如: 88888888"
+                placeholder="統一編號 (統編)"
                 value={taxId}
                 onChange={(e) => setTaxId(e.target.value)}
                 className="w-full px-2 py-1 bg-[#F7F3ED] border border-[#E6DDCF] rounded-lg focus:outline-none focus:border-[#B26A27] text-[#382D24]"
@@ -638,20 +650,18 @@ export default function ButterToastProposalPage() {
               />
             </div>
             <div>
-              <label className="block text-[#7C6E62] mb-0.5 text-[10px]">發票寄送地址</label>
               <input
                 type="text"
-                placeholder="請輸入紙本發票寄送地址"
+                placeholder="發票寄送地址"
                 value={invoiceAddress}
                 onChange={(e) => setInvoiceAddress(e.target.value)}
                 className="w-full px-2 py-1 bg-[#F7F3ED] border border-[#E6DDCF] rounded-lg focus:outline-none focus:border-[#B26A27] text-[#382D24]"
               />
             </div>
             <div>
-              <label className="block text-[#7C6E62] mb-0.5 text-[10px]">電子發票通知 Email</label>
               <input
                 type="email"
-                placeholder="請輸入收到發票通知的 Email"
+                placeholder="電子發票通知 Email"
                 value={contactEmail}
                 onChange={(e) => setContactEmail(e.target.value)}
                 className="w-full px-2 py-1 bg-[#F7F3ED] border border-[#E6DDCF] rounded-lg focus:outline-none focus:border-[#B26A27] text-[#382D24]"
@@ -722,7 +732,7 @@ export default function ButterToastProposalPage() {
     <div className="w-full my-auto space-y-4">
       <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-2">
         <h2 className="text-base md:text-2xl font-bold font-serif text-[#382D24]">
-          詳細服務交付 ✕ 吉祥物 AI 人設 ✕ 會員 CRM 積點清單
+          詳細服務交付 ✕ 吉祥物 AI 人設 ✕ 模組清單
         </h2>
         <span className="text-[10px] md:text-xs bg-[#EFE7DA] text-[#B26A27] px-2.5 py-0.5 rounded-full font-bold">
           完整交付清單
@@ -731,13 +741,13 @@ export default function ButterToastProposalPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
         <div className="bg-white border border-[#E6DDCF] rounded-2xl p-4 shadow-xs">
-          <h4 className="font-bold text-[#B26A27] text-xs md:text-sm mb-2">📌 AI 店長與會員 CRM 建置 (一次性)</h4>
+          <h4 className="font-bold text-[#B26A27] text-xs md:text-sm mb-2">📌 基礎大腦 ✕ 全加購模組交付</h4>
           <ul className="text-xs md:text-sm text-[#382D24] space-y-1">
             <li>✓ 100% 全遠端雲端建置與線上指導驗收</li>
-            <li>✓ <b>LINE 會員紅利積點 ✕ 點數折抵點餐機制</b></li>
-            <li>✓ <b>會員尊榮分級 (新星/狂熱者/VIP) 自動升級</b></li>
-            <li>✓ 刪單/改單產線鎖定控管 SOP 流程</li>
-            <li>✓ 久候未取餐雙向自動化提醒與催取卡片</li>
+            <li>✓ <b>[模組A] LINE 會員紅利積點 ✕ 點數折抵現金</b></li>
+            <li>✓ <b>[模組B] 企業 B2B 大宗團購 ✕ 一鍵 PDF 報價單</b></li>
+            <li>✓ <b>[模組C] 刪單/改單產線鎖定 SOP ✕ 久候催取卡片</b></li>
+            <li>✓ 完售/缺料實時推播警報 ✕ 老闆 AI 數據助手</li>
             <li>✓ 前後台原生身份認證與店家員工專屬權限鎖</li>
           </ul>
         </div>
@@ -790,23 +800,23 @@ export default function ButterToastProposalPage() {
           <tbody className="divide-y divide-[#E6DDCF] text-[#382D24]">
             <tr>
               <td className="p-2 md:p-2.5 font-bold">會員經營與紅利積點</td>
-              <td className="p-2 md:p-2.5 text-gray-600">手動蓋章卡易遺失，無法精確算點折抵</td>
-              <td className="p-2 md:p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]"><b>LINE 免下載卡片自動算點 ✕ 點餐一鍵直接折抵現金</b></td>
+              <td className="p-2 md:p-2.5 text-gray-600">手動蓋章卡易遺失，無算點扣抵</td>
+              <td className="p-2 md:p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]"><b>[模組A] LINE 自動算點 ✕ 點餐一鍵扣抵現金</b></td>
             </tr>
             <tr>
               <td className="p-2 md:p-2.5 font-bold">刪改單與棄單防禦</td>
-              <td className="p-2 md:p-2.5 text-gray-600">口頭改單易忘記，棄單無法即時催取損耗大</td>
-              <td className="p-2 md:p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]"><b>製作中狀態自動鎖定防隨意改單 ✕ 久候未取雙向催卡</b></td>
+              <td className="p-2 md:p-2.5 text-gray-600">口頭改單易忘，棄單無即時催取</td>
+              <td className="p-2 md:p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]"><b>[模組C] 製作中自動鎖定 ✕ 逾時30分雙向催卡</b></td>
             </tr>
             <tr>
               <td className="p-2 md:p-2.5 font-bold">企業 B2B 大宗團購對接</td>
-              <td className="p-2 md:p-2.5 text-gray-600">人工詢問溝通慢，缺 PDF 報價單</td>
-              <td className="p-2 md:p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]"><b>200-400份採購引導、階梯折扣與一鍵 PDF 估價單</b></td>
+              <td className="p-2 md:p-2.5 text-gray-600">人工溝通慢，缺 PDF 報價單</td>
+              <td className="p-2 md:p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]"><b>[模組B] 200-400份採購引導 ✕ 一鍵 PDF 估價單</b></td>
             </tr>
             <tr>
-              <td className="p-2 md:p-2.5 font-bold">每月固定費用成本</td>
-              <td className="p-2 md:p-2.5 text-red-600 font-mono font-bold">NT$ 30,000 ~ 35,000</td>
-              <td className="p-2 md:p-2.5 text-emerald-700 font-mono font-black bg-[#FFF8F0]">NT$ 4,800 / 月 (含稅 $5,040)</td>
+              <td className="p-2 md:p-2.5 font-bold">方案與費用模式</td>
+              <td className="p-2 md:p-2.5 text-red-600 font-mono font-bold">NT$ 30,000 ~ 35,000/月</td>
+              <td className="p-2 md:p-2.5 text-emerald-700 font-mono font-black bg-[#FFF8F0]"><b>【全功能旗艦包】特惠 $48,000 (月費 $4,800/月)</b></td>
             </tr>
           </tbody>
         </table>
@@ -903,20 +913,20 @@ export default function ButterToastProposalPage() {
             <button
               onClick={() => setCurrentSlide((prev) => Math.max(prev - 1, 0))}
               disabled={currentSlide === 0}
-              className="px-5 py-2 bg-white border border-[#E6DDCF] rounded-full text-sm font-bold text-[#382D24] hover:bg-[#B26A27] hover:text-white disabled:opacity-30 transition shadow-xs active:scale-95"
+              className="px-5 py-2 bg-[#F7F3ED] border border-[#E6DDCF] rounded-full text-xs font-bold text-[#382D24] hover:bg-[#B26A27] hover:text-white disabled:opacity-30 transition shadow-xs active:scale-95"
             >
               ← 上一頁
             </button>
             <button
               onClick={() => setCurrentSlide((prev) => Math.min(prev + 1, allSections.length - 1))}
               disabled={currentSlide === allSections.length - 1}
-              className="px-5 py-2 bg-white border border-[#E6DDCF] rounded-full text-sm font-bold text-[#382D24] hover:bg-[#B26A27] hover:text-white disabled:opacity-30 transition shadow-xs active:scale-95"
+              className="px-5 py-2 bg-[#F7F3ED] border border-[#E6DDCF] rounded-full text-xs font-bold text-[#382D24] hover:bg-[#B26A27] hover:text-white disabled:opacity-30 transition shadow-xs active:scale-95"
             >
               下一頁 →
             </button>
             <button
               onClick={() => window.print()}
-              className="px-5 py-2 bg-[#EFE7DA] border border-[#D6A86E] text-[#B26A27] rounded-full text-sm font-bold hover:bg-[#B26A27] hover:text-white transition shadow-xs active:scale-95"
+              className="px-5 py-2 bg-[#EFE7DA] border border-[#D6A86E] text-[#B26A27] rounded-full text-xs font-bold hover:bg-[#B26A27] hover:text-white transition shadow-xs active:scale-95"
             >
               🖨️ 列印 / PDF
             </button>

@@ -318,7 +318,7 @@ export default function ButterToastStarterProposalPage() {
       </h1>
 
       <p className="text-xs md:text-base text-[#7C6E62] max-w-2xl mx-auto mb-4 md:mb-6 leading-relaxed font-medium">
-        專為輕量預算門市打造的 <b>1 萬元極速上線 AI 智慧總管 ✕ 1,000 元小額月費</b>！精準專注於<b>「聊天回覆 ✕ 產品卡片 ✕ 對話記憶 ✕ 資安防護 ✕ 品牌人設」</b>！
+        專為輕量預算門市打造的 <b>1 萬元極速上線 AI 智慧總管 ✕ 1,000 元小額月費</b>！精準專注於<b>「聊天回覆 ✕ 產品卡片 ✕ 對話記憶 ✕ AI 對話資安防護 ✕ 品牌人設」</b>！
       </p>
 
       {/* 5 Core Feature Highlights Grid */}
@@ -339,8 +339,8 @@ export default function ButterToastStarterProposalPage() {
         </div>
 
         <div className="bg-white/90 border border-[#D6A86E] p-2.5 rounded-xl shadow-xs">
-          <div className="text-xs font-bold text-[#B26A27] mb-0.5">🔒 金融級資安防護</div>
-          <p className="text-[10px] text-[#7C6E62] leading-tight">鎖定 F12/右鍵/複製，防偷窺騙價</p>
+          <div className="text-xs font-bold text-[#B26A27] mb-0.5">🔒 AI 智能資安防護</div>
+          <p className="text-[10px] text-[#7C6E62] leading-tight">防不理性謾罵/亂打字/十萬字灌爆/防反向套成本個資</p>
         </div>
 
         <div className="bg-white/90 border border-[#D6A86E] p-2.5 rounded-xl shadow-xs col-span-2 sm:col-span-1">
@@ -365,7 +365,7 @@ export default function ButterToastStarterProposalPage() {
     </div>
   );
 
-  // Section 2: Pain Points (Strictly the 5 Core Features)
+  // Section 2: Pain Points (Detailed 5 Core Features with AI Security Defense)
   const sectionPainPoints = (
     <div className="w-full my-auto space-y-4 max-w-4xl mx-auto">
       <div className="flex justify-between items-center border-b border-[#E6DDCF] pb-2">
@@ -408,13 +408,13 @@ export default function ButterToastStarterProposalPage() {
           </p>
         </div>
 
-        <div className="bg-white border-2 border-[#D6A86E] rounded-2xl p-3.5 shadow-xs">
+        <div className="bg-white border-2 border-[#B26A27] rounded-2xl p-3.5 shadow-xs bg-amber-50/20">
           <div className="text-xl mb-1">🔒</div>
           <h3 className="font-serif font-bold text-sm text-[#B26A27] mb-1">
-            功能 4：金融級資安防護與防偷窺鎖
+            功能 4：AI 智能對話資安防護與反套話防線
           </h3>
-          <p className="text-xs text-[#7C6E62] leading-relaxed">
-            全面防護！禁用 F12/DevTools/右鍵選單與文字複製選取，傳輸高強度加密防誘導改價防偷窺。
+          <p className="text-xs text-[#382D24] leading-relaxed">
+            <b>【AI 機密與情緒防護大腦】</b>自動過濾不理性謾罵髒話、亂打字清洗、防範十萬字灌爆過載；當惡意反向套話<em>（如問成本多少？問店長個人資料電話？）</em>時，AI 智能捍衛機密並高 EQ 優雅婉拒！
           </p>
         </div>
 
@@ -455,7 +455,7 @@ export default function ButterToastStarterProposalPage() {
             <li className="p-1.5 bg-[#FFF8F0] rounded-lg border border-[#D6A86E]">💬 <b>1. 24H 聊天回覆與門市問答</b></li>
             <li className="p-1.5 bg-[#FFF8F0] rounded-lg border border-[#D6A86E]">📱 <b>2. 自動彈出圖文產品卡片與算錢</b></li>
             <li className="p-1.5 bg-[#FFF8F0] rounded-lg border border-[#D6A86E]">🧠 <b>3. 記憶客人對話內容與口味偏好</b></li>
-            <li className="p-1.5 bg-[#FFF8F0] rounded-lg border border-[#D6A86E]">🔒 <b>4. 金融級資安防護與防偷窺鎖</b></li>
+            <li className="p-1.5 bg-[#FFF8F0] rounded-lg border border-[#D6A86E]">🔒 <b>4. AI 對話資安防護 (防謾罵/防十萬字爆量/防套成本與個資)</b></li>
             <li className="p-1.5 bg-[#FFF8F0] rounded-lg border border-[#D6A86E]">🧸 <b>5. 品牌吉祥物娃娃 AI 人設導入</b></li>
           </ul>
         </div>
@@ -521,7 +521,7 @@ export default function ButterToastStarterProposalPage() {
             </div>
             <ul className="text-xs text-[#382D24] space-y-1 mb-2">
               <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> 100% 線上全遠端建置，免到店干擾營運</li>
-              <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> <b>精準包含 5 大極簡核心功能 (聊天/卡片/記憶/資安/人設)</b></li>
+              <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> <b>包含 5 大極簡核心功能 (聊天/卡片/記憶/AI資安防套/人設)</b></li>
               <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> 前後台原生身份認證與資安防護鎖</li>
               <li className="flex items-center gap-1"><span className="text-[#B26A27] font-bold">✓</span> 享【首月 30 天線上維護保障】與微調</li>
             </ul>
@@ -758,7 +758,7 @@ export default function ButterToastStarterProposalPage() {
             <li>✓ <b>1. 24H 聊天回覆與門市問答</b></li>
             <li>✓ <b>2. 自動彈出圖文產品卡片與算錢</b></li>
             <li>✓ <b>3. 記憶客人對話內容與口味偏好</b></li>
-            <li>✓ <b>4. 金融級資安防護與防偷窺鎖</b></li>
+            <li>✓ <b>4. AI 對話資安防護 (防謾罵/防十萬字過載/防套成本與個資)</b></li>
             <li>✓ <b>5. 品牌吉祥物/娃娃 AI 人設導入</b></li>
           </ul>
         </div>
@@ -813,9 +813,9 @@ export default function ButterToastStarterProposalPage() {
               <td className="p-2 md:p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]"><b>吉祥物娃娃語氣 24H 即時回覆 ✕ 記憶顧客內容</b></td>
             </tr>
             <tr>
-              <td className="p-2 md:p-2.5 font-bold">點餐算錢與卡片</td>
-              <td className="p-2 md:p-2.5 text-gray-600">人工算錢易算錯，需手發圖文</td>
-              <td className="p-2 md:p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]"><b>自動彈出圖文產品卡片與算錢發憑證</b></td>
+              <td className="p-2 md:p-2.5 font-bold">對話資安與反套話防線</td>
+              <td className="p-2 md:p-2.5 text-gray-600">人工易情緒化，可能失言洩密</td>
+              <td className="p-2 md:p-2.5 font-bold text-emerald-700 bg-[#FFF8F0]"><b>防謾罵/防十萬字爆量/防反向套問成本與個資</b></td>
             </tr>
             <tr>
               <td className="p-2 md:p-2.5 font-bold">方案金額與負擔</td>
@@ -846,7 +846,7 @@ export default function ButterToastStarterProposalPage() {
             <span className="font-mono font-black text-[#B26A27]">ivanlai33</span>
           </div>
 
-          <div className="bg-white/80 px-3 py-1.5 rounded-xl border border-[#D6A86E]">
+          <div className="bg-white/80 px-[#7C6E62] px-3 py-1.5 rounded-xl border border-[#D6A86E]">
             <span className="text-[9px] text-[#7C6E62] block">電話</span>
             <span className="font-mono font-black text-[#B26A27]">0987528785</span>
           </div>

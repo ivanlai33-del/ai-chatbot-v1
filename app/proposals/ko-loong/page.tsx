@@ -586,6 +586,13 @@ export default function KoloongProposalPage() {
           </div>
 
           <div className="flex items-center space-x-2">
+            <button
+              type="button"
+              onClick={() => window.print()}
+              className="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-lg border border-slate-700 transition flex items-center space-x-1.5 shadow"
+            >
+              <span>🖨️ 列印/輸出官方簽核單</span>
+            </button>
             <span className="text-xs px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 font-mono">
               PROP-2026-KL-01
             </span>

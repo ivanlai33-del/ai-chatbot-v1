@@ -162,6 +162,56 @@ export default function KoloongProposalPage() {
       .catch(() => {});
 
     logAuditEvent("NEW_VIEWER_SESSION_OPENED", `Session: ${sid} | Device: ${dev} opened page`);
+
+    // --- ANTI-COPY & ANTI-TAMPER DEFENSE LISTENERS ---
+    const handleContextMenu = (e: MouseEvent) => {
+      e.preventDefault();
+      logAuditEvent('SECURITY_ALERT', 'Right-click menu blocked');
+    };
+
+    const handleCopy = (e: ClipboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) return;
+      e.preventDefault();
+      if (e.clipboardData) e.clipboardData.setData('text/plain', '');
+      logAuditEvent('SECURITY_ALERT', 'Copy shortcut/attempt blocked');
+      alert("⚠️ 智慧財產保護提示：本線上報價單內容受智財權保護，禁止未授權複製與塗改變造。");
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const isCmdOrCtrl = e.ctrlKey || e.metaKey;
+      const key = e.key.toLowerCase();
+      const target = e.target as HTMLElement;
+
+      if (isCmdOrCtrl && key === 'c' && target && target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        logAuditEvent('SECURITY_ALERT', 'Blocked Cmd/Ctrl+C copy shortcut');
+      }
+      if (isCmdOrCtrl && key === 's') {
+        e.preventDefault();
+        logAuditEvent('SECURITY_ALERT', 'Blocked Cmd/Ctrl+S save shortcut');
+        alert("⚠️ 本計畫書以官方線上紀錄為唯一憑據，無法存檔至本機。");
+      }
+      if (isCmdOrCtrl && key === 'p') {
+        e.preventDefault();
+        logAuditEvent('SECURITY_ALERT', 'Blocked Cmd/Ctrl+P print shortcut');
+        alert("⚠️ 本計畫書禁止直接列印。請以官方線上存取與後台簽核紀錄為憑。");
+      }
+      if (isCmdOrCtrl && key === 'u') {
+        e.preventDefault();
+        logAuditEvent('SECURITY_ALERT', 'Blocked Cmd/Ctrl+U view source shortcut');
+      }
+    };
+
+    window.addEventListener('contextmenu', handleContextMenu);
+    window.addEventListener('copy', handleCopy);
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('contextmenu', handleContextMenu);
+      window.removeEventListener('copy', handleCopy);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
 
   useEffect(() => {

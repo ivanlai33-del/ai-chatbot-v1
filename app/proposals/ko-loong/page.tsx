@@ -38,8 +38,10 @@ export default function KoloongProposalPage() {
   const [checkTerms1, setCheckTerms1] = useState(false);
   const [checkTerms2, setCheckTerms2] = useState(false);
 
-  // Admin View State
+  // Admin View State & Security Intercept
   const [isAdminView, setIsAdminView] = useState(false);
+  const [isVpnBlocked, setIsVpnBlocked] = useState(false);
+  const [detectedVpnIp, setDetectedVpnIp] = useState("");
   const [invoiceRecords, setInvoiceRecords] = useState<InvoiceRecord[]>([]);
 
   // Password Verification (Today's date: 20260725 or 0725)
@@ -156,12 +158,30 @@ export default function KoloongProposalPage() {
     }
     setDeviceInfo(dev);
 
-    fetch("https://api.ipify.org?format=json")
+    fetch("https://ipapi.co/json/")
       .then((res) => res.json())
       .then((data) => {
-        if (data.ip) setClientIp(data.ip);
+        if (data.ip) setClientIp(`${data.ip} (${data.country_name || data.country_code || "TW"})`);
+        const isTaiwanOrLocal = !data.country_code || data.country_code === "TW" || data.ip === "127.0.0.1";
+        const isProxyOrVpn = data.security?.is_proxy || (data.org && (data.org.includes("VPN") || data.org.includes("Cloud") || data.org.includes("DataCenter")));
+
+        const searchParams = new URLSearchParams(window.location.search);
+        const isBypass = searchParams.get("admin") === "87257257";
+
+        if ((!isTaiwanOrLocal || isProxyOrVpn) && !isBypass) {
+          setIsVpnBlocked(true);
+          setDetectedVpnIp(`${data.ip} [${data.country_name || "海外/VPN"}]`);
+          logAuditEvent("SECURITY_VPN_BLOCKED", `Blocked foreign/VPN IP: ${data.ip} [${data.country_name}]`);
+        }
       })
-      .catch(() => {});
+      .catch(() => {
+        fetch("https://api.ipify.org?format=json")
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.ip) setClientIp(data.ip);
+          })
+          .catch(() => {});
+      });
 
     logAuditEvent("NEW_VIEWER_SESSION_OPENED", `Session: ${sid} | Device: ${dev} opened page`);
 
@@ -364,6 +384,40 @@ export default function KoloongProposalPage() {
 
   if (isOwnerBypass && typeof window !== "undefined") {
     sessionStorage.setItem("proposal_admin_bypass", "true");
+  }
+
+  // Foreign IP / VPN Intercept Screen
+  if (isVpnBlocked && !isOwnerBypass) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4 font-sans select-none">
+        <div className="w-full max-w-md bg-slate-900 border border-amber-500/40 rounded-3xl p-8 text-center shadow-2xl space-y-5">
+          <div className="w-16 h-16 bg-amber-500/10 text-amber-400 rounded-2xl flex items-center justify-center text-3xl mx-auto border border-amber-500/30 animate-bounce">
+            🌐
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-white">安全存取驗證 — 請關閉 VPN 代理</h1>
+            <span className="inline-block mt-2 px-3 py-1 bg-amber-500/20 text-amber-300 text-xs font-mono font-bold rounded-full border border-amber-500/30">
+              {detectedVpnIp ? `偵測到非台灣在地連線/VPN: ${detectedVpnIp}` : "連線位置安全性檢測中..."}
+            </span>
+          </div>
+          <p className="text-xs text-slate-300 leading-relaxed text-left bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
+            <span>⚠️ <strong>存取限制說明：</strong></span><br />
+            1. 為防範商業機密外洩與跨國網路詐騙，本專案報價計畫書僅限<strong>台灣在地網路 IP</strong>開啓與瀏覽。<br />
+            2. 若您正在使用 VPN 代理伺服器、跳板網路或國外 IP，<strong>請先暫時關閉 VPN 或切換至台灣本地電信網路</strong>，並重新重新整理頁面。
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-bold rounded-xl shadow-lg transition"
+          >
+            🔄 關閉 VPN 後重新嘗試開啟
+          </button>
+          <div className="pt-2 text-[11px] text-slate-500">
+            如為官方授權海外連線需求，請聯繫執行團隊：<br />
+            聯絡電話：0987528785 ｜ Line ID: ivanlai33
+          </div>
+        </div>
+      </div>
+    );
   }
 
   // 10-Day URL Blocked / Hidden Screen (Triggered ONLY after stranger IP first opened + > 10 days)

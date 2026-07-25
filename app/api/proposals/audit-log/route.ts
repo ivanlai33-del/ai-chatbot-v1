@@ -81,13 +81,13 @@ export async function GET(req: NextRequest) {
     }
 
     // 預設返回後台統計數據
-    const allLogs = ProposalAuditService.getProposalLogs();
+    const allLogs = ProposalAuditService.getProposalLogs() as Record<string, any[]>;
     
     // 計算全站實時統計數據
     let totalSessionsCount = 0;
     let totalInvoiceCount = 0;
     const projectSummaries = ALL_PROPOSALS.map((p) => {
-      const projectSessions = (allLogs[p.slug] as any[]) || [];
+      const projectSessions = (allLogs[p.slug] || []) as any[];
       totalSessionsCount += projectSessions.length;
       
       const invoiceSessions = projectSessions.filter((s) => s.invoiceInfo);

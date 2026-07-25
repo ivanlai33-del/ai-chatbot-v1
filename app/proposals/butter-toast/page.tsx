@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Script from "next/script";
+import { calculateProposalLifecycle, sendProposalAuditTrack } from "@/lib/services/ProposalLifecycleHelper";
 
 interface InvoiceRecord {
   id: string;
@@ -18,6 +19,10 @@ export default function ButterToastProposalPage() {
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Proposal Effective Date
+  const CREATED_AT = "2026-07-23";
+  const lifecycle = calculateProposalLifecycle(CREATED_AT);
 
   // LIFF Context State
   const [lineProfile, setLineProfile] = useState<{ displayName?: string; userId?: string } | null>(null);
@@ -253,43 +258,88 @@ export default function ButterToastProposalPage() {
     setTimeout(() => setCopySuccess(false), 2500);
   };
 
-  // Password Lock View (100% Mobile Responsive inside LINE LIFF)
+  // 🔴 3-Stage Lifecycle: Stage 3 (ARCHIVED_404 > 10 Days)
+  if (lifecycle.stage === "ARCHIVED_404") {
+    return (
+      <div className="w-full min-h-screen bg-[#0F172A] text-slate-200 flex flex-col justify-center items-center p-6 text-center font-sans">
+        <div className="w-16 h-16 bg-rose-950/80 text-rose-400 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 border border-rose-700/50">
+          🚫
+        </div>
+        <h1 className="text-3xl font-black mb-2 text-white">404 — 專案頁面已隱蔽歸檔</h1>
+        <p className="text-sm text-slate-400 max-w-md mx-auto leading-relaxed mb-6">
+          本商業提案已超過最高有效期限並對外隱蔽歸檔，專案畫面與密碼視窗已下架。如需重新查看專案簡報，請聯繫專案負責窗口。
+        </p>
+      </div>
+    );
+  }
+
+  // Password Lock View (100% Mobile Responsive inside LINE LIFF) / 🟡 Stage 2 (EXPIRED 6-10 Days)
   if (!isUnlocked) {
     return (
       <div className="w-full min-h-screen bg-[#F7F3ED] text-[#382D24] flex flex-col justify-center items-center p-4 font-sans select-none overflow-x-hidden">
         <Script src="https://static.line-scdn.net/liff/edge/2/sdk.js" onLoad={handleLiffInit} />
         <div className="w-full max-w-sm bg-[#FFFDF9] border border-[#E6DDCF] rounded-3xl p-6 shadow-xl text-center backdrop-blur-md">
-          <div className="w-12 h-12 bg-[#EFE7DA] text-[#B26A27] rounded-full flex items-center justify-center text-xl mx-auto mb-3 border border-[#D6A86E]">
-            🔒
-          </div>
-          <h1 className="text-lg font-bold font-serif mb-1.5 text-[#382D24]">
-            【生乳/奶霜專賣店】專屬提案
-          </h1>
-          <p className="text-xs text-[#7C6E62] mb-4 leading-relaxed">
-            本專案報價為受資安防護與商業加密保護之受控內容，請輸入授權密碼檢視。
-          </p>
+          {lifecycle.stage === "EXPIRED" ? (
+            <>
+              <div className="w-12 h-12 bg-amber-100 text-amber-800 rounded-full flex items-center justify-center text-xl mx-auto mb-3 border border-amber-300">
+                🔒
+              </div>
+              <h1 className="text-lg font-bold font-serif mb-1.5 text-rose-700">
+                🔒 專案報價存取期限已過期失效
+              </h1>
+              <p className="text-xs text-[#7C6E62] mb-4 leading-relaxed font-medium">
+                本專案報價已超過 5 天有效存取期 (第 {lifecycle.daysDiff} 天)，系統已自動停用密碼輸入。外人無法再輸入密碼查看內容，請聯絡專案窗口展延權限。
+              </p>
+              <div className="space-y-3">
+                <input
+                  type="password"
+                  disabled
+                  placeholder="密碼已自動停用"
+                  className="w-full px-3 py-2.5 bg-[#F7F3ED] border border-[#E6DDCF] rounded-xl text-center text-base opacity-50 cursor-not-allowed text-[#A39587]"
+                />
+                <button
+                  disabled
+                  className="w-full py-2.5 bg-slate-400 text-white font-bold rounded-xl text-sm cursor-not-allowed opacity-60"
+                >
+                  密碼已失效停用
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="w-12 h-12 bg-[#EFE7DA] text-[#B26A27] rounded-full flex items-center justify-center text-xl mx-auto mb-3 border border-[#D6A86E]">
+                🔒
+              </div>
+              <h1 className="text-lg font-bold font-serif mb-1.5 text-[#382D24]">
+                【生乳/奶霜專賣店】專屬提案
+              </h1>
+              <p className="text-xs text-[#7C6E62] mb-4 leading-relaxed">
+                本專案報價為受資安防護與商業加密保護之受控內容，請輸入授權密碼檢視。
+              </p>
 
-          <form onSubmit={handleUnlock} className="space-y-3">
-            <div>
-              <input
-                type="password"
-                placeholder="請輸入瀏覽密碼 (如: 20260723)"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2.5 bg-[#F7F3ED] border border-[#E6DDCF] rounded-xl text-center text-base focus:outline-none focus:border-[#B26A27] text-[#382D24] placeholder-[#A39587]"
-                autoFocus
-              />
-            </div>
+              <form onSubmit={handleUnlock} className="space-y-3">
+                <div>
+                  <input
+                    type="password"
+                    placeholder="請輸入瀏覽密碼 (如: 20260723)"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full px-3 py-2.5 bg-[#F7F3ED] border border-[#E6DDCF] rounded-xl text-center text-base focus:outline-none focus:border-[#B26A27] text-[#382D24] placeholder-[#A39587]"
+                    autoFocus
+                  />
+                </div>
 
-            {errorMsg && <p className="text-xs text-red-600 font-medium">{errorMsg}</p>}
+                {errorMsg && <p className="text-xs text-red-600 font-medium">{errorMsg}</p>}
 
-            <button
-              type="submit"
-              className="w-full py-2.5 bg-[#B26A27] hover:bg-[#8F521B] text-[#FFFDF9] font-bold rounded-xl shadow-md transition text-sm active:scale-95"
-            >
-              解鎖檢視量身打造提案
-            </button>
-          </form>
+                <button
+                  type="submit"
+                  className="w-full py-2.5 bg-[#B26A27] hover:bg-[#8F521B] text-[#FFFDF9] font-bold rounded-xl shadow-md transition text-sm active:scale-95"
+                >
+                  解鎖檢視量身打造提案
+                </button>
+              </form>
+            </>
+          )}
 
           <div className="mt-4 pt-3 border-t border-[#E6DDCF] text-[10px] text-[#A39587] flex items-center justify-center gap-1">
             <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>

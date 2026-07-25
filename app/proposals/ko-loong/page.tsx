@@ -24,6 +24,8 @@ export default function KoloongProposalPage() {
   const [taxId, setTaxId] = useState("");
   const [invoiceAddress, setInvoiceAddress] = useState("");
   const [contactEmail, setContactEmail] = useState("");
+  const [payBankLast5, setPayBankLast5] = useState("");
+  const [payAccountName, setPayAccountName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
@@ -299,13 +301,13 @@ export default function KoloongProposalPage() {
 
   const handleSaveInvoiceInfo = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!companyName || !taxId) {
-      alert("請填寫公司全銜與統一編號！");
+    if (!companyName || !taxId || !payBankLast5 || !payAccountName) {
+      alert("請填寫公司全銜、統一編號、預計匯出帳號後5碼與匯款戶名！");
       return;
     }
 
     setIsSubmitting(true);
-    const info = { companyName, taxId, invoiceAddress, contactEmail };
+    const info = { companyName, taxId, invoiceAddress, contactEmail, payBankLast5, payAccountName };
     localStorage.setItem("ko_loong_invoice_info", JSON.stringify(info));
 
     try {
@@ -317,6 +319,8 @@ export default function KoloongProposalPage() {
           taxId,
           invoiceAddress,
           contactEmail,
+          payBankLast5,
+          payAccountName,
           proposalSlug: "ko-loong",
         }),
       });
@@ -1067,12 +1071,41 @@ export default function KoloongProposalPage() {
                     />
                   </div>
 
+                  <div className="pt-2 border-t border-slate-800 space-y-3">
+                    <div className="p-2.5 bg-blue-950/30 border border-blue-500/20 rounded-xl">
+                      <span className="text-[11px] text-blue-300 font-bold block mb-1">🔒 專案訂金啟動對帳綁定資料：</span>
+                      <p className="text-[10px] text-slate-400 leading-normal">此資料將作為本工作室「核對訂金與啟動專案之唯一指定匯出帳號」，請務必精確填寫。</p>
+                    </div>
+                    <div>
+                      <label className="block text-amber-300 font-bold mb-1">預計匯出銀行與帳號後 5 碼 *</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="例：中國信託 帳號後 5 碼 (12345)"
+                        value={payBankLast5}
+                        onChange={(e) => setPayBankLast5(e.target.value)}
+                        className="w-full px-3 py-2 bg-slate-800 border border-amber-500/50 rounded-lg text-white font-mono focus:outline-none focus:border-amber-400"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-amber-300 font-bold mb-1">預計匯款戶名 / 匯款人姓名 *</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="例：科隆工業股份有限公司 或 張負責人"
+                        value={payAccountName}
+                        onChange={(e) => setPayAccountName(e.target.value)}
+                        className="w-full px-3 py-2 bg-slate-800 border border-amber-500/50 rounded-lg text-white focus:outline-none focus:border-amber-400"
+                      />
+                    </div>
+                  </div>
+
                   <button
                     type="submit"
                     disabled={isSubmitting}
                     className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-lg border border-slate-700 transition flex items-center justify-center space-x-2"
                   >
-                    <span>{isSaved ? "✓ 資料已更新儲存" : "儲存電子發票資料"}</span>
+                    <span>{isSaved ? "✓ 資料與匯款對帳帳號已儲存" : "儲存電子發票與對帳帳號"}</span>
                   </button>
                 </form>
               </div>

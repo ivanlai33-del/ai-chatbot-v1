@@ -28,10 +28,10 @@ export default function ProposalsIndexPage() {
             📁
           </div>
           <h1 className="text-2xl font-bold font-serif text-[#382D24]">
-            bot.ycideas.com 報價資料專區
+            www.ycideas.com 報價資料專區
           </h1>
           <p className="text-sm text-[#7C6E62] mt-1">
-            本區包含專屬客戶之 AI 系統建置、網站重置與代營運服務提案計畫書
+            本區包含專屬客戶之網站全站重置、現代化工程重構與系統建置提案計畫書
           </p>
         </div>
 
@@ -67,10 +67,10 @@ export default function ProposalsIndexPage() {
             <div className="p-4 bg-[#EFE7DA] border border-[#D6A86E] rounded-2xl flex justify-between items-center">
               <div>
                 <h3 className="font-bold font-serif text-[#B26A27]">
-                  ⚙️ 【科隆工業】網站重置 & AI 現代化重構提案
+                  ⚙️ 【科隆工業】網站全站重置 & 現代化工程重構提案
                 </h3>
                 <p className="text-xs text-[#7C6E62] mt-0.5">
-                  砍站爬取備份 / AI 代碼重構 / 輕量動態後台 / 檔案交付驗收
+                  全資產還原備份 / 現代前端重構 / 輕量動態後台 / 原主機無縫驗收
                 </p>
               </div>
               <Link
@@ -102,7 +102,7 @@ export default function ProposalsIndexPage() {
         )}
 
         <div className="mt-8 pt-4 border-t border-[#E6DDCF] text-center text-xs text-[#A39587]">
-          © 2026 bot.ycideas.com ｜ AI 店長專案服務團隊
+          © 2026 www.ycideas.com ｜ 智企概念專案服務團隊
         </div>
       </div>
     </div>

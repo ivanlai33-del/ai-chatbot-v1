@@ -226,10 +226,10 @@ export default function KoloongProposalPage() {
               科隆工業股份有限公司
             </h1>
             <p className="text-xs text-blue-400 font-semibold tracking-wider uppercase mt-1">
-              網站重置與 AI 代碼優化專案報價單
+              網站全站重置與現代化工程重構報價單
             </p>
             <p className="text-xs text-slate-400 mt-2">
-              本報告包含獨立伺服器診斷、砍站還原策略與實作報價
+              本報告包含獨立伺服器診斷、資產還原策略與實作報價
             </p>
           </div>
 
@@ -260,7 +260,7 @@ export default function KoloongProposalPage() {
           </form>
 
           <div className="mt-8 pt-4 border-t border-slate-800/60 text-center text-xs text-slate-500">
-            機密文件 ｜ © 2026 YCideas Digital Solutions
+            機密文件 ｜ © 2026 www.ycideas.com 智企概念
           </div>
         </div>
       </div>
@@ -270,7 +270,7 @@ export default function KoloongProposalPage() {
   // Proposal Content Slides
   const slides = [
     { id: 0, title: "1. 現狀況主機與架構診斷" },
-    { id: 1, title: "2. 砍站爬取與 AI 重構策略" },
+    { id: 1, title: "2. 資產還原與工程重構策略" },
     { id: 2, title: "3. 專案實作項目與報價單" },
     { id: 3, title: "4. 驗收流程與交付項目" },
     { id: 4, title: "5. 線上簽核與訂金匯款" },
@@ -290,7 +290,7 @@ export default function KoloongProposalPage() {
                 科隆工業股份有限公司
               </h2>
               <p className="text-[10px] text-slate-400">
-                網站重置 & AI 現代化重構計畫書
+                網站全站重置 & 現代化工程重構計畫書
               </p>
             </div>
           </div>
@@ -344,7 +344,7 @@ export default function KoloongProposalPage() {
             <div className="bg-gradient-to-r from-blue-950/40 via-slate-900 to-indigo-950/40 border border-blue-500/20 rounded-3xl p-6 md:p-8">
               <div className="flex items-center space-x-2 text-blue-400 text-xs font-semibold uppercase tracking-wider mb-2">
                 <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-                <span>系統工程團隊專業實測診斷</span>
+                <span>資深系統工程團隊實測診斷</span>
               </div>
               <h1 className="text-2xl md:text-3xl font-bold text-white mb-3">
                 目前網站主機空間與技術架構解析報告
@@ -354,7 +354,7 @@ export default function KoloongProposalPage() {
               </p>
             </div>
 
-            <div className="grid md:grid-grid-cols-2 grid-cols-1 gap-6">
+            <div className="grid md:grid-cols-2 grid-cols-1 gap-6">
               {/* Host Space Specs */}
               <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6">
                 <h3 className="text-lg font-bold text-white mb-4 flex items-center">
@@ -375,7 +375,7 @@ export default function KoloongProposalPage() {
                   </div>
                   <div className="flex justify-between py-2">
                     <span className="text-slate-400">後端程式語言</span>
-                    <span className="text-amber-400 font-mono font-bold">PHP / 7.4.21 (EOL 舊版)</span>
+                    <span className="text-amber-400 font-mono font-bold">PHP / 7.4.21 (舊版環境)</span>
                   </div>
                 </div>
               </div>
@@ -411,21 +411,21 @@ export default function KoloongProposalPage() {
             <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl text-xs text-amber-300 flex items-start space-x-3">
               <span className="text-base">⚠️</span>
               <div>
-                <strong>安全性與技術風險提示：</strong> 原網站運行於 PHP 7.4 舊版環境（官方已停止修補安全性漏洞）。由於原始碼已遺失，若強行原版複製會保留舊型 Bootstrap 3 與安全性風險，建議藉由本次重置採用 AI 重構現代化 React/Next.js 前台與雲端後台。
+                <strong>技術升級建議：</strong> 原網站運行於 PHP 7.4 舊版環境。由於原始碼遺失，建議藉由本次專案進行全站語法高質感重構，導入現代化 Next.js/React 前台與雲端管理後台，徹底提升載入速度、RWD 手機體驗與資安等級。
               </div>
             </div>
           </div>
         )}
 
-        {/* SLIDE 1: Scraping & AI Strategy */}
+        {/* SLIDE 1: Reconstruction Strategy */}
         {currentSlide === 1 && (
           <div className="space-y-6 animate-fadeIn">
             <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8">
               <h2 className="text-2xl font-bold text-white mb-2">
-                砍站軟體與 AI 現代化重構技術策略
+                全資產還原與現代化工程重構技術策略
               </h2>
               <p className="text-slate-400 text-sm">
-                協助客戶釐清「傳統砍站」與「AI 代碼優化」之關鍵工程差異與最佳復刻路徑：
+                協助客戶釐清「傳統網頁抓取」與「專業工程重構」之關鍵差異與最佳復刻路徑：
               </p>
             </div>
 
@@ -434,7 +434,7 @@ export default function KoloongProposalPage() {
               <div className="bg-slate-900/60 border border-rose-500/20 rounded-2xl p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-bold text-rose-400 text-base">
-                    ❌ 傳統純砍站 (HTTrack/Wget) 之極限
+                    ❌ 傳統網頁抓取之極限與瓶頸
                   </h3>
                   <span className="text-xs px-2 py-0.5 bg-rose-500/10 text-rose-400 rounded border border-rose-500/20">
                     死板靜態化
@@ -443,7 +443,7 @@ export default function KoloongProposalPage() {
                 <ul className="space-y-3 text-xs text-slate-300">
                   <li className="flex items-start">
                     <span className="text-rose-400 mr-2">▸</span>
-                    <span><strong>無法抓取後台：</strong> 砍站軟體只能下載瀏覽器看得到的 HTML/CSS/圖片，無法抓取 PHP 原始碼與 MySQL 資料庫。</span>
+                    <span><strong>無法抓取後台邏輯：</strong> 自動抓取工具只能擷取瀏覽器呈現的靜態畫面，無法還原後端 PHP 原始碼與 MySQL 資料庫。</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-rose-400 mr-2">▸</span>
@@ -451,33 +451,33 @@ export default function KoloongProposalPage() {
                   </li>
                   <li className="flex items-start">
                     <span className="text-rose-400 mr-2">▸</span>
-                    <span><strong>程式碼冗贅：</strong> 帶有大量已過時的 Bootstrap 3 及 jQuery 舊代碼，無法進行手持裝置現代化優化。</span>
+                    <span><strong>程式碼舊化冗贅：</strong> 帶有大量過時 Bootstrap 3 及 jQuery 舊語法，無法符合現代手持裝置之視覺體驗。</span>
                   </li>
                 </ul>
               </div>
 
-              {/* AI Optimized Strategy */}
+              {/* Engineering Strategy */}
               <div className="bg-slate-900/60 border border-emerald-500/20 rounded-2xl p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-bold text-emerald-400 text-base">
-                    ⚡ YCideas AI 現代化優化重構方案
+                    ⚡ YCideas 專業現代化工程重構方案
                   </h3>
                   <span className="text-xs px-2 py-0.5 bg-emerald-500/10 text-emerald-400 rounded border border-emerald-500/20">
-                    開箱即用升級
+                    高品質升級
                   </span>
                 </div>
                 <ul className="space-y-3 text-xs text-slate-300">
                   <li className="flex items-start">
                     <span className="text-emerald-400 mr-2">▸</span>
-                    <span><strong>全站靜態資源爬取：</strong> 自動化腳本下載所有產品圖片、繁簡英圖文與網頁結構，做到 100% 畫面一模一樣。</span>
+                    <span><strong>全站資產還原備份：</strong> 精準提取所有產品圖片、繁簡英多語系圖文與網頁結構，做到 100% 視覺視覺一模一樣。</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-emerald-400 mr-2">▸</span>
-                    <span><strong>AI 結構化代碼清理：</strong> 利用 Gemini / Claude AI 將舊網頁重構為現代 Next.js 14 + Tailwind CSS，SEO 評分飆升高達 95+。</span>
+                    <span><strong>現代前端架構重寫：</strong> 全手繪重構為現代 Next.js 14 + Tailwind CSS，Google 效能與 SEO 評分飆升高達 95+。</span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-emerald-400 mr-2">▸</span>
-                    <span><strong>動態後台與搜尋重建：</strong> 為客戶重構輕量化產品管理後台與表單收件匣，補足遺失的後端邏輯。</span>
+                    <span><strong>動態後台與搜尋重建：</strong> 為客戶重建專屬輕量化產品管理後台與表單收件匣，補足遺失的後端邏輯。</span>
                   </li>
                 </ul>
               </div>
@@ -490,11 +490,11 @@ export default function KoloongProposalPage() {
               </h4>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
                 <div className="p-3 bg-slate-800 rounded-xl border border-slate-700">
-                  <div className="text-blue-400 font-bold mb-1">1. 砍站與資產爬取</div>
-                  <p className="text-slate-400">完整備份所有圖片、CSS 與圖文內容</p>
+                  <div className="text-blue-400 font-bold mb-1">1. 資產還原與備份</div>
+                  <p className="text-slate-400">完整提取所有圖片、CSS 與圖文內容</p>
                 </div>
                 <div className="p-3 bg-slate-800 rounded-xl border border-slate-700">
-                  <div className="text-indigo-400 font-bold mb-1">2. AI 清理與現代化</div>
+                  <div className="text-indigo-400 font-bold mb-1">2. 前端工程重構</div>
                   <p className="text-slate-400">重構為極速 React/Next.js + RWD</p>
                 </div>
                 <div className="p-3 bg-slate-800 rounded-xl border border-slate-700">
@@ -571,7 +571,7 @@ export default function KoloongProposalPage() {
                       方案 A
                     </span>
                     <h3 className="text-xl font-bold text-white mt-1">
-                      純靜態前台還原與 AI 代碼優化
+                      純靜態前台還原與代碼重構優化
                     </h3>
                   </div>
                   <input
@@ -592,10 +592,10 @@ export default function KoloongProposalPage() {
 
                 <ul className="space-y-2 text-xs text-slate-300 border-t border-slate-800 pt-4">
                   <li className="flex items-center">
-                    <span className="text-blue-400 mr-2">✓</span> 全站靜態圖片與 HTML 完整爬取備份
+                    <span className="text-blue-400 mr-2">✓</span> 全站靜態圖片與 HTML 完整資產還原備份
                   </li>
                   <li className="flex items-center">
-                    <span className="text-blue-400 mr-2">✓</span> AI 重構頁面為現代化 HTML5 / Tailwind CSS
+                    <span className="text-blue-400 mr-2">✓</span> 全手繪重構頁面為現代化 HTML5 / Tailwind CSS
                   </li>
                   <li className="flex items-center">
                     <span className="text-blue-400 mr-2">✓</span> 全機型 RWD 響應式佈局校正
@@ -628,7 +628,7 @@ export default function KoloongProposalPage() {
                       方案 B (完整版)
                     </span>
                     <h3 className="text-xl font-bold text-white mt-1">
-                      全站復刻 + AI 現代化重構 + 輕量動態後台
+                      全站復刻 + 現代化高質感重構 + 輕量動態後台
                     </h3>
                   </div>
                   <input
@@ -649,7 +649,7 @@ export default function KoloongProposalPage() {
 
                 <ul className="space-y-2 text-xs text-slate-300 border-t border-slate-800 pt-4">
                   <li className="flex items-center font-semibold text-indigo-300">
-                    <span className="text-indigo-400 mr-2">★</span> 包含方案 A 所有靜態爬取與 AI 重構
+                    <span className="text-indigo-400 mr-2">★</span> 包含方案 A 所有資產還原與前端重構
                   </li>
                   <li className="flex items-center">
                     <span className="text-indigo-400 mr-2">✓</span> 重建產品分類與關鍵字搜尋引擎
@@ -703,9 +703,9 @@ export default function KoloongProposalPage() {
                 <span className="absolute -left-[9px] top-0.5 w-4 h-4 rounded-full bg-blue-500 ring-4 ring-slate-950"></span>
                 <div className="bg-slate-900 border border-slate-800 rounded-xl p-4">
                   <span className="text-[10px] text-blue-400 font-mono uppercase font-bold">Phase 01 ｜ 預計 3 個工作天</span>
-                  <h3 className="text-base font-bold text-white mt-1">靜態資源爬取與 AI 網頁解析</h3>
+                  <h3 className="text-base font-bold text-white mt-1">全資產還原與網頁結構解析</h3>
                   <p className="text-xs text-slate-400 mt-1">
-                    完成原網站所有 HTML、CSS、JS、字型及產品圖片 100% 爬取歸檔，並建立元件樹狀結構。
+                    完成原網站所有 HTML、CSS、JS、字型及產品圖片 100% 提取歸檔，並建立元件樹狀結構。
                   </p>
                 </div>
               </div>
@@ -717,7 +717,7 @@ export default function KoloongProposalPage() {
                   <span className="text-[10px] text-indigo-400 font-mono uppercase font-bold">Phase 02 ｜ 預計 5 個工作天</span>
                   <h3 className="text-base font-bold text-white mt-1">前台 UI 響應式重構與 SEO 優化</h3>
                   <p className="text-xs text-slate-400 mt-1">
-                    使用 AI 將舊程式碼轉譯為 Next.js 現代化響應式頁面，並針對 Mobile 手機介面重新排版。
+                    手繪重構為 Next.js 現代化響應式頁面，並針對 Mobile 手機介面重新設計最適排版。
                   </p>
                 </div>
               </div>

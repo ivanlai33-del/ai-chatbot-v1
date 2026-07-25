@@ -87,6 +87,51 @@ export default function KoloongProposalPage() {
     };
   }, [isUnlocked]);
 
+  // Background Audit Logger State
+  const [clientIp, setClientIp] = useState("Detecting...");
+
+  const logAuditEvent = (eventType: string, details: string = "") => {
+    const now = new Date();
+    const eventItem = {
+      type: eventType,
+      details,
+      timestamp: now.toISOString(),
+      timeFormatted: now.toLocaleString("zh-TW", { timeZone: "Asia/Taipei" }),
+    };
+
+    const saved = localStorage.getItem("ko_loong_proposal_audit_log");
+    let currentLogs: any = saved ? JSON.parse(saved) : { events: [] };
+    currentLogs.proposalSlug = "ko-loong";
+    currentLogs.clientIp = clientIp;
+    currentLogs.events = currentLogs.events || [];
+    currentLogs.events.push(eventItem);
+
+    localStorage.setItem("ko_loong_proposal_audit_log", JSON.stringify(currentLogs));
+
+    fetch("/api/proposals/audit-log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        proposalSlug: "ko-loong",
+        clientIp,
+        userAgent: typeof navigator !== "undefined" ? navigator.userAgent : "",
+        events: currentLogs.events,
+        acceptedTerms: true,
+      }),
+    }).catch(() => {});
+  };
+
+  useEffect(() => {
+    fetch("https://api.ipify.org?format=json")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.ip) setClientIp(data.ip);
+      })
+      .catch(() => {});
+
+    logAuditEvent("PAGE_OPENED", "Client loaded Ko-Loong proposal page");
+  }, []);
+
   useEffect(() => {
     const unlocked = sessionStorage.getItem("proposal_unlocked_ko_loong");
     if (unlocked === "true") {

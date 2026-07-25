@@ -3,6 +3,14 @@
 import React, { useState, useEffect } from "react";
 import Script from "next/script";
 import { calculateProposalLifecycle, sendProposalAuditTrack } from "@/lib/services/ProposalLifecycleHelper";
+import {
+  SecurityWatermarkOverlay,
+  OwnerBypassBanner,
+  FraudAlertAndDomainVerifier,
+  VpnInterceptModal,
+  PrintSignatureSection,
+  PROVIDER_INFO,
+} from "@/components/proposals/CommercialDefenseComponents";
 
 interface InvoiceRecord {
   id: string;
@@ -20,6 +28,10 @@ export default function ButterToastProposalPage() {
   const [errorMsg, setErrorMsg] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
 
+  // Commercial Defense & Admin Bypass State
+  const [isAdminBypass, setIsAdminBypass] = useState(false);
+  const [isForeignOrVpn, setIsForeignOrVpn] = useState(false);
+
   // Proposal Effective Date
   const CREATED_AT = "2026-07-23";
   const lifecycle = calculateProposalLifecycle(CREATED_AT);
@@ -27,11 +39,13 @@ export default function ButterToastProposalPage() {
   // LIFF Context State
   const [lineProfile, setLineProfile] = useState<{ displayName?: string; userId?: string } | null>(null);
 
-  // Invoice Form State
+  // Invoice & Remittance Form State
   const [companyName, setCompanyName] = useState("");
   const [taxId, setTaxId] = useState("");
   const [invoiceAddress, setInvoiceAddress] = useState("");
   const [contactEmail, setContactEmail] = useState("");
+  const [remittanceBank5, setRemittanceBank5] = useState("");
+  const [remittanceName, setRemittanceName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
@@ -42,7 +56,7 @@ export default function ButterToastProposalPage() {
   const [invoiceRecords, setInvoiceRecords] = useState<InvoiceRecord[]>([]);
 
   // Password Verification (20260723 or 0723)
-  const VALID_PASSWORDS = ["20260723", "0723"];
+  const VALID_PASSWORDS = ["20260723", "0723", "20260725", "0725"];
 
   // Anti-Theft & Security Hooks
   useEffect(() => {
@@ -65,7 +79,6 @@ export default function ButterToastProposalPage() {
         return false;
       }
 
-      // Keyboard Slide Switch for Desktop
       if (isUnlocked) {
         if (e.key === "ArrowRight" || e.key === " ") {
           setCurrentSlide((prev) => Math.min(prev + 1, 6));
@@ -75,30 +88,29 @@ export default function ButterToastProposalPage() {
       }
     };
 
-    const handleSelectStart = (e: Event) => {
-      const target = e.target as HTMLElement;
-      if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA")) {
-        return true;
-      }
-      e.preventDefault();
-      return false;
-    };
-
     document.addEventListener("contextmenu", handleContextMenu);
     document.addEventListener("keydown", handleKeyDown);
-    document.addEventListener("selectstart", handleSelectStart);
 
     return () => {
       document.removeEventListener("contextmenu", handleContextMenu);
       document.removeEventListener("keydown", handleKeyDown);
-      document.removeEventListener("selectstart", handleSelectStart);
     };
   }, [isUnlocked]);
 
   useEffect(() => {
+    // 2. 🔑 管理者上帝視角 (?admin=87257257)
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get("admin") === "87257257") {
+        setIsAdminBypass(true);
+        setIsUnlocked(true);
+      }
+    }
+
     const unlocked = sessionStorage.getItem("proposal_unlocked_butter_toast");
     if (unlocked === "true") {
       setIsUnlocked(true);
+      sendProposalAuditTrack("butter-toast", "PAGE_VISITED_SESSION");
     }
     const savedInfo = localStorage.getItem("butter_toast_invoice_info");
     if (savedInfo) {
@@ -108,6 +120,8 @@ export default function ButterToastProposalPage() {
         setTaxId(parsed.taxId || "");
         setInvoiceAddress(parsed.invoiceAddress || "");
         setContactEmail(parsed.contactEmail || "");
+        setRemittanceBank5(parsed.remittanceBank5 || "");
+        setRemittanceName(parsed.remittanceName || "");
         setIsSaved(true);
       } catch (e) {
         console.error(e);
@@ -198,9 +212,13 @@ export default function ButterToastProposalPage() {
       alert("請填寫公司全銜與統一編號！");
       return;
     }
+    if (!remittanceBank5 || !remittanceName) {
+      alert("請填寫首期訂金對帳所需之「預計匯出銀行與帳號後 5 碼」與「預計匯款戶名」！");
+      return;
+    }
 
     setIsSubmitting(true);
-    const info = { companyName, taxId, invoiceAddress, contactEmail };
+    const info = { companyName, taxId, invoiceAddress, contactEmail, remittanceBank5, remittanceName };
     localStorage.setItem("butter_toast_invoice_info", JSON.stringify(info));
 
     try {
@@ -212,6 +230,8 @@ export default function ButterToastProposalPage() {
           taxId,
           invoiceAddress,
           contactEmail,
+          remittanceBank5,
+          remittanceName,
           proposalSlug: "butter-toast",
         }),
       });
@@ -219,15 +239,15 @@ export default function ButterToastProposalPage() {
       const data = await res.json();
       if (data.success) {
         setIsSaved(true);
-        alert("✓ 發票資料已成功儲存並同步傳送！");
+        alert("✓ 發票與銀行對帳綁定資料已成功儲存並同步傳送！");
       } else {
         setIsSaved(true);
-        alert("發票資料已成功儲存！");
+        alert("發票與對帳資料已成功儲存！");
       }
     } catch (err) {
       console.error(err);
       setIsSaved(true);
-      alert("發票資料已儲存於本機。");
+      alert("發票與對帳資料已儲存於本機。");
     } finally {
       setIsSubmitting(false);
     }
@@ -258,8 +278,8 @@ export default function ButterToastProposalPage() {
     setTimeout(() => setCopySuccess(false), 2500);
   };
 
-  // 🔴 3-Stage Lifecycle: Stage 3 (ARCHIVED_404 > 10 Days)
-  if (lifecycle.stage === "ARCHIVED_404") {
+  // 🔴 3-Stage Lifecycle: Stage 3 (ARCHIVED_404 > 10 Days) — 除非為管理者上帝視角
+  if (!isAdminBypass && lifecycle.stage === "ARCHIVED_404") {
     return (
       <div className="w-full min-h-screen bg-[#0F172A] text-slate-200 flex flex-col justify-center items-center p-6 text-center font-sans">
         <div className="w-16 h-16 bg-rose-950/80 text-rose-400 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 border border-rose-700/50">
@@ -273,8 +293,8 @@ export default function ButterToastProposalPage() {
     );
   }
 
-  // Password Lock View (100% Mobile Responsive inside LINE LIFF) / 🟡 Stage 2 (EXPIRED 6-10 Days)
-  if (!isUnlocked) {
+  // Password Lock View / 🟡 Stage 2 (EXPIRED 6-10 Days) — 除非為管理者上帝視角
+  if (!isUnlocked && !isAdminBypass) {
     return (
       <div className="w-full min-h-screen bg-[#F7F3ED] text-[#382D24] flex flex-col justify-center items-center p-4 font-sans select-none overflow-x-hidden">
         <Script src="https://static.line-scdn.net/liff/edge/2/sdk.js" onLoad={handleLiffInit} />
@@ -603,6 +623,9 @@ export default function ButterToastProposalPage() {
         </div>
       </div>
 
+      {/* 5. 🚨 官方直營防詐聲明與網域驗證 */}
+      <FraudAlertAndDomainVerifier />
+
       {/* Bank Account Details */}
       <div className="bg-gradient-to-br from-[#FFFDF9] to-[#FCEFDC] border-2 border-[#B26A27] rounded-2xl p-2 shadow-xs">
         <div className="flex justify-between items-center mb-1">
@@ -620,19 +643,19 @@ export default function ButterToastProposalPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5 text-xs bg-white/90 p-1.5 rounded-xl border border-[#D6A86E]">
           <div>
             <span className="text-[#7C6E62] block text-[10px]">匯款銀行</span>
-            <span className="font-bold text-[#382D24]">中國信託</span>
+            <span className="font-bold text-[#382D24]">{PROVIDER_INFO.bankName}</span>
           </div>
           <div>
-            <span className="text-[#7C6E62] block text-[10px]">銀行代碼 / 分行</span>
-            <span className="font-bold text-[#382D24]">（822）內壢簡易型分行</span>
+            <span className="text-[#7C6E62] block text-[10px]">銀行代碼</span>
+            <span className="font-bold text-[#382D24]">（{PROVIDER_INFO.bankCode}）</span>
           </div>
           <div>
             <span className="text-[#7C6E62] block text-[10px]">戶名</span>
-            <span className="font-bold text-[#382D24]">賴奕暢</span>
+            <span className="font-bold text-[#382D24]">{PROVIDER_INFO.accountName}</span>
           </div>
           <div>
             <span className="text-[#7C6E62] block text-[10px]">帳號</span>
-            <span className="font-mono font-extrabold text-[#B26A27] text-sm">131540035543</span>
+            <span className="font-mono font-extrabold text-[#B26A27] text-sm">{PROVIDER_INFO.accountNumber}</span>
           </div>
         </div>
       </div>
@@ -682,7 +705,7 @@ export default function ButterToastProposalPage() {
             <div>
               <input
                 type="text"
-                placeholder="公司全銜 / 買受人抬頭"
+                placeholder="公司全銜 / 買受人抬頭 *"
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
                 className="w-full px-2 py-1 bg-[#F7F3ED] border border-[#E6DDCF] rounded-lg focus:outline-none focus:border-[#B26A27] text-[#382D24]"
@@ -692,13 +715,36 @@ export default function ButterToastProposalPage() {
             <div>
               <input
                 type="text"
-                placeholder="統一編號 (統編)"
+                placeholder="統一編號 (統編) *"
                 value={taxId}
                 onChange={(e) => setTaxId(e.target.value)}
                 className="w-full px-2 py-1 bg-[#F7F3ED] border border-[#E6DDCF] rounded-lg focus:outline-none focus:border-[#B26A27] text-[#382D24]"
                 required
               />
             </div>
+
+            {/* 6. 🔒 預約匯出帳號對帳綁定欄位 */}
+            <div>
+              <input
+                type="text"
+                placeholder="預計匯出銀行與帳號後 5 碼 * (如: 中國信託 12345)"
+                value={remittanceBank5}
+                onChange={(e) => setRemittanceBank5(e.target.value)}
+                className="w-full px-2 py-1 bg-[#F7F3ED] border border-amber-500/80 rounded-lg focus:outline-none focus:border-amber-700 text-[#382D24] placeholder-amber-800 font-bold"
+                required
+              />
+            </div>
+            <div>
+              <input
+                type="text"
+                placeholder="預計匯款戶名 / 匯款人姓名 * (如: 某某公司)"
+                value={remittanceName}
+                onChange={(e) => setRemittanceName(e.target.value)}
+                className="w-full px-2 py-1 bg-[#F7F3ED] border border-amber-500/80 rounded-lg focus:outline-none focus:border-amber-700 text-[#382D24] placeholder-amber-800 font-bold"
+                required
+              />
+            </div>
+
             <div>
               <input
                 type="text"
@@ -721,9 +767,9 @@ export default function ButterToastProposalPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-3 py-1 bg-[#B26A27] hover:bg-[#8F521B] text-white font-bold rounded-lg text-xs transition"
+                className="px-4 py-1.5 bg-[#B26A27] hover:bg-[#8F521B] text-white font-bold rounded-lg text-xs transition cursor-pointer active:scale-95 shadow-sm"
               >
-                {isSubmitting ? "傳送中..." : "💾 儲存並同步傳送發票資料"}
+                {isSubmitting ? "傳送中..." : "💾 儲存資料並綁定匯款對帳"}
               </button>
             </div>
           </form>
@@ -912,19 +958,34 @@ export default function ButterToastProposalPage() {
   ];
 
   return (
-    <div className="w-full min-h-screen bg-[#F7F3ED] text-[#382D24] font-sans select-none overflow-x-hidden">
+    <div className="w-full min-h-screen bg-[#F7F3ED] print:bg-white text-[#382D24] font-sans select-none overflow-x-hidden">
       <Script src="https://static.line-scdn.net/liff/edge/2/sdk.js" onLoad={handleLiffInit} />
 
+      {/* 4. 🛡️ 5重防複製、防變造與背景斜向 Security Watermark */}
+      <SecurityWatermarkOverlay />
+
+      {/* 2. 🔑 管理者上帝視角 Banner */}
+      {isAdminBypass && <OwnerBypassBanner />}
+
+      {/* 7. 🌐 VPN 代理與海外 IP 全螢幕攔截 */}
+      {isForeignOrVpn && !isAdminBypass && <VpnInterceptModal />}
+
       {/* Top Header Bar */}
-      <header className="sticky top-0 z-50 bg-[#F7F3ED]/95 backdrop-blur-md border-b border-[#E6DDCF] px-4 py-2.5">
+      <header className="sticky top-0 z-50 bg-[#F7F3ED]/95 backdrop-blur-md border-b border-[#E6DDCF] px-4 py-2.5 print:hidden">
         <div className="max-w-5xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
             <span className="font-bold text-xs md:text-sm text-[#382D24]">
-              AI 品牌店長 24H 自動化專案
+              AI 品牌店長 24H 自動化專案 (奶油吐司旗艦版)
             </span>
           </div>
           <div className="text-[10px] md:text-xs text-[#7C6E62] font-mono flex items-center gap-1.5">
+            <button
+              onClick={() => window.print()}
+              className="px-2 py-0.5 bg-[#382D24] text-white rounded font-bold transition cursor-pointer active:scale-95"
+            >
+              🖨️ 列印/輸出官方簽核單
+            </button>
             <span className="text-amber-800 font-bold bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
               🛡️ 資安保護中
             </span>
@@ -937,8 +998,8 @@ export default function ButterToastProposalPage() {
         </div>
       </header>
 
-      {/* Mobile Mode: Native Vertical Continuous Scroll View (手機直向順暢上下滑動模式) */}
-      <div className="block md:hidden w-full max-w-xl mx-auto p-3 space-y-4">
+      {/* Mobile Mode: Native Vertical Continuous Scroll View */}
+      <div className="block md:hidden w-full max-w-xl mx-auto p-3 space-y-4 print:hidden">
         {sectionCover}
         {sectionPainPoints}
         {sectionArchitecture}
@@ -946,10 +1007,11 @@ export default function ButterToastProposalPage() {
         {sectionTimeline}
         {sectionChecklist}
         {sectionSummary}
+        <PrintSignatureSection proposalTitle="【奶油吐司】AI 品牌店長 24H 自動化專案 (旗艦版)" />
       </div>
 
       {/* Desktop Mode: High-End Vertically & Horizontally Centered Minimalist Deck View */}
-      <div className="hidden md:flex min-h-[calc(100vh-65px)] flex-col justify-between items-center p-6 max-w-5xl mx-auto">
+      <div className="hidden md:flex min-h-[calc(100vh-65px)] flex-col justify-between items-center p-6 max-w-5xl mx-auto print:hidden">
         <main className="w-full h-[78vh] max-h-[700px] bg-[#FFFDF9] border border-[#E6DDCF] rounded-3xl p-8 md:p-10 shadow-xl flex flex-col justify-center items-center my-auto backdrop-blur-md overflow-y-auto">
           {allSections[currentSlide].component}
         </main>
@@ -963,25 +1025,30 @@ export default function ButterToastProposalPage() {
             <button
               onClick={() => setCurrentSlide((prev) => Math.max(prev - 1, 0))}
               disabled={currentSlide === 0}
-              className="px-5 py-2 bg-[#F7F3ED] border border-[#E6DDCF] rounded-full text-xs font-bold text-[#382D24] hover:bg-[#B26A27] hover:text-white disabled:opacity-30 transition shadow-xs active:scale-95"
+              className="px-5 py-2 bg-[#F7F3ED] border border-[#E6DDCF] rounded-full text-xs font-bold text-[#382D24] hover:bg-[#B26A27] hover:text-white disabled:opacity-30 transition shadow-xs active:scale-95 cursor-pointer"
             >
               ← 上一頁
             </button>
             <button
               onClick={() => setCurrentSlide((prev) => Math.min(prev + 1, allSections.length - 1))}
               disabled={currentSlide === allSections.length - 1}
-              className="px-5 py-2 bg-[#F7F3ED] border border-[#E6DDCF] rounded-full text-xs font-bold text-[#382D24] hover:bg-[#B26A27] hover:text-white disabled:opacity-30 transition shadow-xs active:scale-95"
+              className="px-5 py-2 bg-[#F7F3ED] border border-[#E6DDCF] rounded-full text-xs font-bold text-[#382D24] hover:bg-[#B26A27] hover:text-white disabled:opacity-30 transition shadow-xs active:scale-95 cursor-pointer"
             >
               下一頁 →
             </button>
             <button
               onClick={() => window.print()}
-              className="px-5 py-2 bg-[#EFE7DA] border border-[#D6A86E] text-[#B26A27] rounded-full text-xs font-bold hover:bg-[#B26A27] hover:text-white transition shadow-xs active:scale-95"
+              className="px-5 py-2 bg-[#EFE7DA] border border-[#D6A86E] text-[#B26A27] rounded-full text-xs font-bold hover:bg-[#B26A27] hover:text-white transition shadow-xs active:scale-95 cursor-pointer"
             >
               🖨️ 列印 / PDF
             </button>
           </div>
         </footer>
+      </div>
+
+      {/* 8. 🖨️ 官方白紙黑字紙本列印與主管簽核用印區 (電腦版列印) */}
+      <div className="hidden print:block max-w-5xl mx-auto p-4">
+        <PrintSignatureSection proposalTitle="【奶油吐司】AI 品牌店長 24H 自動化專案 (旗艦版)" />
       </div>
     </div>
   );

@@ -3,6 +3,14 @@
 import React, { useState, useEffect } from "react";
 import Script from "next/script";
 import { calculateProposalLifecycle, sendProposalAuditTrack } from "@/lib/services/ProposalLifecycleHelper";
+import {
+  SecurityWatermarkOverlay,
+  OwnerBypassBanner,
+  FraudAlertAndDomainVerifier,
+  VpnInterceptModal,
+  PrintSignatureSection,
+  PROVIDER_INFO,
+} from "@/components/proposals/CommercialDefenseComponents";
 
 interface InvoiceRecord {
   id: string;
@@ -20,6 +28,10 @@ export default function StarkWorksProposalPage() {
   const [errorMsg, setErrorMsg] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
 
+  // Commercial Defense & Admin Bypass State
+  const [isAdminBypass, setIsAdminBypass] = useState(false);
+  const [isForeignOrVpn, setIsForeignOrVpn] = useState(false);
+
   // Proposal Effective Date
   const CREATED_AT = "2026-07-25";
   const lifecycle = calculateProposalLifecycle(CREATED_AT);
@@ -27,11 +39,13 @@ export default function StarkWorksProposalPage() {
   // LIFF Context State
   const [lineProfile, setLineProfile] = useState<{ displayName?: string; userId?: string } | null>(null);
 
-  // Invoice Form State
+  // Invoice & Remittance Form State
   const [companyName, setCompanyName] = useState("");
   const [taxId, setTaxId] = useState("");
   const [invoiceAddress, setInvoiceAddress] = useState("");
   const [contactEmail, setContactEmail] = useState("");
+  const [remittanceBank5, setRemittanceBank5] = useState("");
+  const [remittanceName, setRemittanceName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
@@ -47,7 +61,7 @@ export default function StarkWorksProposalPage() {
   // Password Verification (Today's date: 20260725 or 0725)
   const VALID_PASSWORDS = ["20260725", "0725", "20260724", "0724"];
 
-  // Anti-Theft & Security Hooks
+  // Anti-Theft & Security Hooks (Anti-Copy, Anti-Cut, Anti-Drag, Anti-Select)
   useEffect(() => {
     const handleContextMenu = (e: MouseEvent) => {
       e.preventDefault();
@@ -63,7 +77,11 @@ export default function StarkWorksProposalPage() {
         e.preventDefault();
         return false;
       }
-      if ((e.ctrlKey || e.metaKey) && (e.key === "U" || e.key === "u" || e.key === "S" || e.key === "s")) {
+      if ((e.ctrlKey || e.metaKey) && (e.key === "U" || e.key === "u" || e.key === "S" || e.key === "s" || e.key === "c" || e.key === "C" || e.key === "x" || e.key === "X" || e.key === "a" || e.key === "A")) {
+        const target = e.target as HTMLElement;
+        if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") {
+          return;
+        }
         e.preventDefault();
         return false;
       }
@@ -78,19 +96,73 @@ export default function StarkWorksProposalPage() {
       }
     };
 
+    const handleCopy = (e: ClipboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") {
+        return;
+      }
+      e.preventDefault();
+      return false;
+    };
+
+    const handleCut = (e: ClipboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") {
+        return;
+      }
+      e.preventDefault();
+      return false;
+    };
+
+    const handleSelectStart = (e: Event) => {
+      const target = e.target as HTMLElement;
+      if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") {
+        return;
+      }
+      e.preventDefault();
+      return false;
+    };
+
+    const handleDragStart = (e: DragEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") {
+        return;
+      }
+      e.preventDefault();
+      return false;
+    };
+
     document.addEventListener("contextmenu", handleContextMenu);
     document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("copy", handleCopy);
+    document.addEventListener("cut", handleCut);
+    document.addEventListener("selectstart", handleSelectStart);
+    document.addEventListener("dragstart", handleDragStart);
 
     return () => {
       document.removeEventListener("contextmenu", handleContextMenu);
       document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("copy", handleCopy);
+      document.removeEventListener("cut", handleCut);
+      document.removeEventListener("selectstart", handleSelectStart);
+      document.removeEventListener("dragstart", handleDragStart);
     };
   }, [isUnlocked]);
 
   useEffect(() => {
+    // 2. 🔑 管理者上帝視角 (Owner Bypass Mode: ?admin=87257257)
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get("admin") === "87257257") {
+        setIsAdminBypass(true);
+        setIsUnlocked(true);
+      }
+    }
+
     const unlocked = sessionStorage.getItem("proposal_unlocked_stark_works");
     if (unlocked === "true") {
       setIsUnlocked(true);
+      sendProposalAuditTrack("stark-works", "PAGE_VISITED_SESSION");
     }
     const savedInfo = localStorage.getItem("stark_works_invoice_info");
     if (savedInfo) {
@@ -100,6 +172,8 @@ export default function StarkWorksProposalPage() {
         setTaxId(parsed.taxId || "");
         setInvoiceAddress(parsed.invoiceAddress || "");
         setContactEmail(parsed.contactEmail || "");
+        setRemittanceBank5(parsed.remittanceBank5 || "");
+        setRemittanceName(parsed.remittanceName || "");
         setIsSaved(true);
       } catch (e) {
         console.error(e);
@@ -133,6 +207,7 @@ export default function StarkWorksProposalPage() {
       setIsUnlocked(true);
       sessionStorage.setItem("proposal_unlocked_stark_works", "true");
       setErrorMsg("");
+      sendProposalAuditTrack("stark-works", "PASSWORD_UNLOCKED");
     } else {
       setErrorMsg("密碼不正確，請重新輸入（提示：本日日期 8 碼 20260725 或 4 碼 0725）");
     }
@@ -190,15 +265,20 @@ export default function StarkWorksProposalPage() {
     }
   };
 
+  // 6. 🔒 預約匯出帳號對帳綁定表單驗證與發送
   const handleSaveInvoiceInfo = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!companyName || !taxId) {
       alert("請填寫公司全銜與統一編號！");
       return;
     }
+    if (!remittanceBank5 || !remittanceName) {
+      alert("請填寫首期訂金對帳所需之「預計匯出銀行與帳號後 5 碼」與「預計匯款戶名」！");
+      return;
+    }
 
     setIsSubmitting(true);
-    const info = { companyName, taxId, invoiceAddress, contactEmail };
+    const info = { companyName, taxId, invoiceAddress, contactEmail, remittanceBank5, remittanceName };
     localStorage.setItem("stark_works_invoice_info", JSON.stringify(info));
 
     try {
@@ -210,6 +290,8 @@ export default function StarkWorksProposalPage() {
           taxId,
           invoiceAddress,
           contactEmail,
+          remittanceBank5,
+          remittanceName,
           proposalSlug: "stark-works",
         }),
       });
@@ -217,15 +299,15 @@ export default function StarkWorksProposalPage() {
       const data = await res.json();
       if (data.success) {
         setIsSaved(true);
-        alert("✓ 發票資料已成功儲存並同步傳送！");
+        alert("✓ 發票與銀行對帳綁定資料已成功儲存並同步傳送！");
       } else {
         setIsSaved(true);
-        alert("發票資料已成功儲存！");
+        alert("發票與對帳資料已成功儲存！");
       }
     } catch (err) {
       console.error(err);
       setIsSaved(true);
-      alert("發票資料已儲存於本機。");
+      alert("發票與對帳資料已儲存於本機。");
     } finally {
       setIsSubmitting(false);
     }
@@ -256,8 +338,8 @@ export default function StarkWorksProposalPage() {
     setTimeout(() => setCopySuccess(false), 2500);
   };
 
-  // 🔴 3-Stage Lifecycle: Stage 3 (ARCHIVED_404 > 10 Days)
-  if (lifecycle.stage === "ARCHIVED_404") {
+  // 🔴 3-Stage Lifecycle: Stage 3 (ARCHIVED_404 > 10 Days) — 除非為管理者上帝視角
+  if (!isAdminBypass && lifecycle.stage === "ARCHIVED_404") {
     return (
       <div className="w-full min-h-screen bg-[#0F172A] text-slate-200 flex flex-col justify-center items-center p-6 text-center font-sans">
         <div className="w-16 h-16 bg-rose-950/80 text-rose-400 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 border border-rose-700/50">
@@ -271,8 +353,8 @@ export default function StarkWorksProposalPage() {
     );
   }
 
-  // Password Lock View / 🟡 Stage 2 (EXPIRED 6-10 Days)
-  if (!isUnlocked) {
+  // Password Lock View / 🟡 Stage 2 (EXPIRED 6-10 Days) — 除非為管理者上帝視角
+  if (!isUnlocked && !isAdminBypass) {
     return (
       <div className="w-full min-h-screen bg-[#F8F5EE] text-[#0F172A] flex flex-col justify-center items-center p-4 font-sans overflow-x-hidden">
         <Script src="https://static.line-scdn.net/liff/edge/2/sdk.js" onLoad={handleLiffInit} />
@@ -362,7 +444,7 @@ export default function StarkWorksProposalPage() {
       <h1 className="text-xl md:text-4xl lg:text-5xl font-black mb-2 md:mb-4 leading-tight text-[#0F172A]">
         【史塔克運動科學團隊】<br />
         <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 via-cyan-600 to-emerald-600">
-          LINE 官方帳號 ✕ 官網雙通道 AI 運動顧問系統
+          LINE 官方帳號 ✕ 官網雙通道 AI 店長客服系統
         </span>
       </h1>
 
@@ -672,6 +754,9 @@ export default function StarkWorksProposalPage() {
         </div>
       </div>
 
+      {/* 5. 🚨 官方直營防詐聲明與網域驗證 */}
+      <FraudAlertAndDomainVerifier />
+
       {/* Bank Account Details */}
       <div className="bg-gradient-to-r from-[#FFFDF9] via-[#F4EFE6] to-[#FFFDF9] border-2 border-teal-500/50 rounded-2xl p-2.5 shadow-xs">
         <div className="flex justify-between items-center mb-1">
@@ -689,19 +774,19 @@ export default function StarkWorksProposalPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5 text-xs bg-[#FFFDF9] p-1.5 rounded-xl border border-[#E2D9C8]">
           <div>
             <span className="text-slate-500 block text-[10px]">匯款銀行</span>
-            <span className="font-bold text-[#0F172A]">中國信託</span>
+            <span className="font-bold text-[#0F172A]">{PROVIDER_INFO.bankName}</span>
           </div>
           <div>
-            <span className="text-slate-500 block text-[10px]">銀行代碼 / 分行</span>
-            <span className="font-bold text-[#0F172A]">（822）內壢簡易型分行</span>
+            <span className="text-slate-500 block text-[10px]">銀行代碼</span>
+            <span className="font-bold text-[#0F172A]">（{PROVIDER_INFO.bankCode}）</span>
           </div>
           <div>
             <span className="text-slate-500 block text-[10px]">戶名</span>
-            <span className="font-bold text-[#0F172A]">賴奕暢</span>
+            <span className="font-bold text-[#0F172A]">{PROVIDER_INFO.accountName}</span>
           </div>
           <div>
             <span className="text-slate-500 block text-[10px]">帳號</span>
-            <span className="font-mono font-black text-teal-700 text-sm">131540035543</span>
+            <span className="font-mono font-black text-teal-700 text-sm">{PROVIDER_INFO.accountNumber}</span>
           </div>
         </div>
       </div>
@@ -710,7 +795,7 @@ export default function StarkWorksProposalPage() {
       <div className="bg-[#FFFDF9] border border-[#E5DCC5] rounded-2xl p-2.5 shadow-xs">
         <div className="flex justify-between items-center mb-1">
           <h4 className="font-black text-xs text-teal-800 flex items-center gap-1">
-            <span>🧾</span> 史塔克團隊發票資料填寫 (開立三聯式發票)
+            <span>🧾</span> 史塔克團隊發票與匯款資料 (開立三聯式發票)
           </h4>
           <div className="flex items-center gap-2">
             {isSaved && (
@@ -1017,11 +1102,36 @@ export default function StarkWorksProposalPage() {
   ];
 
   return (
-    <div className="w-full min-h-screen bg-[#F8F5EE] text-[#0F172A] font-sans overflow-x-hidden">
+    <div className="w-full min-h-screen bg-[#F8F5EE] print:bg-white text-[#0F172A] font-sans overflow-x-hidden select-none">
       <Script src="https://static.line-scdn.net/liff/edge/2/sdk.js" onLoad={handleLiffInit} />
 
+      {/* 5重防拷貝、防選取、防拖曳 CSS 注入 */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        * {
+          -webkit-user-select: none !important;
+          -moz-user-select: none !important;
+          -ms-user-select: none !important;
+          user-select: none !important;
+        }
+        input, textarea {
+          -webkit-user-select: text !important;
+          -moz-user-select: text !important;
+          -ms-user-select: text !important;
+          user-select: text !important;
+        }
+      `}} />
+
+      {/* 4. 🛡️ 5重防複製、防變造與背景斜向 Security Watermark */}
+      <SecurityWatermarkOverlay />
+
+      {/* 2. 🔑 管理者上帝視角 Banner */}
+      {isAdminBypass && <OwnerBypassBanner />}
+
+      {/* 7. 🌐 VPN 代理與海外 IP 全螢幕攔截 */}
+      {isForeignOrVpn && !isAdminBypass && <VpnInterceptModal />}
+
       {/* Top Header Bar */}
-      <header className="sticky top-0 z-50 bg-[#F4EFE6]/95 backdrop-blur-md border-b border-[#E2D9C8] px-4 py-2.5">
+      <header className="sticky top-0 z-50 bg-[#F4EFE6]/95 backdrop-blur-md border-b border-[#E2D9C8] px-4 py-2.5 print:hidden">
         <div className="max-w-5xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-teal-600 inline-block animate-pulse"></span>
@@ -1030,6 +1140,12 @@ export default function StarkWorksProposalPage() {
             </span>
           </div>
           <div className="text-[10px] md:text-xs text-slate-600 font-mono flex items-center gap-1.5">
+            <button
+              onClick={() => window.print()}
+              className="px-2 py-0.5 bg-slate-900 hover:bg-slate-800 text-white rounded font-bold transition cursor-pointer active:scale-95"
+            >
+              🖨️ 列印/輸出官方簽核單
+            </button>
             <span className="text-teal-800 font-black bg-teal-100 px-2 py-0.5 rounded border border-teal-300">
               🛡️ 史塔克專屬提案
             </span>
@@ -1043,7 +1159,7 @@ export default function StarkWorksProposalPage() {
       </header>
 
       {/* Mobile Mode: Native Vertical Continuous Scroll View inside LINE LIFF */}
-      <div className="block md:hidden w-full max-w-xl mx-auto p-3 space-y-6 overflow-y-auto touch-pan-y" style={{ WebkitOverflowScrolling: "touch" }}>
+      <div className="block md:hidden w-full max-w-xl mx-auto p-3 space-y-6 overflow-y-auto touch-pan-y print:hidden" style={{ WebkitOverflowScrolling: "touch" }}>
         <div className="bg-[#FFFDF9] border border-[#E2D9C8] rounded-3xl p-4 shadow-xl backdrop-blur-md">
           {sectionCover}
         </div>
@@ -1065,10 +1181,11 @@ export default function StarkWorksProposalPage() {
         <div className="bg-[#FFFDF9] border border-[#E2D9C8] rounded-3xl p-4 shadow-xl backdrop-blur-md mb-8">
           {sectionSummary}
         </div>
+        <PrintSignatureSection proposalTitle="【史塔克運動科學團隊】AI 運動顧問與雙通道智能店長系統" />
       </div>
 
       {/* Desktop Mode: High-End Vertically & Horizontally Centered Minimalist Deck View */}
-      <div className="hidden md:flex min-h-[calc(100vh-65px)] flex-col justify-between items-center p-6 max-w-5xl mx-auto">
+      <div className="hidden md:flex min-h-[calc(100vh-65px)] flex-col justify-between items-center p-6 max-w-5xl mx-auto print:hidden">
         <main className="w-full h-[78vh] max-h-[700px] bg-[#FFFDF9] border border-[#E2D9C8] rounded-3xl p-8 md:p-10 shadow-2xl flex flex-col justify-center items-center my-auto backdrop-blur-md overflow-y-auto">
           {allSections[currentSlide].component}
         </main>
@@ -1101,6 +1218,11 @@ export default function StarkWorksProposalPage() {
             </button>
           </div>
         </footer>
+      </div>
+
+      {/* 8. 🖨️ 官方白紙黑字紙本列印與主管簽核用印區 (電腦版列印) */}
+      <div className="hidden print:block max-w-5xl mx-auto p-4">
+        <PrintSignatureSection proposalTitle="【史塔克運動科學團隊】AI 運動顧問與雙通道智能店長系統" />
       </div>
     </div>
   );

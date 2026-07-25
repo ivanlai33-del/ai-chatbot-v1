@@ -15,6 +15,8 @@ export interface AuditSession {
     taxId: string;
     invoiceAddress?: string;
     contactEmail?: string;
+    remittanceBank5?: string;
+    remittanceName?: string;
     submittedAt: string;
   };
 }
@@ -72,7 +74,6 @@ function loadFromFile() {
     if (fs.existsSync(STORE_FILE_PATH)) {
       const content = fs.readFileSync(STORE_FILE_PATH, 'utf-8');
       const parsed = JSON.parse(content);
-      // 相容舊資料格式
       if (parsed.sessions) {
         auditStoreData = parsed;
       } else {
@@ -102,20 +103,16 @@ function saveToFile() {
 
 loadFromFile();
 
+export { evaluateIpRisk } from './ProposalAuditUtils';
+
 /**
  * 計算報價單動態生命週期
- * 依據：第一個「非我方陌生 IP」的首次開啓時間 (firstExternalViewedAt)
- * 1. 尚未有陌生 IP 開啓 ➔ 🟢 正常期 (倒數計時未啟動，不計天數)
- * 2. 有陌生 IP 開啓 1~5 天 ➔ 🟢 正常期 (倒數計時中 Day 1~5)
- * 3. 陌生 IP 開啓 6~10 天 ➔ 🟡 密碼過期期 (密碼自動停用 Day 6~10)
- * 4. 陌生 IP 開啓 10 天以上 ➔ 🔴 網址歸檔 404 (404下架)
  */
 export function getProposalLifecycleStage(proposalSlug: string) {
   loadFromFile();
   const sessions = auditStoreData.sessions[proposalSlug] || [];
   const teamIps = new Set(auditStoreData.teamIps || []);
 
-  // 尋找第一個非團隊 IP 的觀看 Session
   const firstExternalSession = sessions
     .filter((s) => !teamIps.has(s.clientIp) && !s.isTeamIp)
     .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())[0];
@@ -133,7 +130,7 @@ export function getProposalLifecycleStage(proposalSlug: string) {
   const firstViewDate = new Date(firstExternalSession.createdAt);
   const now = new Date();
   const timeDiff = now.getTime() - firstViewDate.getTime();
-  const daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24)) + 1; // 第一天記為 Day 1
+  const daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24)) + 1;
 
   if (daysDiff <= 5) {
     return {
@@ -163,7 +160,6 @@ export function getProposalLifecycleStage(proposalSlug: string) {
 }
 
 export const ProposalAuditService = {
-  // 將特定 IP 註冊為「我方內部團隊 IP」
   registerTeamIp(ip: string) {
     loadFromFile();
     if (ip && !auditStoreData.teamIps.includes(ip)) {
@@ -246,6 +242,8 @@ export const ProposalAuditService = {
       taxId: invoiceData.taxId,
       invoiceAddress: invoiceData.invoiceAddress,
       contactEmail: invoiceData.contactEmail,
+      remittanceBank5: invoiceData.remittanceBank5,
+      remittanceName: invoiceData.remittanceName,
       submittedAt: nowIso,
     };
 

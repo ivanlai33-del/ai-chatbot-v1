@@ -3,18 +3,30 @@ import { supabase } from '@/lib/supabase';
 import { ProposalAuditService } from '@/lib/services/ProposalAuditStore';
 
 /**
- * 報價專區 — 客戶發票資料提交與通知 API
+ * 報價專區 — 客戶發票與對帳資料提交與通知 API
  */
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { companyName, taxId, invoiceAddress, contactEmail, proposalSlug = 'butter-toast' } = body;
+    const {
+      companyName,
+      taxId,
+      invoiceAddress,
+      contactEmail,
+      remittanceBank5,
+      remittanceName,
+      proposalSlug = 'butter-toast',
+    } = body;
 
     if (!companyName || !taxId) {
       return NextResponse.json({ error: '請填寫公司名稱與統一編號' }, { status: 400 });
     }
 
-    console.log(`[Invoice Submission] Customer submitted invoice info for proposal: ${proposalSlug}`, body);
+    if (!remittanceBank5 || !remittanceName) {
+      return NextResponse.json({ error: '請填寫對帳所需之「預計匯出銀行帳號後5碼」與「預計匯款戶名」！' }, { status: 400 });
+    }
+
+    console.log(`[Invoice Submission] Customer submitted invoice & remittance info for proposal: ${proposalSlug}`, body);
 
     // 同步備份至 ProposalAuditService
     ProposalAuditService.logInvoice(proposalSlug, {
@@ -22,6 +34,8 @@ export async function POST(req: NextRequest) {
       taxId,
       invoiceAddress,
       contactEmail,
+      remittanceBank5,
+      remittanceName,
     });
 
     // 1. 寫入 Supabase 資料庫
@@ -34,8 +48,8 @@ export async function POST(req: NextRequest) {
           contact_email: contactEmail,
           address: invoiceAddress,
           source: `proposal_${proposalSlug}`,
-          status: 'NEW_INVOICE_REQUIRED',
-          notes: `發票地址: ${invoiceAddress} | 提交時間: ${new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })}`,
+          status: 'REMITTANCE_BINDING_REQUIRED',
+          notes: `匯款戶名: ${remittanceName} | 帳號後5碼: ${remittanceBank5} | 發票地址: ${invoiceAddress} | 提交時間: ${new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })}`,
         });
     } catch (dbErr) {
       console.warn('[Invoice Supabase Warning]:', dbErr);
@@ -43,10 +57,12 @@ export async function POST(req: NextRequest) {
 
     // 2. LINE Notify 即時通知老闆/小編
     if (process.env.LINE_NOTIFY_TOKEN) {
-      const messageText = `\n🧾【收到客戶發票資料通知】\n` +
+      const messageText = `\n🧾【收到客戶發票與對帳綁定通知】\n` +
         `📌 專案：${proposalSlug}\n` +
         `🏢 公司全銜：${companyName}\n` +
         `🔢 統一編號：${taxId}\n` +
+        `🏦 預計匯款戶名：${remittanceName}\n` +
+        `💳 預計帳號後5碼：${remittanceBank5}\n` +
         `📍 寄送地址：${invoiceAddress || '未填寫'}\n` +
         `✉️ 通知 Email：${contactEmail || '未填寫'}\n` +
         `⏰ 提交時間：${new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })}`;
@@ -67,7 +83,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: '發票資料已成功傳送！',
+      message: '發票與匯款對帳資料已成功傳送！',
       submittedAt: new Date().toISOString(),
     });
   } catch (err: any) {

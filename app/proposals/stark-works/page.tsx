@@ -845,31 +845,31 @@ export default function StarkWorksProposalPage() {
 
   // Section 7: Summary, 1-Year Cost Savings & ROI Calculation
   const sectionSummary = (
-    <div className="w-full my-auto space-y-3">
-      <div className="flex justify-between items-center border-b border-[#E2D9C8] pb-1.5">
-        <h2 className="text-base md:text-2xl font-black text-[#0F172A]">
+    <div className="w-full pt-1 space-y-2.5">
+      <div className="flex flex-wrap justify-between items-center border-b border-[#E2D9C8] pb-1 gap-1">
+        <h2 className="text-sm md:text-xl font-black text-[#0F172A] leading-tight">
           與真人客服小編比較 — 1 年投資報酬率 (ROI) 與費用節省算表
         </h2>
-        <span className="text-[10px] md:text-xs bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-black border border-emerald-300">
+        <span className="text-[10px] md:text-xs bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-black border border-emerald-300 shrink-0">
           年省 80%~88% 客服成本
         </span>
       </div>
 
       {/* 1-Year Cost Comparison Highlight Banner */}
-      <div className="bg-gradient-to-r from-teal-700 via-cyan-700 to-emerald-700 text-white rounded-2xl p-3 md:p-4 shadow-md">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-2">
+      <div className="bg-gradient-to-r from-teal-700 via-cyan-700 to-emerald-700 text-white rounded-2xl p-2.5 md:p-3.5 shadow-md">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
           <div>
             <span className="text-[10px] bg-white/20 text-white px-2 py-0.5 rounded-full font-bold block w-fit mb-1">
               💰 一年費用總效益算表 (1-Year ROI Summary)
             </span>
-            <h3 className="text-sm md:text-lg font-black">
+            <h3 className="text-xs md:text-base font-black">
               聘用 1 名真人全職客服 vs 史塔克 AI 雙通道智能店長
             </h3>
           </div>
-          <div className="text-right">
-            <span className="text-xs text-teal-100 block font-medium">首年預計為史塔克直接省下</span>
-            <span className="text-2xl md:text-3xl font-black font-mono text-yellow-300">
-              NT$ 445,000 ~ 495,000 元/年
+          <div className="text-left sm:text-right shrink-0">
+            <span className="text-[11px] md:text-xs text-teal-100 block font-medium">首年預計為史塔克直接省下</span>
+            <span className="text-sm md:text-lg font-black font-mono text-yellow-300 whitespace-nowrap">
+              NT$ 445,000 ~ 495,000 元 / 年
             </span>
           </div>
         </div>

@@ -507,6 +507,38 @@ export default function KoloongProposalPage() {
                 </div>
               </div>
             </div>
+
+            {/* Seamless Integration Block for Original Hosting Location */}
+            <div className="bg-gradient-to-r from-blue-900/30 via-slate-900 to-indigo-900/30 border border-blue-500/30 rounded-2xl p-6">
+              <div className="flex items-center space-x-3 mb-3">
+                <span className="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-lg font-bold border border-blue-500/30">
+                  🔗
+                </span>
+                <div>
+                  <h3 className="text-base font-bold text-white">
+                    放回原主機位置 — 100% 無縫銜接與無痛覆蓋部署保障
+                  </h3>
+                  <p className="text-xs text-blue-300">
+                    完全相容數位聯合電信 (Seednet) 原有 Apache/PHP 主機環境，無需修改任何伺服器合約與設定
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-4 text-xs text-slate-300 pt-2">
+                <div className="p-3 bg-slate-950/80 rounded-xl border border-slate-800">
+                  <strong className="text-blue-400 block mb-1">📁 FTP 直接覆蓋上線</strong>
+                  交付包提供相容原主機 Apache/PHP 的極速靜態/輕量 API 檔案，透過 FTP 上傳至原根目錄即可立即運作。
+                </div>
+                <div className="p-3 bg-slate-950/80 rounded-xl border border-slate-800">
+                  <strong className="text-indigo-400 block mb-1">🌐 網址結構與 SEO 無縫接軌</strong>
+                  包含專屬 <code className="text-amber-300 font-mono">.htaccess</code> 路由配置，100% 對齊原 `/tw/home`, `/tw/about`, `/tw/product` 等網址，Google 搜尋索引零斷鏈。
+                </div>
+                <div className="p-3 bg-slate-950/80 rounded-xl border border-slate-800">
+                  <strong className="text-purple-400 block mb-1">📦 雙軌交付（開箱即用 + 原始碼）</strong>
+                  同時交付「原主機即插即用部署包」與「現代化 React/Next.js 完整專案原始碼」，未來擴充隨心所欲。
+                </div>
+              </div>
+            </div>
           </div>
         )}
 

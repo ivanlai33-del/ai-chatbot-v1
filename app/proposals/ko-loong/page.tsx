@@ -119,10 +119,18 @@ export default function KoloongProposalPage() {
         deviceInfo,
         clientIp,
         userAgent: typeof navigator !== "undefined" ? navigator.userAgent : "",
-        events: currentLogs.events,
-        acceptedTerms: true,
+        action: eventType,
+        isAdminAccess: isOwnerBypass,
+        details: { note: details }
       }),
-    }).catch(() => {});
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.lifecycle) {
+        setLifecycleInfo(data.lifecycle);
+      }
+    })
+    .catch(() => {});
   };
 
   useEffect(() => {
@@ -286,10 +294,12 @@ export default function KoloongProposalPage() {
     setTimeout(() => setCopySuccess(false), 2500);
   };
 
-  // Creation & Expiration Time-Lock Config
-  const PROPOSAL_CREATED_DATE = new Date("2026-07-25T00:00:00+08:00");
-  const now = new Date();
-  const diffTimeDays = Math.floor((now.getTime() - PROPOSAL_CREATED_DATE.getTime()) / (1000 * 60 * 60 * 24));
+  const [lifecycleInfo, setLifecycleInfo] = useState<any>({
+    stage: 'NORMAL',
+    countdownStarted: false,
+    daysDiff: 0,
+    message: '等待客戶首次開啓 (倒數未啟動)'
+  });
 
   // Owner Bypass Mode (Allows agency owner to view full proposal without password/time-lock)
   const isOwnerBypass = typeof window !== "undefined" && (
@@ -302,8 +312,8 @@ export default function KoloongProposalPage() {
     sessionStorage.setItem("proposal_admin_bypass", "true");
   }
 
-  // 10-Day URL Blocked / Hidden Screen (Bypassed if Owner)
-  if (!isOwnerBypass && diffTimeDays > 10) {
+  // 10-Day URL Blocked / Hidden Screen (Triggered ONLY after stranger IP first opened + > 10 days)
+  if (!isOwnerBypass && lifecycleInfo.countdownStarted && lifecycleInfo.stage === 'ARCHIVED_404') {
     return (
       <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4 font-sans select-none">
         <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-8 text-center shadow-2xl space-y-4">
@@ -312,7 +322,7 @@ export default function KoloongProposalPage() {
           </div>
           <h1 className="text-xl font-bold text-white">404 — 專案頁面已隱蔽歸檔</h1>
           <p className="text-xs text-slate-400 leading-relaxed">
-            您存取的網址已超過有效營運期限（10天），本專案報價連結已自動封鎖隱蔽並歸檔。
+            您存取的網址已超過有效營運期限（客戶首次開啟後 10 天），本專案報價連結已自動封鎖隱蔽並歸檔。
           </p>
           <div className="pt-4 border-t border-slate-800 text-[11px] text-slate-500">
             如有專案問題請聯繫執行團隊：奕暢創新設計工作室<br />
@@ -325,7 +335,7 @@ export default function KoloongProposalPage() {
 
   // Password Lock View (Bypassed if Owner)
   if (!isUnlocked && !isOwnerBypass) {
-    const isExpired = diffTimeDays > 5;
+    const isExpired = lifecycleInfo.countdownStarted && lifecycleInfo.stage === 'EXPIRED';
 
     return (
       <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4 font-sans select-none overflow-y-auto">
@@ -340,6 +350,9 @@ export default function KoloongProposalPage() {
             <p className="text-xs text-blue-400 font-semibold tracking-wider uppercase mt-1">
               網站重置與工程重構專案 ｜ 法律條款切結與報價單存取
             </p>
+            <span className={`inline-block mt-2 px-3 py-1 text-[11px] font-mono rounded-full border ${!lifecycleInfo.countdownStarted ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : isExpired ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'}`}>
+              {!lifecycleInfo.countdownStarted ? '🟢 狀態：尚未啟動倒數 (保持無限期開放中)' : isExpired ? `🔒 狀態：密碼已逾期失效 (客戶開啓後第 ${lifecycleInfo.daysDiff} 天)` : `⏳ 狀態：客戶已開啓 (倒數第 ${lifecycleInfo.daysDiff} 天)`}
+            </span>
           </div>
 
           {/* 5-Day Password Expired Banner */}
@@ -347,7 +360,7 @@ export default function KoloongProposalPage() {
             <div className="p-4 bg-rose-500/10 border border-rose-500/30 rounded-2xl text-xs text-rose-300 text-center mb-4 space-y-1">
               <strong className="text-rose-400 text-sm block">🔒 專案報價存取期限已過期失效</strong>
               <p className="text-[11px] text-slate-300">
-                本專案報價單之瀏覽有效期限（5天）已屆滿，訪問密碼已自動停用失效。如需展延瀏覽或重發提案，請聯繫專案窗口（Line: ivanlai33 / 電話: 0987528785）。
+                本專案報價單之瀏覽有效期限（客戶首次開啟後 5 天）已屆滿，訪問密碼已自動停用失效。如需展延瀏覽或重發提案，請聯繫專案窗口（Line: ivanlai33 / 電話: 0987528785）。
               </p>
             </div>
           )}

@@ -32,6 +32,10 @@ export default function KoloongProposalPage() {
   // Selected Plan State
   const [selectedPlan, setSelectedPlan] = useState<"static" | "full">("full");
 
+  // Legal Terms Confirmation State
+  const [checkTerms1, setCheckTerms1] = useState(false);
+  const [checkTerms2, setCheckTerms2] = useState(false);
+
   // Admin View State
   const [isAdminView, setIsAdminView] = useState(false);
   const [invoiceRecords, setInvoiceRecords] = useState<InvoiceRecord[]>([]);
@@ -216,25 +220,23 @@ export default function KoloongProposalPage() {
   // Password Lock View
   if (!isUnlocked) {
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4 font-sans select-none">
-        <div className="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl backdrop-blur-xl">
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4 font-sans select-none overflow-y-auto">
+        <div className="w-full max-w-lg bg-slate-900/90 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl backdrop-blur-xl my-8">
           <div className="text-center mb-6">
-            <div className="w-16 h-16 bg-blue-500/10 text-blue-400 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4 border border-blue-500/20 shadow-inner">
-              ⚙️
+            <div className="w-16 h-16 bg-blue-500/10 text-blue-400 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3 border border-blue-500/20 shadow-inner">
+              🛡️
             </div>
             <h1 className="text-2xl font-bold font-serif text-white tracking-wide">
               科隆工業股份有限公司
             </h1>
             <p className="text-xs text-blue-400 font-semibold tracking-wider uppercase mt-1">
-              網站全站重置與現代化工程重構報價單
-            </p>
-            <p className="text-xs text-slate-400 mt-2">
-              本報告包含獨立伺服器診斷、資產還原策略與實作報價
+              網站重置與工程重構專案 ｜ 法律條款切結與報價單存取
             </p>
           </div>
 
           <form onSubmit={handleUnlock} className="space-y-4">
             <div>
+              <label className="block text-xs text-slate-400 mb-1 font-medium">專案瀏覽存取密碼 *</label>
               <input
                 type="password"
                 placeholder="請輸入訪問密碼 (預設: 本日日期)"
@@ -245,6 +247,38 @@ export default function KoloongProposalPage() {
               />
             </div>
 
+            {/* Legal Disclaimer Checkboxes */}
+            <div className="p-4 bg-slate-950/80 border border-slate-800 rounded-2xl space-y-3 text-xs">
+              <div className="text-slate-300 font-bold flex items-center space-x-1 border-b border-slate-800 pb-2">
+                <span className="text-amber-400">⚖️</span>
+                <span>委託方權利切結與法律條款聲明 (進入前請勾選確認)</span>
+              </div>
+
+              <label className="flex items-start space-x-3 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={checkTerms1}
+                  onChange={(e) => setCheckTerms1(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 accent-blue-500 rounded cursor-pointer"
+                />
+                <span className="text-slate-300 group-hover:text-white leading-relaxed">
+                  <strong className="text-blue-400">[確認一：網域與智財權切結]</strong> 我（委託方）確認為 <code className="text-amber-300 font-mono">ko-loong.com</code> 網站之合法擁有者或取得官方完全授權，保證所提供之網頁資產與商標皆具合法使用權，並無侵犯第三方智慧財產權。
+                </span>
+              </label>
+
+              <label className="flex items-start space-x-3 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={checkTerms2}
+                  onChange={(e) => setCheckTerms2(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 accent-blue-500 rounded cursor-pointer"
+                />
+                <span className="text-slate-300 group-hover:text-white leading-relaxed">
+                  <strong className="text-emerald-400">[確認二：用途合規與免責聲明]</strong> 我承諾本專案重置與交付之網站檔案僅用於合法商業營運，絕不用於釣魚、詐欺或違法用途；如有任何法律責任，概由委託方自行承擔，與執行團隊（奕暢創新設計工作室）無涉。
+                </span>
+              </label>
+            </div>
+
             {errorMsg && (
               <p className="text-xs text-rose-400 text-center font-medium">
                 {errorMsg}
@@ -253,9 +287,10 @@ export default function KoloongProposalPage() {
 
             <button
               type="submit"
-              className="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg transition shadow-blue-500/20"
+              disabled={!checkTerms1 || !checkTerms2}
+              className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg transition shadow-blue-500/20 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
             >
-              進入專案提案報價單 ➔
+              <span>同意條款並解鎖專案報價單 ➔</span>
             </button>
           </form>
 

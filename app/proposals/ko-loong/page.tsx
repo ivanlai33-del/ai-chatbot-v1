@@ -291,8 +291,19 @@ export default function KoloongProposalPage() {
   const now = new Date();
   const diffTimeDays = Math.floor((now.getTime() - PROPOSAL_CREATED_DATE.getTime()) / (1000 * 60 * 60 * 24));
 
-  // 10-Day URL Blocked / Hidden Screen
-  if (diffTimeDays > 10) {
+  // Owner Bypass Mode (Allows agency owner to view full proposal without password/time-lock)
+  const isOwnerBypass = typeof window !== "undefined" && (
+    new URLSearchParams(window.location.search).get("admin") === "87257257" ||
+    sessionStorage.getItem("master_console_unlocked_ycideas") === "true" ||
+    sessionStorage.getItem("proposal_admin_bypass") === "true"
+  );
+
+  if (isOwnerBypass && typeof window !== "undefined") {
+    sessionStorage.setItem("proposal_admin_bypass", "true");
+  }
+
+  // 10-Day URL Blocked / Hidden Screen (Bypassed if Owner)
+  if (!isOwnerBypass && diffTimeDays > 10) {
     return (
       <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4 font-sans select-none">
         <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-8 text-center shadow-2xl space-y-4">
@@ -312,8 +323,8 @@ export default function KoloongProposalPage() {
     );
   }
 
-  // Password Lock View
-  if (!isUnlocked) {
+  // Password Lock View (Bypassed if Owner)
+  if (!isUnlocked && !isOwnerBypass) {
     const isExpired = diffTimeDays > 5;
 
     return (

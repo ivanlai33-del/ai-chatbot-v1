@@ -89,6 +89,8 @@ export default function KoloongProposalPage() {
 
   // Background Audit Logger State
   const [clientIp, setClientIp] = useState("Detecting...");
+  const [sessionId, setSessionId] = useState("");
+  const [deviceInfo, setDeviceInfo] = useState("");
 
   const logAuditEvent = (eventType: string, details: string = "") => {
     const now = new Date();
@@ -113,6 +115,8 @@ export default function KoloongProposalPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         proposalSlug: "ko-loong",
+        sessionId,
+        deviceInfo,
         clientIp,
         userAgent: typeof navigator !== "undefined" ? navigator.userAgent : "",
         events: currentLogs.events,
@@ -122,6 +126,26 @@ export default function KoloongProposalPage() {
   };
 
   useEffect(() => {
+    let sid = sessionStorage.getItem("ko_loong_viewer_session_id");
+    if (!sid) {
+      sid = `SES-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+      sessionStorage.setItem("ko_loong_viewer_session_id", sid);
+    }
+    setSessionId(sid);
+
+    let dev = "Desktop";
+    if (typeof navigator !== "undefined") {
+      const ua = navigator.userAgent;
+      if (/Mobi|Android|iPhone|iPad|iPod/i.test(ua)) {
+        dev = /iPad|Tablet/i.test(ua) ? "Tablet" : "Mobile Phone";
+      }
+      if (ua.indexOf("Win") !== -1) dev += " (Windows)";
+      else if (ua.indexOf("Mac") !== -1) dev += " (macOS)";
+      else if (ua.indexOf("iPhone") !== -1 || ua.indexOf("iPad") !== -1) dev += " (iOS)";
+      else if (ua.indexOf("Android") !== -1) dev += " (Android)";
+    }
+    setDeviceInfo(dev);
+
     fetch("https://api.ipify.org?format=json")
       .then((res) => res.json())
       .then((data) => {
@@ -129,7 +153,7 @@ export default function KoloongProposalPage() {
       })
       .catch(() => {});
 
-    logAuditEvent("PAGE_OPENED", "Client loaded Ko-Loong proposal page");
+    logAuditEvent("NEW_VIEWER_SESSION_OPENED", `Session: ${sid} | Device: ${dev} opened page`);
   }, []);
 
   useEffect(() => {

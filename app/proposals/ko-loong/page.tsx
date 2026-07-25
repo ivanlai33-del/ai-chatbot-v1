@@ -993,6 +993,29 @@ export default function KoloongProposalPage() {
             <div className="grid md:grid-cols-2 gap-6">
               {/* Form Section */}
               <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6">
+                <div className="p-3 bg-indigo-950/40 border border-indigo-500/20 rounded-xl text-xs text-indigo-300 mb-4">
+                    已選方案：<strong className="text-white font-bold">{selectedPlan === "full" ? "方案 B (全站復刻+動態後台) NT$ 68,000" : "方案 A (純靜態還原) NT$ 38,000"}</strong><br />
+                    <span className="text-[11px] text-slate-300 mt-1 block">
+                      ⚖️ <strong>匯款條款說明：</strong>專案開工請支付首期訂金（總金額 50%）。本訂金為專案資產備份、伺服器配置與手繪工程重構之保留預收費用，匯款完成即代表專案正式啟動並排程，訂金恕不退還。
+                    </span>
+                    <div className="mt-2 pt-2 border-t border-indigo-500/20 text-[10px] font-mono text-slate-400 flex items-center justify-between">
+                      <span>🛡️ 數位防偽認證碼：</span>
+                      <span className="text-amber-400 font-bold">SHA256-YCIDEAS-KOLOONG-68K-SECURED</span>
+                    </div>
+                  </div>
+
+                  {/* ANTI-MIDDLEMAN IMPERSONATION FRAUD NOTICE */}
+                  <div className="p-3.5 bg-red-950/40 border border-red-500/30 rounded-xl text-xs text-red-200 mb-4 space-y-1">
+                    <div className="font-bold text-red-400 flex items-center">
+                      <span className="mr-1.5">🚨</span> 官方直營防詐騙聲明 (防範第三方仲介假冒)
+                    </div>
+                    <p className="text-[11px] leading-relaxed text-red-300">
+                      1. 本工作室<strong>絕無委託任何第三方仲介、代理商或個人代收專案款項</strong>。<br />
+                      2. 匯款<strong>唯一指定戶名必須為「賴奕暢」</strong>(中信 822 / 帳號 131540035543)，若有人要求轉帳至其他非賴奕暢名下帳戶，切勿匯款！<br />
+                      3. 匯款完成後請逕向官方電話 <strong className="text-white font-mono">0987528785</strong> 或 Line: <strong className="text-emerald-400 font-mono">ivanlai33</strong> 對帳確認。
+                    </p>
+                  </div>
+
                 <h3 className="text-base font-bold text-white mb-4 flex items-center">
                   <span className="mr-2">📝</span> 發票開立與簽核資料填寫
                 </h3>

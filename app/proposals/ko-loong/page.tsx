@@ -749,16 +749,29 @@ export default function KoloongProposalPage() {
           </div>
         )}
 
-        {/* SLIDE 4: Sign-off & Invoice */}
+        {/* SLIDE 4: Sign-off & Bank Transfer Only */}
         {currentSlide === 4 && (
           <div className="space-y-6 animate-fadeIn">
             <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8">
               <h2 className="text-2xl font-bold text-white mb-2">
-                線上簽核與訂金匯款資訊
+                線上簽核與銀行訂金匯款資訊
               </h2>
               <p className="text-slate-400 text-sm">
-                請確認您選擇的方案，填寫發票資料後即可完成線上簽核：
+                請確認您選擇的方案，填寫發票資料後請使用下方指定銀行帳戶完成專案訂金匯款：
               </p>
+            </div>
+
+            {/* Executive Vendor Information Box */}
+            <div className="bg-slate-900/90 border border-blue-500/30 rounded-2xl p-6 mb-6">
+              <h3 className="text-base font-bold text-white mb-3 flex items-center">
+                <span className="mr-2">🏢</span> 執行團隊乙方資訊 (奕暢創新設計工作室)
+              </h3>
+              <div className="grid md:grid-cols-2 gap-4 text-xs font-mono">
+                <div className="flex justify-between py-1.5 border-b border-slate-800"><span className="text-slate-400">公司全銜</span><span className="text-white font-bold">奕暢創新設計工作室</span></div>
+                <div className="flex justify-between py-1.5 border-b border-slate-800"><span className="text-slate-400">統一編號</span><span className="text-blue-400 font-bold">41370842</span></div>
+                <div className="flex justify-between py-1.5 border-b border-slate-800"><span className="text-slate-400">專案聯絡電話</span><span className="text-white font-bold">0987528785</span></div>
+                <div className="flex justify-between py-1.5 border-b border-slate-800"><span className="text-slate-400">聯絡人 Line ID</span><span className="text-emerald-400 font-bold">ivanlai33</span></div>
+              </div>
             </div>
 
             <div className="grid md:grid-cols-2 gap-6">
@@ -834,12 +847,16 @@ export default function KoloongProposalPage() {
 
                   <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-2 mb-4 text-xs font-mono">
                     <div className="flex justify-between">
-                      <span className="text-slate-500">銀行代碼</span>
-                      <span className="text-white font-bold">822 中國信託銀行</span>
+                      <span className="text-slate-500">匯款銀行</span>
+                      <span className="text-white font-bold">中國信託銀行 (822)</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">分行資訊</span>
+                      <span className="text-slate-300">內壢簡易型分行</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-500">帳戶戶名</span>
-                      <span className="text-white">智企概念有限公司</span>
+                      <span className="text-white font-bold">賴奕暢</span>
                     </div>
                     <div className="flex justify-between items-center pt-1 border-t border-slate-900">
                       <span className="text-slate-500">匯款帳號</span>
@@ -857,14 +874,14 @@ export default function KoloongProposalPage() {
 
                   <div className="p-3 bg-indigo-950/40 border border-indigo-500/20 rounded-xl text-xs text-indigo-300 mb-4">
                     已選方案：<strong className="text-white font-bold">{selectedPlan === "full" ? "方案 B (全站復刻+動態後台) NT$ 68,000" : "方案 A (純靜態還原) NT$ 38,000"}</strong><br />
-                    <span className="text-[11px] text-slate-400 mt-1 block">請於簽核完成後轉帳專案訂金（總金額之 50%），匯款後請提供帳號後五碼以利對帳。</span>
+                    <span className="text-[11px] text-slate-400 mt-1 block">請於簽核完成後轉帳專案訂金（總金額之 50%），匯款後請告知帳號後五碼或聯繫 Line: ivanlai33 以利對帳。</span>
                   </div>
                 </div>
 
                 <button
                   onClick={() => {
                     handleCopyAccount();
-                    alert("✓ 匯款帳號 (822 中國信託 131540035543) 已成功複製！請完成專案訂金匯款，謝謝。");
+                    alert("✓ 匯款帳號 (822 中國信託 131540035543 戶名:賴奕暢) 已成功複製！請完成專案訂金匯款，如有疑問請聯繫 Line: ivanlai33。");
                   }}
                   className="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg transition flex items-center justify-center space-x-2"
                 >

@@ -286,14 +286,42 @@ export default function KoloongProposalPage() {
     setTimeout(() => setCopySuccess(false), 2500);
   };
 
+  // Creation & Expiration Time-Lock Config
+  const PROPOSAL_CREATED_DATE = new Date("2026-07-25T00:00:00+08:00");
+  const now = new Date();
+  const diffTimeDays = Math.floor((now.getTime() - PROPOSAL_CREATED_DATE.getTime()) / (1000 * 60 * 60 * 24));
+
+  // 10-Day URL Blocked / Hidden Screen
+  if (diffTimeDays > 10) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4 font-sans select-none">
+        <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-8 text-center shadow-2xl space-y-4">
+          <div className="w-16 h-16 bg-rose-500/10 text-rose-400 rounded-2xl flex items-center justify-center text-3xl mx-auto border border-rose-500/20">
+            🚫
+          </div>
+          <h1 className="text-xl font-bold text-white">404 — 專案頁面已隱蔽歸檔</h1>
+          <p className="text-xs text-slate-400 leading-relaxed">
+            您存取的網址已超過有效營運期限（10天），本專案報價連結已自動封鎖隱蔽並歸檔。
+          </p>
+          <div className="pt-4 border-t border-slate-800 text-[11px] text-slate-500">
+            如有專案問題請聯繫執行團隊：奕暢創新設計工作室<br />
+            聯絡電話：0987528785 ｜ Line ID: ivanlai33
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Password Lock View
   if (!isUnlocked) {
+    const isExpired = diffTimeDays > 5;
+
     return (
       <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4 font-sans select-none overflow-y-auto">
         <div className="w-full max-w-lg bg-slate-900/90 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl backdrop-blur-xl my-8">
           <div className="text-center mb-6">
-            <div className="w-16 h-16 bg-blue-500/10 text-blue-400 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3 border border-blue-500/20 shadow-inner">
-              🛡️
+            <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3 border shadow-inner ${isExpired ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-blue-500/10 text-blue-400 border-blue-500/20'}`}>
+              {isExpired ? '🔒' : '🛡️'}
             </div>
             <h1 className="text-2xl font-bold font-serif text-white tracking-wide">
               科隆工業股份有限公司
@@ -302,6 +330,16 @@ export default function KoloongProposalPage() {
               網站重置與工程重構專案 ｜ 法律條款切結與報價單存取
             </p>
           </div>
+
+          {/* 5-Day Password Expired Banner */}
+          {isExpired && (
+            <div className="p-4 bg-rose-500/10 border border-rose-500/30 rounded-2xl text-xs text-rose-300 text-center mb-4 space-y-1">
+              <strong className="text-rose-400 text-sm block">🔒 專案報價存取期限已過期失效</strong>
+              <p className="text-[11px] text-slate-300">
+                本專案報價單之瀏覽有效期限（5天）已屆滿，訪問密碼已自動停用失效。如需展延瀏覽或重發提案，請聯繫專案窗口（Line: ivanlai33 / 電話: 0987528785）。
+              </p>
+            </div>
+          )}
 
           <form onSubmit={handleUnlock} className="space-y-4">
             <div>

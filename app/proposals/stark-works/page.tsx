@@ -251,19 +251,19 @@ export default function StarkWorksProposalPage() {
     setTimeout(() => setCopySuccess(false), 2500);
   };
 
-  // Password Lock View
+  // Password Lock View (Soft Cream Warm Beige + Cyberpunk Teal)
   if (!isUnlocked) {
     return (
-      <div className="w-full min-h-screen bg-[#0F172A] text-[#E2E8F0] flex flex-col justify-center items-center p-4 font-sans overflow-x-hidden">
+      <div className="w-full min-h-screen bg-[#F8F5EE] text-[#0F172A] flex flex-col justify-center items-center p-4 font-sans overflow-x-hidden">
         <Script src="https://static.line-scdn.net/liff/edge/2/sdk.js" onLoad={handleLiffInit} />
-        <div className="w-full max-w-sm bg-[#1E293B] border border-[#334155] rounded-3xl p-6 shadow-2xl text-center backdrop-blur-md">
-          <div className="w-12 h-12 bg-emerald-900/50 text-emerald-400 rounded-full flex items-center justify-center text-xl mx-auto mb-3 border border-emerald-500/30">
+        <div className="w-full max-w-sm bg-[#FFFDF9] border border-[#E2D9C8] rounded-3xl p-6 shadow-2xl text-center backdrop-blur-md">
+          <div className="w-12 h-12 bg-teal-100/80 text-teal-700 rounded-full flex items-center justify-center text-xl mx-auto mb-3 border border-teal-300/60 shadow-xs">
             🏃‍♂️
           </div>
-          <h1 className="text-lg font-bold mb-1.5 text-white">
+          <h1 className="text-lg font-black mb-1.5 text-[#0F172A]">
             【史塔克運動科學團隊】<br />AI 運動顧問與雙通道智能店長系統提案
           </h1>
-          <p className="text-xs text-slate-400 mb-4 leading-relaxed">
+          <p className="text-xs text-slate-500 mb-4 leading-relaxed font-medium">
             本專案報價為受資安防護與商業加密保護之受控內容，請輸入授權密碼檢視。
           </p>
 
@@ -274,23 +274,23 @@ export default function StarkWorksProposalPage() {
                 placeholder="請輸入瀏覽密碼 (如: 20260725)"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2.5 bg-[#0F172A] border border-[#334155] rounded-xl text-center text-base focus:outline-none focus:border-emerald-500 text-white placeholder-slate-500"
+                className="w-full px-3 py-2.5 bg-[#F4EFE6] border border-[#D5C9B3] rounded-xl text-center text-base focus:outline-none focus:border-teal-600 text-[#0F172A] placeholder-slate-400 font-medium"
                 autoFocus
               />
             </div>
 
-            {errorMsg && <p className="text-xs text-rose-400 font-medium">{errorMsg}</p>}
+            {errorMsg && <p className="text-xs text-rose-600 font-bold">{errorMsg}</p>}
 
             <button
               type="submit"
-              className="w-full py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl shadow-lg transition text-sm active:scale-95 cursor-pointer"
+              className="w-full py-2.5 bg-gradient-to-r from-teal-600 via-cyan-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-white font-extrabold rounded-xl shadow-lg transition text-sm active:scale-95 cursor-pointer"
             >
               解鎖檢視史塔克專屬提案
             </button>
           </form>
 
-          <div className="mt-4 pt-3 border-t border-slate-700/60 text-[10px] text-slate-400 flex items-center justify-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
+          <div className="mt-4 pt-3 border-t border-[#E8DFC8] text-[10px] text-slate-500 flex items-center justify-center gap-1 font-medium">
+            <span className="w-2 h-2 rounded-full bg-teal-500 inline-block animate-pulse"></span>
             <span>bot.ycideas.com 📱 史塔克運動科學團隊專屬提案</span>
           </div>
         </div>
@@ -302,112 +302,120 @@ export default function StarkWorksProposalPage() {
   const sectionCover = (
     <div className="w-full my-auto text-center py-2">
       <div className="flex items-center justify-center gap-2 mb-2 md:mb-3">
-        <span className="h-[1px] w-6 md:w-10 bg-emerald-500"></span>
-        <span className="text-[10px] md:text-xs font-bold text-emerald-400 tracking-widest uppercase font-mono">
+        <span className="h-[2px] w-6 md:w-10 bg-teal-500"></span>
+        <span className="text-[10px] md:text-xs font-black text-teal-700 tracking-widest uppercase font-mono">
           SPECIAL PROPOSAL ✕ 史塔克運動科學團隊
         </span>
-        <span className="h-[1px] w-6 md:w-10 bg-emerald-500"></span>
+        <span className="h-[2px] w-6 md:w-10 bg-teal-500"></span>
       </div>
 
-      <h1 className="text-xl md:text-4xl lg:text-5xl font-black mb-2 md:mb-4 leading-tight text-white">
+      <h1 className="text-xl md:text-4xl lg:text-5xl font-black mb-2 md:mb-4 leading-tight text-[#0F172A]">
         【史塔克運動科學團隊】<br />
-        <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400">
+        <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 via-cyan-600 to-emerald-600">
           LINE 官方帳號 ✕ 官網雙通道 AI 運動顧問系統
         </span>
       </h1>
 
-      <p className="text-xs md:text-base text-slate-300 max-w-2xl mx-auto mb-4 md:mb-6 leading-relaxed font-medium">
+      <p className="text-xs md:text-base text-slate-700 max-w-2xl mx-auto mb-4 md:mb-6 leading-relaxed font-bold">
         結合史塔克 11 年頂尖選手與大眾運動科學專業！<b>「LINE 機器人 ✕ 官網 AI 小幫手雙通道進駐 ✕ 動作評估諮詢導客 ✕ 1對1課程線上預約 ✕ Shopline 電商產品推薦」</b>全方位 AI 智能店長！
       </p>
 
       {/* 4 Core Pillars Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 mb-4 md:mb-6 text-left">
-        <div className="bg-slate-800/80 border border-slate-700 p-3 rounded-xl shadow-xs backdrop-blur-md">
-          <div className="text-xs md:text-sm font-bold text-emerald-400 mb-1">🏃‍♂️ 史塔克運動科學大腦</div>
-          <p className="text-[11px] md:text-xs text-slate-300 leading-tight">精準分流久坐族、增肌減脂、運動嗜好、頂尖選手與急性/照護特別族群諮詢。</p>
+        <div className="bg-[#FFFDF9] border border-[#E5DCC5] p-3 rounded-2xl shadow-xs">
+          <div className="text-xs md:text-sm font-black text-teal-700 mb-1 flex items-center gap-1">
+            <span>🏃‍♂️</span> 史塔克運動科學大腦
+          </div>
+          <p className="text-[11px] md:text-xs text-slate-600 leading-tight font-medium">精準分流久坐族、增肌減脂、運動嗜好、頂尖選手與特別照護族群。</p>
         </div>
 
-        <div className="bg-slate-800/80 border border-slate-700 p-3 rounded-xl shadow-xs backdrop-blur-md">
-          <div className="text-xs md:text-sm font-bold text-teal-400 mb-1">📲 LINE ✕ 官網雙通道進駐</div>
-          <p className="text-[11px] md:text-xs text-slate-300 leading-tight">LINE 官方帳號全天候自動客服，同步支援 Shopline 官網右下角嵌入式 AI 小幫手！</p>
+        <div className="bg-[#FFFDF9] border border-[#E5DCC5] p-3 rounded-2xl shadow-xs">
+          <div className="text-xs md:text-sm font-black text-cyan-700 mb-1 flex items-center gap-1">
+            <span>📲</span> LINE ✕ 官網雙通道進駐
+          </div>
+          <p className="text-[11px] md:text-xs text-slate-600 leading-tight font-medium">LINE 官方帳號全天候自動客服，同步支援 Shopline 官網右下角嵌入小幫手！</p>
         </div>
 
-        <div className="bg-slate-800/80 border border-slate-700 p-3 rounded-xl shadow-xs backdrop-blur-md">
-          <div className="text-xs md:text-sm font-bold text-cyan-400 mb-1">📅 1對1評估與課程線上預約</div>
-          <p className="text-[11px] md:text-xs text-slate-300 leading-tight">引導學員完成初次體能/動作評估諮詢，LIFF 點擊即可完成 1對1 訓練線上預約！</p>
+        <div className="bg-[#FFFDF9] border border-[#E5DCC5] p-3 rounded-2xl shadow-xs">
+          <div className="text-xs md:text-sm font-black text-emerald-700 mb-1 flex items-center gap-1">
+            <span>📅</span> 1對1評估與課程線上預約
+          </div>
+          <p className="text-[11px] md:text-xs text-slate-600 leading-tight font-medium">引導學員完成初次動作評估，彈出選單點擊即可完成 1對1 訓練線上預約！</p>
         </div>
 
-        <div className="bg-slate-800/80 border border-slate-700 p-3 rounded-xl shadow-xs backdrop-blur-md">
-          <div className="text-xs md:text-sm font-bold text-sky-400 mb-1">🛍️ Shopline 周邊器材導購</div>
-          <p className="text-[11px] md:text-xs text-slate-300 leading-tight">推薦 FLEXIBAR、AIREX、BellaBambi、MUNI、SoftX 與運動精油圖文產品卡片。</p>
+        <div className="bg-[#FFFDF9] border border-[#E5DCC5] p-3 rounded-2xl shadow-xs">
+          <div className="text-xs md:text-sm font-black text-sky-700 mb-1 flex items-center gap-1">
+            <span>🛍️</span> Shopline 周邊器材導購
+          </div>
+          <p className="text-[11px] md:text-xs text-slate-600 leading-tight font-medium">推薦 FLEXIBAR、AIREX、BellaBambi、MUNI 與運動精油圖文卡片。</p>
         </div>
       </div>
 
-      <div className="inline-flex items-center flex-wrap justify-center gap-1.5 px-4 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-full text-xs font-bold shadow-md mb-4">
+      <div className="inline-flex items-center flex-wrap justify-center gap-1.5 px-4 py-1.5 bg-gradient-to-r from-teal-600 via-cyan-600 to-emerald-600 text-white rounded-full text-xs font-black shadow-md mb-4">
         <span>✨ 實用版建置費：NT$ 38,000</span>
         <span>•</span>
         <span>✨ 旗艦雙通道版：NT$ 68,000</span>
         <span>•</span>
-        <span>✨ 維護費：NT$ 2,500~3,500/月</span>
+        <span>✨ 年省客服成本 80%+</span>
       </div>
 
-      <div className="pt-3 border-t border-slate-800 text-xs text-slate-400 font-medium flex justify-center flex-wrap gap-2 md:gap-4">
-        <span>🏢 <b>提案單位：</b>奕暢創新設計工作室 <span className="font-mono text-emerald-400">(統編: 41370842)</span></span>
-        <span>💬 <b>LINE ID：</b><b className="text-emerald-400 font-mono">ivanlai33</b></span>
-        <span>📞 <b>電話：</b><b className="text-emerald-400 font-mono">0987528785</b></span>
+      <div className="pt-3 border-t border-[#E2D9C8] text-xs text-slate-600 font-bold flex justify-center flex-wrap gap-2 md:gap-4">
+        <span>🏢 <b>提案單位：</b>奕暢創新設計工作室 <span className="font-mono text-teal-700 font-black">(統編: 41370842)</span></span>
+        <span>💬 <b>LINE ID：</b><b className="text-teal-700 font-mono font-black">ivanlai33</b></span>
+        <span>📞 <b>電話：</b><b className="text-teal-700 font-mono font-black">0987528785</b></span>
       </div>
     </div>
   );
 
-  // Section 2: Requirements & Problem Statement (STARK.WORKS Focus)
+  // Section 2: Requirements & Problem Statement
   const sectionRequirements = (
     <div className="w-full my-auto space-y-4">
-      <div className="flex justify-between items-center border-b border-slate-800 pb-2">
-        <h2 className="text-base md:text-2xl font-bold text-white">
+      <div className="flex justify-between items-center border-b border-[#E2D9C8] pb-2">
+        <h2 className="text-base md:text-2xl font-black text-[#0F172A]">
           【史塔克運動科學】品牌痛點與 AI 解決方案
         </h2>
-        <span className="text-[10px] md:text-xs bg-emerald-900/60 text-emerald-300 px-2.5 py-0.5 rounded-full font-bold border border-emerald-700/50">
+        <span className="text-[10px] md:text-xs bg-teal-100/90 text-teal-800 px-2.5 py-0.5 rounded-full font-black border border-teal-300">
           需求完全對齊
         </span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-        <div className="bg-slate-800/70 border border-slate-700 rounded-2xl p-4 shadow-xs">
+        <div className="bg-[#FFFDF9] border border-[#E5DCC5] rounded-2xl p-4 shadow-xs">
           <div className="flex items-center gap-2 mb-2">
             <span className="text-xl">🎯</span>
-            <h3 className="font-bold text-sm md:text-base text-emerald-400">挑戰 1：5大族群需求各異，人工客服回覆耗時</h3>
+            <h3 className="font-black text-sm md:text-base text-teal-700">挑戰 1：5大族群需求各異，人工客服回覆耗時</h3>
           </div>
-          <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
+          <p className="text-xs md:text-sm text-slate-700 leading-relaxed font-medium">
             史塔克服務涵蓋「久坐族、增肌減脂、運動嗜好、頂尖選手與特別照護者」。<b>AI 智庫能自動辨識諮詢者身分，給予最精準的運動科學建議與課程引導。</b>
           </p>
         </div>
 
-        <div className="bg-slate-800/70 border border-slate-700 rounded-2xl p-4 shadow-xs">
+        <div className="bg-[#FFFDF9] border border-[#E5DCC5] rounded-2xl p-4 shadow-xs">
           <div className="flex items-center gap-2 mb-2">
             <span className="text-xl">🌐</span>
-            <h3 className="font-bold text-sm md:text-base text-teal-400">挑戰 2：官網與 LINE 訪客雙向分散，諮詢中斷</h3>
+            <h3 className="font-black text-sm md:text-base text-cyan-700">挑戰 2：官網與 LINE 訪客雙向分散，諮詢中斷</h3>
           </div>
-          <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
+          <p className="text-xs md:text-sm text-slate-700 leading-relaxed font-medium">
             官網 (stark.works) 逛街訪客與 LINE 好友分流。<b>建置雙通道 AI 機器人，官網嵌入式客服與 LINE 機器人共享同一個 AI 大腦，不漏接任何意向顧客！</b>
           </p>
         </div>
 
-        <div className="bg-slate-800/70 border border-slate-700 rounded-2xl p-4 shadow-xs">
+        <div className="bg-[#FFFDF9] border border-[#E5DCC5] rounded-2xl p-4 shadow-xs">
           <div className="flex items-center gap-2 mb-2">
             <span className="text-xl">📅</span>
-            <h3 className="font-bold text-sm md:text-base text-cyan-400">挑戰 3：1對1訓練與動作評估，預約流程繁瑣</h3>
+            <h3 className="font-black text-sm md:text-base text-emerald-700">挑戰 3：1對1訓練與動作評估，預約流程繁瑣</h3>
           </div>
-          <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
+          <p className="text-xs md:text-sm text-slate-700 leading-relaxed font-medium">
             顧客常詢問「怎麼預約一對一訓練？」、「急性不適怎麼辦？」。<b>AI 秒回諮詢並彈出 LIFF 線上預約選單，大幅提高諮詢轉化為實體預約的成功率！</b>
           </p>
         </div>
 
-        <div className="bg-slate-800/70 border border-slate-700 rounded-2xl p-4 shadow-xs">
+        <div className="bg-[#FFFDF9] border border-[#E5DCC5] rounded-2xl p-4 shadow-xs">
           <div className="flex items-center gap-2 mb-2">
             <span className="text-xl">🛍️</span>
-            <h3 className="font-bold text-sm md:text-base text-sky-400">挑戰 4：Shopline 運動器材與周邊電商導購</h3>
+            <h3 className="font-black text-sm md:text-base text-sky-700">挑戰 4：Shopline 運動器材與周邊電商導購</h3>
           </div>
-          <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
+          <p className="text-xs md:text-sm text-slate-700 leading-relaxed font-medium">
             當顧客詢問「FLEXIBAR 如何使用？」、「AIREX 墊子或運動精油推薦」，<b>AI 自動引導彈出產品卡片，點擊直達 Shopline 購物車完成結帳！</b>
           </p>
         </div>
@@ -415,81 +423,81 @@ export default function StarkWorksProposalPage() {
     </div>
   );
 
-  // Section 3: Detailed Modules Breakdown (LINE + Web Widget)
+  // Section 3: Detailed Modules Breakdown
   const sectionModules = (
     <div className="w-full my-auto space-y-3">
-      <div className="flex justify-between items-center border-b border-slate-800 pb-1.5">
-        <h2 className="text-base md:text-2xl font-bold text-white">
+      <div className="flex justify-between items-center border-b border-[#E2D9C8] pb-1.5">
+        <h2 className="text-base md:text-2xl font-black text-[#0F172A]">
           詳細功能模組與雙通道系統架構拆解
         </h2>
-        <span className="text-[10px] md:text-xs bg-emerald-900/60 text-emerald-300 px-2.5 py-0.5 rounded-full font-bold border border-emerald-700/50">
+        <span className="text-[10px] md:text-xs bg-teal-100/90 text-teal-800 px-2.5 py-0.5 rounded-full font-black border border-teal-300">
           4 大核心模組
         </span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-        {/* Module 1: LINE & Web Bot Dual Channel */}
-        <div className="bg-slate-800/80 border border-emerald-500/40 p-3 rounded-2xl shadow-xs">
+        {/* Module 1 */}
+        <div className="bg-[#FFFDF9] border border-teal-200 p-3 rounded-2xl shadow-xs">
           <div className="flex items-center justify-between mb-1.5">
-            <h4 className="font-bold text-xs md:text-sm text-emerald-400 flex items-center gap-1.5">
+            <h4 className="font-black text-xs md:text-sm text-teal-700 flex items-center gap-1.5">
               <span>📲</span> 模組 1：LINE 官方帳號 ✕ 官網小幫手雙通道進駐
             </h4>
-            <span className="text-[10px] bg-emerald-900/80 text-emerald-200 px-1.5 py-0.5 rounded font-mono">
+            <span className="text-[10px] bg-teal-100 text-teal-800 px-1.5 py-0.5 rounded font-mono font-bold">
               雙通道 AI 大腦
             </span>
           </div>
-          <ul className="text-[11px] md:text-xs text-slate-300 space-y-1">
+          <ul className="text-[11px] md:text-xs text-slate-700 space-y-1 font-medium">
             <li>✓ <b>LINE 機器人主通道</b>：24H 自動回應官方帳號訊息、發送圖文卡片</li>
             <li>✓ <b>官網右下角 AI Widget 嵌入</b>：一行程式碼直接嵌入 Shopline 官網</li>
             <li>✓ <b>共享知識庫與語氣</b>：官網與 LINE 諮詢紀錄自動同步，體驗完整</li>
           </ul>
         </div>
 
-        {/* Module 2: Sports Science Knowledge Base */}
-        <div className="bg-slate-800/80 border border-teal-500/40 p-3 rounded-2xl shadow-xs">
+        {/* Module 2 */}
+        <div className="bg-[#FFFDF9] border border-cyan-200 p-3 rounded-2xl shadow-xs">
           <div className="flex items-center justify-between mb-1.5">
-            <h4 className="font-bold text-xs md:text-sm text-teal-400 flex items-center gap-1.5">
+            <h4 className="font-black text-xs md:text-sm text-cyan-700 flex items-center gap-1.5">
               <span>🏋️‍♂️</span> 模組 2：史塔克運動科學與5大族群諮詢智庫
             </h4>
-            <span className="text-[10px] bg-teal-900/80 text-teal-200 px-1.5 py-0.5 rounded font-mono">
+            <span className="text-[10px] bg-cyan-100 text-cyan-800 px-1.5 py-0.5 rounded font-mono font-bold">
               專業知識庫
             </span>
           </div>
-          <ul className="text-[11px] md:text-xs text-slate-300 space-y-1">
+          <ul className="text-[11px] md:text-xs text-slate-700 space-y-1 font-medium">
             <li>✓ <b>5大族群精準問答</b>：久坐族、增肌減脂、運動嗜好、專項選手、特別照護族</li>
             <li>✓ <b>醫師與教練團隊導流</b>：急性不適自動引導至團隊醫師門診與評估流程</li>
             <li>✓ <b>品牌 11 年權威人設</b>：展現亞洲頂尖選手訓練經驗與專業信任感</li>
           </ul>
         </div>
 
-        {/* Module 3: Booking & Course Assessment */}
-        <div className="bg-slate-800/80 border border-cyan-500/40 p-3 rounded-2xl shadow-xs">
+        {/* Module 3 */}
+        <div className="bg-[#FFFDF9] border border-emerald-200 p-3 rounded-2xl shadow-xs">
           <div className="flex items-center justify-between mb-1.5">
-            <h4 className="font-bold text-xs md:text-sm text-cyan-400 flex items-center gap-1.5">
+            <h4 className="font-black text-xs md:text-sm text-emerald-700 flex items-center gap-1.5">
               <span>📅</span> 模組 3：1對1訓練預約與體能評估引導 (LIFF)
             </h4>
-            <span className="text-[10px] bg-cyan-900/80 text-cyan-200 px-1.5 py-0.5 rounded font-mono">
+            <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-mono font-bold">
               線上預約導客
             </span>
           </div>
-          <ul className="text-[11px] md:text-xs text-slate-300 space-y-1">
+          <ul className="text-[11px] md:text-xs text-slate-700 space-y-1 font-medium">
             <li>✓ <b>初次動作評估導流</b>：引導新學員進行動作篩檢與體能諮詢</li>
             <li>✓ <b>LINE LIFF 滿版預約選單</b>：直覺選擇課程、時段與服務教練</li>
             <li>✓ <b>預約前自動提醒 SOP</b>：課前注意事項與門市位置地圖自動發送</li>
           </ul>
         </div>
 
-        {/* Module 4: E-commerce Product Recommendation */}
-        <div className="bg-slate-800/80 border border-sky-500/40 p-3 rounded-2xl shadow-xs">
+        {/* Module 4 */}
+        <div className="bg-[#FFFDF9] border border-sky-200 p-3 rounded-2xl shadow-xs">
           <div className="flex items-center justify-between mb-1.5">
-            <h4 className="font-bold text-xs md:text-sm text-sky-400 flex items-center gap-1.5">
+            <h4 className="font-black text-xs md:text-sm text-sky-700 flex items-center gap-1.5">
               <span>🛍️</span> 模組 4：Shopline 運動器材與周邊產品 AI 導購
             </h4>
-            <span className="text-[10px] bg-sky-900/80 text-sky-200 px-1.5 py-0.5 rounded font-mono">
+            <span className="text-[10px] bg-sky-100 text-sky-800 px-1.5 py-0.5 rounded font-mono font-bold">
               電商圖文導購
             </span>
           </div>
-          <ul className="text-[11px] md:text-xs text-slate-300 space-y-1">
+          <ul className="text-[11px] md:text-xs text-slate-700 space-y-1 font-medium">
             <li>✓ <b>圖文產品卡片</b>：自動拉出 FLEXIBAR、AIREX、BellaBambi、精油等卡片</li>
             <li>✓ <b>使用場景建議</b>：根據學員恢復需求，主動推薦搭配之運動修復器材</li>
             <li>✓ <b>直達 Shopline 購物車</b>：點擊直接跳轉完成下單，提高電商轉換率</li>
@@ -499,23 +507,23 @@ export default function StarkWorksProposalPage() {
     </div>
   );
 
-  // Section 4: Pricing Options (Starter vs Flagship Dual Channel)
+  // Section 4: Pricing Options
   const sectionPricing = (
     <div className="w-full my-auto space-y-3">
-      <div className="flex justify-between items-center border-b border-slate-800 pb-2">
-        <h2 className="text-base md:text-2xl font-bold text-white">
+      <div className="flex justify-between items-center border-b border-[#E2D9C8] pb-2">
+        <h2 className="text-base md:text-2xl font-black text-[#0F172A]">
           史塔克專案報價方案選擇與發票資料
         </h2>
         <div className="flex items-center gap-1 text-xs">
           <button
             onClick={() => setSelectedPlan("starter")}
-            className={`px-3 py-1 rounded-lg font-bold transition ${selectedPlan === "starter" ? "bg-emerald-600 text-white" : "bg-slate-800 text-slate-400"}`}
+            className={`px-3 py-1 rounded-lg font-extrabold transition cursor-pointer ${selectedPlan === "starter" ? "bg-teal-700 text-white shadow-xs" : "bg-[#F4EFE6] text-slate-600"}`}
           >
             精準實用版 ($38,000)
           </button>
           <button
             onClick={() => setSelectedPlan("flagship")}
-            className={`px-3 py-1 rounded-lg font-bold transition ${selectedPlan === "flagship" ? "bg-emerald-600 text-white" : "bg-slate-800 text-slate-400"}`}
+            className={`px-3 py-1 rounded-lg font-extrabold transition cursor-pointer ${selectedPlan === "flagship" ? "bg-teal-700 text-white shadow-xs" : "bg-[#F4EFE6] text-slate-600"}`}
           >
             ★ 雙通道旗艦版 ($68,000)
           </button>
@@ -525,66 +533,66 @@ export default function StarkWorksProposalPage() {
       {/* Pricing Cards Comparison */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {/* Starter Plan */}
-        <div className={`bg-slate-800 border-2 rounded-2xl p-3.5 shadow-xs flex flex-col justify-between ${selectedPlan === "starter" ? "border-emerald-500" : "border-slate-700 opacity-80"}`}>
+        <div className={`bg-[#FFFDF9] border-2 rounded-2xl p-3.5 shadow-xs flex flex-col justify-between ${selectedPlan === "starter" ? "border-teal-600 ring-2 ring-teal-500/20" : "border-[#E5DCC5] opacity-80"}`}>
           <div>
             <div className="flex justify-between items-center mb-1">
-              <span className="font-bold text-xs md:text-sm text-emerald-400">
+              <span className="font-black text-xs md:text-sm text-teal-800">
                 🟢 【方案 A】LINE 機器人精準實用版
               </span>
-              <span className="text-[10px] bg-emerald-900/80 text-emerald-200 px-2 py-0.5 rounded-full font-bold">
+              <span className="text-[10px] bg-teal-100 text-teal-800 px-2 py-0.5 rounded-full font-bold">
                 專注 LINE 管道
               </span>
             </div>
-            <div className="text-2xl md:text-3xl font-black font-mono text-white my-1">
-              NT$ 38,000 <span className="text-xs font-normal text-slate-400">(建置費未稅)</span>
+            <div className="text-2xl md:text-3xl font-black font-mono text-[#0F172A] my-1">
+              NT$ 38,000 <span className="text-xs font-normal text-slate-500">(建置費未稅)</span>
             </div>
-            <div className="text-xs text-slate-300 mb-2 bg-slate-900/80 p-1.5 rounded-lg border border-slate-700">
+            <div className="text-xs text-slate-700 mb-2 bg-[#F4EFE6] p-1.5 rounded-lg border border-[#E2D9C8] font-bold">
               月維護費：<b>NT$ 2,500 / 月 (未稅)</b> ｜ 含 5% 稅金 <b>$2,625/月</b>
             </div>
-            <ul className="text-xs text-slate-300 space-y-1 mb-2">
-              <li className="flex items-center gap-1"><span className="text-emerald-400 font-bold">✓</span> <b>LINE 官方帳號 24H AI 店長進駐</b></li>
-              <li className="flex items-center gap-1"><span className="text-emerald-400 font-bold">✓</span> 史塔克運動科學與 5 大族群專業智庫</li>
-              <li className="flex items-center gap-1"><span className="text-emerald-400 font-bold">✓</span> 1對1預約與體能評估線上導流選單</li>
-              <li className="flex items-center gap-1"><span className="text-emerald-400 font-bold">✓</span> Shopline 運動器材產品圖文卡片推薦</li>
+            <ul className="text-xs text-slate-700 space-y-1 mb-2 font-medium">
+              <li className="flex items-center gap-1"><span className="text-teal-700 font-bold">✓</span> <b>LINE 官方帳號 24H AI 店長進駐</b></li>
+              <li className="flex items-center gap-1"><span className="text-teal-700 font-bold">✓</span> 史塔克運動科學與 5 大族群專業智庫</li>
+              <li className="flex items-center gap-1"><span className="text-teal-700 font-bold">✓</span> 1對1預約與體能評估線上導流選單</li>
+              <li className="flex items-center gap-1"><span className="text-teal-700 font-bold">✓</span> Shopline 運動器材產品圖文卡片推薦</li>
             </ul>
           </div>
           <button
             onClick={() => setSelectedPlan("starter")}
-            className="w-full py-1.5 bg-slate-700 hover:bg-emerald-600 text-white font-bold rounded-xl text-xs transition cursor-pointer"
+            className="w-full py-1.5 bg-[#F4EFE6] hover:bg-teal-700 hover:text-white text-slate-800 font-bold rounded-xl text-xs transition cursor-pointer"
           >
             {selectedPlan === "starter" ? "✓ 已選擇實用版" : "選擇實用版"}
           </button>
         </div>
 
         {/* Flagship Dual Channel Plan */}
-        <div className={`bg-slate-800 border-2 rounded-2xl p-3.5 shadow-md flex flex-col justify-between ${selectedPlan === "flagship" ? "border-teal-400 bg-teal-950/20" : "border-slate-700 opacity-80"}`}>
+        <div className={`bg-[#FFFDF9] border-2 rounded-2xl p-3.5 shadow-md flex flex-col justify-between ${selectedPlan === "flagship" ? "border-teal-600 bg-teal-50/30 ring-2 ring-teal-500/30" : "border-[#E5DCC5] opacity-80"}`}>
           <div>
             <div className="flex justify-between items-center mb-1">
-              <span className="font-bold text-xs md:text-sm text-teal-300">
+              <span className="font-black text-xs md:text-sm text-teal-800">
                 💎 【方案 B】LINE ✕ 官網雙通道全方位旗艦版
               </span>
-              <span className="text-[10px] bg-teal-900 text-teal-200 px-2 py-0.5 rounded-full font-bold">
+              <span className="text-[10px] bg-teal-700 text-white px-2 py-0.5 rounded-full font-bold">
                 全通道導客首選
               </span>
             </div>
-            <div className="text-2xl md:text-3xl font-black font-mono text-white my-1">
-              NT$ 68,000 <span className="text-xs font-normal text-slate-400">(建置費未稅)</span>
+            <div className="text-2xl md:text-3xl font-black font-mono text-[#0F172A] my-1">
+              NT$ 68,000 <span className="text-xs font-normal text-slate-500">(建置費未稅)</span>
             </div>
-            <div className="text-xs text-slate-300 mb-2 bg-slate-900/80 p-1.5 rounded-lg border border-slate-700">
+            <div className="text-xs text-slate-700 mb-2 bg-[#F4EFE6] p-1.5 rounded-lg border border-[#E2D9C8] font-bold">
               月維護費：<b>NT$ 3,500 / 月 (未稅)</b> ｜ 含 5% 稅金 <b>$3,675/月</b>
             </div>
-            <ul className="text-xs text-slate-300 space-y-1 mb-3">
-              <li className="flex items-center gap-1"><span className="text-teal-300 font-bold">★</span> <b>包含方案 A 所有功能 ✕ 官網嵌入式 AI 小幫手</b></li>
-              <li className="flex items-center gap-1"><span className="text-teal-300 font-bold">✓</span> <b>stark.works 官網右下角一鍵嵌入 Web Widget</b></li>
-              <li className="flex items-center gap-1"><span className="text-teal-300 font-bold">✓</span> 雙通道資料共享：官網訪客直接引導加入 LINE 預約</li>
-              <li className="flex items-center gap-1"><span className="text-teal-300 font-bold">✓</span> 享優先語氣客製與電商數據月報表分析</li>
+            <ul className="text-xs text-slate-700 space-y-1 mb-3 font-medium">
+              <li className="flex items-center gap-1"><span className="text-teal-700 font-bold">★</span> <b>包含方案 A 所有功能 ✕ 官網嵌入式 AI 小幫手</b></li>
+              <li className="flex items-center gap-1"><span className="text-teal-700 font-bold">✓</span> <b>stark.works 官網右下角一鍵嵌入 Web Widget</b></li>
+              <li className="flex items-center gap-1"><span className="text-teal-700 font-bold">✓</span> 雙通道資料共享：官網訪客直接引導加入 LINE 預約</li>
+              <li className="flex items-center gap-1"><span className="text-teal-700 font-bold">✓</span> 享優先語氣客製與電商數據月報表分析</li>
             </ul>
           </div>
 
           <button
             onClick={handleMonthlyCheckout}
             disabled={checkoutLoading}
-            className="w-full py-2 px-3 bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-extrabold rounded-xl shadow-md transition flex items-center justify-center gap-1 text-xs cursor-pointer active:scale-95"
+            className="w-full py-2 px-3 bg-gradient-to-r from-teal-600 via-cyan-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-white font-extrabold rounded-xl shadow-md transition flex items-center justify-center gap-1 text-xs cursor-pointer active:scale-95"
           >
             <span>💳</span>
             <span>{checkoutLoading ? "正在連接藍新金流..." : `線上驗收綁定刷卡開通 (${selectedPlan === "flagship" ? "NT$ 3,675/月含稅" : "NT$ 2,625/月含稅"})`}</span>
@@ -594,73 +602,73 @@ export default function StarkWorksProposalPage() {
       </div>
 
       {/* Bank Account Details */}
-      <div className="bg-gradient-to-r from-slate-900 to-slate-800 border-2 border-emerald-500/50 rounded-2xl p-2.5 shadow-xs">
+      <div className="bg-gradient-to-r from-[#FFFDF9] via-[#F4EFE6] to-[#FFFDF9] border-2 border-teal-500/50 rounded-2xl p-2.5 shadow-xs">
         <div className="flex justify-between items-center mb-1">
-          <h4 className="font-bold text-emerald-400 text-xs md:text-sm flex items-center gap-1">
+          <h4 className="font-black text-teal-800 text-xs md:text-sm flex items-center gap-1">
             <span>🏦</span> 建置費訂金與尾款 — 現金匯款指定帳號
           </h4>
           <button
             onClick={handleCopyAccount}
-            className="px-2 py-0.5 bg-emerald-600 text-white text-[11px] font-bold rounded-lg hover:bg-emerald-500 transition cursor-pointer"
+            className="px-2 py-0.5 bg-teal-700 text-white text-[11px] font-bold rounded-lg hover:bg-teal-600 transition cursor-pointer"
           >
             {copySuccess ? "✓ 已複製" : "📋 複製帳號"}
           </button>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5 text-xs bg-slate-950/80 p-1.5 rounded-xl border border-slate-700">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5 text-xs bg-[#FFFDF9] p-1.5 rounded-xl border border-[#E2D9C8]">
           <div>
-            <span className="text-slate-400 block text-[10px]">匯款銀行</span>
-            <span className="font-bold text-white">中國信託</span>
+            <span className="text-slate-500 block text-[10px]">匯款銀行</span>
+            <span className="font-bold text-[#0F172A]">中國信託</span>
           </div>
           <div>
-            <span className="text-slate-400 block text-[10px]">銀行代碼 / 分行</span>
-            <span className="font-bold text-white">（822）內壢簡易型分行</span>
+            <span className="text-slate-500 block text-[10px]">銀行代碼 / 分行</span>
+            <span className="font-bold text-[#0F172A]">（822）內壢簡易型分行</span>
           </div>
           <div>
-            <span className="text-slate-400 block text-[10px]">戶名</span>
-            <span className="font-bold text-white">賴奕暢</span>
+            <span className="text-slate-500 block text-[10px]">戶名</span>
+            <span className="font-bold text-[#0F172A]">賴奕暢</span>
           </div>
           <div>
-            <span className="text-slate-400 block text-[10px]">帳號</span>
-            <span className="font-mono font-extrabold text-emerald-400 text-sm">131540035543</span>
+            <span className="text-slate-500 block text-[10px]">帳號</span>
+            <span className="font-mono font-black text-teal-700 text-sm">131540035543</span>
           </div>
         </div>
       </div>
 
       {/* Invoice Info Form */}
-      <div className="bg-slate-800/80 border border-slate-700 rounded-2xl p-2.5 shadow-xs">
+      <div className="bg-[#FFFDF9] border border-[#E5DCC5] rounded-2xl p-2.5 shadow-xs">
         <div className="flex justify-between items-center mb-1">
-          <h4 className="font-bold text-xs text-emerald-400 flex items-center gap-1">
+          <h4 className="font-black text-xs text-teal-800 flex items-center gap-1">
             <span>🧾</span> 史塔克團隊發票資料填寫 (開立三聯式發票)
           </h4>
           <div className="flex items-center gap-2">
             {isSaved && (
-              <span className="text-[10px] text-emerald-400 font-bold bg-emerald-900/50 px-2 py-0.5 rounded border border-emerald-700/50">
+              <span className="text-[10px] text-teal-800 font-bold bg-teal-100 px-2 py-0.5 rounded border border-teal-300">
                 ✓ 已傳送
               </span>
             )}
-            <button onClick={toggleAdminView} className="text-xs text-emerald-400 underline cursor-pointer">
+            <button onClick={toggleAdminView} className="text-xs text-teal-700 underline font-bold cursor-pointer">
               {isAdminView ? "返回" : "🔍 發票紀錄"}
             </button>
           </div>
         </div>
 
         {isAdminView ? (
-          <div className="bg-slate-900/80 p-2 rounded-xl border border-slate-700 max-h-32 overflow-y-auto space-y-1 text-xs">
-            <div className="font-bold text-emerald-400 border-b border-slate-700 pb-1 flex justify-between">
+          <div className="bg-[#F4EFE6] p-2 rounded-xl border border-[#E2D9C8] max-h-32 overflow-y-auto space-y-1 text-xs">
+            <div className="font-bold text-teal-800 border-b border-[#E2D9C8] pb-1 flex justify-between">
               <span>所有已填寫發票清單</span>
               <span>狀態: 已同步至雲端</span>
             </div>
             {invoiceRecords.length === 0 ? (
-              <p className="text-xs text-slate-400 py-2 text-center">目前尚無已填寫之發票資料紀錄</p>
+              <p className="text-xs text-slate-500 py-2 text-center">目前尚無已填寫之發票資料紀錄</p>
             ) : (
               invoiceRecords.map((r) => (
-                <div key={r.id} className="bg-slate-800 p-1.5 rounded-lg border border-slate-700 space-y-0.5">
-                  <div className="flex justify-between font-bold text-white">
+                <div key={r.id} className="bg-[#FFFDF9] p-1.5 rounded-lg border border-[#E2D9C8] space-y-0.5">
+                  <div className="flex justify-between font-bold text-[#0F172A]">
                     <span>🏢 {r.company_name}</span>
-                    <span className="font-mono text-emerald-400">統編: {r.tax_id}</span>
+                    <span className="font-mono text-teal-700">統編: {r.tax_id}</span>
                   </div>
-                  <div className="text-[11px] text-slate-400">
+                  <div className="text-[11px] text-slate-500">
                     📍 地址: {r.address || "未填寫"} ｜ ✉️ Email: {r.contact_email || "未填寫"}
                   </div>
                 </div>
@@ -675,7 +683,7 @@ export default function StarkWorksProposalPage() {
                 placeholder="公司全銜 / 買受人抬頭"
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
-                className="w-full px-2 py-1 bg-slate-900 border border-slate-700 rounded-lg focus:outline-none focus:border-emerald-500 text-white placeholder-slate-500"
+                className="w-full px-2 py-1 bg-[#F4EFE6] border border-[#D5C9B3] rounded-lg focus:outline-none focus:border-teal-600 text-[#0F172A] placeholder-slate-400 font-medium"
                 required
               />
             </div>
@@ -685,7 +693,7 @@ export default function StarkWorksProposalPage() {
                 placeholder="統一編號 (統編)"
                 value={taxId}
                 onChange={(e) => setTaxId(e.target.value)}
-                className="w-full px-2 py-1 bg-slate-900 border border-slate-700 rounded-lg focus:outline-none focus:border-emerald-500 text-white placeholder-slate-500"
+                className="w-full px-2 py-1 bg-[#F4EFE6] border border-[#D5C9B3] rounded-lg focus:outline-none focus:border-teal-600 text-[#0F172A] placeholder-slate-400 font-medium"
                 required
               />
             </div>
@@ -695,7 +703,7 @@ export default function StarkWorksProposalPage() {
                 placeholder="發票寄送地址"
                 value={invoiceAddress}
                 onChange={(e) => setInvoiceAddress(e.target.value)}
-                className="w-full px-2 py-1 bg-slate-900 border border-slate-700 rounded-lg focus:outline-none focus:border-emerald-500 text-white placeholder-slate-500"
+                className="w-full px-2 py-1 bg-[#F4EFE6] border border-[#D5C9B3] rounded-lg focus:outline-none focus:border-teal-600 text-[#0F172A] placeholder-slate-400 font-medium"
               />
             </div>
             <div>
@@ -704,14 +712,14 @@ export default function StarkWorksProposalPage() {
                 placeholder="電子發票通知 Email"
                 value={contactEmail}
                 onChange={(e) => setContactEmail(e.target.value)}
-                className="w-full px-2 py-1 bg-slate-900 border border-slate-700 rounded-lg focus:outline-none focus:border-emerald-500 text-white placeholder-slate-500"
+                className="w-full px-2 py-1 bg-[#F4EFE6] border border-[#D5C9B3] rounded-lg focus:outline-none focus:border-teal-600 text-[#0F172A] placeholder-slate-400 font-medium"
               />
             </div>
             <div className="md:col-span-2 text-right">
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-xs transition cursor-pointer"
+                className="px-3 py-1 bg-teal-700 hover:bg-teal-600 text-white font-bold rounded-lg text-xs transition cursor-pointer"
               >
                 {isSubmitting ? "傳送中..." : "💾 儲存並同步傳送發票資料"}
               </button>
@@ -725,38 +733,38 @@ export default function StarkWorksProposalPage() {
   // Section 5: Timeline
   const sectionTimeline = (
     <div className="w-full my-auto space-y-4">
-      <div className="flex justify-between items-center border-b border-slate-800 pb-2">
-        <h2 className="text-base md:text-2xl font-bold text-white">
+      <div className="flex justify-between items-center border-b border-[#E2D9C8] pb-2">
+        <h2 className="text-base md:text-2xl font-black text-[#0F172A]">
           全遠端零干擾建置、測試與上線時程
         </h2>
-        <span className="text-[10px] md:text-xs bg-emerald-900/60 text-emerald-300 px-2.5 py-0.5 rounded-full font-bold border border-emerald-700/50">
+        <span className="text-[10px] md:text-xs bg-teal-100/90 text-teal-800 px-2.5 py-0.5 rounded-full font-black border border-teal-300">
           100% 全遠端無縫導入
         </span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
-        <div className="bg-slate-800/80 border border-slate-700 rounded-2xl p-4 shadow-xs">
-          <span className="inline-block px-2.5 py-0.5 bg-emerald-600 text-white rounded-full text-[10px] font-bold mb-2">PHASE 1 (Week 1)</span>
-          <h4 className="font-bold text-emerald-400 mb-1.5 text-sm md:text-base">LINE 授權與運動科學知識庫建置</h4>
-          <ul className="text-xs md:text-sm text-slate-300 space-y-1">
+        <div className="bg-[#FFFDF9] border border-[#E5DCC5] rounded-2xl p-4 shadow-xs">
+          <span className="inline-block px-2.5 py-0.5 bg-teal-700 text-white rounded-full text-[10px] font-bold mb-2">PHASE 1 (Week 1)</span>
+          <h4 className="font-black text-teal-800 mb-1.5 text-sm md:text-base">LINE 授權與運動科學知識庫建置</h4>
+          <ul className="text-xs md:text-sm text-slate-700 space-y-1 font-medium">
             <li>✓ 簽訂合約並<b>轉帳付訂金</b></li>
             <li>✓ 授權 LINE 官方帳號與 Shopline 官網連線</li>
             <li>✓ 匯入史塔克 11 年 5 大族群專業智庫與課程介紹</li>
           </ul>
         </div>
-        <div className="bg-slate-800/80 border border-slate-700 rounded-2xl p-4 shadow-xs">
-          <span className="inline-block px-2.5 py-0.5 bg-emerald-600 text-white rounded-full text-[10px] font-bold mb-2">PHASE 2 (Week 2)</span>
-          <h4 className="font-serif font-bold text-teal-400 mb-1.5 text-sm md:text-base">預約流程與雙通道測試</h4>
-          <ul className="text-xs md:text-sm text-slate-300 space-y-1">
+        <div className="bg-[#FFFDF9] border border-[#E5DCC5] rounded-2xl p-4 shadow-xs">
+          <span className="inline-block px-2.5 py-0.5 bg-teal-700 text-white rounded-full text-[10px] font-bold mb-2">PHASE 2 (Week 2)</span>
+          <h4 className="font-serif font-black text-cyan-800 mb-1.5 text-sm md:text-base">預約流程與雙通道測試</h4>
+          <ul className="text-xs md:text-sm text-slate-700 space-y-1 font-medium">
             <li>✓ 提供專屬測試環境，測試 1對1評估線上預約</li>
             <li>✓ 測試 Shopline 周邊器材圖文卡片拉取與導購</li>
             <li>✓ 雙方進行 30 分鐘線上視訊會審微調諮詢對話語氣</li>
           </ul>
         </div>
-        <div className="bg-slate-800/80 border-2 border-emerald-500 rounded-2xl p-4 shadow-xs bg-emerald-950/20">
-          <span className="inline-block px-2.5 py-0.5 bg-emerald-600 text-white rounded-full text-[10px] font-bold mb-2">PHASE 3 (Week 3 遠端驗收)</span>
-          <h4 className="font-bold text-emerald-400 mb-1.5 text-sm md:text-base">驗收開通 ➔ 綁定信用卡 ➔ 保固</h4>
-          <ul className="text-xs md:text-sm text-slate-200 space-y-1 font-medium">
+        <div className="bg-teal-50/50 border-2 border-teal-600 rounded-2xl p-4 shadow-xs">
+          <span className="inline-block px-2.5 py-0.5 bg-teal-700 text-white rounded-full text-[10px] font-bold mb-2">PHASE 3 (Week 3 遠端驗收)</span>
+          <h4 className="font-black text-teal-900 mb-1.5 text-sm md:text-base">驗收開通 ➔ 綁定信用卡 ➔ 保固</h4>
+          <ul className="text-xs md:text-sm text-slate-800 space-y-1 font-bold">
             <li>✓ 系統全面開通正式串接發布</li>
             <li>✓ 線上通過驗收並<b>付驗收尾款</b></li>
             <li>✓ 點擊按鈕<b>線上綁定藍新信用卡開通月維護！</b></li>
@@ -770,19 +778,19 @@ export default function StarkWorksProposalPage() {
   // Section 6: Checklist & Security
   const sectionChecklist = (
     <div className="w-full my-auto space-y-4">
-      <div className="flex justify-between items-center border-b border-slate-800 pb-2">
-        <h2 className="text-base md:text-2xl font-bold text-white">
+      <div className="flex justify-between items-center border-b border-[#E2D9C8] pb-2">
+        <h2 className="text-base md:text-2xl font-black text-[#0F172A]">
           詳細服務交付 ✕ 系統完整清單
         </h2>
-        <span className="text-[10px] md:text-xs bg-emerald-900/60 text-emerald-300 px-2.5 py-0.5 rounded-full font-bold border border-emerald-700/50">
+        <span className="text-[10px] md:text-xs bg-teal-100/90 text-teal-800 px-2.5 py-0.5 rounded-full font-black border border-teal-300">
           史塔克專屬交付清單
         </span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
-        <div className="bg-slate-800/80 border border-slate-700 rounded-2xl p-4 shadow-xs">
-          <h4 className="font-bold text-emerald-400 text-xs md:text-sm mb-2">📌 AI 系統建置交付清單 (一次性)</h4>
-          <ul className="text-xs md:text-sm text-slate-300 space-y-1.5">
+        <div className="bg-[#FFFDF9] border border-[#E5DCC5] rounded-2xl p-4 shadow-xs">
+          <h4 className="font-black text-teal-800 text-xs md:text-sm mb-2">📌 AI 系統建置交付清單 (一次性)</h4>
+          <ul className="text-xs md:text-sm text-slate-700 space-y-1.5 font-medium">
             <li>✓ 100% 全遠端雲端建置與線上指導驗收</li>
             <li>✓ <b>1. LINE 官方帳號 ✕ 官網 AI 小幫手雙通道</b></li>
             <li>✓ <b>2. 史塔克運動科學與 5大族群專業智庫</b></li>
@@ -791,9 +799,9 @@ export default function StarkWorksProposalPage() {
           </ul>
         </div>
 
-        <div className="bg-slate-800/80 border border-slate-700 rounded-2xl p-4 shadow-xs">
-          <h4 className="font-bold text-teal-400 text-xs md:text-sm mb-2">🔄 代營運與保固交付 (每月持續)</h4>
-          <ul className="text-xs md:text-sm text-slate-300 space-y-1">
+        <div className="bg-[#FFFDF9] border border-[#E5DCC5] rounded-2xl p-4 shadow-xs">
+          <h4 className="font-black text-cyan-800 text-xs md:text-sm mb-2">🔄 代營運與保固交付 (每月持續)</h4>
+          <ul className="text-xs md:text-sm text-slate-700 space-y-1 font-medium">
             <li>✓ <b>首月 30 天線上免費維護保障 (語氣與內容微調)</b></li>
             <li>✓ 每月課程庫與商品資訊編修支援</li>
             <li>✓ 官方 LINE 與官網 API 連線維護與系統安全</li>
@@ -801,9 +809,9 @@ export default function StarkWorksProposalPage() {
           </ul>
         </div>
 
-        <div className="bg-emerald-950/40 border-2 border-emerald-500/60 rounded-2xl p-4 shadow-xs">
-          <h4 className="font-bold text-cyan-400 text-xs md:text-sm mb-2">🔒 企業級帳號安全與個資防線</h4>
-          <ul className="text-xs md:text-sm text-slate-200 space-y-1 font-medium">
+        <div className="bg-[#FFFDF9] border-2 border-teal-500/60 rounded-2xl p-4 shadow-xs bg-teal-50/30">
+          <h4 className="font-black text-teal-900 text-xs md:text-sm mb-2">🔒 企業級帳號安全與個資防線</h4>
+          <ul className="text-xs md:text-sm text-slate-800 space-y-1 font-bold">
             <li>✓ <b>官方帳號安全金鑰防護</b>：連線憑證高強度加密隔離</li>
             <li>✓ <b>AI 惡意意圖過濾</b>：防範無關干擾與競業惡意探聽</li>
             <li>✓ <b>學員健康個資保護</b>：符合個人資料保護法</li>
@@ -814,75 +822,113 @@ export default function StarkWorksProposalPage() {
     </div>
   );
 
-  // Section 7: Summary & ROI
+  // Section 7: Summary, 1-Year Cost Savings & ROI Calculation
   const sectionSummary = (
-    <div className="w-full my-auto space-y-4">
-      <div className="flex justify-between items-center border-b border-slate-800 pb-2">
-        <h2 className="text-base md:text-2xl font-bold text-white">
-          傳統真人客服 ✕ 史塔克 AI 雙通道智能店長效益比較
+    <div className="w-full my-auto space-y-3">
+      <div className="flex justify-between items-center border-b border-[#E2D9C8] pb-1.5">
+        <h2 className="text-base md:text-2xl font-black text-[#0F172A]">
+          與真人客服小編比較 — 1 年投資報酬率 (ROI) 與費用節省算表
         </h2>
-        <span className="text-[10px] md:text-xs bg-emerald-900/60 text-emerald-300 px-2.5 py-0.5 rounded-full font-bold border border-emerald-700/50">
-          商業價值總結
+        <span className="text-[10px] md:text-xs bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-black border border-emerald-300">
+          年省 80%~88% 客服成本
         </span>
       </div>
 
-      <div className="bg-slate-800/90 border-2 border-emerald-500/60 rounded-2xl overflow-x-auto shadow-xs">
-        <table className="w-full min-w-[320px] text-left text-xs md:text-sm">
-          <thead className="bg-slate-900 text-emerald-400 font-bold border-b border-slate-700">
+      {/* 1-Year Cost Comparison Highlight Banner */}
+      <div className="bg-gradient-to-r from-teal-700 via-cyan-700 to-emerald-700 text-white rounded-2xl p-3 md:p-4 shadow-md">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-2">
+          <div>
+            <span className="text-[10px] bg-white/20 text-white px-2 py-0.5 rounded-full font-bold block w-fit mb-1">
+              💰 一年費用總效益算表 (1-Year ROI Summary)
+            </span>
+            <h3 className="text-sm md:text-lg font-black">
+              聘用 1 名真人全職客服 vs 史塔克 AI 雙通道智能店長
+            </h3>
+          </div>
+          <div className="text-right">
+            <span className="text-xs text-teal-100 block font-medium">首年預計為史塔克直接省下</span>
+            <span className="text-2xl md:text-3xl font-black font-mono text-yellow-300">
+              NT$ 445,000 ~ 495,000 元/年
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Detailed Cost Comparison Table */}
+      <div className="bg-[#FFFDF9] border-2 border-teal-600/60 rounded-2xl overflow-x-auto shadow-xs">
+        <table className="w-full min-w-[340px] text-left text-xs md:text-sm">
+          <thead className="bg-[#F4EFE6] text-teal-900 font-extrabold border-b border-[#E2D9C8]">
             <tr>
-              <th className="p-2 md:p-2.5">評估比較項目</th>
-              <th className="p-2 md:p-2.5 text-slate-400">傳統真人客服 / 罐頭機器人</th>
-              <th className="p-2 md:p-2.5 text-emerald-400 bg-emerald-950/40 font-black">🏃‍♂️ 史塔克 AI 雙通道智能店長</th>
+              <th className="p-2 md:p-2.5">費用計算項目</th>
+              <th className="p-2 md:p-2.5 text-slate-600">聘用 1 名真人全職客服</th>
+              <th className="p-2 md:p-2.5 text-teal-800 bg-teal-100/60 font-black">🟢 AI 方案 A (精準實用版)</th>
+              <th className="p-2 md:p-2.5 text-teal-900 bg-teal-200/60 font-black">💎 AI 方案 B (雙通道旗艦版)</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-700 text-slate-200">
+          <tbody className="divide-y divide-[#E2D9C8] text-slate-800 font-medium">
             <tr>
-              <td className="p-2 md:p-2.5 font-bold">5大族群諮詢響應速度</td>
-              <td className="p-2 md:p-2.5 text-slate-400">課後或下班時間無法回覆，潛在學員流失</td>
-              <td className="p-2 md:p-2.5 font-bold text-emerald-400 bg-emerald-950/40"><b>24H 秒級精準解答，自動辨識族群需求</b></td>
+              <td className="p-2 md:p-2.5 font-bold">月薪 / 維護月費</td>
+              <td className="p-2 md:p-2.5 text-rose-600 font-bold">$38,000 / 月</td>
+              <td className="p-2 md:p-2.5 text-teal-800 bg-teal-50/50 font-bold">$2,500 / 月</td>
+              <td className="p-2 md:p-2.5 text-teal-900 bg-teal-100/40 font-bold">$3,500 / 月</td>
             </tr>
             <tr>
-              <td className="p-2 md:p-2.5 font-bold">官網與 LINE 雙通道整合</td>
-              <td className="p-2 md:p-2.5 text-slate-400">官網訪客問完就走，無法留下名單</td>
-              <td className="p-2 md:p-2.5 font-bold text-emerald-400 bg-emerald-950/40"><b>官網 AI 小幫手 ✕ LINE 機器人同步導客</b></td>
+              <td className="p-2 md:p-2.5 font-bold">一次性系統建置費</td>
+              <td className="p-2 md:p-2.5 text-slate-500">$0</td>
+              <td className="p-2 md:p-2.5 text-teal-800 bg-teal-50/50 font-bold">$38,000 (僅首年)</td>
+              <td className="p-2 md:p-2.5 text-teal-900 bg-teal-100/40 font-bold">$68,000 (僅首年)</td>
             </tr>
             <tr>
-              <td className="p-2 md:p-2.5 font-bold">1對1預約與電商導購率</td>
-              <td className="p-2 md:p-2.5 text-slate-400">文字對話重複貼連結，轉換率低</td>
-              <td className="p-2 md:p-2.5 font-bold text-emerald-400 bg-emerald-950/40"><b>彈出 LIFF 預約選單與 Shopline 產品卡片</b></td>
+              <td className="p-2 md:p-2.5 font-bold">年終獎金與勞健保福利</td>
+              <td className="p-2 md:p-2.5 text-rose-600 font-bold">約 $107,000 (年終1.5月+勞健保)</td>
+              <td className="p-2 md:p-2.5 text-emerald-700 bg-teal-50/50 font-bold"><b>$0 (無額外人事隱形成本)</b></td>
+              <td className="p-2 md:p-2.5 text-emerald-700 bg-teal-100/40 font-bold"><b>$0 (無額外人事隱形成本)</b></td>
             </tr>
-            <tr>
-              <td className="p-2 md:p-2.5 font-bold">方案負擔與CP值</td>
-              <td className="p-2 md:p-2.5 text-rose-400 font-mono font-bold">聘用專職客服 3.5 萬 ~ 4.5 萬/月</td>
-              <td className="p-2 md:p-2.5 text-emerald-400 font-mono font-black bg-emerald-950/40"><b>建置費 $38,000起 (月維護低至 $2,500/月)</b></td>
+            <tr className="bg-[#F8F5EE]">
+              <td className="p-2 md:p-2.5 font-black text-[#0F172A]">【第一年】年度總費用總計</td>
+              <td className="p-2 md:p-2.5 text-rose-600 font-black font-mono text-sm">NT$ 563,000 元/年</td>
+              <td className="p-2 md:p-2.5 text-teal-800 bg-teal-100 font-black font-mono text-sm">NT$ 68,000 元/首年</td>
+              <td className="p-2 md:p-2.5 text-teal-900 bg-teal-200/80 font-black font-mono text-sm">NT$ 110,000 元/首年</td>
+            </tr>
+            <tr className="bg-emerald-50">
+              <td className="p-2 md:p-2.5 font-black text-emerald-900">🎉 第一年為史塔克省下金額</td>
+              <td className="p-2 md:p-2.5 text-slate-400 font-bold">—</td>
+              <td className="p-2 md:p-2.5 text-emerald-800 font-black font-mono text-base"><b>省下 NT$ 495,000 (88%)</b></td>
+              <td className="p-2 md:p-2.5 text-emerald-900 font-black font-mono text-base"><b>省下 NT$ 453,000 (80%)</b></td>
+            </tr>
+            <tr className="bg-teal-100/40">
+              <td className="p-2 md:p-2.5 font-black text-teal-900">🚀 第二年起每年持續省下</td>
+              <td className="p-2 md:p-2.5 text-slate-400 font-bold">—</td>
+              <td className="p-2 md:p-2.5 text-teal-900 font-black font-mono text-base"><b>每年省 NT$ 533,000 (94%)</b></td>
+              <td className="p-2 md:p-2.5 text-teal-950 font-black font-mono text-base"><b>每年省 NT$ 521,000 (92%)</b></td>
             </tr>
           </tbody>
         </table>
       </div>
 
       {/* Proposing Company Card */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-2 border-emerald-500/60 rounded-2xl p-3 md:p-4 shadow-xs flex flex-col md:flex-row justify-between items-center gap-2">
+      <div className="bg-gradient-to-r from-[#FFFDF9] via-[#F4EFE6] to-[#FFFDF9] border-2 border-teal-600/60 rounded-2xl p-2.5 md:p-3 shadow-xs flex flex-col md:flex-row justify-between items-center gap-2">
         <div>
-          <span className="text-[10px] bg-emerald-600 text-white px-2 py-0.5 rounded-full font-bold block w-fit mb-1">
+          <span className="text-[10px] bg-teal-700 text-white px-2 py-0.5 rounded-full font-bold block w-fit mb-1">
             🏢 提案團隊聯絡資訊
           </span>
-          <h3 className="font-extrabold text-sm md:text-base text-white flex items-center gap-1.5">
+          <h3 className="font-black text-sm md:text-base text-[#0F172A] flex items-center gap-1.5">
             <span>奕暢創新設計工作室</span>
-            <span className="text-[10px] md:text-xs font-mono font-bold text-emerald-400 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">
+            <span className="text-[10px] md:text-xs font-mono font-bold text-teal-800 bg-teal-100 px-1.5 py-0.5 rounded border border-teal-300">
               統編: 41370842
             </span>
           </h3>
         </div>
 
         <div className="flex items-center gap-2 md:gap-3 text-xs md:text-sm">
-          <div className="bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-700">
-            <span className="text-[9px] text-slate-400 block">LINE ID</span>
-            <span className="font-mono font-black text-emerald-400">ivanlai33</span>
+          <div className="bg-[#FFFDF9] px-3 py-1.5 rounded-xl border border-[#E2D9C8]">
+            <span className="text-[9px] text-slate-500 block">LINE ID</span>
+            <span className="font-mono font-black text-teal-800">ivanlai33</span>
           </div>
 
-          <div className="bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-700">
-            <span className="text-[9px] text-slate-400 block">電話</span>
-            <span className="font-mono font-black text-emerald-400">0987528785</span>
+          <div className="bg-[#FFFDF9] px-3 py-1.5 rounded-xl border border-[#E2D9C8]">
+            <span className="text-[9px] text-slate-500 block">電話</span>
+            <span className="font-mono font-black text-teal-800">0987528785</span>
           </div>
         </div>
       </div>
@@ -896,28 +942,28 @@ export default function StarkWorksProposalPage() {
     { title: "方案金額與發票", component: sectionPricing },
     { title: "建置時程", component: sectionTimeline },
     { title: "交付清單", component: sectionChecklist },
-    { title: "效益總結", component: sectionSummary },
+    { title: "1年省下的費用與ROI", component: sectionSummary },
   ];
 
   return (
-    <div className="w-full min-h-screen bg-[#0F172A] text-slate-200 font-sans overflow-x-hidden">
+    <div className="w-full min-h-screen bg-[#F8F5EE] text-[#0F172A] font-sans overflow-x-hidden">
       <Script src="https://static.line-scdn.net/liff/edge/2/sdk.js" onLoad={handleLiffInit} />
 
       {/* Top Header Bar */}
-      <header className="sticky top-0 z-50 bg-[#0F172A]/95 backdrop-blur-md border-b border-slate-800 px-4 py-2.5">
+      <header className="sticky top-0 z-50 bg-[#F4EFE6]/95 backdrop-blur-md border-b border-[#E2D9C8] px-4 py-2.5">
         <div className="max-w-5xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
-            <span className="font-bold text-xs md:text-sm text-white">
+            <span className="w-2.5 h-2.5 rounded-full bg-teal-600 inline-block animate-pulse"></span>
+            <span className="font-black text-xs md:text-sm text-[#0F172A]">
               史塔克運動科學團隊 — AI 運動顧問與雙通道智能店長系統
             </span>
           </div>
-          <div className="text-[10px] md:text-xs text-slate-400 font-mono flex items-center gap-1.5">
-            <span className="text-emerald-300 font-bold bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-700/50">
+          <div className="text-[10px] md:text-xs text-slate-600 font-mono flex items-center gap-1.5">
+            <span className="text-teal-800 font-black bg-teal-100 px-2 py-0.5 rounded border border-teal-300">
               🛡️ 史塔克專屬提案
             </span>
             {lineProfile?.displayName && (
-              <span className="hidden sm:inline text-teal-300 font-bold bg-teal-950/80 px-2 py-0.5 rounded border border-teal-700/50">
+              <span className="hidden sm:inline text-cyan-800 font-black bg-cyan-100 px-2 py-0.5 rounded border border-cyan-300">
                 👤 {lineProfile.displayName}
               </span>
             )}
@@ -927,37 +973,37 @@ export default function StarkWorksProposalPage() {
 
       {/* Mobile Mode: Native Vertical Continuous Scroll View inside LINE LIFF */}
       <div className="block md:hidden w-full max-w-xl mx-auto p-3 space-y-6 overflow-y-auto touch-pan-y" style={{ WebkitOverflowScrolling: "touch" }}>
-        <div className="bg-[#1E293B]/90 border border-slate-800 rounded-3xl p-4 shadow-xl backdrop-blur-md">
+        <div className="bg-[#FFFDF9] border border-[#E2D9C8] rounded-3xl p-4 shadow-xl backdrop-blur-md">
           {sectionCover}
         </div>
-        <div className="bg-[#1E293B]/90 border border-slate-800 rounded-3xl p-4 shadow-xl backdrop-blur-md">
+        <div className="bg-[#FFFDF9] border border-[#E2D9C8] rounded-3xl p-4 shadow-xl backdrop-blur-md">
           {sectionRequirements}
         </div>
-        <div className="bg-[#1E293B]/90 border border-slate-800 rounded-3xl p-4 shadow-xl backdrop-blur-md">
+        <div className="bg-[#FFFDF9] border border-[#E2D9C8] rounded-3xl p-4 shadow-xl backdrop-blur-md">
           {sectionModules}
         </div>
-        <div className="bg-[#1E293B]/90 border border-slate-800 rounded-3xl p-4 shadow-xl backdrop-blur-md">
+        <div className="bg-[#FFFDF9] border border-[#E2D9C8] rounded-3xl p-4 shadow-xl backdrop-blur-md">
           {sectionPricing}
         </div>
-        <div className="bg-[#1E293B]/90 border border-slate-800 rounded-3xl p-4 shadow-xl backdrop-blur-md">
+        <div className="bg-[#FFFDF9] border border-[#E2D9C8] rounded-3xl p-4 shadow-xl backdrop-blur-md">
           {sectionTimeline}
         </div>
-        <div className="bg-[#1E293B]/90 border border-slate-800 rounded-3xl p-4 shadow-xl backdrop-blur-md">
+        <div className="bg-[#FFFDF9] border border-[#E2D9C8] rounded-3xl p-4 shadow-xl backdrop-blur-md">
           {sectionChecklist}
         </div>
-        <div className="bg-[#1E293B]/90 border border-slate-800 rounded-3xl p-4 shadow-xl backdrop-blur-md mb-8">
+        <div className="bg-[#FFFDF9] border border-[#E2D9C8] rounded-3xl p-4 shadow-xl backdrop-blur-md mb-8">
           {sectionSummary}
         </div>
       </div>
 
       {/* Desktop Mode: High-End Vertically & Horizontally Centered Minimalist Deck View */}
       <div className="hidden md:flex min-h-[calc(100vh-65px)] flex-col justify-between items-center p-6 max-w-5xl mx-auto">
-        <main className="w-full h-[78vh] max-h-[700px] bg-[#1E293B]/90 border border-slate-800 rounded-3xl p-8 md:p-10 shadow-2xl flex flex-col justify-center items-center my-auto backdrop-blur-md overflow-y-auto">
+        <main className="w-full h-[78vh] max-h-[700px] bg-[#FFFDF9] border border-[#E2D9C8] rounded-3xl p-8 md:p-10 shadow-2xl flex flex-col justify-center items-center my-auto backdrop-blur-md overflow-y-auto">
           {allSections[currentSlide].component}
         </main>
 
-        <footer className="w-full flex justify-between items-center pt-3 border-t border-slate-800">
-          <div className="text-xs font-mono font-bold text-slate-400">
+        <footer className="w-full flex justify-between items-center pt-3 border-t border-[#E2D9C8]">
+          <div className="text-xs font-mono font-black text-slate-500">
             SLIDE {currentSlide + 1} / {allSections.length} — {allSections[currentSlide].title}
           </div>
 
@@ -965,20 +1011,20 @@ export default function StarkWorksProposalPage() {
             <button
               onClick={() => setCurrentSlide((prev) => Math.max(prev - 1, 0))}
               disabled={currentSlide === 0}
-              className="px-5 py-2 bg-slate-800 border border-slate-700 rounded-full text-xs font-bold text-slate-200 hover:bg-emerald-600 hover:text-white disabled:opacity-30 transition shadow-xs active:scale-95 cursor-pointer"
+              className="px-5 py-2 bg-[#F4EFE6] border border-[#D5C9B3] rounded-full text-xs font-bold text-slate-700 hover:bg-teal-700 hover:text-white disabled:opacity-30 transition shadow-xs active:scale-95 cursor-pointer"
             >
               ← 上一頁
             </button>
             <button
               onClick={() => setCurrentSlide((prev) => Math.min(prev + 1, allSections.length - 1))}
               disabled={currentSlide === allSections.length - 1}
-              className="px-5 py-2 bg-slate-800 border border-slate-700 rounded-full text-xs font-bold text-slate-200 hover:bg-emerald-600 hover:text-white disabled:opacity-30 transition shadow-xs active:scale-95 cursor-pointer"
+              className="px-5 py-2 bg-[#F4EFE6] border border-[#D5C9B3] rounded-full text-xs font-bold text-slate-700 hover:bg-teal-700 hover:text-white disabled:opacity-30 transition shadow-xs active:scale-95 cursor-pointer"
             >
               下一頁 →
             </button>
             <button
               onClick={() => window.print()}
-              className="px-5 py-2 bg-emerald-950 border border-emerald-700 text-emerald-300 rounded-full text-xs font-bold hover:bg-emerald-600 hover:text-white transition shadow-xs active:scale-95 cursor-pointer"
+              className="px-5 py-2 bg-teal-100 border border-teal-300 text-teal-800 rounded-full text-xs font-extrabold hover:bg-teal-700 hover:text-white transition shadow-xs active:scale-95 cursor-pointer"
             >
               🖨️ 列印 / PDF
             </button>

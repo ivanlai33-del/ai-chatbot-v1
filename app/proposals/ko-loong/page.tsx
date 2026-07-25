@@ -829,7 +829,7 @@ export default function KoloongProposalPage() {
               <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
                 <div>
                   <h3 className="text-base font-bold text-white mb-4 flex items-center">
-                    <span className="mr-2">🏦</span> 專案匯款與藍新線上刷卡
+                    <span className="mr-2">🏦</span> 專案指定銀行對帳匯款帳號
                   </h3>
 
                   <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-2 mb-4 text-xs font-mono">
@@ -856,17 +856,19 @@ export default function KoloongProposalPage() {
                   </div>
 
                   <div className="p-3 bg-indigo-950/40 border border-indigo-500/20 rounded-xl text-xs text-indigo-300 mb-4">
-                    已選方案：<strong className="text-white font-bold">{selectedPlan === "full" ? "方案 B (全站復刻+動態後台) NT$ 68,000" : "方案 A (純靜態還原) NT$ 38,000"}</strong>
-                    （專案訂金為總金額 50%）
+                    已選方案：<strong className="text-white font-bold">{selectedPlan === "full" ? "方案 B (全站復刻+動態後台) NT$ 68,000" : "方案 A (純靜態還原) NT$ 38,000"}</strong><br />
+                    <span className="text-[11px] text-slate-400 mt-1 block">請於簽核完成後轉帳專案訂金（總金額之 50%），匯款後請提供帳號後五碼以利對帳。</span>
                   </div>
                 </div>
 
                 <button
-                  onClick={handleMonthlyCheckout}
-                  disabled={checkoutLoading}
+                  onClick={() => {
+                    handleCopyAccount();
+                    alert("✓ 匯款帳號 (822 中國信託 131540035543) 已成功複製！請完成專案訂金匯款，謝謝。");
+                  }}
                   className="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg transition flex items-center justify-center space-x-2"
                 >
-                  <span>{checkoutLoading ? "連線藍新金流中..." : "💳 藍新金流線上付款 / 刷卡測試 ➔"}</span>
+                  <span>✓ 確定填寫資料並複製帳號匯款 ➔</span>
                 </button>
               </div>
             </div>

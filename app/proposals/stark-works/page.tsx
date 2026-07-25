@@ -556,12 +556,24 @@ export default function StarkWorksProposalPage() {
               <li className="flex items-center gap-1"><span className="text-teal-700 font-bold">✓</span> Shopline 運動器材產品圖文卡片推薦</li>
             </ul>
           </div>
-          <button
-            onClick={() => setSelectedPlan("starter")}
-            className="w-full py-1.5 bg-[#F4EFE6] hover:bg-teal-700 hover:text-white text-slate-800 font-bold rounded-xl text-xs transition cursor-pointer"
-          >
-            {selectedPlan === "starter" ? "✓ 已選擇實用版" : "選擇實用版"}
-          </button>
+          {selectedPlan === "starter" ? (
+            <button
+              onClick={handleMonthlyCheckout}
+              disabled={checkoutLoading}
+              className="w-full py-2 px-3 bg-gradient-to-r from-teal-600 via-cyan-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-white font-extrabold rounded-xl shadow-md transition flex items-center justify-center gap-1 text-xs cursor-pointer active:scale-95 mt-2"
+            >
+              <span>💳</span>
+              <span>{checkoutLoading ? "正在連接藍新金流..." : "線上驗收點此【綁定信用卡開通】(NT$ 2,625/月含稅)"}</span>
+              <span>➔</span>
+            </button>
+          ) : (
+            <button
+              onClick={() => setSelectedPlan("starter")}
+              className="w-full py-2 bg-[#F4EFE6] hover:bg-teal-700 hover:text-white text-slate-800 font-bold rounded-xl text-xs transition cursor-pointer mt-2 border border-[#D5C9B3]"
+            >
+              點擊選擇【方案 A 精準實用版】
+            </button>
+          )}
         </div>
 
         {/* Flagship Dual Channel Plan */}
@@ -589,15 +601,24 @@ export default function StarkWorksProposalPage() {
             </ul>
           </div>
 
-          <button
-            onClick={handleMonthlyCheckout}
-            disabled={checkoutLoading}
-            className="w-full py-2 px-3 bg-gradient-to-r from-teal-600 via-cyan-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-white font-extrabold rounded-xl shadow-md transition flex items-center justify-center gap-1 text-xs cursor-pointer active:scale-95"
-          >
-            <span>💳</span>
-            <span>{checkoutLoading ? "正在連接藍新金流..." : `線上驗收綁定刷卡開通 (${selectedPlan === "flagship" ? "NT$ 3,675/月含稅" : "NT$ 2,625/月含稅"})`}</span>
-            <span>➔</span>
-          </button>
+          {selectedPlan === "flagship" ? (
+            <button
+              onClick={handleMonthlyCheckout}
+              disabled={checkoutLoading}
+              className="w-full py-2 px-3 bg-gradient-to-r from-teal-600 via-cyan-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-white font-extrabold rounded-xl shadow-md transition flex items-center justify-center gap-1 text-xs cursor-pointer active:scale-95 mt-2"
+            >
+              <span>💳</span>
+              <span>{checkoutLoading ? "正在連接藍新金流..." : "線上驗收點此【綁定信用卡開通】(NT$ 3,675/月含稅)"}</span>
+              <span>➔</span>
+            </button>
+          ) : (
+            <button
+              onClick={() => setSelectedPlan("flagship")}
+              className="w-full py-2 bg-[#F4EFE6] hover:bg-teal-700 hover:text-white text-slate-800 font-bold rounded-xl text-xs transition cursor-pointer mt-2 border border-[#D5C9B3]"
+            >
+              點擊選擇【方案 B 雙通道旗艦版】
+            </button>
+          )}
         </div>
       </div>
 

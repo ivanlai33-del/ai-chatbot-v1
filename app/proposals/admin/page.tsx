@@ -1,6 +1,6 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
+import { evaluateIpRisk } from "@/lib/services/ProposalAuditUtils";
 
 interface ProjectSummary {
   slug: string;
@@ -33,6 +33,8 @@ interface AuditSession {
     taxId: string;
     invoiceAddress?: string;
     contactEmail?: string;
+    remittanceBank5?: string;
+    remittanceName?: string;
     submittedAt: string;
   };
 }
@@ -42,7 +44,7 @@ export default function ProposalAdminPage() {
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  const [stats, setStats] = useState<{ totalProjects: number; totalSessions: number; totalInvoices: number }>({
+  const [stats, setStats] = useState<{ totalProjects: number; totalSessions: number; totalInvoices: number; teamIpsCount?: number }>({
     totalProjects: 0,
     totalSessions: 0,
     totalInvoices: 0,
@@ -103,7 +105,7 @@ export default function ProposalAdminPage() {
     window.open("/api/proposals/audit-log?export=all", "_blank");
   };
 
-  // Ultra-Minimalist Password Gate Screen
+  // 2. 🔑 極簡無字密碼鎖畫面 (無視覺文字提示，僅保留輸入框與按鈕)
   if (!isUnlocked) {
     return (
       <div className="w-full min-h-screen bg-[#0F172A] flex justify-center items-center p-4">
@@ -112,7 +114,7 @@ export default function ProposalAdminPage() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-3 bg-[#1E293B] border border-[#334155] rounded-xl text-center text-lg text-white focus:outline-none focus:border-teal-500 placeholder-slate-600"
+            className="w-full px-4 py-3 bg-[#1E293B] border border-[#334155] rounded-xl text-center text-lg text-white focus:outline-none focus:border-teal-500 placeholder-slate-600 font-mono"
             autoFocus
           />
           {errorMsg && <p className="text-xs text-rose-500 text-center font-bold">{errorMsg}</p>}
@@ -138,7 +140,7 @@ export default function ProposalAdminPage() {
           <div className="flex items-center gap-3">
             <span className="w-3 h-3 rounded-full bg-teal-400 animate-pulse"></span>
             <h1 className="text-lg font-black text-white">
-              AI 店長報價單 — 總管理與舉證稽核後台
+              AI 店長報價單 — 總管理與對帳風險稽核後台
             </h1>
           </div>
 
@@ -153,7 +155,7 @@ export default function ProposalAdminPage() {
               <span className="font-mono font-black text-cyan-400 text-sm">{stats.totalSessions} 次</span>
             </div>
             <div className="bg-[#0F172A] border border-[#334155] px-3 py-1.5 rounded-xl">
-              <span className="text-slate-400 block text-[10px]">發票簽核紀錄筆數</span>
+              <span className="text-slate-400 block text-[10px]">發票與對帳綁定紀錄</span>
               <span className="font-mono font-black text-emerald-400 text-sm">{stats.totalInvoices} 筆</span>
             </div>
 
@@ -199,16 +201,16 @@ export default function ProposalAdminPage() {
                     <h3 className="font-bold text-sm text-white">{p.title}</h3>
                     {stage === "NORMAL" && !countdownStarted && (
                       <span className="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full font-bold border border-slate-600">
-                        🟢 尚未開啓 (計時未始)
+                        🟢 尚未開啟 (計時未始)
                       </span>
                     )}
                     {stage === "NORMAL" && countdownStarted && (
-                      <span className="text-[10px] bg-emerald-900/80 text-emerald-300 px-2 py-0.5 rounded-full font-bold border border-emerald-700">
-                        🟢 Day {daysDiff} 倒數中
+                      <span className="text-[10px] bg-blue-900/80 text-blue-300 px-2 py-0.5 rounded-full font-bold border border-blue-700 animate-pulse">
+                        🔵 Day {daysDiff} 倒數中 (已啟動)
                       </span>
                     )}
                     {stage === "EXPIRED" && (
-                      <span className="text-[10px] bg-amber-900/80 text-amber-300 px-2 py-0.5 rounded-full font-bold border border-amber-700">
+                      <span className="text-[10px] bg-amber-900/80 text-amber-300 px-2 py-0.5 rounded-full font-bold border border-amber-700 animate-pulse">
                         🟡 Day {daysDiff} 密碼過期
                       </span>
                     )}
@@ -255,13 +257,14 @@ export default function ProposalAdminPage() {
                 </div>
 
                 <div className="flex items-center gap-2">
+                  {/* 上帝視角預閱連結 (帶 ?admin=87257257 免密且全豁免) */}
                   <a
-                    href={`/proposals/${selectedProject.slug}`}
+                    href={`/proposals/${selectedProject.slug}?admin=87257257`}
                     target="_blank"
                     rel="noreferrer"
-                    className="px-3 py-1.5 bg-[#0F172A] border border-teal-500/50 text-teal-300 rounded-lg text-xs font-bold hover:bg-teal-950 transition"
+                    className="px-3 py-1.5 bg-gradient-to-r from-amber-600 to-yellow-600 text-white rounded-lg text-xs font-bold shadow-sm hover:from-amber-500 hover:to-yellow-500 transition"
                   >
-                    🔗 免密開啟專案網頁 ➔
+                    👑 上帝視角預閱 ➔
                   </a>
                   <button
                     onClick={() => handleExportSingleJSON(selectedProject.slug)}
@@ -272,23 +275,30 @@ export default function ProposalAdminPage() {
                 </div>
               </div>
 
-              {/* Invoice & Client Basic Info Card */}
+              {/* 6. 🔒 預約匯出帳號對帳綁定資訊 Card */}
               <div className="bg-[#0F172A] border border-[#334155] rounded-xl p-4 space-y-2">
                 <h3 className="text-xs font-bold text-teal-400 flex items-center gap-1.5">
-                  <span>🧾</span> 客戶基本與三聯式發票簽核資料
+                  <span>🧾</span> 客戶基本、發票與銀行對帳綁定資料
                 </h3>
 
                 {selectedSessions.filter((s) => s.invoiceInfo).length === 0 ? (
-                  <p className="text-xs text-slate-500 py-2">該客戶尚未於專案頁面提交發票簽核資料</p>
+                  <p className="text-xs text-slate-500 py-2">該客戶尚未於專案頁面提交發票與對帳綁定資料</p>
                 ) : (
                   selectedSessions
                     .filter((s) => s.invoiceInfo)
                     .map((s, idx) => (
-                      <div key={idx} className="bg-[#1E293B] p-3 rounded-lg border border-[#334155] space-y-1 text-xs">
+                      <div key={idx} className="bg-[#1E293B] p-3.5 rounded-lg border border-teal-500/40 space-y-1.5 text-xs">
                         <div className="flex justify-between font-bold text-white">
                           <span>🏢 公司全銜：{s.invoiceInfo?.companyName}</span>
                           <span className="font-mono text-teal-400">統編：{s.invoiceInfo?.taxId}</span>
                         </div>
+
+                        {/* 銀行對帳綁定資訊 */}
+                        <div className="bg-[#0F172A] p-2.5 rounded-md border border-amber-500/40 text-amber-300 font-mono flex flex-wrap justify-between gap-2">
+                          <span>💳 預計匯出帳號後 5 碼：<b>{s.invoiceInfo?.remittanceBank5 || "未填寫"}</b></span>
+                          <span>👤 預計匯款戶名：<b>{s.invoiceInfo?.remittanceName || "未填寫"}</b></span>
+                        </div>
+
                         <div className="text-slate-300">
                           📍 寄送地址：{s.invoiceInfo?.invoiceAddress || "未填寫"}
                         </div>
@@ -301,10 +311,10 @@ export default function ProposalAdminPage() {
                 )}
               </div>
 
-              {/* Multi-Member View Timeline Table (多成員傳閱時間軸表格) */}
+              {/* 9. 📊 多成員傳閱、IP 智慧風險標記時間軸 */}
               <div className="space-y-2">
                 <h3 className="text-xs font-bold text-cyan-400 flex items-center gap-1.5">
-                  <span>🕵️‍♂️</span> 多成員傳閱、IP 位址與點擊軌跡時間軸 ({selectedSessions.length} 筆觀看紀錄)
+                  <span>🕵️‍♂️</span> 多成員傳閱、IP 風險標記與點擊軌跡時間軸 ({selectedSessions.length} 筆觀看紀錄)
                 </h3>
 
                 <div className="bg-[#0F172A] border border-[#334155] rounded-xl overflow-x-auto">
@@ -313,34 +323,55 @@ export default function ProposalAdminPage() {
                       <tr>
                         <th className="p-2.5">觀看時間</th>
                         <th className="p-2.5">真實 IP 位址</th>
+                        <th className="p-2.5">IP 風險評估</th>
                         <th className="p-2.5">裝置類型 (User-Agent)</th>
-                        <th className="p-2.5">操作點擊軌跡與事件</th>
+                        <th className="p-2.5">操作點擊軌跡</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[#334155] text-slate-300">
                       {selectedSessions.length === 0 ? (
                         <tr>
-                          <td colSpan={4} className="p-4 text-center text-slate-500 font-sans">
+                          <td colSpan={5} className="p-4 text-center text-slate-500 font-sans">
                             尚無傳閱觀看紀錄
                           </td>
                         </tr>
                       ) : (
-                        selectedSessions.map((s, idx) => (
-                          <tr key={idx} className="hover:bg-[#1E293B]/50 transition">
-                            <td className="p-2.5 text-teal-300">
-                              {new Date(s.updatedAt || s.createdAt).toLocaleString("zh-TW")}
-                            </td>
-                            <td className="p-2.5 font-bold text-white">{s.clientIp}</td>
-                            <td className="p-2.5 text-slate-400 max-w-[200px] truncate" title={s.userAgent}>
-                              {s.userAgent}
-                            </td>
-                            <td className="p-2.5 text-emerald-400">
-                              {s.actions && s.actions.length > 0
-                                ? s.actions.map((a) => a.action).join(" ➔ ")
-                                : "解鎖觀看頁面"}
-                            </td>
-                          </tr>
-                        ))
+                        selectedSessions.map((s, idx) => {
+                          const ipRisk = evaluateIpRisk(s.clientIp, s.userAgent, s.isTeamIp);
+                          return (
+                            <tr key={idx} className="hover:bg-[#1E293B]/50 transition">
+                              <td className="p-2.5 text-teal-300">
+                                {new Date(s.updatedAt || s.createdAt).toLocaleString("zh-TW")}
+                              </td>
+                              <td className="p-2.5 font-bold text-white">{s.clientIp}</td>
+                              <td className="p-2.5">
+                                {ipRisk.level === "TEAM" && (
+                                  <span className="bg-blue-900/60 text-blue-300 border border-blue-700 px-2 py-0.5 rounded-md text-[10px] font-bold">
+                                    {ipRisk.label}
+                                  </span>
+                                )}
+                                {ipRisk.level === "LOCAL_TW" && (
+                                  <span className="bg-emerald-900/60 text-emerald-300 border border-emerald-700 px-2 py-0.5 rounded-md text-[10px] font-bold">
+                                    {ipRisk.label}
+                                  </span>
+                                )}
+                                {ipRisk.level === "HIGH_RISK_VPN" && (
+                                  <span className="bg-rose-900/80 text-rose-300 border border-rose-600 px-2 py-0.5 rounded-md text-[10px] font-bold animate-pulse">
+                                    {ipRisk.label}
+                                  </span>
+                                )}
+                              </td>
+                              <td className="p-2.5 text-slate-400 max-w-[180px] truncate" title={s.userAgent}>
+                                {s.userAgent}
+                              </td>
+                              <td className="p-2.5 text-emerald-400">
+                                {s.actions && s.actions.length > 0
+                                  ? s.actions.map((a) => a.action).join(" ➔ ")
+                                  : "解鎖觀看頁面"}
+                              </td>
+                            </tr>
+                          );
+                        })
                       )}
                     </tbody>
                   </table>

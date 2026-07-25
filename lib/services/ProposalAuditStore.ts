@@ -8,6 +8,7 @@ export interface AuditSession {
   userAgent: string;
   createdAt: string;
   updatedAt: string;
+  isTeamIp?: boolean;
   actions: { action: string; timestamp: string; details?: any }[];
   invoiceInfo?: {
     companyName: string;
@@ -58,31 +59,16 @@ export const ALL_PROPOSALS: ProposalProjectConfig[] = [
   },
 ];
 
-/**
- * 計算報價單目前的生命週期階段
- * 🟢 Day 1 ~ 5: NORMAL (正常存取)
- * 🟡 Day 6 ~ 10: EXPIRED (密碼過期禁用)
- * 🔴 Day > 10: ARCHIVED_404 (網址隱蔽歸檔 404)
- */
-export function getProposalLifecycleStage(createdDateStr: string) {
-  const createdDate = new Date(createdDateStr);
-  const now = new Date();
-  
-  // 計算天數差 (以 ms 為單位轉成天數)
-  const timeDiff = now.getTime() - createdDate.getTime();
-  const daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24));
-
-  if (daysDiff <= 5) {
-    return { stage: 'NORMAL' as const, daysDiff };
-  } else if (daysDiff <= 10) {
-    return { stage: 'EXPIRED' as const, daysDiff };
-  } else {
-    return { stage: 'ARCHIVED_404' as const, daysDiff };
-  }
+interface AuditStoreData {
+  teamIps: string[];
+  sessions: Record<string, AuditSession[]>;
 }
 
-// 記憶體快取數據
-let memoryAuditStore: Record<string, AuditSession[]> = {};
+// 預設記憶體資料
+let auditStoreData: AuditStoreData = {
+  teamIps: ['127.0.0.1', '::1', '::ffff:127.0.0.1'],
+  sessions: {},
+};
 
 const STORE_FILE_PATH = path.join(process.cwd(), 'lib/data/proposal-audit-store.json');
 
@@ -91,7 +77,16 @@ function loadFromFile() {
   try {
     if (fs.existsSync(STORE_FILE_PATH)) {
       const content = fs.readFileSync(STORE_FILE_PATH, 'utf-8');
-      memoryAuditStore = JSON.parse(content);
+      const parsed = JSON.parse(content);
+      // 相容舊資料格式
+      if (parsed.sessions) {
+        auditStoreData = parsed;
+      } else {
+        auditStoreData = {
+          teamIps: ['127.0.0.1', '::1', '::ffff:127.0.0.1'],
+          sessions: parsed,
+        };
+      }
     }
   } catch (err) {
     console.error('[ProposalAuditStore] Error loading audit store file:', err);
@@ -105,7 +100,7 @@ function saveToFile() {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
-    fs.writeFileSync(STORE_FILE_PATH, JSON.stringify(memoryAuditStore, null, 2), 'utf-8');
+    fs.writeFileSync(STORE_FILE_PATH, JSON.stringify(auditStoreData, null, 2), 'utf-8');
   } catch (err) {
     console.error('[ProposalAuditStore] Error saving audit store file:', err);
   }
@@ -113,24 +108,102 @@ function saveToFile() {
 
 loadFromFile();
 
+/**
+ * 計算報價單動態生命週期
+ * 依據：第一個「非我方陌生 IP」的首次開啓時間 (firstExternalViewedAt)
+ * 1. 尚未有陌生 IP 開啓 ➔ 🟢 正常期 (倒數計時未啟動，不計天數)
+ * 2. 有陌生 IP 開啓 1~5 天 ➔ 🟢 正常期 (倒數計時中 Day 1~5)
+ * 3. 陌生 IP 開啓 6~10 天 ➔ 🟡 密碼過期期 (密碼自動停用 Day 6~10)
+ * 4. 陌生 IP 開啓 10 天以上 ➔ 🔴 網址歸檔 404 (404下架)
+ */
+export function getProposalLifecycleStage(proposalSlug: string) {
+  loadFromFile();
+  const sessions = auditStoreData.sessions[proposalSlug] || [];
+  const teamIps = new Set(auditStoreData.teamIps || []);
+
+  // 尋找第一個非團隊 IP 的觀看 Session
+  const firstExternalSession = sessions
+    .filter((s) => !teamIps.has(s.clientIp) && !s.isTeamIp)
+    .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())[0];
+
+  if (!firstExternalSession) {
+    return {
+      stage: 'NORMAL' as const,
+      countdownStarted: false,
+      daysDiff: 0,
+      firstExternalViewedAt: null,
+      message: '等待客戶首次開啓 (倒數未啟動)',
+    };
+  }
+
+  const firstViewDate = new Date(firstExternalSession.createdAt);
+  const now = new Date();
+  const timeDiff = now.getTime() - firstViewDate.getTime();
+  const daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24)) + 1; // 第一天記為 Day 1
+
+  if (daysDiff <= 5) {
+    return {
+      stage: 'NORMAL' as const,
+      countdownStarted: true,
+      daysDiff,
+      firstExternalViewedAt: firstExternalSession.createdAt,
+      message: `客戶已於 ${new Date(firstExternalSession.createdAt).toLocaleDateString('zh-TW')} 首次開啓 (倒數第 ${daysDiff} 天)`,
+    };
+  } else if (daysDiff <= 10) {
+    return {
+      stage: 'EXPIRED' as const,
+      countdownStarted: true,
+      daysDiff,
+      firstExternalViewedAt: firstExternalSession.createdAt,
+      message: `密碼已過期 (客戶首次開啓後第 ${daysDiff} 天)`,
+    };
+  } else {
+    return {
+      stage: 'ARCHIVED_404' as const,
+      countdownStarted: true,
+      daysDiff,
+      firstExternalViewedAt: firstExternalSession.createdAt,
+      message: `網址已歸檔下架 (客戶首次開啓後第 ${daysDiff} 天)`,
+    };
+  }
+}
+
 export const ProposalAuditService = {
+  // 將特定 IP 註冊為「我方內部團隊 IP」
+  registerTeamIp(ip: string) {
+    loadFromFile();
+    if (ip && !auditStoreData.teamIps.includes(ip)) {
+      auditStoreData.teamIps.push(ip);
+      saveToFile();
+    }
+  },
+
   logAction(data: {
     proposalSlug: string;
     sessionId: string;
     clientIp: string;
     userAgent: string;
     action: string;
+    isAdminAccess?: boolean;
     details?: any;
   }) {
     loadFromFile();
-    const { proposalSlug, sessionId, clientIp, userAgent, action, details } = data;
+    const { proposalSlug, sessionId, clientIp, userAgent, action, isAdminAccess, details } = data;
     const nowIso = new Date().toISOString();
 
-    if (!memoryAuditStore[proposalSlug]) {
-      memoryAuditStore[proposalSlug] = [];
+    if (isAdminAccess && clientIp) {
+      if (!auditStoreData.teamIps.includes(clientIp)) {
+        auditStoreData.teamIps.push(clientIp);
+      }
     }
 
-    let session = memoryAuditStore[proposalSlug].find((s) => s.sessionId === sessionId);
+    const isTeamIp = auditStoreData.teamIps.includes(clientIp) || isAdminAccess === true;
+
+    if (!auditStoreData.sessions[proposalSlug]) {
+      auditStoreData.sessions[proposalSlug] = [];
+    }
+
+    let session = auditStoreData.sessions[proposalSlug].find((s) => s.sessionId === sessionId);
     if (!session) {
       session = {
         sessionId,
@@ -139,12 +212,14 @@ export const ProposalAuditService = {
         userAgent,
         createdAt: nowIso,
         updatedAt: nowIso,
+        isTeamIp,
         actions: [],
       };
-      memoryAuditStore[proposalSlug].push(session);
+      auditStoreData.sessions[proposalSlug].push(session);
     }
 
     session.updatedAt = nowIso;
+    session.isTeamIp = isTeamIp;
     session.actions.push({
       action,
       timestamp: nowIso,
@@ -157,17 +232,18 @@ export const ProposalAuditService = {
 
   logInvoice(proposalSlug: string, invoiceData: any) {
     loadFromFile();
-    if (!memoryAuditStore[proposalSlug]) {
-      memoryAuditStore[proposalSlug] = [];
+    if (!auditStoreData.sessions[proposalSlug]) {
+      auditStoreData.sessions[proposalSlug] = [];
     }
     const nowIso = new Date().toISOString();
-    const session = memoryAuditStore[proposalSlug][0] || {
+    const session = auditStoreData.sessions[proposalSlug][0] || {
       sessionId: `INV-${Date.now()}`,
       proposalSlug,
       clientIp: 'Form Submission',
       userAgent: 'Form Submission',
       createdAt: nowIso,
       updatedAt: nowIso,
+      isTeamIp: false,
       actions: [],
     };
 
@@ -186,21 +262,27 @@ export const ProposalAuditService = {
   getProposalLogs(slug?: string) {
     loadFromFile();
     if (slug) {
-      return memoryAuditStore[slug] || [];
+      return auditStoreData.sessions[slug] || [];
     }
-    return memoryAuditStore;
+    return auditStoreData.sessions;
+  },
+
+  getTeamIps() {
+    loadFromFile();
+    return auditStoreData.teamIps;
   },
 
   getAllAuditBackup() {
     loadFromFile();
     return {
       exportedAt: new Date().toISOString(),
+      teamIps: auditStoreData.teamIps,
       proposals: ALL_PROPOSALS.map((p) => {
-        const stageInfo = getProposalLifecycleStage(p.createdAt);
+        const stageInfo = getProposalLifecycleStage(p.slug);
         return {
           project: p,
           lifecycle: stageInfo,
-          sessions: memoryAuditStore[p.slug] || [],
+          sessions: auditStoreData.sessions[p.slug] || [],
         };
       }),
     };

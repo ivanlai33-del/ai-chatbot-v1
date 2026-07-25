@@ -8,7 +8,10 @@ interface ProjectSummary {
   createdAt: string;
   lifecycle: {
     stage: "NORMAL" | "EXPIRED" | "ARCHIVED_404";
+    countdownStarted: boolean;
     daysDiff: number;
+    firstExternalViewedAt: string | null;
+    message: string;
   };
   sessionCount: number;
   latestViewAt: string | null;
@@ -23,6 +26,7 @@ interface AuditSession {
   userAgent: string;
   createdAt: string;
   updatedAt: string;
+  isTeamIp?: boolean;
   actions: { action: string; timestamp: string; details?: any }[];
   invoiceInfo?: {
     companyName: string;
@@ -74,7 +78,7 @@ export default function ProposalAdminPage() {
   const fetchDashboardData = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/proposals/audit-log");
+      const res = await fetch("/api/proposals/audit-log?isAdmin=true");
       const data = await res.json();
       if (data.success) {
         setStats(data.stats);
@@ -99,7 +103,7 @@ export default function ProposalAdminPage() {
     window.open("/api/proposals/audit-log?export=all", "_blank");
   };
 
-  // Ultra-Minimalist Password Gate Screen (極簡門禁視窗：無贅字，僅保留密碼輸入框與按鈕)
+  // Ultra-Minimalist Password Gate Screen
   if (!isUnlocked) {
     return (
       <div className="w-full min-h-screen bg-[#0F172A] flex justify-center items-center p-4">
@@ -138,7 +142,7 @@ export default function ProposalAdminPage() {
             </h1>
           </div>
 
-          {/* Top Realtime Stats Bar (頂部實時數據統計) */}
+          {/* Top Realtime Stats Bar */}
           <div className="flex items-center gap-4 text-xs">
             <div className="bg-[#0F172A] border border-[#334155] px-3 py-1.5 rounded-xl">
               <span className="text-slate-400 block text-[10px]">總建置專案</span>
@@ -165,7 +169,7 @@ export default function ProposalAdminPage() {
 
       {/* Main 2-Column Dashboard Layout */}
       <div className="max-w-7xl mx-auto p-6 grid grid-cols-1 md:grid-cols-12 gap-6">
-        {/* Left Column: Client Projects List (全客戶專案動態列表) */}
+        {/* Left Column: Client Projects List */}
         <div className="md:col-span-4 bg-[#1E293B] border border-[#334155] rounded-2xl p-4 space-y-3">
           <div className="flex justify-between items-center pb-2 border-b border-[#334155]">
             <h2 className="text-sm font-bold text-white flex items-center gap-1.5">
@@ -179,7 +183,7 @@ export default function ProposalAdminPage() {
           <div className="space-y-2">
             {projects.map((p) => {
               const isSelected = p.slug === selectedSlug;
-              const { stage, daysDiff } = p.lifecycle;
+              const { stage, countdownStarted, daysDiff } = p.lifecycle;
 
               return (
                 <div
@@ -193,9 +197,14 @@ export default function ProposalAdminPage() {
                 >
                   <div className="flex justify-between items-start mb-1">
                     <h3 className="font-bold text-sm text-white">{p.title}</h3>
-                    {stage === "NORMAL" && (
+                    {stage === "NORMAL" && !countdownStarted && (
+                      <span className="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full font-bold border border-slate-600">
+                        🟢 尚未開啓 (計時未始)
+                      </span>
+                    )}
+                    {stage === "NORMAL" && countdownStarted && (
                       <span className="text-[10px] bg-emerald-900/80 text-emerald-300 px-2 py-0.5 rounded-full font-bold border border-emerald-700">
-                        🟢 Day {daysDiff} 正常
+                        🟢 Day {daysDiff} 倒數中
                       </span>
                     )}
                     {stage === "EXPIRED" && (
@@ -209,6 +218,10 @@ export default function ProposalAdminPage() {
                       </span>
                     )}
                   </div>
+
+                  <p className="text-[11px] text-teal-400 font-mono mt-1">
+                    {p.lifecycle.message}
+                  </p>
 
                   <div className="flex justify-between items-center text-[11px] text-slate-400 font-mono mt-2 pt-2 border-t border-[#334155]/50">
                     <span>傳閱 Session: <b className="text-white">{p.sessionCount}</b></span>
@@ -232,8 +245,12 @@ export default function ProposalAdminPage() {
                     <span className="text-xs font-mono text-slate-400">(/proposals/{selectedProject.slug})</span>
                   </div>
                   <p className="text-xs text-slate-400 mt-0.5">
-                    創立生效日期: <b className="font-mono text-teal-400">{selectedProject.createdAt}</b> ｜ 狀態:{" "}
-                    {selectedProject.lifecycle.stage === "NORMAL" ? "🟢 Day 1~5 正常存取" : selectedProject.lifecycle.stage === "EXPIRED" ? "🟡 Day 6~10 密碼過期" : "🔴 Day 10+ 404歸檔"}
+                    創立時間: <b className="font-mono text-teal-400">{selectedProject.createdAt}</b> ｜ 客戶首次開啟:{" "}
+                    <b className="font-mono text-yellow-400">
+                      {selectedProject.lifecycle.firstExternalViewedAt
+                        ? new Date(selectedProject.lifecycle.firstExternalViewedAt).toLocaleString("zh-TW")
+                        : "尚無陌生 IP 開啟 (倒數未觸發)"}
+                    </b>
                   </p>
                 </div>
 

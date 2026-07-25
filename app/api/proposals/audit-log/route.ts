@@ -11,6 +11,7 @@ export async function POST(req: NextRequest) {
       proposalSlug = 'stark-works',
       sessionId = `SES-${Date.now()}`,
       action = 'UNLOCKED_VIEW',
+      isAdminAccess = false,
       details = {},
     } = body;
 
@@ -27,13 +28,17 @@ export async function POST(req: NextRequest) {
       clientIp: realIp,
       userAgent,
       action,
+      isAdminAccess,
       details,
     });
+
+    const lifecycle = getProposalLifecycleStage(proposalSlug);
 
     return NextResponse.json({
       success: true,
       sessionId: session.sessionId,
       loggedIp: realIp,
+      lifecycle,
       timestamp: new Date().toISOString(),
     });
   } catch (err: any) {
@@ -47,6 +52,16 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const slug = searchParams.get('slug');
     const exportMode = searchParams.get('export');
+    const isAdmin = searchParams.get('isAdmin') === 'true';
+
+    // 如果是管理員訪問，自動將該 IP 註冊為我方團隊 IP
+    const forwardedFor = req.headers.get('x-forwarded-for');
+    const cfIp = req.headers.get('cf-connecting-ip');
+    const realIp = cfIp || (forwardedFor ? forwardedFor.split(',')[0].trim() : req.ip || '');
+
+    if (isAdmin && realIp) {
+      ProposalAuditService.registerTeamIp(realIp);
+    }
 
     if (exportMode === 'all') {
       const fullBackup = ProposalAuditService.getAllAuditBackup();
@@ -62,7 +77,7 @@ export async function GET(req: NextRequest) {
     if (exportMode === 'single' && slug) {
       const logs = ProposalAuditService.getProposalLogs(slug);
       const projectConfig = ALL_PROPOSALS.find((p) => p.slug === slug);
-      const stageInfo = projectConfig ? getProposalLifecycleStage(projectConfig.createdAt) : null;
+      const stageInfo = projectConfig ? getProposalLifecycleStage(slug) : null;
       
       const singleBackup = {
         exportedAt: new Date().toISOString(),
@@ -82,6 +97,7 @@ export async function GET(req: NextRequest) {
 
     // 預設返回後台統計數據
     const allLogs = ProposalAuditService.getProposalLogs() as Record<string, any[]>;
+    const teamIps = ProposalAuditService.getTeamIps();
     
     // 計算全站實時統計數據
     let totalSessionsCount = 0;
@@ -97,7 +113,7 @@ export async function GET(req: NextRequest) {
         ? projectSessions.reduce((prev, current) => (new Date(prev.updatedAt) > new Date(current.updatedAt) ? prev : current))
         : null;
 
-      const stageInfo = getProposalLifecycleStage(p.createdAt);
+      const stageInfo = getProposalLifecycleStage(p.slug);
 
       return {
         slug: p.slug,
@@ -117,7 +133,9 @@ export async function GET(req: NextRequest) {
         totalProjects: ALL_PROPOSALS.length,
         totalSessions: totalSessionsCount,
         totalInvoices: totalInvoiceCount,
+        teamIpsCount: teamIps.length,
       },
+      teamIps,
       projects: projectSummaries,
       allLogs,
     });

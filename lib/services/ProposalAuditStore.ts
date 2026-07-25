@@ -28,12 +28,6 @@ export interface ProposalProjectConfig {
 
 export const ALL_PROPOSALS: ProposalProjectConfig[] = [
   {
-    slug: 'ko-loong',
-    clientTitle: '科隆工業',
-    createdAt: '2026-07-20',
-    validPasswords: ['20260720', '0720', '20260725', '0725'],
-  },
-  {
     slug: 'butter-toast',
     clientTitle: '奶油吐司 (旗艦版)',
     createdAt: '2026-07-23',

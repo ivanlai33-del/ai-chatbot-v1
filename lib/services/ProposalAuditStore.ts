@@ -53,12 +53,6 @@ export const ALL_PROPOSALS: ProposalProjectConfig[] = [
     createdAt: '2026-07-25',
     validPasswords: ['20260725', '0725', '20260724', '0724'],
   },
-  {
-    slug: 'ko-loong',
-    clientTitle: '可龍哥運動科技',
-    createdAt: '2026-07-25',
-    validPasswords: ['20260725', '0725', '20260724', '0724'],
-  },
 ];
 
 interface AuditStoreData {

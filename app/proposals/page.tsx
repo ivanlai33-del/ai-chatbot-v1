@@ -63,24 +63,6 @@ export default function ProposalsIndexPage() {
           </form>
         ) : (
           <div className="space-y-4">
-            {/* Ko-Loong Industrial Proposal */}
-            <div className="p-4 bg-[#EFE7DA] border border-[#D6A86E] rounded-2xl flex justify-between items-center">
-              <div>
-                <h3 className="font-bold font-serif text-[#B26A27]">
-                  ⚙️ 【科隆工業】網站全站重置 & 現代化工程重構提案
-                </h3>
-                <p className="text-xs text-[#7C6E62] mt-0.5">
-                  全資產還原備份 / 現代前端重構 / 輕量動態後台 / 原主機無縫驗收
-                </p>
-              </div>
-              <Link
-                href="/proposals/ko-loong"
-                className="px-4 py-2 bg-[#B26A27] text-[#FFFDF9] text-xs font-bold rounded-xl hover:bg-[#8F521B] transition shadow"
-              >
-                檢視提案 ➔
-              </Link>
-            </div>
-
             {/* Butter Toast Proposal */}
             <div className="p-4 bg-[#EFE7DA] border border-[#D6A86E] rounded-2xl flex justify-between items-center">
               <div>

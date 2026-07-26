@@ -15,7 +15,7 @@ export function calculateProposalLifecycle(createdAtStr: string) {
   }
 }
 
-export async function sendProposalAuditTrack(slug: string, action: string, details?: any) {
+export async function sendProposalAuditTrack(slug: string, action: string, details?: any): Promise<any> {
   try {
     let sessionId = sessionStorage.getItem(`audit_session_${slug}`);
     if (!sessionId) {
@@ -23,7 +23,7 @@ export async function sendProposalAuditTrack(slug: string, action: string, detai
       sessionStorage.setItem(`audit_session_${slug}`, sessionId);
     }
 
-    await fetch("/api/proposals/audit-log", {
+    const res = await fetch("/api/proposals/audit-log", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -33,7 +33,11 @@ export async function sendProposalAuditTrack(slug: string, action: string, detai
         details,
       }),
     });
+
+    const data = await res.json();
+    return data;
   } catch (err) {
     console.warn("[Audit Track Error]:", err);
+    return null;
   }
 }

@@ -7,16 +7,18 @@ interface ProjectSummary {
   title: string;
   createdAt: string;
   lifecycle: {
-    stage: "NORMAL" | "EXPIRED" | "ARCHIVED_404";
+    stage: "NORMAL" | "EXPIRED" | "ARCHIVED_404" | "MANUALLY_CLOSED";
     countdownStarted: boolean;
     daysDiff: number;
     firstExternalViewedAt: string | null;
     message: string;
+    isManuallyClosed?: boolean;
   };
   sessionCount: number;
   latestViewAt: string | null;
   latestIp: string | null;
   invoiceCount: number;
+  isManuallyClosed?: boolean;
 }
 
 interface AuditSession {
@@ -94,6 +96,51 @@ export default function ProposalAdminPage() {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleToggleProposalStatus = async (slug: string, currentClosed: boolean) => {
+    const nextClosed = !currentClosed;
+    const confirmMsg = nextClosed
+      ? `確定要「隱蔽關閉」 [${slug}] 報價單嗎？\n\n關閉後對外訪客無法檢視（呈現隱蔽歸檔頁），但我方（?admin=87257257）仍可透過上帝視角正常查看。`
+      : `確定要「重新開啟」 [${slug}] 報價單嗎？`;
+
+    if (!window.confirm(confirmMsg)) return;
+
+    try {
+      const res = await fetch("/api/proposals/audit-log", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          proposalSlug: slug,
+          action: "TOGGLE_PROPOSAL_STATUS",
+          details: { isClosed: nextClosed },
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setProjects((prev) =>
+          prev.map((p) =>
+            p.slug === slug
+              ? {
+                  ...p,
+                  isManuallyClosed: nextClosed,
+                  lifecycle: {
+                    ...p.lifecycle,
+                    stage: nextClosed ? "MANUALLY_CLOSED" : "NORMAL",
+                    isManuallyClosed: nextClosed,
+                    message: nextClosed ? "🔒 已由管理者手動關閉 (對外隱蔽中)" : "已重新開啟報價單",
+                  },
+                }
+              : p
+          )
+        );
+      } else {
+        alert("切換失敗: " + (data.error || "未知錯誤"));
+      }
+    } catch (err) {
+      console.error(err);
+      alert("切換連線失敗，請稍後再試。");
     }
   };
 
@@ -199,6 +246,11 @@ export default function ProposalAdminPage() {
                 >
                   <div className="flex justify-between items-start mb-1">
                     <h3 className="font-bold text-sm text-white">{p.title}</h3>
+                    {stage === "MANUALLY_CLOSED" && (
+                      <span className="text-[10px] bg-rose-900/90 text-rose-200 px-2 py-0.5 rounded-full font-bold border border-rose-600 animate-pulse">
+                        🔒 已手動隱蔽關閉
+                      </span>
+                    )}
                     {stage === "NORMAL" && !countdownStarted && (
                       <span className="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full font-bold border border-slate-600">
                         🟢 尚未開啟 (計時未始)
@@ -245,6 +297,11 @@ export default function ProposalAdminPage() {
                   <div className="flex items-center gap-2">
                     <h2 className="text-lg font-black text-white">{selectedProject.title}</h2>
                     <span className="text-xs font-mono text-slate-400">(/proposals/{selectedProject.slug})</span>
+                    {selectedProject.isManuallyClosed && (
+                      <span className="text-[10px] bg-rose-900/90 text-rose-200 px-2 py-0.5 rounded font-bold border border-rose-600">
+                        🔒 對外隱蔽中
+                      </span>
+                    )}
                   </div>
                   <p className="text-xs text-slate-400 mt-0.5">
                     創立時間: <b className="font-mono text-teal-400">{selectedProject.createdAt}</b> ｜ 客戶首次開啟:{" "}
@@ -257,12 +314,24 @@ export default function ProposalAdminPage() {
                 </div>
 
                 <div className="flex items-center gap-2">
+                  {/* 手動關閉/隱蔽報價單按鈕 */}
+                  <button
+                    onClick={() => handleToggleProposalStatus(selectedProject.slug, !!selectedProject.isManuallyClosed)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition shadow-xs cursor-pointer active:scale-95 ${
+                      selectedProject.isManuallyClosed
+                        ? "bg-emerald-600 hover:bg-emerald-500 text-white"
+                        : "bg-rose-700 hover:bg-rose-600 text-white"
+                    }`}
+                  >
+                    {selectedProject.isManuallyClosed ? "🔓 重新開啟報價" : "🔒 手動隱蔽關閉報價單"}
+                  </button>
+
                   {/* 上帝視角預閱連結 (帶 ?admin=87257257 免密且全豁免) */}
                   <a
                     href={`/proposals/${selectedProject.slug}?admin=87257257`}
                     target="_blank"
                     rel="noreferrer"
-                    className="px-3 py-1.5 bg-gradient-to-r from-amber-600 to-yellow-600 text-white rounded-lg text-xs font-bold shadow-sm hover:from-amber-500 hover:to-yellow-500 transition"
+                    className="px-3 py-1.5 bg-gradient-to-r from-amber-600 to-yellow-600 text-white rounded-lg text-xs font-bold shadow-xs hover:from-amber-500 hover:to-yellow-500 transition"
                   >
                     👑 上帝視角預閱 ➔
                   </a>

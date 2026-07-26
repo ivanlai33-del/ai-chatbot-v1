@@ -53,17 +53,25 @@ export const ALL_PROPOSALS: ProposalProjectConfig[] = [
     createdAt: '2026-07-25',
     validPasswords: ['20260725', '0725', '20260724', '0724'],
   },
+  {
+    slug: 'ko-loong',
+    clientTitle: '可龍哥運動科技',
+    createdAt: '2026-07-25',
+    validPasswords: ['20260725', '0725', '20260724', '0724'],
+  },
 ];
 
 interface AuditStoreData {
   teamIps: string[];
   sessions: Record<string, AuditSession[]>;
+  closedProposals?: Record<string, boolean>;
 }
 
 // 預設記憶體資料
 let auditStoreData: AuditStoreData = {
   teamIps: ['127.0.0.1', '::1', '::ffff:127.0.0.1'],
   sessions: {},
+  closedProposals: {},
 };
 
 const STORE_FILE_PATH = path.join(process.cwd(), 'lib/data/proposal-audit-store.json');
@@ -75,11 +83,16 @@ function loadFromFile() {
       const content = fs.readFileSync(STORE_FILE_PATH, 'utf-8');
       const parsed = JSON.parse(content);
       if (parsed.sessions) {
-        auditStoreData = parsed;
+        auditStoreData = {
+          teamIps: parsed.teamIps || ['127.0.0.1', '::1', '::ffff:127.0.0.1'],
+          sessions: parsed.sessions || {},
+          closedProposals: parsed.closedProposals || {},
+        };
       } else {
         auditStoreData = {
           teamIps: ['127.0.0.1', '::1', '::ffff:127.0.0.1'],
           sessions: parsed,
+          closedProposals: {},
         };
       }
     }
@@ -110,6 +123,19 @@ export { evaluateIpRisk } from './ProposalAuditUtils';
  */
 export function getProposalLifecycleStage(proposalSlug: string) {
   loadFromFile();
+
+  const isManuallyClosed = !!(auditStoreData.closedProposals && auditStoreData.closedProposals[proposalSlug]);
+  if (isManuallyClosed) {
+    return {
+      stage: 'MANUALLY_CLOSED' as const,
+      countdownStarted: true,
+      daysDiff: 0,
+      firstExternalViewedAt: null,
+      message: '🔒 已由管理者手動關閉 (對外隱蔽中)',
+      isManuallyClosed: true,
+    };
+  }
+
   const sessions = auditStoreData.sessions[proposalSlug] || [];
   const teamIps = new Set(auditStoreData.teamIps || []);
 
@@ -124,6 +150,7 @@ export function getProposalLifecycleStage(proposalSlug: string) {
       daysDiff: 0,
       firstExternalViewedAt: null,
       message: '等待客戶首次開啓 (倒數未啟動)',
+      isManuallyClosed: false,
     };
   }
 
@@ -139,6 +166,7 @@ export function getProposalLifecycleStage(proposalSlug: string) {
       daysDiff,
       firstExternalViewedAt: firstExternalSession.createdAt,
       message: `客戶已於 ${new Date(firstExternalSession.createdAt).toLocaleDateString('zh-TW')} 首次開啓 (倒數第 ${daysDiff} 天)`,
+      isManuallyClosed: false,
     };
   } else if (daysDiff <= 10) {
     return {
@@ -147,6 +175,7 @@ export function getProposalLifecycleStage(proposalSlug: string) {
       daysDiff,
       firstExternalViewedAt: firstExternalSession.createdAt,
       message: `密碼已過期 (客戶首次開啓後第 ${daysDiff} 天)`,
+      isManuallyClosed: false,
     };
   } else {
     return {
@@ -155,11 +184,27 @@ export function getProposalLifecycleStage(proposalSlug: string) {
       daysDiff,
       firstExternalViewedAt: firstExternalSession.createdAt,
       message: `網址已歸檔下架 (客戶首次開啓後第 ${daysDiff} 天)`,
+      isManuallyClosed: false,
     };
   }
 }
 
 export const ProposalAuditService = {
+  toggleProposalStatus(slug: string, isClosed: boolean) {
+    loadFromFile();
+    if (!auditStoreData.closedProposals) {
+      auditStoreData.closedProposals = {};
+    }
+    auditStoreData.closedProposals[slug] = isClosed;
+    saveToFile();
+    return auditStoreData.closedProposals;
+  },
+
+  isProposalManuallyClosed(slug: string) {
+    loadFromFile();
+    return !!(auditStoreData.closedProposals && auditStoreData.closedProposals[slug]);
+  },
+
   registerTeamIp(ip: string) {
     loadFromFile();
     if (ip && !auditStoreData.teamIps.includes(ip)) {

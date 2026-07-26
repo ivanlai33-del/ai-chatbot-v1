@@ -15,6 +15,20 @@ export async function POST(req: NextRequest) {
       details = {},
     } = body;
 
+    // 手動切換報價單隱蔽狀態
+    if (action === 'TOGGLE_PROPOSAL_STATUS') {
+      const isClosed = !!details.isClosed;
+      ProposalAuditService.toggleProposalStatus(proposalSlug, isClosed);
+      const lifecycle = getProposalLifecycleStage(proposalSlug);
+      return NextResponse.json({
+        success: true,
+        proposalSlug,
+        isClosed,
+        lifecycle,
+        timestamp: new Date().toISOString(),
+      });
+    }
+
     // 獲取 Real IP (支援 Proxy / Cloudflare Header)
     const forwardedFor = req.headers.get('x-forwarded-for');
     const cfIp = req.headers.get('cf-connecting-ip');
@@ -114,6 +128,7 @@ export async function GET(req: NextRequest) {
         : null;
 
       const stageInfo = getProposalLifecycleStage(p.slug);
+      const isManuallyClosed = ProposalAuditService.isProposalManuallyClosed(p.slug);
 
       return {
         slug: p.slug,
@@ -124,6 +139,7 @@ export async function GET(req: NextRequest) {
         latestViewAt: latestSession ? latestSession.updatedAt : null,
         latestIp: latestSession ? latestSession.clientIp : null,
         invoiceCount: invoiceSessions.length,
+        isManuallyClosed,
       };
     });
 

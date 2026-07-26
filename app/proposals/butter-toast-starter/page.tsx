@@ -33,7 +33,34 @@ export default function ButterToastStarterProposalPage() {
 
   // Proposal Effective Date
   const CREATED_AT = "2026-07-23";
-  const lifecycle = calculateProposalLifecycle(CREATED_AT);
+  const [lifecycleState, setLifecycleState] = useState<{ stage: string; daysDiff: number }>(
+    calculateProposalLifecycle(CREATED_AT)
+  );
+
+  useEffect(() => {
+    sendProposalAuditTrack("butter-toast-starter", "PAGE_VISITED_SESSION").then((res) => {
+      if (res && res.lifecycle) {
+        setLifecycleState(res.lifecycle);
+      }
+    });
+  }, []);
+
+  // 🔴 3-Stage Lifecycle & Manual Closure (Unless Owner Bypass Mode)
+  if (!isAdminBypass && (lifecycleState.stage === "ARCHIVED_404" || lifecycleState.stage === "MANUALLY_CLOSED")) {
+    return (
+      <div className="w-full min-h-screen bg-[#0F172A] text-slate-200 flex flex-col justify-center items-center p-6 text-center font-sans">
+        <div className="w-16 h-16 bg-rose-950/80 text-rose-400 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 border border-rose-700/50">
+          🔒
+        </div>
+        <h1 className="text-3xl font-black mb-2 text-white">404 — 專案頁面已隱蔽歸檔</h1>
+        <p className="text-sm text-slate-400 max-w-md mx-auto leading-relaxed mb-6">
+          {lifecycleState.stage === "MANUALLY_CLOSED"
+            ? "本商業提案已由管理者手動隱蔽關閉，對外不開放檢視與存取。如需查看專案內容，請聯繫專案負責窗口。"
+            : "本商業提案已超過最高有效期限並對外隱蔽歸檔，專案畫面與密碼視窗已下架。如需重新查看專案簡報，請聯繫專案負責窗口。"}
+        </p>
+      </div>
+    );
+  }
 
   // LIFF Context State
   const [lineProfile, setLineProfile] = useState<{ displayName?: string; userId?: string } | null>(null);
@@ -275,28 +302,13 @@ export default function ButterToastStarterProposalPage() {
     setTimeout(() => setCopySuccess(false), 2500);
   };
 
-  // 🔴 3-Stage Lifecycle: Stage 3 (ARCHIVED_404 > 10 Days) — 除非為管理者上帝視角
-  if (!isAdminBypass && lifecycle.stage === "ARCHIVED_404") {
-    return (
-      <div className="w-full min-h-screen bg-[#0F172A] text-slate-200 flex flex-col justify-center items-center p-6 text-center font-sans">
-        <div className="w-16 h-16 bg-rose-950/80 text-rose-400 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 border border-rose-700/50">
-          🚫
-        </div>
-        <h1 className="text-3xl font-black mb-2 text-white">404 — 專案頁面已隱蔽歸檔</h1>
-        <p className="text-sm text-slate-400 max-w-md mx-auto leading-relaxed mb-6">
-          本商業提案已超過最高有效期限並對外隱蔽歸檔，專案畫面與密碼視窗已下架。如需重新查看專案簡報，請聯繫專案負責窗口。
-        </p>
-      </div>
-    );
-  }
-
   // Password Lock View / 🟡 Stage 2 (EXPIRED 6-10 Days) — 除非為管理者上帝視角
   if (!isUnlocked && !isAdminBypass) {
     return (
       <div className="w-full min-h-screen bg-[#F7F3ED] text-[#382D24] flex flex-col justify-center items-center p-4 font-sans select-none overflow-x-hidden">
         <Script src="https://static.line-scdn.net/liff/edge/2/sdk.js" onLoad={handleLiffInit} />
         <div className="w-full max-w-sm bg-[#FFFDF9] border border-[#E6DDCF] rounded-3xl p-6 shadow-xl text-center backdrop-blur-md">
-          {lifecycle.stage === "EXPIRED" ? (
+          {lifecycleState.stage === "EXPIRED" ? (
             <>
               <div className="w-12 h-12 bg-amber-100 text-amber-800 rounded-full flex items-center justify-center text-xl mx-auto mb-3 border border-amber-300">
                 🔒
@@ -305,7 +317,7 @@ export default function ButterToastStarterProposalPage() {
                 🔒 專案報價存取期限已過期失效
               </h1>
               <p className="text-xs text-[#7C6E62] mb-4 leading-relaxed font-medium">
-                本專案報價已超過 5 天有效存取期 (第 {lifecycle.daysDiff} 天)，系統已自動停用密碼輸入。外人無法再輸入密碼查看內容，請聯絡專案窗口展延權限。
+                本專案報價已超過 5 天有效存取期 (第 {lifecycleState.daysDiff} 天)，系統已自動停用密碼輸入。外人無法再輸入密碼查看內容，請聯絡專案窗口展延權限。
               </p>
               <div className="space-y-3">
                 <input

@@ -420,17 +420,19 @@ export default function KoloongProposalPage() {
     );
   }
 
-  // 10-Day URL Blocked / Hidden Screen (Triggered ONLY after stranger IP first opened + > 10 days)
-  if (!isOwnerBypass && lifecycleInfo.countdownStarted && lifecycleInfo.stage === 'ARCHIVED_404') {
+  // 10-Day URL Blocked / Hidden Screen (Triggered ONLY after stranger IP first opened + > 10 days, or manually closed)
+  if (!isOwnerBypass && (lifecycleInfo.stage === 'ARCHIVED_404' || lifecycleInfo.stage === 'MANUALLY_CLOSED')) {
     return (
       <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4 font-sans select-none">
         <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-8 text-center shadow-2xl space-y-4">
           <div className="w-16 h-16 bg-rose-500/10 text-rose-400 rounded-2xl flex items-center justify-center text-3xl mx-auto border border-rose-500/20">
-            🚫
+            🔒
           </div>
           <h1 className="text-xl font-bold text-white">404 — 專案頁面已隱蔽歸檔</h1>
           <p className="text-xs text-slate-400 leading-relaxed">
-            您存取的網址已超過有效營運期限（客戶首次開啟後 10 天），本專案報價連結已自動封鎖隱蔽並歸檔。
+            {lifecycleInfo.stage === 'MANUALLY_CLOSED'
+              ? '本商業提案已由管理者手動隱蔽關閉，對外不開放檢視與存取。如需查看專案內容，請聯繫專案負責窗口。'
+              : '您存取的網址已超過有效營運期限（客戶首次開啟後 10 天），本專案報價連結已自動封鎖隱蔽並歸檔。'}
           </p>
           <div className="pt-4 border-t border-slate-800 text-[11px] text-slate-500">
             如有專案問題請聯繫執行團隊：奕暢創新設計工作室<br />

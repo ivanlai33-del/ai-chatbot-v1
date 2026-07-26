@@ -57,6 +57,10 @@ export default function ProposalAdminPage() {
   const [allLogs, setAllLogs] = useState<Record<string, AuditSession[]>>({});
   const [loading, setLoading] = useState(false);
 
+  // Version Control State
+  const [projectVersions, setProjectVersions] = useState<any[]>([]);
+  const [activeVersionId, setActiveVersionId] = useState<string>("v1");
+
   const ADMIN_PASSWORD = "87257257";
 
   useEffect(() => {
@@ -66,6 +70,47 @@ export default function ProposalAdminPage() {
       fetchDashboardData();
     }
   }, []);
+
+  const fetchVersionsData = async (slug: string) => {
+    try {
+      const res = await fetch(`/api/proposals/versions?slug=${slug}`);
+      const data = await res.json();
+      if (data.success) {
+        setProjectVersions(data.versions || []);
+        setActiveVersionId(data.activeVersionId || "v1");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedSlug) {
+      fetchVersionsData(selectedSlug);
+    }
+  }, [selectedSlug]);
+
+  const handleSetActiveVersion = async (slug: string, versionId: string) => {
+    try {
+      const res = await fetch("/api/proposals/versions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "SET_ACTIVE_VERSION",
+          slug,
+          versionId,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setActiveVersionId(versionId);
+        setProjectVersions(data.versions || []);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("設定預設發布版本失敗。");
+    }
+  };
 
   const handleUnlock = (e: React.FormEvent) => {
     e.preventDefault();
@@ -335,12 +380,67 @@ export default function ProposalAdminPage() {
                   >
                     👑 上帝視角預閱 ➔
                   </a>
-                  <button
-                    onClick={() => handleExportSingleJSON(selectedProject.slug)}
-                    className="px-3 py-1.5 bg-teal-600 hover:bg-teal-500 text-white rounded-lg text-xs font-bold transition cursor-pointer"
-                  >
-                    📥 匯出此專案 JSON
-                  </button>
+                </div>
+              </div>
+
+              {/* 📜 報價單多版本歷史控制 Card */}
+              <div className="bg-[#0F172A] border border-[#334155] rounded-xl p-4 space-y-3">
+                <div className="flex justify-between items-center pb-2 border-b border-[#334155]">
+                  <h3 className="text-xs font-bold text-teal-400 flex items-center gap-1.5">
+                    <span>📜</span> 報價單編修版本歷史紀錄 ({projectVersions.length} 個版本)
+                  </h3>
+                  <span className="text-[10px] text-slate-400 font-mono">
+                    對外發布中：<b className="text-emerald-400">{activeVersionId}</b>
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                  {projectVersions.map((v) => {
+                    const isActive = v.versionId === activeVersionId;
+                    return (
+                      <div
+                        key={v.versionId}
+                        className={`p-3 rounded-xl border transition flex flex-col justify-between ${
+                          isActive
+                            ? "bg-teal-950/40 border-teal-500 shadow-xs"
+                            : "bg-[#1E293B] border-[#334155]"
+                        }`}
+                      >
+                        <div>
+                          <div className="flex justify-between items-center mb-1">
+                            <span className="font-mono font-black text-sm text-white">{v.versionId}</span>
+                            {isActive ? (
+                              <span className="text-[10px] bg-emerald-900/90 text-emerald-200 px-2 py-0.5 rounded font-bold border border-emerald-600">
+                                🟢 對外生效中
+                              </span>
+                            ) : (
+                              <button
+                                onClick={() => handleSetActiveVersion(selectedProject.slug, v.versionId)}
+                                className="text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-0.5 rounded font-bold border border-slate-600 transition cursor-pointer"
+                              >
+                                ⭐️ 設為發布版
+                              </button>
+                            )}
+                          </div>
+                          <p className="text-xs text-slate-300 font-medium line-clamp-2">
+                            {v.note || "報價單內容編修"}
+                          </p>
+                        </div>
+
+                        <div className="mt-2 pt-2 border-t border-[#334155]/60 flex justify-between items-center text-[10px] text-slate-400 font-mono">
+                          <span>{new Date(v.createdAt).toLocaleDateString("zh-TW")}</span>
+                          <a
+                            href={`/proposals/${selectedProject.slug}?admin=87257257&v=${v.versionId}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-teal-400 underline hover:text-teal-300 font-bold"
+                          >
+                            👁️ 檢視此版 ➔
+                          </a>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 

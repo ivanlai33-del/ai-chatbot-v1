@@ -1,7 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Script from "next/script";
+import {
+  SecurityWatermarkOverlay,
+  OwnerBypassBanner,
+  ProposalEditableProvider,
+  EditableText,
+} from "@/components/proposals/CommercialDefenseComponents";
 
 interface InvoiceRecord {
   id: string;
@@ -18,6 +23,17 @@ export default function KoloongProposalPage() {
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isAdminBypass, setIsAdminBypass] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get("admin") === "87257257") {
+        setIsAdminBypass(true);
+        setIsUnlocked(true);
+      }
+    }
+  }, []);
 
   // Invoice Form State
   const [companyName, setCompanyName] = useState("");
@@ -553,8 +569,12 @@ export default function KoloongProposalPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans select-none pb-20">
-      {/* Top Navbar */}
+    <ProposalEditableProvider slug="ko-loong" isAdminBypass={isAdminBypass}>
+      <div className="min-h-screen bg-slate-950 text-slate-100 font-sans select-none pb-20">
+        {/* 2. 🔑 管理者上帝視角 Banner */}
+        {isAdminBypass && <OwnerBypassBanner />}
+
+        {/* Top Navbar */}
       <header className="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-800">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center space-x-3">
@@ -1271,5 +1291,6 @@ export default function KoloongProposalPage() {
         </div>
       </footer>
     </div>
+  </ProposalEditableProvider>
   );
 }

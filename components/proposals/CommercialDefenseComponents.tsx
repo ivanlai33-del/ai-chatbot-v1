@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 
+export { ProposalEditableProvider, EditableText, useProposalEditable } from './ProposalEditableProvider';
+
 export const PROVIDER_INFO = {
   companyName: "奕暢創新設計工作室",
   taxId: "41370842",

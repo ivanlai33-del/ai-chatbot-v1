@@ -10,6 +10,8 @@ import {
   VpnInterceptModal,
   PrintSignatureSection,
   PROVIDER_INFO,
+  ProposalEditableProvider,
+  EditableText,
 } from "@/components/proposals/CommercialDefenseComponents";
 
 interface InvoiceRecord {
@@ -1114,128 +1116,130 @@ export default function StarkWorksProposalPage() {
   ];
 
   return (
-    <div className="w-full min-h-screen bg-[#F8F5EE] print:bg-white text-[#0F172A] font-sans overflow-x-hidden select-none">
-      <Script src="https://static.line-scdn.net/liff/edge/2/sdk.js" onLoad={handleLiffInit} />
+    <ProposalEditableProvider slug="stark-works" isAdminBypass={isAdminBypass}>
+      <div className="w-full min-h-screen bg-[#F8F5EE] print:bg-white text-[#0F172A] font-sans overflow-x-hidden select-none">
+        <Script src="https://static.line-scdn.net/liff/edge/2/sdk.js" onLoad={handleLiffInit} />
 
-      {/* 5重防拷貝、防選取、防拖曳 CSS 注入 */}
-      <style dangerouslySetInnerHTML={{ __html: `
-        * {
-          -webkit-user-select: none !important;
-          -moz-user-select: none !important;
-          -ms-user-select: none !important;
-          user-select: none !important;
-        }
-        input, textarea {
-          -webkit-user-select: text !important;
-          -moz-user-select: text !important;
-          -ms-user-select: text !important;
-          user-select: text !important;
-        }
-      `}} />
+        {/* 5重防拷貝、防選取、防拖曳 CSS 注入 */}
+        <style dangerouslySetInnerHTML={{ __html: `
+          * {
+            -webkit-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            user-select: none !important;
+          }
+          input, textarea, [contenteditable="true"] {
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+            user-select: text !important;
+          }
+        `}} />
 
-      {/* 4. 🛡️ 5重防複製、防變造與背景斜向 Security Watermark */}
-      <SecurityWatermarkOverlay />
+        {/* 4. 🛡️ 5重防複製、防變造與背景斜向 Security Watermark */}
+        <SecurityWatermarkOverlay />
 
-      {/* 2. 🔑 管理者上帝視角 Banner */}
-      {isAdminBypass && <OwnerBypassBanner />}
+        {/* 2. 🔑 管理者上帝視角 Banner */}
+        {isAdminBypass && <OwnerBypassBanner />}
 
-      {/* 7. 🌐 VPN 代理與海外 IP 全螢幕攔截 */}
-      {isForeignOrVpn && !isAdminBypass && <VpnInterceptModal />}
+        {/* 7. 🌐 VPN 代理與海外 IP 全螢幕攔截 */}
+        {isForeignOrVpn && !isAdminBypass && <VpnInterceptModal />}
 
-      {/* Top Header Bar */}
-      <header className="sticky top-0 z-50 bg-[#F4EFE6]/95 backdrop-blur-md border-b border-[#E2D9C8] px-4 py-2.5 print:hidden">
-        <div className="max-w-5xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-teal-600 inline-block animate-pulse"></span>
-            <span className="font-black text-xs md:text-sm text-[#0F172A]">
-              史塔克運動科學團隊 — AI 運動顧問與雙通道智能店長系統
-            </span>
-          </div>
-          <div className="text-[10px] md:text-xs text-slate-600 font-mono flex items-center gap-1.5">
-            <button
-              onClick={() => window.print()}
-              className="px-2 py-0.5 bg-slate-900 hover:bg-slate-800 text-white rounded font-bold transition cursor-pointer active:scale-95"
-            >
-              🖨️ 列印/輸出官方簽核單
-            </button>
-            <span className="text-teal-800 font-black bg-teal-100 px-2 py-0.5 rounded border border-teal-300">
-              🛡️ 史塔克專屬提案
-            </span>
-            {lineProfile?.displayName && (
-              <span className="hidden sm:inline text-cyan-800 font-black bg-cyan-100 px-2 py-0.5 rounded border border-cyan-300">
-                👤 {lineProfile.displayName}
+        {/* Top Header Bar */}
+        <header className="sticky top-0 z-50 bg-[#F4EFE6]/95 backdrop-blur-md border-b border-[#E2D9C8] px-4 py-2.5 print:hidden">
+          <div className="max-w-5xl mx-auto flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-teal-600 inline-block animate-pulse"></span>
+              <span className="font-black text-xs md:text-sm text-[#0F172A]">
+                <EditableText id="stark_header_title" defaultText="史塔克運動科學團隊 — AI 運動顧問與雙通道智能店長系統" />
               </span>
-            )}
+            </div>
+            <div className="text-[10px] md:text-xs text-slate-600 font-mono flex items-center gap-1.5">
+              <button
+                onClick={() => window.print()}
+                className="px-2 py-0.5 bg-slate-900 hover:bg-slate-800 text-white rounded font-bold transition cursor-pointer active:scale-95"
+              >
+                🖨️ 列印/輸出官方簽核單
+              </button>
+              <span className="text-teal-800 font-black bg-teal-100 px-2 py-0.5 rounded border border-teal-300">
+                🛡️ 史塔克專屬提案
+              </span>
+              {lineProfile?.displayName && (
+                <span className="hidden sm:inline text-cyan-800 font-black bg-cyan-100 px-2 py-0.5 rounded border border-cyan-300">
+                  👤 {lineProfile.displayName}
+                </span>
+              )}
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      {/* Mobile Mode: Native Vertical Continuous Scroll View inside LINE LIFF */}
-      <div className="block md:hidden w-full max-w-xl mx-auto p-3 space-y-6 overflow-y-auto touch-pan-y print:hidden" style={{ WebkitOverflowScrolling: "touch" }}>
-        <div className="bg-[#FFFDF9] border border-[#E2D9C8] rounded-3xl p-4 shadow-xl backdrop-blur-md">
-          {sectionCover}
-        </div>
-        <div className="bg-[#FFFDF9] border border-[#E2D9C8] rounded-3xl p-4 shadow-xl backdrop-blur-md">
-          {sectionRequirements}
-        </div>
-        <div className="bg-[#FFFDF9] border border-[#E2D9C8] rounded-3xl p-4 shadow-xl backdrop-blur-md">
-          {sectionModules}
-        </div>
-        <div className="bg-[#FFFDF9] border border-[#E2D9C8] rounded-3xl p-4 shadow-xl backdrop-blur-md">
-          {sectionPricing}
-        </div>
-        <div className="bg-[#FFFDF9] border border-[#E2D9C8] rounded-3xl p-4 shadow-xl backdrop-blur-md">
-          {sectionTimeline}
-        </div>
-        <div className="bg-[#FFFDF9] border border-[#E2D9C8] rounded-3xl p-4 shadow-xl backdrop-blur-md">
-          {sectionChecklist}
-        </div>
-        <div className="bg-[#FFFDF9] border border-[#E2D9C8] rounded-3xl p-4 shadow-xl backdrop-blur-md mb-8">
-          {sectionSummary}
-        </div>
-        <PrintSignatureSection proposalTitle="【史塔克運動科學團隊】AI 運動顧問與雙通道智能店長系統" />
-      </div>
-
-      {/* Desktop Mode: High-End Vertically & Horizontally Centered Minimalist Deck View */}
-      <div className="hidden md:flex min-h-[calc(100vh-65px)] flex-col justify-between items-center p-6 max-w-5xl mx-auto print:hidden">
-        <main className="w-full h-[78vh] max-h-[700px] bg-[#FFFDF9] border border-[#E2D9C8] rounded-3xl p-8 md:p-10 shadow-2xl flex flex-col justify-center items-center my-auto backdrop-blur-md overflow-y-auto">
-          {allSections[currentSlide].component}
-        </main>
-
-        <footer className="w-full flex justify-between items-center pt-3 border-t border-[#E2D9C8]">
-          <div className="text-xs font-mono font-black text-slate-500">
-            SLIDE {currentSlide + 1} / {allSections.length} — {allSections[currentSlide].title}
+        {/* Mobile Mode: Native Vertical Continuous Scroll View inside LINE LIFF */}
+        <div className="block md:hidden w-full max-w-xl mx-auto p-3 space-y-6 overflow-y-auto touch-pan-y print:hidden" style={{ WebkitOverflowScrolling: "touch" }}>
+          <div className="bg-[#FFFDF9] border border-[#E2D9C8] rounded-3xl p-4 shadow-xl backdrop-blur-md">
+            {sectionCover}
           </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setCurrentSlide((prev) => Math.max(prev - 1, 0))}
-              disabled={currentSlide === 0}
-              className="px-5 py-2 bg-[#F4EFE6] border border-[#D5C9B3] rounded-full text-xs font-bold text-slate-700 hover:bg-teal-700 hover:text-white disabled:opacity-30 transition shadow-xs active:scale-95 cursor-pointer"
-            >
-              ← 上一頁
-            </button>
-            <button
-              onClick={() => setCurrentSlide((prev) => Math.min(prev + 1, allSections.length - 1))}
-              disabled={currentSlide === allSections.length - 1}
-              className="px-5 py-2 bg-[#F4EFE6] border border-[#D5C9B3] rounded-full text-xs font-bold text-slate-700 hover:bg-teal-700 hover:text-white disabled:opacity-30 transition shadow-xs active:scale-95 cursor-pointer"
-            >
-              下一頁 →
-            </button>
-            <button
-              onClick={() => window.print()}
-              className="px-5 py-2 bg-teal-100 border border-teal-300 text-teal-800 rounded-full text-xs font-extrabold hover:bg-teal-700 hover:text-white transition shadow-xs active:scale-95 cursor-pointer"
-            >
-              🖨️ 列印 / PDF
-            </button>
+          <div className="bg-[#FFFDF9] border border-[#E2D9C8] rounded-3xl p-4 shadow-xl backdrop-blur-md">
+            {sectionRequirements}
           </div>
-        </footer>
-      </div>
+          <div className="bg-[#FFFDF9] border border-[#E2D9C8] rounded-3xl p-4 shadow-xl backdrop-blur-md">
+            {sectionModules}
+          </div>
+          <div className="bg-[#FFFDF9] border border-[#E2D9C8] rounded-3xl p-4 shadow-xl backdrop-blur-md">
+            {sectionPricing}
+          </div>
+          <div className="bg-[#FFFDF9] border border-[#E2D9C8] rounded-3xl p-4 shadow-xl backdrop-blur-md">
+            {sectionTimeline}
+          </div>
+          <div className="bg-[#FFFDF9] border border-[#E2D9C8] rounded-3xl p-4 shadow-xl backdrop-blur-md">
+            {sectionChecklist}
+          </div>
+          <div className="bg-[#FFFDF9] border border-[#E2D9C8] rounded-3xl p-4 shadow-xl backdrop-blur-md mb-8">
+            {sectionSummary}
+          </div>
+          <PrintSignatureSection proposalTitle="【史塔克運動科學團隊】AI 運動顧問與雙通道智能店長系統" />
+        </div>
 
-      {/* 8. 🖨️ 官方白紙黑字紙本列印與主管簽核用印區 (電腦版列印) */}
-      <div className="hidden print:block max-w-5xl mx-auto p-4">
-        <PrintSignatureSection proposalTitle="【史塔克運動科學團隊】AI 運動顧問與雙通道智能店長系統" />
+        {/* Desktop Mode: High-End Vertically & Horizontally Centered Minimalist Deck View */}
+        <div className="hidden md:flex min-h-[calc(100vh-65px)] flex-col justify-between items-center p-6 max-w-5xl mx-auto print:hidden">
+          <main className="w-full h-[78vh] max-h-[700px] bg-[#FFFDF9] border border-[#E2D9C8] rounded-3xl p-8 md:p-10 shadow-2xl flex flex-col justify-center items-center my-auto backdrop-blur-md overflow-y-auto">
+            {allSections[currentSlide].component}
+          </main>
+
+          <footer className="w-full flex justify-between items-center pt-3 border-t border-[#E2D9C8]">
+            <div className="text-xs font-mono font-black text-slate-500">
+              SLIDE {currentSlide + 1} / {allSections.length} — {allSections[currentSlide].title}
+            </div>
+
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setCurrentSlide((prev) => Math.max(prev - 1, 0))}
+                disabled={currentSlide === 0}
+                className="px-5 py-2 bg-[#F4EFE6] border border-[#D5C9B3] rounded-full text-xs font-bold text-slate-700 hover:bg-teal-700 hover:text-white disabled:opacity-30 transition shadow-xs active:scale-95 cursor-pointer"
+              >
+                ← 上一頁
+              </button>
+              <button
+                onClick={() => setCurrentSlide((prev) => Math.min(prev + 1, allSections.length - 1))}
+                disabled={currentSlide === allSections.length - 1}
+                className="px-5 py-2 bg-[#F4EFE6] border border-[#D5C9B3] rounded-full text-xs font-bold text-slate-700 hover:bg-teal-700 hover:text-white disabled:opacity-30 transition shadow-xs active:scale-95 cursor-pointer"
+              >
+                下一頁 →
+              </button>
+              <button
+                onClick={() => window.print()}
+                className="px-5 py-2 bg-teal-100 border border-teal-300 text-teal-800 rounded-full text-xs font-extrabold hover:bg-teal-700 hover:text-white transition shadow-xs active:scale-95 cursor-pointer"
+              >
+                🖨️ 列印 / PDF
+              </button>
+            </div>
+          </footer>
+        </div>
+
+        {/* 8. 🖨️ 官方白紙黑字紙本列印與主管簽核用印區 (電腦版列印) */}
+        <div className="hidden print:block max-w-5xl mx-auto p-4">
+          <PrintSignatureSection proposalTitle="【史塔克運動科學團隊】AI 運動顧問與雙通道智能店長系統" />
+        </div>
       </div>
-    </div>
+    </ProposalEditableProvider>
   );
 }

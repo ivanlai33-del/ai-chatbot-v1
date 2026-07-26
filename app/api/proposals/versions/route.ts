@@ -1,6 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ProposalVersionService } from '@/lib/services/ProposalVersionStore';
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+};
+
+export async function OPTIONS() {
+  return NextResponse.json({}, { headers: corsHeaders });
+}
+
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
@@ -10,17 +20,20 @@ export async function GET(req: NextRequest) {
     const { versions, activeVersionId } = ProposalVersionService.getVersions(slug);
     const { version, textOverrides } = ProposalVersionService.getVersionContent(slug, versionId);
 
-    return NextResponse.json({
-      success: true,
-      slug,
-      activeVersionId,
-      currentVersion: version,
-      versions,
-      textOverrides,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        slug,
+        activeVersionId,
+        currentVersion: version,
+        versions,
+        textOverrides,
+      },
+      { headers: corsHeaders }
+    );
   } catch (err: any) {
     console.error('[Proposal Versions GET API Error]:', err);
-    return NextResponse.json({ error: err.message || 'Failed to fetch versions' }, { status: 500 });
+    return NextResponse.json({ error: err.message || 'Failed to fetch versions' }, { status: 500, headers: corsHeaders });
   }
 }
 
@@ -30,38 +43,44 @@ export async function POST(req: NextRequest) {
     const { action = 'CREATE_VERSION', slug, textOverrides = {}, note, versionId } = body;
 
     if (!slug) {
-      return NextResponse.json({ error: 'Proposal slug is required' }, { status: 400 });
+      return NextResponse.json({ error: 'Proposal slug is required' }, { status: 400, headers: corsHeaders });
     }
 
     if (action === 'SET_ACTIVE_VERSION') {
       if (!versionId) {
-        return NextResponse.json({ error: 'versionId is required' }, { status: 400 });
+        return NextResponse.json({ error: 'versionId is required' }, { status: 400, headers: corsHeaders });
       }
       const success = ProposalVersionService.setActiveVersion(slug, versionId);
       const { versions, activeVersionId } = ProposalVersionService.getVersions(slug);
-      return NextResponse.json({
-        success,
-        slug,
-        activeVersionId,
-        versions,
-        message: `Version ${versionId} is now set as active for clients.`,
-      });
+      return NextResponse.json(
+        {
+          success,
+          slug,
+          activeVersionId,
+          versions,
+          message: `Version ${versionId} is now set as active for clients.`,
+        },
+        { headers: corsHeaders }
+      );
     }
 
     // Default: CREATE_VERSION
     const newVersion = ProposalVersionService.createVersion(slug, textOverrides, note);
     const { versions, activeVersionId } = ProposalVersionService.getVersions(slug);
 
-    return NextResponse.json({
-      success: true,
-      slug,
-      createdVersion: newVersion,
-      activeVersionId,
-      versions,
-      message: `Successfully saved new version ${newVersion.versionId}.`,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        slug,
+        createdVersion: newVersion,
+        activeVersionId,
+        versions,
+        message: `Successfully saved new version ${newVersion.versionId}.`,
+      },
+      { headers: corsHeaders }
+    );
   } catch (err: any) {
     console.error('[Proposal Versions POST API Error]:', err);
-    return NextResponse.json({ error: err.message || 'Failed to update version' }, { status: 500 });
+    return NextResponse.json({ error: err.message || 'Failed to update version' }, { status: 500, headers: corsHeaders });
   }
 }

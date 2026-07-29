@@ -289,8 +289,8 @@ export default function XianghuiProposalPage() {
                   <span>2026 年 07 月 29 日</span>
                 </div>
                 <div className="flex justify-between border-b border-slate-100 pb-1.5">
-                  <span className="text-slate-500">建議預算區間</span>
-                  <span className="font-bold text-amber-600">NT$ 50,000 ~ 70,000</span>
+                  <span className="text-slate-500">建置預算區間</span>
+                  <span className="font-bold text-amber-600">NT$ 58,000 ~ 68,000</span>
                 </div>
                 <div className="flex justify-between border-b border-slate-100 pb-1.5">
                   <span className="text-slate-500">預估建置工期</span>

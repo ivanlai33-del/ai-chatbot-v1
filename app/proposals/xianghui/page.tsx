@@ -382,13 +382,90 @@ export default function XianghuiProposalPage() {
             </div>
           </div>
 
+          {/* ROI Comparison Analysis (New Section) */}
+          <div className="bg-[#F0F6FF] border border-blue-200/80 rounded-3xl p-8 shadow-sm mb-12 relative overflow-hidden">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="px-3 py-0.5 bg-blue-600 text-white rounded-full text-xs font-bold">ROI 效益分析</span>
+              <h2 className="text-2xl font-bold font-serif text-slate-900">替代專職小編 ｜ 每年人理成本節省與效益對比</h2>
+            </div>
+            <p className="text-xs text-slate-500 mb-6">
+              傳統聘用一位全職客服小編 vs. 導入「祥惠官方帳號 AI 智慧店長」全天候自動化運作。
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              {/* Traditional Staff Cost */}
+              <div className="bg-white border border-rose-200 rounded-2xl p-6 shadow-sm">
+                <div className="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+                  <span className="text-sm font-bold text-slate-800">👤 聘用全職專責小編 (單人)</span>
+                  <span className="text-xs font-bold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-100">高額固定人事</span>
+                </div>
+                <div className="space-y-2 text-xs text-slate-600 mb-4">
+                  <div className="flex justify-between">
+                    <span>底薪＋勞健保＋退撫提撥（約 NT$ 38,000/月）</span>
+                    <span className="font-semibold text-slate-900">NT$ 456,000 / 年</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>年終獎金 / 節慶獎金（約 1.5 個月）</span>
+                    <span className="font-semibold text-slate-900">NT$ 57,000 / 年</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>辦公設備、培訓與管理行政隱性成本</span>
+                    <span className="font-semibold text-slate-900">約 NT$ 30,000 / 年</span>
+                  </div>
+                </div>
+                <div className="pt-3 border-t border-rose-100 flex justify-between items-center text-sm font-bold text-rose-600">
+                  <span>每年人力總成本支出：</span>
+                  <span className="text-lg">約 NT$ 543,000 / 年</span>
+                </div>
+              </div>
+
+              {/* AI Store Manager Cost */}
+              <div className="bg-white border border-blue-300 ring-2 ring-blue-500/10 rounded-2xl p-6 shadow-md">
+                <div className="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+                  <span className="text-sm font-bold text-slate-900">🤖 祥惠官方帳號 AI 智慧店長 (旗艦版)</span>
+                  <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">24H 無休自動化</span>
+                </div>
+                <div className="space-y-2 text-xs text-slate-600 mb-4">
+                  <div className="flex justify-between">
+                    <span>一次性系統客製建置費（僅首年支付）</span>
+                    <span className="font-semibold text-slate-900">NT$ 68,000 (一次性)</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>全年系統維運與 AI 高階模型費（NT$ 3,500/月 × 12）</span>
+                    <span className="font-semibold text-slate-900">NT$ 42,000 / 年</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>24 小時即時回覆、PDF 比對、業務白名單管理</span>
+                    <span className="font-semibold text-blue-600">全部包含，無額外加班費</span>
+                  </div>
+                </div>
+                <div className="pt-3 border-t border-blue-100 flex justify-between items-center text-sm font-bold text-blue-700">
+                  <span>首年總費用（建置＋全年維運）：</span>
+                  <span className="text-lg">NT$ 110,000 / 首年</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Savings Banner */}
+            <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl p-4 flex flex-col md:flex-row justify-between items-center gap-2 shadow-md">
+              <div className="text-sm">
+                <span className="font-bold text-amber-300">💰 首年即可為貴司省下：</span>
+                <span className="text-base font-extrabold ml-1">約 NT$ 433,000 成本</span>
+                <span className="text-xs text-blue-100 block md:inline md:ml-2">(次年起每年省下超過 50 萬元人事費用)</span>
+              </div>
+              <div className="text-xs font-semibold bg-white/20 px-3 py-1.5 rounded-xl backdrop-blur-sm border border-white/30">
+                相當於用 <span className="text-amber-300 font-bold">1/5 的小編薪水</span> 聘請 24 小時全天候頂級客服與業務管家！
+              </div>
+            </div>
+          </div>
+
           {/* Pricing Plans Selection */}
           <div className="mb-12">
             <h2 className="text-2xl font-bold font-serif text-slate-900 mb-2 flex items-center gap-2">
-              <span>💎</span> 建議建置方案 (雙版本規劃)
+              <span>💎</span> 建議建置方案與月費說明 (雙版本規劃)
             </h2>
             <p className="text-xs text-slate-500 mb-6">
-              請點擊選擇符合祥惠有限公司需求之方案，金額皆透明公開。
+              系統建置完成並驗收後，即進入每月維運期。月費已包含雲端伺服器運算、AI 對話模型點數、後台資料庫與定期系統更新維護，透明無隱藏費用。
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -415,11 +492,11 @@ export default function XianghuiProposalPage() {
                     </div>
                   </div>
 
-                  <p className="text-xs text-slate-600 mb-6 pb-4 border-b border-slate-100 leading-relaxed">
+                  <p className="text-xs text-slate-600 mb-4 pb-3 border-b border-slate-100 leading-relaxed">
                     適合基礎建置，包含一般農場客戶基本問答、圖文選單、洽詢表單與 6 人業務白名單。
                   </p>
 
-                  <ul className="text-xs text-slate-700 space-y-2.5 mb-8">
+                  <ul className="text-xs text-slate-700 space-y-2.5 mb-6">
                     <li className="flex items-center gap-2">
                       <span className="text-blue-600 font-bold">✓</span> 一般客戶 3 種互動（圖文選單 + 關鍵字卡片 + 洽詢表單）
                     </li>
@@ -435,9 +512,16 @@ export default function XianghuiProposalPage() {
                   </ul>
                 </div>
 
-                <div className="pt-4 border-t border-slate-100 flex justify-between items-center text-xs">
-                  <span className="text-slate-500">月費（維運/AI對話費）：</span>
-                  <span className="font-bold text-amber-600">NT$ 2,500 / 月 (含稅 2,625)</span>
+                <div className="pt-4 border-t border-slate-100 bg-slate-50/70 -mx-8 -mb-8 p-6 rounded-b-3xl space-y-2">
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="font-bold text-slate-700">每月維運費用 (建置交屋後收費)：</span>
+                    <span className="font-bold text-blue-600 text-sm">NT$ 2,500 / 月 (含稅 2,625)</span>
+                  </div>
+                  <ul className="text-[11px] text-slate-500 space-y-1">
+                    <li>• 包含雲端伺服器運算與 7×24 小時服務穩定度保障</li>
+                    <li>• 包含每月基礎 AI 對話 token 額度配額</li>
+                    <li>• 包含資料庫安全備份與系統定期技術更新</li>
+                  </ul>
                 </div>
               </div>
 
@@ -469,11 +553,11 @@ export default function XianghuiProposalPage() {
                     </div>
                   </div>
 
-                  <p className="text-xs text-slate-600 mb-6 pb-4 border-b border-slate-100 leading-relaxed">
+                  <p className="text-xs text-slate-600 mb-4 pb-3 border-b border-slate-100 leading-relaxed">
                     完整涵蓋原廠進口產品 PDF 智慧檢索、15 人業務白名單、動態週期筆記與雙頻道廣播。
                   </p>
 
-                  <ul className="text-xs text-slate-700 space-y-2.5 mb-8">
+                  <ul className="text-xs text-slate-700 space-y-2.5 mb-6">
                     <li className="flex items-center gap-2">
                       <span className="text-blue-600 font-bold">★</span> 一般客戶 3 種互動（祥惠官方帳號 AI 智慧店長自動拉出 PDF 與多圖卡片）
                     </li>
@@ -489,9 +573,16 @@ export default function XianghuiProposalPage() {
                   </ul>
                 </div>
 
-                <div className="pt-4 border-t border-slate-100 flex justify-between items-center text-xs">
-                  <span className="text-slate-500">月費（高階AI模型與維運）：</span>
-                  <span className="font-bold text-amber-600">NT$ 3,500 / 月 (含稅 3,675)</span>
+                <div className="pt-4 border-t border-blue-100 bg-blue-50/50 -mx-8 -mb-8 p-6 rounded-b-3xl space-y-2 border-t">
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="font-bold text-slate-800">每月維運費用 (建置交屋後收費)：</span>
+                    <span className="font-bold text-blue-700 text-sm">NT$ 3,500 / 月 (含稅 3,675)</span>
+                  </div>
+                  <ul className="text-[11px] text-slate-600 space-y-1">
+                    <li>• 包含高階多模態 AI 對話點數與原廠 PDF 檔案解析算力</li>
+                    <li>• 包含高頻次雲端數據同步與優先伺服器通道</li>
+                    <li>• 包含專屬線上技術顧問技術支援與功能優化維護</li>
+                  </ul>
                 </div>
               </div>
             </div>

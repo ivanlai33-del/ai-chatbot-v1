@@ -493,7 +493,7 @@ export default function XianghuiProposalPage() {
           <div className="bg-[#F0F6FF] border border-blue-200/80 rounded-3xl p-8 shadow-sm mb-12 relative overflow-hidden">
             <div className="flex items-center gap-2 mb-2">
               <span className="px-3 py-0.5 bg-blue-600 text-white rounded-full text-xs font-bold">ROI 效益分析</span>
-              <h2 className="text-2xl font-bold font-serif text-slate-900">替代專職小編 ｜ 每年人理成本節省與效益對比</h2>
+              <h2 className="text-2xl font-bold font-serif text-slate-900">替代專職小編 ｜ 每年人事成本節省與效益對比</h2>
             </div>
             <p className="text-xs text-slate-500 mb-6">
               傳統聘用一位全職客服小編 vs. 導入「祥惠官方帳號 AI 智慧店長」全天候自動化運作。

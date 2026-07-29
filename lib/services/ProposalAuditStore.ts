@@ -53,6 +53,12 @@ export const ALL_PROPOSALS: ProposalProjectConfig[] = [
     createdAt: '2026-07-25',
     validPasswords: ['20260725', '0725', '20260724', '0724'],
   },
+  {
+    slug: 'xianghui',
+    clientTitle: '祥惠有限公司 (AI 店長與業務管家)',
+    createdAt: '2026-07-29',
+    validPasswords: ['20260729', '0729', '20260725', '0725', '23215860'],
+  },
 ];
 
 interface AuditStoreData {

@@ -63,6 +63,24 @@ export default function ProposalsIndexPage() {
           </form>
         ) : (
           <div className="space-y-4">
+            {/* Xianghui Proposal */}
+            <div className="p-4 bg-[#E8F5E9] border border-[#A5D6A7] rounded-2xl flex justify-between items-center">
+              <div>
+                <h3 className="font-bold font-serif text-[#1B4332]">
+                  🌿 【祥惠有限公司】AI店長與業務管家建置提案
+                </h3>
+                <p className="text-xs text-[#388E3C] mt-0.5">
+                  畜牧業(雞/豬) / 業務白名單推播 / 三大互動模式 / 後台管理
+                </p>
+              </div>
+              <Link
+                href="/proposals/xianghui"
+                className="px-4 py-2 bg-[#2E7D32] text-[#FFFFFF] text-xs font-bold rounded-xl hover:bg-[#1B4332] transition shadow"
+              >
+                檢視提案 ➔
+              </Link>
+            </div>
+
             {/* Butter Toast Proposal */}
             <div className="p-4 bg-[#EFE7DA] border border-[#D6A86E] rounded-2xl flex justify-between items-center">
               <div>

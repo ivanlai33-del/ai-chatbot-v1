@@ -80,6 +80,13 @@ export default function XianghuiProposalPage() {
   // Selected Plan State: 'starter' (5.8萬) | 'flagship' (6.8萬)
   const [selectedPlan, setSelectedPlan] = useState<"starter" | "flagship">("flagship");
 
+  // Calculation for Deposit and Balance
+  const basePrice = selectedPlan === "flagship" ? 68000 : 58000;
+  const depositAmount = basePrice * 0.5; // 50% 訂金
+  const balanceAmount = basePrice * 0.5; // 50% 尾款
+  const depositTaxed = depositAmount * 1.05;
+  const balanceTaxed = balanceAmount * 1.05;
+
   // Passwords: Today (20260729 / 0729), Tax ID (23215860)
   const VALID_PASSWORDS = ["20260729", "0729", "23215860", "20260725", "0725"];
 
@@ -174,7 +181,7 @@ export default function XianghuiProposalPage() {
 
       await sendProposalAuditTrack("xianghui", "SUBMIT_INVOICE_INFO", infoData);
       setIsSaved(true);
-      alert("✅ 開票與匯款資料已成功確認送出！專案組已收到對帳資訊。");
+      alert("✅ 開票與匯款對帳資訊已成功確認送出！專案團隊已收到對帳資訊。");
     } catch (err) {
       console.error(err);
       alert("❌ 儲存失敗，請稍後再試。");
@@ -294,7 +301,7 @@ export default function XianghuiProposalPage() {
                 </div>
                 <div className="flex justify-between border-b border-slate-100 pb-1.5">
                   <span className="text-slate-500">預估建置工期</span>
-                  <span>3 ~ 4 週</span>
+                  <span>3 ~ 4 週 (包含線上驗收與上線)</span>
                 </div>
                 <div className="flex justify-between pt-1">
                   <span className="text-slate-500">規劃顧問</span>
@@ -382,7 +389,7 @@ export default function XianghuiProposalPage() {
             </div>
           </div>
 
-          {/* ROI Comparison Analysis (New Section) */}
+          {/* ROI Comparison Analysis */}
           <div className="bg-[#F0F6FF] border border-blue-200/80 rounded-3xl p-8 shadow-sm mb-12 relative overflow-hidden">
             <div className="flex items-center gap-2 mb-2">
               <span className="px-3 py-0.5 bg-blue-600 text-white rounded-full text-xs font-bold">ROI 效益分析</span>
@@ -588,13 +595,107 @@ export default function XianghuiProposalPage() {
             </div>
           </div>
 
+          {/* Implementation Timeline & Payment Terms (New Section) */}
+          <div className="bg-white border border-slate-200/80 rounded-3xl p-8 shadow-sm mb-12 space-y-8">
+            {/* Timeline */}
+            <div>
+              <div className="flex justify-between items-center border-b border-slate-100 pb-3 mb-6">
+                <h2 className="text-xl font-bold font-serif text-slate-900 flex items-center gap-2">
+                  <span>🚀</span> 專案建置與驗收上線流程 (約 3 ~ 4 週)
+                </h2>
+                <span className="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-full font-bold border border-blue-200">
+                  全遠端無縫導入
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-2">
+                  <span className="inline-block px-2.5 py-0.5 bg-blue-600 text-white rounded-full text-[10px] font-bold">
+                    PHASE 1 (Week 1)
+                  </span>
+                  <h3 className="text-sm font-bold text-slate-900">需求對齊 ➔ 簽約付訂金 (50%)</h3>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    確定雞隻/豬隻產品資料結構、匯入 PDF 產品知識庫，完成合約簽訂與第一期建置訂金匯款。
+                  </p>
+                </div>
+                <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-2">
+                  <span className="inline-block px-2.5 py-0.5 bg-blue-500 text-white rounded-full text-[10px] font-bold">
+                    PHASE 2 (Week 2~3)
+                  </span>
+                  <h3 className="text-sm font-bold text-slate-900">AI 智慧店長訓練 ➔ 雙頻道部署</h3>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    進行對話模型訓練、設定一般客戶 3 大互動模式，以及建立業務白名單後台廣播通道。
+                  </p>
+                </div>
+                <div className="bg-blue-50/80 p-5 rounded-2xl border border-blue-200 space-y-2">
+                  <span className="inline-block px-2.5 py-0.5 bg-emerald-600 text-white rounded-full text-[10px] font-bold">
+                    PHASE 3 (Week 4)
+                  </span>
+                  <h3 className="text-sm font-bold text-slate-900">線上驗收 ➔ 付尾款 (50%) ➔ 系統上線</h3>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    提供內部測試環境測試對話與白名單推播，驗收無誤後支付建置尾款 50%，開通正式營運與每月維運！
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Payment Milestone Terms */}
+            <div className="pt-6 border-t border-slate-100">
+              <h3 className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+                <span>🏦</span> 建置費用付款條件 (兩期款付款細節)
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-xs font-bold text-blue-700 bg-blue-100 px-2.5 py-0.5 rounded-md">
+                      第一期：簽約訂金 (50%)
+                    </span>
+                    <span className="text-sm font-bold text-slate-900">
+                      NT$ {depositAmount.toLocaleString()} <span className="text-xs font-normal text-slate-500">(含稅 ${depositTaxed.toLocaleString()})</span>
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-600">
+                    雙方確認報價與需求細節，簽訂正式合約後支付。專案小組收到首期訂金即啟動 AI 模型訓練與 LINE 官方帳號 API 串接工程。
+                  </p>
+                </div>
+
+                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-xs font-bold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-md">
+                      第二期：線上驗收尾款 (50%)
+                    </span>
+                    <span className="text-sm font-bold text-slate-900">
+                      NT$ {balanceAmount.toLocaleString()} <span className="text-xs font-normal text-slate-500">(含稅 ${balanceTaxed.toLocaleString()})</span>
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-600">
+                    系統建置完成，經祥惠團隊線上測試驗收無誤後支付尾款。結清尾款後立刻交屋並開通正式營運與後台廣播權限。
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Remittance Bank Info */}
+            <div className="p-4 bg-blue-50/70 rounded-2xl border border-blue-200 text-xs text-slate-700 space-y-1">
+              <div className="font-bold text-blue-800 flex items-center gap-1.5 mb-1 text-sm">
+                <span>💳</span> 指定匯款轉帳銀行帳戶資訊：
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <div>• <b>匯款銀行</b>：{PROVIDER_INFO.bankName}</div>
+                <div>• <b>戶名</b>：{PROVIDER_INFO.accountName}</div>
+                <div>• <b>銀行代碼</b>：<span className="font-mono font-bold text-blue-700">{PROVIDER_INFO.bankCode}</span></div>
+                <div>• <b>匯款帳號</b>：<span className="font-mono font-bold text-blue-700">{PROVIDER_INFO.accountNumber}</span></div>
+              </div>
+            </div>
+          </div>
+
           {/* Form & Invoice Checkout Section */}
           <div className="bg-white border border-slate-200/80 rounded-3xl p-8 shadow-sm mb-12">
             <h2 className="text-xl font-bold font-serif text-slate-900 mb-2 flex items-center gap-2">
-              <span>💳</span> 線上對帳與發票資料確認
+              <span>🧾</span> 發票開立與首期訂金對帳登記
             </h2>
             <p className="text-xs text-slate-500 mb-6">
-              請核對貴司抬頭與統編，完成資料確認後可直接進行藍新金流線上月費訂閱或銀行匯款對帳。
+              請核對貴司發票抬頭與統編，並填寫預計匯款對帳帳號後五碼，專案團隊將第一時間為您進行訂金核對與發票開立。
             </p>
 
             <form onSubmit={handleSaveInvoiceInfo} className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -629,7 +730,7 @@ export default function XianghuiProposalPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">匯款銀行帳號後 5 碼 (匯款對帳用)</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">預計匯款帳號後 5 碼 (首期訂金對帳用)</label>
                 <input
                   type="text"
                   placeholder="例如: 88219"
@@ -639,7 +740,7 @@ export default function XianghuiProposalPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">聯絡 Email</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">電子發票通知 Email</label>
                 <input
                   type="email"
                   placeholder="contact@xianghui.com"
@@ -655,7 +756,7 @@ export default function XianghuiProposalPage() {
                   disabled={isSubmitting}
                   className="flex-1 py-3 bg-[#0066FF] hover:bg-[#0052CC] text-white font-bold rounded-xl shadow-md transition text-sm flex items-center justify-center gap-2"
                 >
-                  <span>📝</span> {isSubmitting ? "資料確認中..." : "送出對帳與開票資訊"}
+                  <span>📝</span> {isSubmitting ? "資料對帳中..." : "送出訂金對帳與發票資訊"}
                 </button>
 
                 <button

@@ -81,3 +81,28 @@ html, body, div, main, section, aside, nav, article {
         @apply bg-[#E2E8F0] text-foreground antialiased;
     }
 }
+
+/* 浮動漸入滑動動畫與卡片 hover 微效果 */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.hover-float {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hover-float:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px -8px rgba(0, 102, 255, 0.12);
+}

@@ -313,7 +313,7 @@ export default function XianghuiProposalPage() {
         {/* Main Content */}
         <main className="max-w-5xl mx-auto px-4 pt-10">
           {/* Header Banner - Light Fresh Visual */}
-          <div className="bg-gradient-to-br from-white via-[#F0F6FF] to-[#E5F0FF] rounded-3xl p-8 border border-blue-200/80 shadow-[0_10px_30px_rgba(0,102,255,0.08)] mb-8 relative overflow-hidden">
+          <div className="bg-gradient-to-br from-white via-[#F0F6FF] to-[#E5F0FF] rounded-3xl p-8 border border-blue-200/80 shadow-[0_10px_30px_rgba(0,102,255,0.08)] mb-8 relative overflow-hidden animate-fade-in-up hover-float">
             <div className="absolute -right-12 -bottom-12 opacity-[0.04] text-[200px] pointer-events-none select-none text-blue-900">
               🧬
             </div>
@@ -333,7 +333,7 @@ export default function XianghuiProposalPage() {
 
           {/* Customer & Proposal Meta Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm animate-fade-in-up hover-float">
               <h3 className="text-xs uppercase font-bold text-blue-600 tracking-wider mb-4 flex items-center gap-2">
                 <span>🏢</span> 客戶對象資訊 (CLIENT)
               </h3>
@@ -402,7 +402,7 @@ export default function XianghuiProposalPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm">
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover-float">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-xl">🐔🐖</span>
                   <h3 className="font-bold text-base text-slate-900">痛點 1：物種分類細緻（雞與豬隻），客戶資料缺乏</h3>
@@ -412,7 +412,7 @@ export default function XianghuiProposalPage() {
                 </p>
               </div>
 
-              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm">
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover-float">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-xl">📅</span>
                   <h3 className="font-bold text-base text-slate-900">痛點 2：牧場週期提醒手動繁瑣，業務容易疏漏</h3>
@@ -422,7 +422,7 @@ export default function XianghuiProposalPage() {
                 </p>
               </div>
 
-              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm">
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover-float">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-xl">💬</span>
                   <h3 className="font-bold text-base text-slate-900">痛點 3：業務需要現場查問題，客戶需要 24H 諮詢</h3>
@@ -432,7 +432,7 @@ export default function XianghuiProposalPage() {
                 </p>
               </div>
 
-              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm">
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm hover-float">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-xl">📣</span>
                   <h3 className="font-bold text-base text-slate-900">痛點 4：內部訊息怕誤發給外部客戶，干擾公頻</h3>
@@ -456,7 +456,7 @@ export default function XianghuiProposalPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-white border border-blue-200 p-5 rounded-2xl shadow-sm">
+              <div className="bg-white border border-blue-200 p-5 rounded-2xl shadow-sm hover-float">
                 <h3 className="font-bold text-sm text-blue-700 mb-2 flex items-center gap-1.5">
                   <span>📱</span> 模組 1：一般客戶 3 大互動模式 (圖文/AI/表單)
                 </h3>
@@ -467,7 +467,7 @@ export default function XianghuiProposalPage() {
                 </ul>
               </div>
 
-              <div className="bg-white border border-amber-200 p-5 rounded-2xl shadow-sm">
+              <div className="bg-white border border-amber-200 p-5 rounded-2xl shadow-sm hover-float">
                 <h3 className="font-bold text-sm text-amber-700 mb-2 flex items-center gap-1.5">
                   <span>🔐</span> 模組 2：業務白名單系統 (4~6位業務人員)
                 </h3>
@@ -478,7 +478,7 @@ export default function XianghuiProposalPage() {
                 </ul>
               </div>
 
-              <div className="bg-white border border-blue-200 p-5 rounded-2xl shadow-sm">
+              <div className="bg-white border border-blue-200 p-5 rounded-2xl shadow-sm hover-float">
                 <h3 className="font-bold text-sm text-blue-700 mb-2 flex items-center gap-1.5">
                   <span>📢</span> 模組 3：雙頻道獨立廣播後台引擎
                 </h3>
@@ -489,7 +489,7 @@ export default function XianghuiProposalPage() {
                 </ul>
               </div>
 
-              <div className="bg-white border border-blue-200 p-5 rounded-2xl shadow-sm">
+              <div className="bg-white border border-blue-200 p-5 rounded-2xl shadow-sm hover-float">
                 <h3 className="font-bold text-sm text-blue-700 mb-2 flex items-center gap-1.5">
                   <span>📚</span> 模組 4：祥惠產品 PDF 大腦與知識庫訓練
                 </h3>

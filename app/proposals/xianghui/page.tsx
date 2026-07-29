@@ -171,18 +171,24 @@ export default function XianghuiProposalPage() {
 
   useEffect(() => {
     // 🔑 Admin Bypass Mode (?admin=87257257)
+    let isAdminAccess = false;
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get("admin") === "87257257") {
+        isAdminAccess = true;
         setIsAdminBypass(true);
         setIsUnlocked(true);
       }
     }
 
+    // 🔥 確保訪客一開啟頁面（無論解鎖與否），立刻記錄 IP 與 Session 軌跡至後台
+    sendProposalAuditTrack("xianghui", "PAGE_VISITED_SESSION", {
+      isUnlockedDirectly: isAdminAccess,
+    }, isAdminAccess);
+
     const unlocked = sessionStorage.getItem("proposal_unlocked_xianghui");
     if (unlocked === "true") {
       setIsUnlocked(true);
-      sendProposalAuditTrack("xianghui", "PAGE_VISITED_SESSION");
     }
   }, []);
 

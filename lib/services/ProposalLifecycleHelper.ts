@@ -15,7 +15,7 @@ export function calculateProposalLifecycle(createdAtStr: string) {
   }
 }
 
-export async function sendProposalAuditTrack(slug: string, action: string, details?: any): Promise<any> {
+export async function sendProposalAuditTrack(slug: string, action: string, details?: any, isAdminAccess?: boolean): Promise<any> {
   try {
     let sessionId = sessionStorage.getItem(`audit_session_${slug}`);
     if (!sessionId) {
@@ -30,6 +30,7 @@ export async function sendProposalAuditTrack(slug: string, action: string, detai
         proposalSlug: slug,
         sessionId,
         action,
+        isAdminAccess: isAdminAccess || false,
         details,
       }),
     });

@@ -198,7 +198,7 @@ export default function XianghuiProposalPage() {
         {isAdminBypass && <OwnerBypassBanner />}
         <FraudAlertAndDomainVerifier />
 
-        {/* Lock Screen Modal - Clean Tech Modal */}
+        {/* Lock Screen Modal */}
         {!isUnlocked && (
           <div className="fixed inset-0 z-[999] bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4">
             <div className="max-w-md w-full bg-white border border-slate-200/80 rounded-3xl p-8 shadow-2xl text-center">
@@ -233,7 +233,7 @@ export default function XianghuiProposalPage() {
 
         {/* Main Content */}
         <main className="max-w-5xl mx-auto px-4 pt-10">
-          {/* Header Banner - Light Fresh Bio-Tech SaaS Visual */}
+          {/* Header Banner - Light Fresh Visual */}
           <div className="bg-gradient-to-br from-white via-[#F0F6FF] to-[#E5F0FF] rounded-3xl p-8 border border-blue-200/80 shadow-[0_10px_30px_rgba(0,102,255,0.08)] mb-8 relative overflow-hidden">
             <div className="absolute -right-12 -bottom-12 opacity-[0.04] text-[200px] pointer-events-none select-none text-blue-900">
               🧬
@@ -247,7 +247,7 @@ export default function XianghuiProposalPage() {
                 祥惠官方帳號 AI 智慧店長 & 業務白名單廣播系統建置案
               </h1>
               <p className="text-sm text-slate-600 max-w-2xl leading-relaxed">
-                專為祥惠有限公司（進口畜牧生技、雞/豬養殖保健與營養產品）量身打造！具備清爽生技醫療風格，整合一般農場客戶的三大互動模式（含產品 PDF 手冊檢索）與內部業務專屬白名單獨立頻道。
+                專為祥惠有限公司（進口畜牧生技、雞/豬養殖保健與營養產品）量身打造！無須重新做網站，直接將流量與農場客戶導入 LINE 官方帳號，完美整合客戶互動、PDF 產品手冊檢索與內部 4~6 人業務白名單廣播。
               </p>
             </div>
           </div>
@@ -276,8 +276,8 @@ export default function XianghuiProposalPage() {
                   <span className="text-xs text-slate-800">彰化縣大村鄉加錫村加錫三巷5-28號</span>
                 </div>
                 <div className="flex justify-between pt-1">
-                  <span className="text-slate-500">產業領域</span>
-                  <span className="text-xs font-semibold text-blue-700">進口畜牧生技 / 動物保健與營養產品</span>
+                  <span className="text-slate-500">產業領域與對象</span>
+                  <span className="text-xs font-semibold text-blue-700">進口畜牧生技 / 雞隻(白肉/蛋/土/種雞)與豬隻農場</span>
                 </div>
               </div>
             </div>
@@ -311,78 +311,178 @@ export default function XianghuiProposalPage() {
             </div>
           </div>
 
-          {/* Core Feature Matrix */}
+          {/* Section: Project Requirements Alignment (New Detailed Alignment Section) */}
           <div className="mb-12">
-            <h2 className="text-2xl font-bold font-serif text-slate-900 mb-2 flex items-center gap-2">
-              <span>🔹</span> 核心功能規劃與系統架構
-            </h2>
-            <p className="text-xs text-slate-500 mb-6">
-              結合一般農場客戶的三大互動模式、業務人員白名單獨立頻道與完整的後台管理機制。
-            </p>
+            <div className="flex justify-between items-center border-b border-slate-200 pb-3 mb-6">
+              <h2 className="text-2xl font-bold font-serif text-slate-900 flex items-center gap-2">
+                <span>🎯</span> 需求規格精準對齊 — 祥惠現況與 AI 解決方案
+              </h2>
+              <span className="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-full font-bold border border-blue-200">
+                100% 貼合實際對話需求
+              </span>
+            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Feature 1 */}
-              <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm relative overflow-hidden hover:border-blue-300 transition">
-                <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center font-bold text-lg mb-4 border border-blue-100">
-                  📱
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xl">🐔🐖</span>
+                  <h3 className="font-bold text-base text-slate-900">痛點 1：物種分類細緻（雞與豬隻），客戶資料缺乏</h3>
                 </div>
-                <h3 className="text-base font-bold text-slate-900 mb-2">1. 一般客戶三大互動模式</h3>
-                <ul className="text-xs text-slate-600 space-y-2.5 leading-relaxed">
-                  <li className="flex items-start gap-1.5">
-                    <span className="text-blue-500 font-bold">▶</span>
-                    <span><strong>富圖文選單 (Rich Menu)</strong>：快速進入「雞隻專區」、「豬隻專區」、「營養保健」、「公司諮詢」。</span>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  祥惠服務項目以「雞（白肉雞、蛋雞、土雞、種雞）與豬」為主。<b>方案：無需先做官網，直接在 LINE 設定樹狀引導與 AI 智庫，客戶一進來就能依動物種類與需求自動切換對應回答與產品。</b>
+                </p>
+              </div>
+
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xl">📅</span>
+                  <h3 className="font-bold text-base text-slate-900">痛點 2：牧場週期提醒手動繁瑣，業務容易疏漏</h3>
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  每一物種約有 4~5 種提醒內容（週週期），需提示業務提醒客戶該用藥或回購。<b>方案：系統提供業務白名單獨占功能，每週自動發送定時推播提醒責任業務，主動關懷農場客戶。</b>
+                </p>
+              </div>
+
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xl">💬</span>
+                  <h3 className="font-bold text-base text-slate-900">痛點 3：業務需要現場查問題，客戶需要 24H 諮詢</h3>
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  業務在現場遇到牧場突發狀況或特定週數病害需查資料。<b>方案：祥惠官方帳號 AI 智慧店長具備「固定選單樹 + 自由 AI 問答 + PDF 仿單檢索」，業務與農場客戶隨時提問秒回解答。</b>
+                </p>
+              </div>
+
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xl">📣</span>
+                  <h3 className="font-bold text-base text-slate-900">痛點 4：內部訊息怕誤發給外部客戶，干擾公頻</h3>
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  公司內部進貨通知或業務規範不可發給農場客戶。<b>方案：後台建置「業務白名單廣播引擎」，精準推播給 4~6 位自家業務，與一般農場客戶公頻 100% 安全隔離。</b>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* 4 Core Build Modules (Detailed System Architecture Section) */}
+          <div className="mb-12">
+            <div className="flex justify-between items-center border-b border-slate-200 pb-3 mb-6">
+              <h2 className="text-2xl font-bold font-serif text-slate-900 flex items-center gap-2">
+                <span>⚙️</span> 4 大核心建置模組 ✕ 後台與廣播架構拆解
+              </h2>
+              <span className="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-full font-bold border border-blue-200">
+                完整系統架構
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-white border border-blue-200 p-5 rounded-2xl shadow-sm">
+                <h3 className="font-bold text-sm text-blue-700 mb-2 flex items-center gap-1.5">
+                  <span>📱</span> 模組 1：一般客戶 3 大互動模式 (圖文/AI/表單)
+                </h3>
+                <ul className="text-xs text-slate-600 space-y-1.5 leading-relaxed">
+                  <li>• <b>模式 A (圖文選單)</b>：直覺點選雞（4大細分）/ 豬專區、營養保健與公司地圖電話。</li>
+                  <li>• <b>模式 B (AI 對話與 PDF 拉出)</b>：輸入關鍵字，AI 自動彈出產品多圖卡片與原廠 PDF 說明。</li>
+                  <li>• <b>模式 C (洽詢表單)</b>：農場客戶線上填寫規模與採購需求，自動歸檔派單。</li>
+                </ul>
+              </div>
+
+              <div className="bg-white border border-amber-200 p-5 rounded-2xl shadow-sm">
+                <h3 className="font-bold text-sm text-amber-700 mb-2 flex items-center gap-1.5">
+                  <span>🔐</span> 模組 2：業務白名單系統 (4~6位業務人員)
+                </h3>
+                <ul className="text-xs text-slate-600 space-y-1.5 leading-relaxed">
+                  <li>• <b>身分自動綁定</b>：識別業務 LINE 身分，自動切換至業務專屬選單與內部筆記。</li>
+                  <li>• <b>牧場週期提醒</b>：設定各物種 4~5 種週期提示，每週自動推播提醒業務聯絡客戶。</li>
+                  <li>• <b>現場問答工具</b>：業務可隨時隨地詢問 AI 智慧店長獲取畜牧問題解答與產品資料。</li>
+                </ul>
+              </div>
+
+              <div className="bg-white border border-blue-200 p-5 rounded-2xl shadow-sm">
+                <h3 className="font-bold text-sm text-blue-700 mb-2 flex items-center gap-1.5">
+                  <span>📢</span> 模組 3：雙頻道獨立廣播後台引擎
+                </h3>
+                <ul className="text-xs text-slate-600 space-y-1.5 leading-relaxed">
+                  <li>• <b>內部業務獨立頻道</b>：公司內部訊息、銷售政策推播給白名單業務，<b>絕對不推至公頻</b>。</li>
+                  <li>• <b>公開客戶廣播頻道</b>：針對一般畜牧農場發布最新產品公告、防疫新知與促銷訊息。</li>
+                  <li>• <b>訊息費用管控</b>：精準推播機制，防止群發訊息費用無謂浪費。</li>
+                </ul>
+              </div>
+
+              <div className="bg-white border border-blue-200 p-5 rounded-2xl shadow-sm">
+                <h3 className="font-bold text-sm text-blue-700 mb-2 flex items-center gap-1.5">
+                  <span>📚</span> 模組 4：祥惠產品 PDF 大腦與知識庫訓練
+                </h3>
+                <ul className="text-xs text-slate-600 space-y-1.5 leading-relaxed">
+                  <li>• <b>原廠 PDF 仿單解析</b>：直接上傳進口產品說明手冊 PDF，AI 大腦自動學習。</li>
+                  <li>• <b>病害與週數應對</b>：針對特定週數易發問題，提供精準注意事項與產品搭配建議。</li>
+                  <li>• <b>定期知識庫維護</b>：隨時更新產品規格，確保 AI 回答 100% 準確。</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Service Deliverables Checklist Section (New Deliverables Section) */}
+          <div className="mb-12">
+            <div className="flex justify-between items-center border-b border-slate-200 pb-3 mb-6">
+              <h2 className="text-2xl font-bold font-serif text-slate-900 flex items-center gap-2">
+                <span>📦</span> 服務交付清單 ✕ 每月售後維護項目
+              </h2>
+              <span className="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-full font-bold border border-blue-200">
+                完整交付保障
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+                <h3 className="font-bold text-base text-slate-900 mb-3 flex items-center gap-2">
+                  <span className="text-blue-600">📌</span> 一次性建置服務交付項目
+                </h3>
+                <ul className="text-xs text-slate-700 space-y-2.5">
+                  <li className="flex items-center gap-2">
+                    <span className="text-blue-600 font-bold">✓</span> 祥惠官方帳號 AI 智慧店長模型建置與對話訓練
                   </li>
-                  <li className="flex items-start gap-1.5">
-                    <span className="text-blue-500 font-bold">▶</span>
-                    <span><strong>對話與 PDF 卡片拉出</strong>：客戶輸入「豬」或「蛋雞營養品」，祥惠官方帳號 AI 智慧店長自動拉出進口產品卡片與 PDF 說明手冊。</span>
+                  <li className="flex items-center gap-2">
+                    <span className="text-blue-600 font-bold">✓</span> LINE 官方帳號 Rich Menu 富圖文選單設計與設置
                   </li>
-                  <li className="flex items-start gap-1.5">
-                    <span className="text-blue-500 font-bold">▶</span>
-                    <span><strong>洽詢表單與門市地圖</strong>：線上留單採購諮詢、地圖導航與直撥電話。</span>
+                  <li className="flex items-center gap-2">
+                    <span className="text-blue-600 font-bold">✓</span> 雞隻（4類別）與豬隻樹狀問答與產品卡片抽卡流程
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-blue-600 font-bold">✓</span> 內部業務白名單身分識別與 4~5 種週週期提醒邏輯
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-blue-600 font-bold">✓</span> 雙頻道獨立廣播後台部署與權限設定
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-blue-600 font-bold">✓</span> 採購諮詢表單、門市地圖與電話撥打功能設定
                   </li>
                 </ul>
               </div>
 
-              {/* Feature 2 */}
-              <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm relative overflow-hidden hover:border-blue-300 transition">
-                <div className="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center font-bold text-lg mb-4 border border-amber-100">
-                  🔐
-                </div>
-                <h3 className="text-base font-bold text-slate-900 mb-2">2. 業務白名單與內部廣播</h3>
-                <ul className="text-xs text-slate-600 space-y-2.5 leading-relaxed">
-                  <li className="flex items-start gap-1.5">
-                    <span className="text-amber-500 font-bold">▶</span>
-                    <span><strong>內部業務白名單 (4~6人)</strong>：識別業務身分，解鎖業務專屬圖文選單與產品筆記。</span>
+              <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+                <h3 className="font-bold text-base text-slate-900 mb-3 flex items-center gap-2">
+                  <span className="text-blue-600">🔄</span> 每月維護與售後服務內容
+                </h3>
+                <ul className="text-xs text-slate-700 space-y-2.5">
+                  <li className="flex items-center gap-2">
+                    <span className="text-blue-600 font-bold">✓</span> 享【首月 30 天線上維護保障與對話語氣微調】
                   </li>
-                  <li className="flex items-start gap-1.5">
-                    <span className="text-amber-500 font-bold">▶</span>
-                    <span><strong>內部訊息獨立推播</strong>：內部進貨、價格政策與訓練通知，<strong>絕不干擾公頻</strong>。</span>
+                  <li className="flex items-center gap-2">
+                    <span className="text-blue-600 font-bold">✓</span> 7×24 小時雲端伺服器運算與服務穩定度監控
                   </li>
-                  <li className="flex items-start gap-1.5">
-                    <span className="text-amber-500 font-bold">▶</span>
-                    <span><strong>牧場週期與產品提醒</strong>：記錄客戶牧場進場週期，每週提醒業務關懷客戶與回購。</span>
+                  <li className="flex items-center gap-2">
+                    <span className="text-blue-600 font-bold">✓</span> 每月 AI 對話模型 Token 額度與原廠 PDF 算力配額
                   </li>
-                </ul>
-              </div>
-
-              {/* Feature 3 */}
-              <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm relative overflow-hidden hover:border-blue-300 transition">
-                <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center font-bold text-lg mb-4 border border-blue-100">
-                  ⚙️
-                </div>
-                <h3 className="text-base font-bold text-slate-900 mb-2">3. 後台管理與雙頻道廣播</h3>
-                <ul className="text-xs text-slate-600 space-y-2.5 leading-relaxed">
-                  <li className="flex items-start gap-1.5">
-                    <span className="text-blue-500 font-bold">▶</span>
-                    <span><strong>業務名單權限控制</strong>：後台自由新增或設定業務 LINE 白名單。</span>
+                  <li className="flex items-center gap-2">
+                    <span className="text-blue-600 font-bold">✓</span> 協助業務白名單名單更新與權限增刪
                   </li>
-                  <li className="flex items-start gap-1.5">
-                    <span className="text-blue-500 font-bold">▶</span>
-                    <span><strong>雙頻道獨立推播引擎</strong>：可選「內部業務頻道」或「公開農場客戶頻道」。</span>
+                  <li className="flex items-center gap-2">
+                    <span className="text-blue-600 font-bold">✓</span> 每日雲端資料庫安全自動備份與系統資安防護
                   </li>
-                  <li className="flex items-start gap-1.5">
-                    <span className="text-blue-500 font-bold">▶</span>
-                    <span><strong>PDF 知識庫訓練</strong>：匯入最新進口原廠產品 PDF 手冊供祥惠官方帳號 AI 智慧店長精準辨識問答。</span>
+                  <li className="flex items-center gap-2">
+                    <span className="text-blue-600 font-bold">✓</span> 專屬線上技術顧問技術支援與功能優化
                   </li>
                 </ul>
               </div>
@@ -595,7 +695,7 @@ export default function XianghuiProposalPage() {
             </div>
           </div>
 
-          {/* Implementation Timeline & Payment Terms (New Section) */}
+          {/* Implementation Timeline & Payment Terms */}
           <div className="bg-white border border-slate-200/80 rounded-3xl p-8 shadow-sm mb-12 space-y-8">
             {/* Timeline */}
             <div>
@@ -725,7 +825,7 @@ export default function XianghuiProposalPage() {
                   type="text"
                   value={invoiceAddress}
                   onChange={(e) => setInvoiceAddress(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-sm focus:outline-none focus:border-blue-500 focus:bg-white transition"
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-sm focus:outline-none focus:border-blue-500 focus:bg-[#FFF] transition"
                   required
                 />
               </div>

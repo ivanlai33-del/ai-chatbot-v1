@@ -589,7 +589,7 @@ export default function LannyYogaProposalPage() {
             </div>
 
             {/* Print & Signature Section */}
-            <PrintSignatureSection />
+            <PrintSignatureSection proposalTitle="Lanny Yoga Studio 瑜伽教室 — 【LINE 官方帳號 ＋ LINE BOT ＋ LIFF 獨立官網】數位品牌建置案" />
           </div>
         </main>
       </div>

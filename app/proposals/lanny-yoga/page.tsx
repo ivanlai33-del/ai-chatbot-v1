@@ -440,6 +440,9 @@ export default function LannyYogaProposalPage() {
         <p className="text-xs text-stone-500">請於匯款首期訂金後填寫下方資訊，專案團隊將即時進行對帳確認。</p>
       </div>
 
+      {/* 防詐聲明與網域驗證 (整合於對帳頁面) */}
+      <FraudAlertAndDomainVerifier />
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Bank Info Box */}
         <div className="bg-[#FAF6F0] border border-amber-200 rounded-2xl p-5 space-y-3">
@@ -524,7 +527,6 @@ export default function LannyYogaProposalPage() {
         {/* Security Overlays */}
         <SecurityWatermarkOverlay />
         {isAdminBypass && <OwnerBypassBanner />}
-        <FraudAlertAndDomainVerifier />
 
         {/* Lock Screen Modal */}
         {!isUnlocked && (

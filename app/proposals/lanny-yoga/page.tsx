@@ -14,98 +14,6 @@ import {
   EditableText,
 } from "@/components/proposals/CommercialDefenseComponents";
 
-// Theme configuration inspired by html-ppt-skill
-type PPTTheme = "morandi" | "forest" | "glass" | "cyber";
-
-interface ThemeStyle {
-  name: string;
-  icon: string;
-  bg: string;
-  deckCanvasBg: string;
-  deckBorder: string;
-  deckShadow: string;
-  cardBg: string;
-  cardBorder: string;
-  textPrimary: string;
-  textSecondary: string;
-  accent: string;
-  accentBg: string;
-  accentBorder: string;
-  highlight: string;
-  progressColor: string;
-}
-
-const PPT_THEMES: Record<PPTTheme, ThemeStyle> = {
-  morandi: {
-    name: "莫蘭迪溫暖 (Morandi Warm)",
-    icon: "🧘",
-    bg: "bg-[#F5EFE6]",
-    deckCanvasBg: "bg-white/95 backdrop-blur-xl",
-    deckBorder: "border-[#E3D5C3]",
-    deckShadow: "shadow-[0_20px_50px_rgba(92,80,74,0.12)]",
-    cardBg: "bg-[#FAF6F0]/90",
-    cardBorder: "border-[#EADCC9]",
-    textPrimary: "text-[#3D332A]",
-    textSecondary: "text-[#706256]",
-    accent: "text-[#5C504A]",
-    accentBg: "bg-[#EFE6D8]",
-    accentBorder: "border-[#D8C7B0]",
-    highlight: "text-[#8C6D46]",
-    progressColor: "bg-[#5C504A]",
-  },
-  forest: {
-    name: "靜謐森林 (Zen Forest)",
-    icon: "🌿",
-    bg: "bg-[#E6F0EB]",
-    deckCanvasBg: "bg-white/95 backdrop-blur-xl",
-    deckBorder: "border-[#C2DFC3]",
-    deckShadow: "shadow-[0_20px_50px_rgba(15,118,110,0.15)]",
-    cardBg: "bg-[#F2F7F4]",
-    cardBorder: "border-[#D1E7DD]",
-    textPrimary: "text-[#133E35]",
-    textSecondary: "text-[#2D6A5D]",
-    accent: "text-[#0F766E]",
-    accentBg: "bg-[#D8EFE9]",
-    accentBorder: "border-[#B2DFD6]",
-    highlight: "text-[#047857]",
-    progressColor: "bg-[#0F766E]",
-  },
-  glass: {
-    name: "極光冰藍 (Modern Light)",
-    icon: "💎",
-    bg: "bg-gradient-to-br from-[#E2E8F0] via-[#EBF8FF] to-[#DBEAFE]",
-    deckCanvasBg: "bg-white/90 backdrop-blur-2xl",
-    deckBorder: "border-blue-200",
-    deckShadow: "shadow-[0_20px_50px_rgba(0,102,255,0.15)]",
-    cardBg: "bg-blue-50/50",
-    cardBorder: "border-blue-100",
-    textPrimary: "text-slate-900",
-    textSecondary: "text-slate-600",
-    accent: "text-blue-900",
-    accentBg: "bg-blue-100/70",
-    accentBorder: "border-blue-300",
-    highlight: "text-blue-600",
-    progressColor: "bg-[#0066FF]",
-  },
-  cyber: {
-    name: "深夜奢華 (Cyber Dark)",
-    icon: "🌙",
-    bg: "bg-[#0B0F19]",
-    deckCanvasBg: "bg-[#161F33]/95 backdrop-blur-2xl",
-    deckBorder: "border-[#2E3D5C]",
-    deckShadow: "shadow-[0_20px_50px_rgba(0,0,0,0.6)]",
-    cardBg: "bg-[#1E293B]/80",
-    cardBorder: "border-[#334155]",
-    textPrimary: "text-slate-100",
-    textSecondary: "text-slate-400",
-    accent: "text-teal-300",
-    accentBg: "bg-teal-950/70",
-    accentBorder: "border-teal-700",
-    highlight: "text-teal-400",
-    progressColor: "bg-teal-400",
-  },
-};
-
 // Speaker Notes for html-ppt-skill Presenter Mode
 const SPEAKER_NOTES = [
   "【專案總覽】強調專屬視覺風格與免下載 LIFF 官網。引導 Lanny 老師關注預算區間 3.88萬 ~ 5.88萬 與 1~2 週高效上線週期。",
@@ -122,8 +30,7 @@ export default function LannyYogaProposalPage() {
   const [errorMsg, setErrorMsg] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // html-ppt-skill Advanced Features: Theme Switcher, Presenter Mode, Timer & Fullscreen
-  const [theme, setTheme] = useState<PPTTheme>("morandi");
+  // Presenter Mode & Fullscreen Controls
   const [isPresenterMode, setIsPresenterMode] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [presenterTimer, setPresenterTimer] = useState(0);
@@ -216,7 +123,7 @@ export default function LannyYogaProposalPage() {
   // Passwords: Today (20260802 / 0802)
   const VALID_PASSWORDS = ["20260802", "0802", "20260729", "0729"];
 
-  // Security & Slide Switch Keyboard Listener (HTML-PPT Shortcuts)
+  // Security & Keyboard Listener
   useEffect(() => {
     const handleContextMenu = (e: MouseEvent) => {
       e.preventDefault();
@@ -311,64 +218,101 @@ export default function LannyYogaProposalPage() {
     }
   };
 
-  const currentThemeStyle = PPT_THEMES[theme];
-
-  // Slide 0: Cover Header (html-ppt-skill Design Architecture)
+  // Slide 0: Magazine Cover Slide (Editorial Presentation Layout)
   const slide0Cover = (
     <div className="w-full my-auto space-y-6">
-      <div className={`${currentThemeStyle.cardBg} rounded-2xl p-6 md:p-8 border ${currentThemeStyle.cardBorder} shadow-xs relative overflow-hidden`}>
-        <div className={`inline-flex items-center gap-2 px-3.5 py-1 rounded-full border text-xs font-semibold ${currentThemeStyle.accent} ${currentThemeStyle.accentBg} ${currentThemeStyle.accentBorder} mb-3 shadow-2xs`}>
-          <span className="w-2 h-2 rounded-full bg-amber-600 animate-pulse"></span>
-          <EditableText id="client_tag" defaultText="Lanny Yoga Studio ｜ Lanny 老師專屬客製" />
+      {/* Editorial Title Header Hero Box */}
+      <div className="bg-gradient-to-br from-white via-[#FBF8F3] to-[#F3EBE0] rounded-3xl p-6 md:p-10 border border-[#E3D5C3] shadow-md relative overflow-hidden">
+        <div className="absolute top-0 right-0 transform translate-x-8 -translate-y-8 opacity-10 pointer-events-none text-stone-900 text-9xl font-serif select-none">
+          🧘
         </div>
-        <h1 className={`text-2xl md:text-4xl font-extrabold font-serif ${currentThemeStyle.textPrimary} tracking-tight leading-tight mb-3`}>
-          <EditableText id="proposal_title" defaultText="【LINE 官方帳號 ＋ LINE BOT ＋ LIFF 獨立官網】數位品牌建置案" />
-        </h1>
-        <p className={`text-xs md:text-sm ${currentThemeStyle.textSecondary} leading-relaxed max-w-2xl`}>
-          <EditableText
-            id="proposal_subtitle"
-            defaultText="專為 Lanny Yoga Studio 瑜伽教室量身打造！結合 LINE 富選單、LIFF 免下載預約官網、自動算效期課券對帳系統，以及 Gemini AI 雙向文案與 5 大視覺風格 HD 配圖小編。"
-          />
-        </p>
+
+        <div className="relative z-10 space-y-4">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-[#5C504A] text-amber-50 rounded-full text-xs font-bold shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+            <EditableText id="client_tag" defaultText="Lanny Yoga Studio ｜ Lanny 老師專屬客製數位專案" />
+          </div>
+
+          <h1 className="text-3xl md:text-5xl font-black font-serif text-[#3D332A] tracking-tight leading-tight">
+            <EditableText id="proposal_title" defaultText="【LINE 官方帳號 ＋ LINE BOT ＋ LIFF 獨立官網】" />
+            <span className="block text-xl md:text-3xl text-[#8C6D46] font-bold mt-2">
+              全自動化教務預約 ✕ Gemini AI 溫暖行銷小編 建置案
+            </span>
+          </h1>
+
+          <p className="text-xs md:text-sm text-[#706256] leading-relaxed max-w-3xl pt-2 border-t border-[#E3D5C3]/60">
+            <EditableText
+              id="proposal_subtitle"
+              defaultText="專為 Lanny Yoga Studio 瑜伽教室量身打造！結合 LINE 富選單、LIFF 免下載預約官網、自動算效期課券對帳系統，以及 Gemini AI 雙向文案與 5 大視覺風格 HD 配圖小編。"
+            />
+          </p>
+
+          {/* Quick Metrics Chips */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-3">
+            <div className="bg-white/80 p-3 rounded-2xl border border-[#EADCC9] text-center shadow-2xs">
+              <span className="text-[10px] text-stone-500 block uppercase font-bold tracking-wider">建置預算區間</span>
+              <span className="text-sm md:text-base font-black font-mono text-[#8C6D46]">NT$ 38,800 ~ 58,800</span>
+            </div>
+            <div className="bg-white/80 p-3 rounded-2xl border border-[#EADCC9] text-center shadow-2xs">
+              <span className="text-[10px] text-stone-500 block uppercase font-bold tracking-wider">預估工期</span>
+              <span className="text-sm md:text-base font-bold text-stone-800">1 ~ 2 週速成驗收</span>
+            </div>
+            <div className="bg-white/80 p-3 rounded-2xl border border-[#EADCC9] text-center shadow-2xs">
+              <span className="text-[10px] text-stone-500 block uppercase font-bold tracking-wider">獨立網域</span>
+              <span className="text-xs md:text-sm font-mono font-bold text-amber-900">booking.lanny-yoga.com</span>
+            </div>
+            <div className="bg-white/80 p-3 rounded-2xl border border-[#EADCC9] text-center shadow-2xs">
+              <span className="text-[10px] text-stone-500 block uppercase font-bold tracking-wider">客戶資料掌控度</span>
+              <span className="text-sm md:text-base font-bold text-emerald-700">100% 獨立資料庫</span>
+            </div>
+          </div>
+        </div>
       </div>
 
+      {/* Structured Client & Proposal Metadata Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className={`${currentThemeStyle.cardBg} border ${currentThemeStyle.cardBorder} rounded-xl p-5 shadow-2xs hover-float`}>
-          <h3 className={`text-xs uppercase font-bold ${currentThemeStyle.highlight} tracking-wider mb-3 flex items-center gap-2`}>
-            <span>🏢</span> 客戶對象資訊 (CLIENT)
-          </h3>
-          <div className={`space-y-2 text-xs md:text-sm ${currentThemeStyle.textSecondary}`}>
-            <div className="flex justify-between border-b border-stone-200/50 pb-1.5">
-              <span className="opacity-70">教室名稱</span>
-              <span className={`font-semibold ${currentThemeStyle.textPrimary}`}><EditableText id="client_name" defaultText="Lanny Yoga Studio 瑜伽教室" /></span>
+        <div className="bg-white/90 border border-[#E3D5C3] rounded-2xl p-5 shadow-2xs hover-float">
+          <div className="flex justify-between items-center mb-3 pb-2 border-b border-stone-200">
+            <h3 className="text-xs font-black text-[#8C6D46] uppercase tracking-wider flex items-center gap-2">
+              <span>🏢</span> 客戶對象資訊 (CLIENT PROFILE)
+            </h3>
+            <span className="px-2 py-0.5 bg-stone-100 text-[10px] font-bold text-stone-600 rounded">Verified</span>
+          </div>
+          <div className="space-y-2.5 text-xs md:text-sm text-stone-700">
+            <div className="flex justify-between items-center">
+              <span className="text-stone-500">教室名稱</span>
+              <span className="font-bold text-stone-900"><EditableText id="client_name" defaultText="Lanny Yoga Studio 瑜伽教室" /></span>
             </div>
-            <div className="flex justify-between border-b border-stone-200/50 pb-1.5">
-              <span className="opacity-70">代表人物</span>
-              <span className={`font-medium ${currentThemeStyle.textPrimary}`}><EditableText id="client_owner" defaultText="Lanny 老師" /></span>
+            <div className="flex justify-between items-center">
+              <span className="text-stone-500">創辦人 / 代表</span>
+              <span className="font-medium text-stone-900"><EditableText id="client_owner" defaultText="Lanny 老師" /></span>
             </div>
-            <div className="flex justify-between border-b border-stone-200/50 pb-1.5">
-              <span className="opacity-70">獨立網域定位</span>
-              <span className={`font-mono font-medium ${currentThemeStyle.highlight}`}>booking.lanny-yoga.com</span>
+            <div className="flex justify-between items-center">
+              <span className="text-stone-500">品牌專屬網域</span>
+              <span className="font-mono text-amber-800 font-bold bg-amber-50 px-2 py-0.5 rounded border border-amber-200">booking.lanny-yoga.com</span>
             </div>
           </div>
         </div>
 
-        <div className={`${currentThemeStyle.cardBg} border ${currentThemeStyle.cardBorder} rounded-xl p-5 shadow-2xs hover-float`}>
-          <h3 className={`text-xs uppercase font-bold ${currentThemeStyle.highlight} tracking-wider mb-3 flex items-center gap-2`}>
-            <span>📑</span> 報價與專案資訊 (PROPOSAL)
-          </h3>
-          <div className={`space-y-2 text-xs md:text-sm ${currentThemeStyle.textSecondary}`}>
-            <div className="flex justify-between border-b border-stone-200/50 pb-1.5">
-              <span className="opacity-70">專案編號</span>
-              <span className={`font-mono font-medium ${currentThemeStyle.highlight}`}>LY-202608-AI01</span>
+        <div className="bg-white/90 border border-[#E3D5C3] rounded-2xl p-5 shadow-2xs hover-float">
+          <div className="flex justify-between items-center mb-3 pb-2 border-b border-stone-200">
+            <h3 className="text-xs font-black text-[#8C6D46] uppercase tracking-wider flex items-center gap-2">
+              <span>📑</span> 專案報價資訊 (PROPOSAL META)
+            </h3>
+            <span className="px-2 py-0.5 bg-amber-100 text-[10px] font-bold text-amber-900 rounded">Official</span>
+          </div>
+          <div className="space-y-2.5 text-xs md:text-sm text-stone-700">
+            <div className="flex justify-between items-center">
+              <span className="text-stone-500">專案編號</span>
+              <span className="font-mono text-amber-900 font-bold">LY-202608-AI01</span>
             </div>
-            <div className="flex justify-between border-b border-stone-200/50 pb-1.5">
-              <span className="opacity-70">建置預算區間</span>
-              <span className="font-bold text-amber-600">NT$ 38,800 ~ 58,800</span>
+            <div className="flex justify-between items-center">
+              <span className="text-stone-500">報價日期</span>
+              <span className="font-medium text-stone-900">2026 年 08 月 02 日</span>
             </div>
-            <div className="flex justify-between border-b border-stone-200/50 pb-1.5">
-              <span className="opacity-70">預估建置工期</span>
-              <span>1 ~ 2 週 (包含驗收上線與教培)</span>
+            <div className="flex justify-between items-center">
+              <span className="text-stone-500">規劃執行單位</span>
+              <span className="font-bold text-[#5C504A]">奕暢創新設計工作室</span>
             </div>
           </div>
         </div>
@@ -376,260 +320,342 @@ export default function LannyYogaProposalPage() {
     </div>
   );
 
-  // Slide 1: Pain Point Transformation
+  // Slide 1: Pain Point Transformation (Editorial Comparison Slide Layout)
   const slide1PainPoints = (
-    <div className="w-full my-auto space-y-4">
-      <div className="border-b border-stone-200/60 pb-3">
-        <h2 className={`text-lg md:text-2xl font-bold font-serif ${currentThemeStyle.textPrimary} flex items-center gap-2`}>
-          <span>💡</span> 營運痛點對照與系統解決方案 (Pain Point Transformation)
+    <div className="w-full my-auto space-y-5">
+      <div className="border-b border-stone-200 pb-3">
+        <span className="text-[10px] font-mono font-bold tracking-widest text-[#8C6D46] uppercase block">TRANSFORMATION MATRIX</span>
+        <h2 className="text-xl md:text-3xl font-black font-serif text-stone-900 flex items-center gap-2 mt-0.5">
+          <span>💡</span> 傳統人工痛點 vs. 24HR 智慧數位總管 (Pain Point Transformation)
         </h2>
-        <p className={`text-xs ${currentThemeStyle.textSecondary} mt-1`}>從傳統人工訊息洗板，升級為 24HR 全自動化 LINE 智慧數位總管</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div className="bg-rose-50/70 border border-rose-200/80 rounded-xl p-5 space-y-3 hover-float">
-          <h4 className="font-bold text-rose-900 text-sm flex items-center gap-2 border-b border-rose-200 pb-2">
-            <span>❌</span> 傳統人工經營痛點
-          </h4>
-          <ul className="text-xs text-rose-800 space-y-2.5 leading-relaxed">
-            <li>• 每天下班還要花 2~3 小時在 LINE 訊息私訊裡處理學員預約與請假</li>
-            <li>• 手動對帳易錯漏，多堂方案與體驗課的到期日計算複雜易生糾紛</li>
-            <li>• 每月花上萬元請外包小編，還常常找不到貼合教室溫暖質感的照片</li>
-            <li>• 第三方平台網址缺乏專屬感，學員資料被扣在別人平台池子裡</li>
-          </ul>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Left Column: ❌ Traditional Manual Pains */}
+        <div className="bg-rose-50/80 border-2 border-rose-200/90 rounded-3xl p-6 space-y-4 shadow-sm relative overflow-hidden">
+          <div className="flex justify-between items-center border-b border-rose-200 pb-3">
+            <h4 className="font-black text-rose-950 text-base flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full bg-rose-200 text-rose-800 flex items-center justify-center text-xs font-bold">✕</span>
+              傳統人工營運痛點
+            </h4>
+            <span className="text-[10px] font-bold bg-rose-100 text-rose-800 px-2.5 py-1 rounded-full">高耗時 / 低效率</span>
+          </div>
+
+          <div className="space-y-3">
+            {[
+              { num: "01", title: "課後訊息私訊洗板", desc: "每天下班後還要花 2~3 小時逐一核對 LINE 訊息處理預約、請假與補課。" },
+              { num: "02", title: "手動算效期與堂數糾紛", desc: "多堂方案、體驗課與期課過期日繁瑣，手動計算容易漏算並引發學員糾紛。" },
+              { num: "03", title: "外包小編成本居高不下", desc: "每月花上萬元外包社群小編，產出的貼文圖片往往不符合瑜伽質感。" },
+              { num: "04", title: "資料被第三方平台扣留", desc: "使用一般第三方預約平台，顧客資料在別人池子裡，無法建立品牌黏性。" },
+            ].map((item, idx) => (
+              <div key={idx} className="bg-white/80 border border-rose-100 rounded-2xl p-3.5 flex items-start gap-3 shadow-2xs">
+                <span className="font-mono text-sm font-black text-rose-400 bg-rose-50 px-2 py-0.5 rounded-lg border border-rose-200">{item.num}</span>
+                <div>
+                  <h5 className="font-bold text-rose-900 text-xs md:text-sm">{item.title}</h5>
+                  <p className="text-[11px] text-rose-700 leading-snug mt-0.5">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className={`${currentThemeStyle.cardBg} border ${currentThemeStyle.cardBorder} rounded-xl p-5 space-y-3 hover-float`}>
-          <h4 className={`font-bold ${currentThemeStyle.accent} text-sm flex items-center gap-2 border-b ${currentThemeStyle.accentBorder} pb-2`}>
-            <span>✨</span> Lanny 智慧總管解決方案
-          </h4>
-          <ul className={`text-xs ${currentThemeStyle.textSecondary} space-y-2.5 leading-relaxed`}>
-            <li>• LIFF 官網學員免下載即可預約，開課前 2 小時 LINE 自動叮咚提醒</li>
-            <li>• 轉帳後五碼即時核對，一鍵確認自動發算 1 個月/3 個月效期憑證</li>
-            <li>• 內建 Gemini AI 行銷小編，常駐 5 大風格（莫蘭迪柔和/極簡日光/日系唯美...）自動畫 HD 配圖</li>
-            <li>• 100% 獨立專屬網域與獨立 Supabase 雲端資料庫，顧客資產 100% 掌握</li>
-          </ul>
+        {/* Right Column: ✨ Lanny Intelligent Manager */}
+        <div className="bg-[#FAF6F0] border-2 border-[#D8C7B0] rounded-3xl p-6 space-y-4 shadow-sm relative overflow-hidden">
+          <div className="flex justify-between items-center border-b border-[#E3D5C3] pb-3">
+            <h4 className="font-black text-[#3D332A] text-base flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full bg-[#5C504A] text-amber-50 flex items-center justify-center text-xs font-bold">✓</span>
+              Lanny 智慧總管對應解方
+            </h4>
+            <span className="text-[10px] font-bold bg-[#EFE6D8] text-[#8C6D46] px-2.5 py-1 rounded-full border border-[#D8C7B0]">24H 自動運作</span>
+          </div>
+
+          <div className="space-y-3">
+            {[
+              { num: "01", title: "LIFF 官網學員秒預約", desc: "免下載 App，學員直接開啟 LINE 點擊預約，開課前 2 小時自動發送提醒。" },
+              { num: "02", title: "後五碼自動核對算效期", desc: "學員填寫匯款後五碼，後台一鍵確認即自動精算效期發券，自動傳送 LINE 憑證。" },
+              { num: "03", title: "Gemini AI 雙向行銷小編", desc: "內建 AI 行銷大腦，常駐莫蘭迪/日光/極簡 5 大風格自動生成 HD 高畫質行銷圖文。" },
+              { num: "04", title: "100% 獨立品牌雲端資產", desc: "擁有一切獨立 Supabase 資料庫與專屬網域，學員資料 100% 掌握在自己手中。" },
+            ].map((item, idx) => (
+              <div key={idx} className="bg-white/90 border border-[#EADCC9] rounded-2xl p-3.5 flex items-start gap-3 shadow-2xs hover-float">
+                <span className="font-mono text-sm font-black text-[#8C6D46] bg-[#EFE6D8] px-2 py-0.5 rounded-lg border border-[#D8C7B0]">{item.num}</span>
+                <div>
+                  <h5 className="font-bold text-[#3D332A] text-xs md:text-sm">{item.title}</h5>
+                  <p className="text-[11px] text-[#706256] leading-snug mt-0.5">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
   );
 
-  // Slide 2: Core System Modules
+  // Slide 2: 8 Core System Feature Modules (Magazine Feature Tile Grid Layout)
   const slide2Modules = (
-    <div className="w-full my-auto space-y-3">
-      <div className="border-b border-stone-200/60 pb-2">
-        <h2 className={`text-lg md:text-2xl font-bold font-serif ${currentThemeStyle.textPrimary} flex items-center gap-2`}>
+    <div className="w-full my-auto space-y-4">
+      <div className="border-b border-stone-200 pb-2">
+        <span className="text-[10px] font-mono font-bold tracking-widest text-[#8C6D46] uppercase block">SYSTEM ARCHITECTURE</span>
+        <h2 className="text-xl md:text-3xl font-black font-serif text-stone-900 flex items-center gap-2 mt-0.5">
           <span>🚀</span> 專案建置 8 大核心系統功能模組 (Scope & Deliverables)
         </h2>
-        <p className={`text-xs ${currentThemeStyle.textSecondary}`}>完整複製 Lanny Yoga Studio 頂級營運架構，一站式搞定教務、財務與 AI 行銷</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
         {[
-          { title: "1. 👥 學員與課券 CRM 中心", desc: "學員歷程卡、真實有效堂數精算 (過期自動過濾)、`repair_credits` 校正、手動撥補發券、LINE 私訊與課堂廣播。" },
-          { title: "2. 📅 多模式課表與點名系統", desc: "月曆/週曆/單日視窗、名額上限控管 (Capacity)、3 天保護期內課堂點名與出席狀態標記、簽到自動扣券。" },
-          { title: "3. 💳 方案訂單與財務對帳", desc: "學員轉帳後五碼即時核對、一鍵「確認收款」自動呼叫 `grant_credit_lot()` 算效期發券，自動傳送 LINE 收條憑證。" },
-          { title: "4. 📊 營運分析與時段熱力圖", desc: "預估/預約/實現三口徑營收分析、過去 6 個月熱門時段熱力圖、12 個月歷史比較 (手刻輕量化 SVG 圖表)。" },
-          { title: "5. 🛍️ 嚴選商城與實體訂單", desc: "瑜伽輔具商品目錄管理 (多圖、價格、庫存、上下架開關)、購物訂單處理與出貨物流單號追蹤。" },
-          { title: "6. 🖼️ 網站內容模組化維護", desc: "教室與品牌簡介 (受保護銀行帳號管理)、老師經歷與形象照網址設定、課程類型 (難度星等/預設時長/簡介)。" },
-          { title: "7. 🤖 LINE 與 AI 助手全方位整合", desc: "富選單對接、Gemini AI 行銷文案、常駐 5 大視覺風格 (莫蘭迪/極簡/日系...) HD 配圖小編、8 項實體叮咚推播。" },
-          { title: "8. 📮 合作邀約與企業包班", desc: "網站訪客與企業包班/品牌合作表單收件匣、處理進度標記與備忘追蹤筆記。" },
+          { num: "01", icon: "👥", pill: "CRM", title: "學員與課券 CRM 中心", desc: "學員歷程卡、真實有效堂數精算 (自動過濾過期)、`repair_credits` 校正與 LINE 廣播。" },
+          { num: "02", icon: "📅", pill: "點名", title: "多模式課表與點名系統", desc: "月曆/週曆/單日視窗、人數上限控管 (Capacity)、3天保護期點名與簽到扣券。" },
+          { num: "03", icon: "💳", pill: "財務", title: "方案訂單與財務對帳", desc: "轉帳後五碼對帳、一鍵「確認收款」自動呼叫 `grant_credit_lot()` 發券與發收條。" },
+          { num: "04", icon: "📊", pill: "報表", title: "營運分析與時段熱力圖", desc: "預估/預約/實現三口徑營收分析、過去 6 個月熱門時段熱力圖與 12 個月比較圖表。" },
+          { num: "05", icon: "🛍️", pill: "商城", title: "嚴選商城與實體訂單", desc: "瑜伽輔具商品目錄管理 (多圖、庫存、上下架開關)、訂單處理與出貨單號追蹤。" },
+          { num: "06", icon: "🖼️", pill: "內容", title: "網站內容模組化維護", desc: "品牌簡介 (受保護銀行帳號管理)、老師經歷形象照、課程類型與難度星等設定。" },
+          { num: "07", icon: "🤖", pill: "AI", title: "LINE 與 AI 助手全方位整合", desc: "富選單對接、Gemini AI 行銷文案、常駐 5 大視覺風格 HD 配圖小編與 8 項叮咚推播。" },
+          { num: "08", icon: "📮", pill: "邀約", title: "合作邀約與企業包班", desc: "網站訪客與企業包班/品牌合作表單收件匣、處理進度標記與備忘追蹤筆記。" },
         ].map((mod, idx) => (
-          <div key={idx} className={`${currentThemeStyle.cardBg} border ${currentThemeStyle.cardBorder} rounded-xl p-3 shadow-2xs hover-float`}>
-            <h3 className={`font-bold ${currentThemeStyle.textPrimary} text-xs md:text-sm`}>{mod.title}</h3>
-            <p className={`text-[11px] ${currentThemeStyle.textSecondary} leading-tight mt-1`}>{mod.desc}</p>
+          <div key={idx} className="bg-white border border-[#E3D5C3] rounded-2xl p-4 shadow-2xs hover-float flex flex-col justify-between space-y-2 relative overflow-hidden">
+            <div className="flex justify-between items-center border-b border-stone-100 pb-2">
+              <span className="text-xl">{mod.icon}</span>
+              <div className="flex items-center gap-1.5">
+                <span className="px-2 py-0.5 bg-[#EFE6D8] text-[9px] font-bold text-[#8C6D46] rounded-md">{mod.pill}</span>
+                <span className="font-mono text-xs font-black text-stone-300">{mod.num}</span>
+              </div>
+            </div>
+            <div>
+              <h3 className="font-bold text-stone-900 text-xs md:text-sm">{mod.title}</h3>
+              <p className="text-[11px] text-stone-600 leading-tight mt-1">{mod.desc}</p>
+            </div>
           </div>
         ))}
       </div>
     </div>
   );
 
-  // Slide 3: Scope & Plan Comparison
+  // Slide 3: Dual Plan Comparison Matrix (High-End Pitch Cards Layout)
   const slide3Plans = (
     <div className="w-full my-auto space-y-4">
-      <div className="border-b border-stone-200/60 pb-2">
-        <h2 className={`text-lg md:text-2xl font-bold font-serif ${currentThemeStyle.textPrimary} flex items-center gap-2`}>
+      <div className="border-b border-stone-200 pb-2">
+        <span className="text-[10px] font-mono font-bold tracking-widest text-[#8C6D46] uppercase block">PLANS MATRIX</span>
+        <h2 className="text-xl md:text-3xl font-black font-serif text-stone-900 flex items-center gap-2 mt-0.5">
           <span>⚖️</span> 雙建置方案功能規格比較 (Dual Plan Matrix)
         </h2>
-        <p className={`text-xs ${currentThemeStyle.textSecondary}`}>依據貴教室規模與需求，靈活選擇最合適的方案（點擊卡片可切換選擇）：</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Starter Plan Card */}
         <div
           onClick={() => setSelectedPlan("starter")}
-          className={`cursor-pointer rounded-xl p-5 border transition-all hover-float ${
+          className={`cursor-pointer rounded-3xl p-6 border-2 transition-all hover-float flex flex-col justify-between ${
             selectedPlan === "starter"
-              ? `${currentThemeStyle.accentBg} border-amber-600 ring-2 ring-amber-600/30 shadow-md`
-              : `${currentThemeStyle.cardBg} ${currentThemeStyle.cardBorder}`
+              ? "bg-[#FAF6F0] border-amber-600 ring-4 ring-amber-600/10 shadow-xl"
+              : "bg-white border-stone-200 hover:border-stone-300 shadow-sm"
           }`}
         >
-          <div className="flex justify-between items-start mb-2">
-            <div>
-              <h3 className={`font-bold ${currentThemeStyle.textPrimary} text-base`}>精緻單店專屬版</h3>
-              <p className={`text-xs ${currentThemeStyle.textSecondary}`}>適合獨立老師 / 個人預約工作室</p>
+          <div className="space-y-3">
+            <div className="flex justify-between items-start border-b border-stone-200 pb-3">
+              <div>
+                <span className="px-2.5 py-0.5 bg-stone-100 text-stone-700 text-[10px] font-bold rounded-full">基礎首選</span>
+                <h3 className="font-black text-stone-900 text-lg md:text-xl mt-1">精緻單店專屬版</h3>
+                <p className="text-xs text-stone-500">適合獨立老師 / 個人預約工作室</p>
+              </div>
+              <div className="text-right">
+                <span className="text-xs text-stone-400 block">建置總額</span>
+                <span className="text-xl md:text-2xl font-black font-mono text-stone-900">NT$ 38,800</span>
+              </div>
             </div>
-            <span className={`text-lg font-bold font-mono ${currentThemeStyle.textPrimary}`}>NT$ 38,800</span>
+
+            <ul className="text-xs text-stone-700 space-y-2.5 pt-1">
+              <li className="flex items-center gap-2"><span className="text-emerald-600 font-bold">✓</span> 100% 獨立專屬網域與 Supabase 資料庫</li>
+              <li className="flex items-center gap-2"><span className="text-emerald-600 font-bold">✓</span> LINE BOT ＋ LIFF 官網預約系統</li>
+              <li className="flex items-center gap-2"><span className="text-emerald-600 font-bold">✓</span> 學員 CRM 與轉帳自動對帳算效期</li>
+              <li className="flex items-center gap-2"><span className="text-emerald-600 font-bold">✓</span> 基礎 LINE 富選單圖文設計</li>
+              <li className="flex items-center gap-2"><span className="text-emerald-600 font-bold">✓</span> 基礎 8 項叮咚推播設定</li>
+            </ul>
           </div>
-          <ul className={`text-xs ${currentThemeStyle.textSecondary} space-y-2 border-t border-stone-200/60 pt-3`}>
-            <li>✔ 100% 獨立專屬網域與 Supabase 資料庫</li>
-            <li>✔ LINE BOT ＋ LIFF 官網預約系統</li>
-            <li>✔ 學員 CRM 與轉帳自動對帳算效期</li>
-            <li>✔ 基礎 LINE 富選單圖文設計</li>
-            <li>✔ 基礎 8 項叮咚推播設定</li>
-          </ul>
+
+          <div className="mt-4 pt-3 border-t border-stone-200 text-center">
+            <span className={`text-xs font-bold ${selectedPlan === "starter" ? "text-amber-800 font-black" : "text-stone-400"}`}>
+              {selectedPlan === "starter" ? "✓ 已選擇精緻版" : "點擊切換此方案"}
+            </span>
+          </div>
         </div>
 
+        {/* Flagship Plan Card */}
         <div
           onClick={() => setSelectedPlan("flagship")}
-          className={`cursor-pointer rounded-xl p-5 border transition-all relative overflow-hidden hover-float ${
+          className={`cursor-pointer rounded-3xl p-6 border-2 transition-all relative overflow-hidden hover-float flex flex-col justify-between ${
             selectedPlan === "flagship"
-              ? `${currentThemeStyle.accentBg} border-amber-700 ring-2 ring-amber-700/40 shadow-md animate-glow`
-              : `${currentThemeStyle.cardBg} ${currentThemeStyle.cardBorder}`
+              ? "bg-[#FAF6F0] border-amber-800 ring-4 ring-amber-800/15 shadow-xl animate-glow"
+              : "bg-white border-stone-200 hover:border-stone-300 shadow-sm"
           }`}
         >
-          <div className="absolute top-0 right-0 bg-amber-700 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl shadow-xs">
-            官方推薦 👑
+          <div className="absolute top-0 right-0 bg-[#5C504A] text-amber-100 text-[11px] font-black px-4 py-1.5 rounded-bl-2xl shadow-sm flex items-center gap-1">
+            <span>👑</span> 官方強力推薦 👑
           </div>
-          <div className="flex justify-between items-start mb-2">
-            <div>
-              <h3 className={`font-bold ${currentThemeStyle.textPrimary} text-base`}>品牌旗艦 AI 尊榮全功能版</h3>
-              <p className={`text-xs ${currentThemeStyle.textSecondary}`}>適合瑜伽館 / 美業沙龍 / 師資團隊</p>
+
+          <div className="space-y-3">
+            <div className="flex justify-between items-start border-b border-stone-200 pb-3">
+              <div>
+                <span className="px-2.5 py-0.5 bg-amber-100 text-amber-900 text-[10px] font-bold rounded-full border border-amber-200">尊榮 AI 旗艦</span>
+                <h3 className="font-black text-stone-900 text-lg md:text-xl mt-1">品牌旗艦 AI 尊榮全功能版</h3>
+                <p className="text-xs text-stone-500">適合瑜伽館 / 美業沙龍 / 師資團隊</p>
+              </div>
+              <div className="text-right">
+                <span className="text-xs text-stone-400 block">建置總額</span>
+                <span className="text-xl md:text-2xl font-black font-mono text-amber-900">NT$ 58,800</span>
+              </div>
             </div>
-            <span className="text-lg font-bold font-mono text-amber-600">NT$ 58,800</span>
+
+            <ul className="text-xs text-stone-800 space-y-2.5 pt-1 font-medium">
+              <li className="flex items-center gap-2"><span className="text-amber-800 font-bold">★</span> 包含精緻版全部功能</li>
+              <li className="flex items-center gap-2"><span className="text-amber-800 font-bold">★</span> <b>Gemini AI 雙向行銷小編</b> (IG貼文 + 課程簡介)</li>
+              <li className="flex items-center gap-2"><span className="text-amber-800 font-bold">★</span> <b>常駐 5 大美業/瑜伽視覺風格</b> (莫蘭迪/極簡...)</li>
+              <li className="flex items-center gap-2"><span className="text-amber-800 font-bold">★</span> <b>AI 高清圖片生成與實體預覽視窗</b></li>
+              <li className="flex items-center gap-2"><span className="text-amber-800 font-bold">★</span> 嚴選商城與實體商品訂單模組</li>
+              <li className="flex items-center gap-2"><span className="text-amber-800 font-bold">★</span> 營運分析與過去 6 個月時段熱力圖</li>
+              <li className="flex items-center gap-2"><span className="text-amber-800 font-bold">★</span> 1 對 1 教務實機培訓與優先技術支援</li>
+            </ul>
           </div>
-          <ul className={`text-xs ${currentThemeStyle.textPrimary} space-y-2 border-t border-stone-200/60 pt-3 font-medium`}>
-            <li>★ 包含精緻版全部功能</li>
-            <li>★ **Gemini AI 雙向行銷小編** (IG貼文 + 課程簡介)</li>
-            <li>★ **常駐 5 大美業/瑜伽視覺風格** (莫蘭迪/極簡...)</li>
-            <li>★ **AI 高清圖片生成與實體預覽視窗**</li>
-            <li>★ 嚴選商城與實體商品訂單模組</li>
-            <li>★ 營運分析與過去 6 個月時段熱力圖</li>
-            <li>★ 1 對 1 教務實機培訓與優先技術支援</li>
-          </ul>
+
+          <div className="mt-4 pt-3 border-t border-stone-200 text-center">
+            <span className={`text-xs font-bold ${selectedPlan === "flagship" ? "text-amber-900 font-black" : "text-stone-400"}`}>
+              {selectedPlan === "flagship" ? "★ 已選擇旗艦 AI 尊榮版" : "點擊切換此方案"}
+            </span>
+          </div>
         </div>
       </div>
     </div>
   );
 
-  // Slide 4: Interactive Price Breakdown
+  // Slide 4: Interactive Pricing Breakdown (Executive Summary Financial Slide)
   const slide4Pricing = (
-    <div className="w-full my-auto space-y-4">
-      <div className="border-b border-stone-200/60 pb-2">
-        <h2 className={`text-lg md:text-2xl font-bold font-serif ${currentThemeStyle.textPrimary} flex items-center gap-2`}>
+    <div className="w-full my-auto space-y-5">
+      <div className="border-b border-stone-200 pb-2">
+        <span className="text-[10px] font-mono font-bold tracking-widest text-[#8C6D46] uppercase block">FINANCIAL SUMMARY</span>
+        <h2 className="text-xl md:text-3xl font-black font-serif text-stone-900 flex items-center gap-2 mt-0.5">
           <span>💰</span> 建置費用試算與結算條款 (Pricing Breakdown)
         </h2>
-        <p className={`text-xs ${currentThemeStyle.textSecondary}`}>已切換方案：<b>{selectedPlan === "flagship" ? "品牌旗艦 AI 尊榮版" : "精緻單店專屬版"}</b></p>
+        <p className="text-xs text-stone-500 mt-1">目前選取方案：<b className="text-amber-900 font-bold">{selectedPlan === "flagship" ? "品牌旗艦 AI 尊榮全功能版 ($58,800)" : "精緻單店專屬版 ($38,800)"}</b></p>
       </div>
 
-      <div className={`${currentThemeStyle.cardBg} border ${currentThemeStyle.cardBorder} rounded-xl p-6 space-y-4 shadow-xs`}>
+      <div className="bg-white border-2 border-[#E3D5C3] rounded-3xl p-6 space-y-5 shadow-sm">
+        {/* KPI Callout Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-          <div className={`${currentThemeStyle.accentBg} p-4 rounded-xl border ${currentThemeStyle.cardBorder} shadow-2xs hover-float`}>
-            <span className={`text-xs ${currentThemeStyle.textSecondary} block mb-1`}>專案建置總額</span>
-            <span className={`text-lg font-bold font-mono ${currentThemeStyle.textPrimary}`}>NT$ {basePrice.toLocaleString()}</span>
+          <div className="bg-[#FAF6F0] p-4 rounded-2xl border border-[#EADCC9] shadow-2xs hover-float">
+            <span className="text-[10px] text-stone-500 uppercase font-bold block mb-1">專案建置總額</span>
+            <span className="text-xl md:text-2xl font-black font-mono text-stone-900">NT$ {basePrice.toLocaleString()}</span>
           </div>
-          <div className={`${currentThemeStyle.accentBg} p-4 rounded-xl border ${currentThemeStyle.cardBorder} shadow-2xs hover-float`}>
-            <span className={`text-xs ${currentThemeStyle.textSecondary} block mb-1`}>首期 50% 訂金</span>
-            <span className="text-lg font-bold font-mono text-amber-700">NT$ {depositAmount.toLocaleString()}</span>
+          <div className="bg-amber-50/80 p-4 rounded-2xl border border-amber-200 shadow-2xs hover-float">
+            <span className="text-[10px] text-amber-800 uppercase font-bold block mb-1">首期 50% 訂金</span>
+            <span className="text-xl md:text-2xl font-black font-mono text-amber-900">NT$ {depositAmount.toLocaleString()}</span>
           </div>
-          <div className={`${currentThemeStyle.accentBg} p-4 rounded-xl border ${currentThemeStyle.cardBorder} shadow-2xs hover-float`}>
-            <span className={`text-xs ${currentThemeStyle.textSecondary} block mb-1`}>尾款 50% (驗收後)</span>
-            <span className={`text-lg font-bold font-mono ${currentThemeStyle.textSecondary}`}>NT$ {balanceAmount.toLocaleString()}</span>
+          <div className="bg-[#FAF6F0] p-4 rounded-2xl border border-[#EADCC9] shadow-2xs hover-float">
+            <span className="text-[10px] text-stone-500 uppercase font-bold block mb-1">尾款 50% (線上驗收後)</span>
+            <span className="text-xl md:text-2xl font-black font-mono text-stone-700">NT$ {balanceAmount.toLocaleString()}</span>
           </div>
-          <div className={`${currentThemeStyle.accentBg} p-4 rounded-xl border ${currentThemeStyle.cardBorder} shadow-2xs hover-float`}>
-            <span className={`text-xs ${currentThemeStyle.textSecondary} block mb-1`}>含 5% 營業稅 (訂金)</span>
-            <span className={`text-lg font-bold font-mono ${currentThemeStyle.textPrimary}`}>NT$ {Math.round(depositTaxed).toLocaleString()}</span>
+          <div className="bg-emerald-50/80 p-4 rounded-2xl border border-emerald-200 shadow-2xs hover-float">
+            <span className="text-[10px] text-emerald-800 uppercase font-bold block mb-1">含 5% 營業稅 (訂金)</span>
+            <span className="text-xl md:text-2xl font-black font-mono text-emerald-900">NT$ {Math.round(depositTaxed).toLocaleString()}</span>
           </div>
         </div>
 
-        <div className={`rounded-xl p-4 border ${currentThemeStyle.cardBorder} text-xs ${currentThemeStyle.textSecondary} space-y-2`}>
-          <div className={`flex justify-between border-b border-stone-200/50 pb-2 font-bold ${currentThemeStyle.textPrimary}`}>
-            <span>維護與託管月費項目</span>
+        {/* Tabular SaaS Monthly Item Table */}
+        <div className="bg-[#FAF6F0]/60 rounded-2xl p-5 border border-[#EADCC9] text-xs text-stone-700 space-y-3">
+          <div className="flex justify-between border-b border-stone-200/80 pb-2.5 font-bold text-stone-900 text-xs md:text-sm">
+            <span>營運與維護託管月費包含項目 (SaaS Monthly Service)</span>
             <span>月費金額</span>
           </div>
-          <div className="flex justify-between">
-            <span>☁️ Supabase 獨立雲端資料庫託管 ＋ 每日自動備份</span>
-            <span>包含於月費</span>
+          <div className="flex justify-between items-center">
+            <span>☁️ Supabase 獨立雲端資料庫託管 ＋ 每日自動備份 ＋ SSL 證書</span>
+            <span className="font-semibold text-emerald-700">包含於月費內</span>
           </div>
-          <div className="flex justify-between">
-            <span>🤖 Gemini AI 文字與高清圖片生成用量</span>
-            <span>包含於月費</span>
+          <div className="flex justify-between items-center">
+            <span>🤖 Gemini AI 雙向文字與 5 大視覺風格高清圖片生成用量</span>
+            <span className="font-semibold text-emerald-700">包含於月費內</span>
           </div>
-          <div className={`flex justify-between border-t border-stone-200/50 pt-2 font-bold ${currentThemeStyle.highlight}`}>
+          <div className="flex justify-between items-center border-t border-stone-200/80 pt-2.5 font-bold text-[#8C6D46] text-xs md:text-sm">
             <span>合計營運與 AI 雲端月費 (年繳折抵享 NT$ 12,000 / 年)</span>
-            <span className="font-mono text-sm">NT$ 1,200 / 月</span>
+            <span className="font-mono text-base text-amber-900">NT$ 1,200 / 月</span>
           </div>
         </div>
       </div>
     </div>
   );
 
-  // Slide 5: Remittance & Signature
+  // Slide 5: Remittance & Signature (Checkout Slide Layout)
   const slide5Checkout = (
-    <div className="w-full my-auto space-y-4">
-      <div className="border-b border-stone-200/60 pb-2">
-        <h2 className={`text-lg md:text-2xl font-bold font-serif ${currentThemeStyle.textPrimary} flex items-center gap-2`}>
+    <div className="w-full my-auto space-y-5">
+      <div className="border-b border-stone-200 pb-2">
+        <span className="text-[10px] font-mono font-bold tracking-widest text-[#8C6D46] uppercase block">CHECKOUT & SIGNATURE</span>
+        <h2 className="text-xl md:text-3xl font-black font-serif text-stone-900 flex items-center gap-2 mt-0.5">
           <span>💳</span> 匯款對帳帳戶與線上簽章 (Remittance & E-Signature)
         </h2>
-        <p className={`text-xs ${currentThemeStyle.textSecondary}`}>請於匯款首期訂金後填寫下方資訊，專案團隊將即時進行對帳確認。</p>
       </div>
 
       <FraudAlertAndDomainVerifier />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className={`${currentThemeStyle.accentBg} border ${currentThemeStyle.accentBorder} rounded-xl p-5 space-y-3 hover-float`}>
-          <h3 className={`font-bold ${currentThemeStyle.accent} text-xs md:text-sm border-b ${currentThemeStyle.accentBorder} pb-2`}>
-            🏦 指定匯款銀行帳戶
-          </h3>
-          <div className={`space-y-2 text-xs ${currentThemeStyle.textSecondary}`}>
+        {/* Passbook Bank Card */}
+        <div className="bg-gradient-to-br from-[#FAF6F0] to-[#EFE6D8] border-2 border-[#D8C7B0] rounded-3xl p-6 space-y-4 shadow-sm hover-float">
+          <div className="flex justify-between items-center border-b border-[#D8C7B0] pb-3">
+            <h3 className="font-black text-[#3D332A] text-base flex items-center gap-2">
+              <span>🏦</span> 指定匯款銀行帳戶 (BANK ACCOUNT)
+            </h3>
+            <span className="px-2 py-0.5 bg-[#5C504A] text-amber-50 text-[10px] font-bold rounded">認證帳戶</span>
+          </div>
+
+          <div className="space-y-3 text-xs md:text-sm text-stone-800">
             <div className="flex justify-between">
-              <span className="opacity-70">銀行名稱</span>
-              <span className={`font-bold ${currentThemeStyle.textPrimary}`}>國泰世華銀行 (013)</span>
+              <span className="text-stone-500">銀行名稱</span>
+              <span className="font-bold text-stone-900">國泰世華銀行 (代碼 013)</span>
             </div>
             <div className="flex justify-between">
-              <span className="opacity-70">分行名稱</span>
-              <span>館前分行</span>
+              <span className="text-stone-500">分行名稱</span>
+              <span className="font-medium">館前分行</span>
             </div>
             <div className="flex justify-between">
-              <span className="opacity-70">戶名</span>
-              <span className={`font-bold ${currentThemeStyle.textPrimary}`}>奕暢數字創意有限公司</span>
+              <span className="text-stone-500">戶名全銜</span>
+              <span className="font-bold text-stone-900">奕暢數位創意有限公司</span>
             </div>
-            <div className={`flex justify-between border-t ${currentThemeStyle.accentBorder} pt-2`}>
-              <span className="opacity-70">匯款帳號</span>
-              <span className={`font-mono font-bold ${currentThemeStyle.highlight} text-sm tracking-wider`}>013-03-500888-9</span>
+            <div className="flex justify-between items-center border-t border-[#D8C7B0] pt-3">
+              <span className="text-stone-600 font-bold">匯款帳號</span>
+              <span className="font-mono font-black text-amber-900 text-base md:text-lg tracking-wider bg-white/80 px-3 py-1 rounded-xl border border-amber-200 shadow-2xs">013-03-500888-9</span>
             </div>
           </div>
         </div>
 
-        <form onSubmit={handleSaveInvoiceInfo} className="space-y-3">
+        {/* E-Signature & Invoice Form */}
+        <form onSubmit={handleSaveInvoiceInfo} className="bg-white border-2 border-stone-200 rounded-3xl p-6 space-y-3.5 shadow-sm">
+          <h3 className="font-black text-stone-900 text-sm border-b border-stone-100 pb-2 flex items-center gap-1.5">
+            <span>📝</span> 線上對帳與發票資料登記
+          </h3>
           <div>
-            <label className={`block text-xs font-bold ${currentThemeStyle.textPrimary} mb-1`}>開票抬頭 (公司/教室全銜)</label>
+            <label className="block text-xs font-bold text-stone-700 mb-1">開票抬頭 (公司/教室全銜)</label>
             <input
               type="text"
               value={companyName}
               onChange={(e) => setCompanyName(e.target.value)}
-              className={`w-full px-3 py-2 ${currentThemeStyle.cardBg} border ${currentThemeStyle.cardBorder} rounded-xl text-xs ${currentThemeStyle.textPrimary} outline-none`}
+              className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs text-stone-800 outline-none focus:border-amber-600 focus:bg-white transition"
               required
             />
           </div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className={`block text-xs font-bold ${currentThemeStyle.textPrimary} mb-1`}>統一編號</label>
+              <label className="block text-xs font-bold text-stone-700 mb-1">統一編號</label>
               <input
                 type="text"
                 value={taxId}
                 onChange={(e) => setTaxId(e.target.value)}
                 placeholder="例: 88888888"
-                className={`w-full px-3 py-2 ${currentThemeStyle.cardBg} border ${currentThemeStyle.cardBorder} rounded-xl text-xs ${currentThemeStyle.textPrimary} outline-none`}
+                className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs text-stone-800 outline-none focus:border-amber-600 focus:bg-white transition"
               />
             </div>
             <div>
-              <label className={`block text-xs font-bold ${currentThemeStyle.textPrimary} mb-1`}>匯款帳號後五碼</label>
+              <label className="block text-xs font-bold text-stone-700 mb-1">匯款帳號後五碼</label>
               <input
                 type="text"
                 value={remittanceBank5}
                 onChange={(e) => setRemittanceBank5(e.target.value)}
                 placeholder="例: 12345"
-                className={`w-full px-3 py-2 ${currentThemeStyle.cardBg} border ${currentThemeStyle.cardBorder} rounded-xl text-xs font-mono ${currentThemeStyle.textPrimary} outline-none`}
+                className="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs font-mono text-stone-800 outline-none focus:border-amber-600 focus:bg-white transition"
                 required
               />
             </div>
@@ -637,7 +663,7 @@ export default function LannyYogaProposalPage() {
           <button
             type="submit"
             disabled={isSubmitting || isSaved}
-            className={`w-full py-2.5 ${currentThemeStyle.progressColor} text-white font-bold text-xs rounded-xl shadow-md transition hover:opacity-90 disabled:opacity-50`}
+            className="w-full py-3 bg-[#5C504A] hover:bg-[#4A403B] disabled:bg-stone-300 text-white font-bold text-xs rounded-xl shadow-md transition cursor-pointer active:scale-98"
           >
             {isSaved ? "✅ 對帳與開票資訊已確認送出" : isSubmitting ? "確認中..." : "送出對帳與開票資訊"}
           </button>
@@ -663,7 +689,7 @@ export default function LannyYogaProposalPage() {
 
   return (
     <ProposalEditableProvider slug="lanny-yoga">
-      <div className={`min-h-screen ${currentThemeStyle.bg} ${currentThemeStyle.textPrimary} font-sans relative selection:bg-[#D4A373] selection:text-white flex flex-col justify-between p-3 md:p-6 transition-colors duration-500`}>
+      <div className="min-h-screen bg-[#F5EFE6] text-[#3D332A] font-sans relative selection:bg-[#D4A373] selection:text-white flex flex-col justify-between p-3 md:p-6 transition-colors duration-500">
         {/* Security Overlays */}
         <SecurityWatermarkOverlay />
         {isAdminBypass && <OwnerBypassBanner />}
@@ -691,9 +717,9 @@ export default function LannyYogaProposalPage() {
                 {errorMsg && <p className="text-xs text-rose-500 font-medium">{errorMsg}</p>}
                 <button
                   type="submit"
-                  className="w-full py-3 bg-[#5C504A] hover:bg-[#4A403B] text-white font-bold rounded-xl shadow-md transition"
+                  className="w-full py-3 bg-[#5C504A] hover:bg-[#4A403B] text-white font-bold rounded-xl shadow-md transition cursor-pointer"
                 >
-                  解鎖進入簡報簡報
+                  解鎖進入簡報報價單
                 </button>
               </form>
               <p className="text-[10px] text-stone-400 mt-4">提示：本日日期 20260802 或 0802</p>
@@ -704,7 +730,7 @@ export default function LannyYogaProposalPage() {
         {/* HTML-PPT Top Progress Indicator Line */}
         <div className="fixed top-0 left-0 right-0 h-1.5 bg-stone-300/30 z-50">
           <div
-            className={`h-full ${currentThemeStyle.progressColor} transition-all duration-300`}
+            className="h-full bg-[#5C504A] transition-all duration-300"
             style={{ width: `${progressPercent}%` }}
           />
         </div>
@@ -719,7 +745,7 @@ export default function LannyYogaProposalPage() {
               </div>
               <button
                 onClick={() => setIsPresenterMode(false)}
-                className="text-xs text-stone-400 hover:text-white px-2 py-0.5 rounded hover:bg-stone-800"
+                className="text-xs text-stone-400 hover:text-white px-2 py-0.5 rounded hover:bg-stone-800 cursor-pointer"
               >
                 ✕ 關閉
               </button>
@@ -743,41 +769,36 @@ export default function LannyYogaProposalPage() {
           </div>
         )}
 
-        {/* Top Header & Visual Theme Quick-Selector Bar */}
+        {/* Top Header Bar */}
         <header className="max-w-6xl w-full mx-auto mb-3">
-          <div className={`${currentThemeStyle.deckCanvasBg} border ${currentThemeStyle.deckBorder} rounded-2xl px-4 py-2.5 shadow-sm flex flex-wrap items-center justify-between gap-3`}>
-            <div className="flex items-center gap-2">
-              <span className="text-xl">{currentThemeStyle.icon}</span>
+          <div className="bg-white/95 backdrop-blur-xl border border-[#E3D5C3] rounded-2xl px-5 py-3 shadow-sm flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <span className="text-2xl">🧘</span>
               <div>
-                <h1 className={`font-bold text-xs md:text-sm ${currentThemeStyle.textPrimary} font-serif flex items-center gap-2`}>
+                <h1 className="font-black text-xs md:text-sm text-[#3D332A] font-serif flex items-center gap-2">
                   Lanny Yoga Studio 專案數位簡報
-                  <span className={`px-2 py-0.5 text-[10px] font-mono rounded-md border ${currentThemeStyle.accentBg} ${currentThemeStyle.accentBorder} ${currentThemeStyle.highlight}`}>
-                    HTML-PPT DECK
+                  <span className="px-2.5 py-0.5 text-[10px] font-mono font-bold rounded-full bg-[#EFE6D8] border border-[#D8C7B0] text-[#8C6D46]">
+                    EDITORIAL DECK
                   </span>
                 </h1>
               </div>
             </div>
 
-            {/* Prominent Visual Theme Switcher Buttons (莫蘭迪 / 靜謐森林 / 極光冰藍 / 深夜暗黑) */}
-            <div className="flex items-center gap-1.5 bg-black/5 dark:bg-white/5 p-1 rounded-xl">
-              {(Object.keys(PPT_THEMES) as PPTTheme[]).map((tKey) => {
-                const tObj = PPT_THEMES[tKey];
-                const isActive = theme === tKey;
-                return (
-                  <button
-                    key={tKey}
-                    onClick={() => setTheme(tKey)}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all flex items-center gap-1 cursor-pointer ${
-                      isActive
-                        ? `${tObj.progressColor} text-white shadow-md scale-105`
-                        : `${currentThemeStyle.textSecondary} hover:${currentThemeStyle.textPrimary} hover:bg-white/40`
-                    }`}
-                  >
-                    <span>{tObj.icon}</span>
-                    <span className="hidden sm:inline">{tObj.name.split(" ")[0]}</span>
-                  </button>
-                );
-              })}
+            {/* Slide Navigation Buttons */}
+            <div className="flex items-center gap-1.5 overflow-x-auto py-1">
+              {slideTitles.map((title, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentSlide(idx)}
+                  className={`px-3 py-1.5 text-xs rounded-xl font-bold transition cursor-pointer ${
+                    currentSlide === idx
+                      ? "bg-[#5C504A] text-amber-50 shadow-xs"
+                      : "text-stone-600 hover:text-stone-900 hover:bg-stone-200/50"
+                  }`}
+                >
+                  {idx + 1}. {title}
+                </button>
+              ))}
             </div>
 
             {/* Presenter & Fullscreen Tools */}
@@ -785,10 +806,10 @@ export default function LannyYogaProposalPage() {
               <button
                 onClick={() => setIsPresenterMode((prev) => !prev)}
                 title="切換演講者模式 [P]"
-                className={`px-3 py-1 rounded-xl font-bold border transition flex items-center gap-1 cursor-pointer ${
+                className={`px-3 py-1.5 rounded-xl font-bold border transition flex items-center gap-1 cursor-pointer ${
                   isPresenterMode
                     ? "bg-amber-600 border-amber-600 text-white shadow-sm"
-                    : `${currentThemeStyle.cardBg} ${currentThemeStyle.cardBorder} ${currentThemeStyle.textSecondary} hover:${currentThemeStyle.textPrimary}`
+                    : "bg-white border-stone-200 text-stone-700 hover:bg-stone-50"
                 }`}
               >
                 🎙️ <span className="hidden md:inline">演講模式 [P]</span>
@@ -797,37 +818,37 @@ export default function LannyYogaProposalPage() {
               <button
                 onClick={toggleFullscreen}
                 title="全螢幕展示 [F]"
-                className={`px-2.5 py-1 rounded-xl border font-bold transition flex items-center gap-1 cursor-pointer ${currentThemeStyle.cardBg} ${currentThemeStyle.cardBorder} ${currentThemeStyle.textSecondary} hover:${currentThemeStyle.textPrimary}`}
+                className="px-3 py-1.5 rounded-xl border font-bold transition flex items-center gap-1 cursor-pointer bg-white border-stone-200 text-stone-700 hover:bg-stone-50"
               >
-                {isFullscreen ? "↙ 退出" : "⛶ 全螢幕"}
+                {isFullscreen ? "↙ 退出" : "⛶ 全螢幕 [F]"}
               </button>
             </div>
           </div>
         </header>
 
-        {/* 🔥 HIGH-IMPACT PPT SLIDE STAGE CANVAS FRAME (16:9 Deck Framing) */}
+        {/* 🔥 HIGH-IMPACT EDITORIAL PPT SLIDE CANVAS STAGE */}
         <main className="max-w-6xl w-full mx-auto flex-1 flex flex-col justify-center my-2">
-          <div className={`w-full min-h-[500px] ${currentThemeStyle.deckCanvasBg} border-2 ${currentThemeStyle.deckBorder} ${currentThemeStyle.deckShadow} rounded-3xl p-6 md:p-10 relative overflow-hidden transition-all duration-300 flex flex-col justify-between`}>
+          <div className="w-full min-h-[520px] bg-white/95 backdrop-blur-xl border-2 border-[#E3D5C3] shadow-[0_25px_60px_rgba(92,80,74,0.12)] rounded-3xl p-6 md:p-10 relative overflow-hidden transition-all duration-300 flex flex-col justify-between">
             
-            {/* Top Slide Header Indicator */}
-            <div className="flex items-center justify-between border-b border-stone-200/40 pb-3 mb-4">
-              <div className="flex items-center gap-2">
-                <span className={`text-xs font-bold font-mono px-2.5 py-0.5 rounded-full ${currentThemeStyle.accentBg} ${currentThemeStyle.accentBorder} ${currentThemeStyle.highlight}`}>
+            {/* Top Slide Header Badge & Progress Indicators */}
+            <div className="flex items-center justify-between border-b border-stone-200/60 pb-3.5 mb-4">
+              <div className="flex items-center gap-2.5">
+                <span className="text-xs font-bold font-mono px-3 py-1 rounded-full bg-[#EFE6D8] border border-[#D8C7B0] text-[#8C6D46]">
                   SLIDE 0{currentSlide + 1} / 0{slides.length}
                 </span>
-                <span className={`text-xs font-bold ${currentThemeStyle.textSecondary}`}>
+                <span className="text-xs font-black text-stone-800">
                   {slideTitles[currentSlide]}
                 </span>
               </div>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1.5">
                 {slideTitles.map((_, idx) => (
                   <button
                     key={idx}
                     onClick={() => setCurrentSlide(idx)}
-                    className={`h-2 rounded-full transition-all cursor-pointer ${
+                    className={`h-2.5 rounded-full transition-all cursor-pointer ${
                       currentSlide === idx
-                        ? `w-6 ${currentThemeStyle.progressColor}`
-                        : "w-2 bg-stone-300/60 hover:bg-stone-400"
+                        ? "w-8 bg-[#5C504A]"
+                        : "w-2.5 bg-stone-200 hover:bg-stone-400"
                     }`}
                     title={slideTitles[idx]}
                   />
@@ -835,40 +856,40 @@ export default function LannyYogaProposalPage() {
               </div>
             </div>
 
-            {/* Dynamic Slide Content with Right-Slide Animation */}
+            {/* Dynamic Editorial Slide Content */}
             <div key={currentSlide} className="flex-1 flex flex-col justify-center animate-slide-in-right">
               {slides[currentSlide]}
             </div>
 
-            {/* Bottom Inner Deck Watermark */}
-            <div className="flex justify-between items-center border-t border-stone-200/40 pt-3 mt-4 text-[11px] opacity-60">
-              <span>奕暢創新設計工作室 ｜ HTML-PPT Presentation Deck System</span>
-              <span className="font-mono">Lanny Yoga Studio Spec v2.0</span>
+            {/* Bottom Inner Deck Footer */}
+            <div className="flex justify-between items-center border-t border-stone-200/60 pt-3 mt-5 text-[11px] text-stone-500 font-medium">
+              <span>奕暢創新設計工作室 ｜ Editorial PPT Presentation Deck</span>
+              <span className="font-mono">Lanny Yoga Studio Spec v3.0</span>
             </div>
           </div>
         </main>
 
         {/* Bottom Slide Controller Dock */}
-        <footer className={`max-w-6xl w-full mx-auto mt-3 pt-3 border-t border-stone-300/40 flex flex-wrap items-center justify-between gap-2 text-xs ${currentThemeStyle.textSecondary}`}>
+        <footer className="max-w-6xl w-full mx-auto mt-3 pt-3 border-t border-stone-300/40 flex flex-wrap items-center justify-between gap-2 text-xs text-stone-600">
           <div className="flex items-center gap-2">
-            <span>⌨️ 方向鍵 `[← / →]` 切換 ｜ `[P]` 演講者講稿 ｜ `[F]` 全螢幕</span>
+            <span>⌨️ 方向鍵 `[← / →]` 切換 ｜ `[P]` 演講講稿 ｜ `[F]` 全螢幕</span>
           </div>
 
           <div className="flex items-center gap-3">
             <button
               onClick={() => setCurrentSlide((prev) => Math.max(prev - 1, 0))}
               disabled={currentSlide === 0}
-              className={`px-4 py-2 rounded-xl border font-bold disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer ${currentThemeStyle.cardBg} ${currentThemeStyle.cardBorder} ${currentThemeStyle.textPrimary} hover:shadow-xs`}
+              className="px-4 py-2 bg-white border border-stone-200 rounded-xl font-bold disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer text-stone-800 hover:bg-stone-50 shadow-2xs"
             >
               ◀ 上一頁 Slide
             </button>
-            <span className="font-mono font-bold text-sm">
+            <span className="font-mono font-bold text-sm text-stone-900">
               0{currentSlide + 1} / 0{slides.length}
             </span>
             <button
               onClick={() => setCurrentSlide((prev) => Math.min(prev + 1, slides.length - 1))}
               disabled={currentSlide === slides.length - 1}
-              className={`px-5 py-2 ${currentThemeStyle.progressColor} text-white rounded-xl font-bold disabled:opacity-40 disabled:cursor-not-allowed transition shadow-md cursor-pointer hover:opacity-90`}
+              className="px-5 py-2 bg-[#5C504A] text-white rounded-xl font-bold disabled:opacity-40 disabled:cursor-not-allowed transition shadow-md cursor-pointer hover:bg-[#4A403B]"
             >
               下一頁 Slide ▶
             </button>

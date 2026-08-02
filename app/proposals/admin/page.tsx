@@ -263,73 +263,81 @@ export default function ProposalAdminPage() {
 
       {/* Main 2-Column Dashboard Layout */}
       <div className="max-w-7xl mx-auto p-6 grid grid-cols-1 md:grid-cols-12 gap-6">
-        {/* Left Column: Client Projects List */}
+        {/* Left Column: Client Projects Selection & Single Card View */}
         <div className="md:col-span-4 bg-[#1E293B] border border-[#334155] rounded-2xl p-4 space-y-3">
           <div className="flex justify-between items-center pb-2 border-b border-[#334155]">
             <h2 className="text-sm font-bold text-white flex items-center gap-1.5">
-              <span>📋</span> 全客戶專案動態列表
+              <span>📋</span> 選擇報價單專案
             </h2>
             <button onClick={fetchDashboardData} className="text-xs text-teal-400 underline">
               {loading ? "更新中..." : "🔄 整理"}
             </button>
           </div>
 
-          <div className="space-y-2">
-            {projects.map((p) => {
-              const isSelected = p.slug === selectedSlug;
-              const { stage, countdownStarted, daysDiff } = p.lifecycle;
-
-              return (
-                <div
-                  key={p.slug}
-                  onClick={() => setSelectedSlug(p.slug)}
-                  className={`p-3 rounded-xl border transition cursor-pointer ${
-                    isSelected
-                      ? "bg-teal-950/40 border-teal-500 shadow-md"
-                      : "bg-[#0F172A]/70 border-[#334155] hover:border-slate-500"
-                  }`}
-                >
-                  <div className="flex justify-between items-start mb-1">
-                    <h3 className="font-bold text-sm text-white">{p.title}</h3>
-                    {stage === "MANUALLY_CLOSED" && (
-                      <span className="text-[10px] bg-rose-900/90 text-rose-200 px-2 py-0.5 rounded-full font-bold border border-rose-600 animate-pulse">
-                        🔒 已手動隱蔽關閉
-                      </span>
-                    )}
-                    {stage === "NORMAL" && !countdownStarted && (
-                      <span className="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full font-bold border border-slate-600">
-                        🟢 尚未開啟 (計時未始)
-                      </span>
-                    )}
-                    {stage === "NORMAL" && countdownStarted && (
-                      <span className="text-[10px] bg-blue-900/80 text-blue-300 px-2 py-0.5 rounded-full font-bold border border-blue-700 animate-pulse">
-                        🔵 Day {daysDiff} 倒數中 (已啟動)
-                      </span>
-                    )}
-                    {stage === "EXPIRED" && (
-                      <span className="text-[10px] bg-amber-900/80 text-amber-300 px-2 py-0.5 rounded-full font-bold border border-amber-700 animate-pulse">
-                        🟡 Day {daysDiff} 密碼過期
-                      </span>
-                    )}
-                    {stage === "ARCHIVED_404" && (
-                      <span className="text-[10px] bg-rose-900/80 text-rose-300 px-2 py-0.5 rounded-full font-bold border border-rose-700">
-                        🔴 Day {daysDiff} 404歸檔
-                      </span>
-                    )}
-                  </div>
-
-                  <p className="text-[11px] text-teal-400 font-mono mt-1">
-                    {p.lifecycle.message}
-                  </p>
-
-                  <div className="flex justify-between items-center text-[11px] text-slate-400 font-mono mt-2 pt-2 border-t border-[#334155]/50">
-                    <span>傳閱 Session: <b className="text-white">{p.sessionCount}</b></span>
-                    <span>最新觀看: {p.latestViewAt ? new Date(p.latestViewAt).toLocaleDateString('zh-TW') : '尚無觀看'}</span>
-                  </div>
-                </div>
-              );
-            })}
+          {/* Dropdown Select Menu (Sorted by Creation Date: Newest on Top, Oldest at Bottom) */}
+          <div>
+            <label className="block text-[11px] font-bold text-slate-400 mb-1.5">
+              切換要檢視的專案 (依建立時間排序，越舊越下方)：
+            </label>
+            <select
+              value={selectedSlug}
+              onChange={(e) => setSelectedSlug(e.target.value)}
+              className="w-full bg-[#0F172A] border border-[#334155] text-white text-xs font-bold rounded-xl px-3 py-2.5 outline-none focus:border-teal-500 transition cursor-pointer"
+            >
+              {[...projects]
+                .sort((a, b) => new Date(b.createdAt || "2026-01-01").getTime() - new Date(a.createdAt || "2026-01-01").getTime())
+                .map((p) => (
+                  <option key={p.slug} value={p.slug}>
+                    [{p.createdAt}] {p.title}
+                  </option>
+                ))}
+            </select>
           </div>
+
+          {/* Single Selected Project Card */}
+          {selectedProject && (
+            <div className="bg-teal-950/40 border border-teal-500/80 rounded-xl p-4 shadow-md space-y-2 mt-3">
+              <div className="flex justify-between items-start">
+                <h3 className="font-bold text-sm text-white">{selectedProject.title}</h3>
+                {selectedProject.lifecycle.stage === "MANUALLY_CLOSED" && (
+                  <span className="text-[10px] bg-rose-900/90 text-rose-200 px-2 py-0.5 rounded-full font-bold border border-rose-600 animate-pulse">
+                    🔒 已手動隱蔽關閉
+                  </span>
+                )}
+                {selectedProject.lifecycle.stage === "NORMAL" && !selectedProject.lifecycle.countdownStarted && (
+                  <span className="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full font-bold border border-slate-600">
+                    🟢 尚未開啟 (計時未始)
+                  </span>
+                )}
+                {selectedProject.lifecycle.stage === "NORMAL" && selectedProject.lifecycle.countdownStarted && (
+                  <span className="text-[10px] bg-blue-900/80 text-blue-300 px-2 py-0.5 rounded-full font-bold border border-blue-700 animate-pulse">
+                    🔵 Day {selectedProject.lifecycle.daysDiff} 倒數中
+                  </span>
+                )}
+                {selectedProject.lifecycle.stage === "EXPIRED" && (
+                  <span className="text-[10px] bg-amber-900/80 text-amber-300 px-2 py-0.5 rounded-full font-bold border border-amber-700 animate-pulse">
+                    🟡 Day {selectedProject.lifecycle.daysDiff} 密碼過期
+                  </span>
+                )}
+                {selectedProject.lifecycle.stage === "ARCHIVED_404" && (
+                  <span className="text-[10px] bg-rose-900/80 text-rose-300 px-2 py-0.5 rounded-full font-bold border border-rose-700">
+                    🔴 Day {selectedProject.lifecycle.daysDiff} 404歸檔
+                  </span>
+                )}
+              </div>
+
+              <div className="text-[11px] text-slate-400 space-y-1 pt-1">
+                <div>建立日期：<b className="font-mono text-teal-400">{selectedProject.createdAt}</b></div>
+                <div>路徑：<span className="font-mono text-slate-300">/proposals/{selectedProject.slug}</span></div>
+                <div className="text-teal-400 font-mono pt-1">{selectedProject.lifecycle.message}</div>
+              </div>
+
+              <div className="flex justify-between items-center text-[11px] text-slate-400 font-mono pt-2 border-t border-[#334155]/60">
+                <span>傳閱 Session: <b className="text-white">{selectedProject.sessionCount}</b></span>
+                <span>最新觀看: {selectedProject.latestViewAt ? new Date(selectedProject.latestViewAt).toLocaleDateString('zh-TW') : '尚無觀看'}</span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Right Column: Deep-Dive Customer Logs & Audit Trail */}

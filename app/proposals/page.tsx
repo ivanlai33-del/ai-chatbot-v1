@@ -102,7 +102,7 @@ export default function ProposalsIndexPage() {
         )}
 
         <div className="mt-8 pt-4 border-t border-[#E6DDCF] text-center text-xs text-[#A39587]">
-          © 2026 www.ycideas.com ｜ 智企概念專案服務團隊
+          © 2026 www.ycideas.com ｜ 奕暢創新設計工作室
         </div>
       </div>
     </div>

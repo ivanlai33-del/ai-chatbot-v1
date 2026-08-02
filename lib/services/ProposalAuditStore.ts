@@ -59,6 +59,12 @@ export const ALL_PROPOSALS: ProposalProjectConfig[] = [
     createdAt: '2026-07-29',
     validPasswords: ['20260729', '0729', '20260725', '0725', '23215860'],
   },
+  {
+    slug: 'lanny-yoga',
+    clientTitle: 'Lanny Yoga Studio (Lanny 老師)',
+    createdAt: '2026-08-02',
+    validPasswords: ['20260802', '0802', '20260729', '0729'],
+  },
 ];
 
 interface AuditStoreData {

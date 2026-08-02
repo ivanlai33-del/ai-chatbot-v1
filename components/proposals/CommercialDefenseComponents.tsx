@@ -200,7 +200,7 @@ export function VpnInterceptModal() {
 /**
  * 8. 🖨️ 官方主管簽核與用印欄 Component (專供白紙黑字紙本列印用)
  */
-export function PrintSignatureSection({ proposalTitle }: { proposalTitle: string }) {
+export function PrintSignatureSection({ proposalTitle = "專案報價單" }: { proposalTitle?: string }) {
   const sha256Hash = "SHA256-AUTH-" + Math.random().toString(36).substring(2, 10).toUpperCase() + "-" + Date.now();
 
   return (

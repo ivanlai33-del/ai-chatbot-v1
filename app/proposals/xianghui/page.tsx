@@ -281,7 +281,6 @@ export default function XianghuiProposalPage() {
         {/* Security overlays */}
         <SecurityWatermarkOverlay />
         {isAdminBypass && <OwnerBypassBanner />}
-        <FraudAlertAndDomainVerifier />
 
         {/* Lock Screen Modal */}
         {!isUnlocked && (
@@ -859,6 +858,9 @@ export default function XianghuiProposalPage() {
                 </div>
               </div>
             </div>
+
+            {/* 官方防偽與網域驗證 */}
+            <FraudAlertAndDomainVerifier />
 
             {/* Remittance Bank Info */}
             <div className="p-4 bg-blue-50/70 rounded-2xl border border-blue-200 text-xs text-slate-700 space-y-1">
